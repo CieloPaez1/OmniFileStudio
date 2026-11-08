@@ -7,7 +7,8 @@ export type FileOriginType =
   | 'MERGED_PDF'
   | 'SPLIT_PDF'
   | 'COMPRESSED_PDF'
-  | 'SIGNED_PDF';
+  | 'SIGNED_PDF'
+  | 'TRANSLATED_DOC';
 
 export type FileTagType = 'Trabajo' | 'Estudio' | 'Facturas' | 'Personal' | 'Legal' | 'Urgente';
 
@@ -19,6 +20,31 @@ export const FILE_TAGS: FileTagType[] = [
   'Legal',
   'Urgente'
 ];
+
+export type TranslationLangCode = 'auto' | 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh';
+
+export interface TranslationLanguageOption {
+  code: TranslationLangCode;
+  name: string;
+  flag: string;
+}
+
+export interface TranslateDocumentRequest {
+  fileId?: number | null;
+  uploadedFile?: File | null;
+  sourceLang: TranslationLangCode;
+  targetLang: Exclude<TranslationLangCode, 'auto'>;
+  outputFormat?: 'preserve' | 'pdf' | 'docx' | 'xlsx' | 'pptx' | 'txt' | 'html' | 'md';
+  outputTitle?: string;
+}
+
+export interface TranslateDocumentResult {
+  file: ManagedFile;
+  detectedSourceLang: string;
+  targetLangName: string;
+  originalSnippet: string;
+  translatedSnippet: string;
+}
 
 export interface ContextualFileAnalysis {
   originalRawName: string;

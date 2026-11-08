@@ -24,6 +24,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <div class="omni-responsive-shell">
   <!-- [REQUISITO 6] Pull-to-refresh con ion-refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content pullingText="Deslizá para actualizar desde json-server..."></ion-refresher-content>
@@ -57,8 +58,8 @@
     </div>
   }
 
-  <!-- Tarjetas KPI Redondeadas (rounded-2xl + shadow-sm) con acentos semánticos -->
-  <div class="kpi-grid">
+  <!-- Tarjetas KPI Redondeadas Responsivas (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style="margin: 0 0.25rem 1.15rem;">
     <div class="kpi-card" (click)="goTo('/mobile/repository')">
       <div class="kpi-top">
         <span class="kpi-label">Total Archivos</span>
@@ -92,32 +93,32 @@
       <small>Listas para escáner PDF</small>
     </div>
 
-    <div class="kpi-card" (click)="goTo('/mobile/repository')">
+    <div class="kpi-card" (click)="goToTranslator()">
       <div class="kpi-top">
-        <span class="kpi-label">Archivados</span>
+        <span class="kpi-label">Traductor Docs</span>
         <span class="kpi-icon-dot dot-emerald">
-          <ion-icon name="stats-chart-outline"></ion-icon>
+          <ion-icon name="language-outline"></ion-icon>
         </span>
       </div>
-      <strong class="kpi-value text-emerald">{{ fileService.archivedFiles().length }}</strong>
-      <small>Con deslizamiento táctil</small>
+      <strong class="kpi-value text-emerald">8 Idiomas</strong>
+      <small>.docx, .xlsx, .pptx, .pdf</small>
     </div>
   </div>
 
-  <!-- Accesos Rápidos (Tarjetas Modernas Slate + Índigo Vibrante #6366f1 + Feedback Háptico) -->
+  <!-- Accesos Rápidos Responsivos -->
   <ion-card class="surface-card">
     <ion-card-header>
       <ion-card-subtitle>ACCESOS RÁPIDOS CON FEEDBACK HÁPTICO</ion-card-subtitle>
       <ion-card-title>¿Qué querés hacer hoy?</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <div class="quick-actions-grid">
-        <button type="button" class="quick-btn cta-indigo" (click)="goTo('/mobile/file-form')">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <button type="button" class="quick-btn cta-indigo" (click)="goToTranslator()">
           <div class="quick-icon-wrap">
-            <ion-icon name="add-circle-outline"></ion-icon>
+            <ion-icon name="language-outline"></ion-icon>
           </div>
-          <strong>Subir / Registrar</strong>
-          <small>Formulario Reactivo</small>
+          <strong>Traductor Universal</strong>
+          <small>Word, Excel, PPTX, PDF</small>
         </button>
 
         <button type="button" class="quick-btn" (click)="goTo('/mobile/scanner')">
@@ -136,12 +137,12 @@
           <small>Unir, Dividir, Firmar</small>
         </button>
 
-        <button type="button" class="quick-btn" (click)="goTo('/mobile/repository')">
+        <button type="button" class="quick-btn" (click)="goTo('/mobile/file-form')">
           <div class="quick-icon-wrap soft-emerald">
-            <ion-icon name="swap-horizontal-outline"></ion-icon>
+            <ion-icon name="add-circle-outline"></ion-icon>
           </div>
-          <strong>Repositorio</strong>
-          <small>Buscar y Convertir</small>
+          <strong>Subida Inteligente</strong>
+          <small>Formulario Reactivo</small>
         </button>
       </div>
     </ion-card-content>
@@ -236,4 +237,5 @@
     [isOpen]="previewOpen()"
     (closed)="closePreview()">
   </app-file-preview-modal>
+  </div>
 </ion-content>

@@ -44,7 +44,8 @@ import {
   timeOutline,
   trashOutline,
   shareSocialOutline,
-  archiveOutline
+  archiveOutline,
+  languageOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { ThemeService } from '../../../services/theme.service';
@@ -122,8 +123,14 @@ export class MobileFileDashboardComponent implements OnInit {
       timeOutline,
       trashOutline,
       shareSocialOutline,
-      archiveOutline
+      archiveOutline,
+      languageOutline
     });
+  }
+
+  goToTranslator(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.router.navigate(['/mobile/pdf-suite'], { queryParams: { tool: 'translate' } });
   }
 
   getFormatBadgeClass(ext: string, category?: string): string {

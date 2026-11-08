@@ -41,7 +41,8 @@ import {
   trashOutline,
   downloadOutline,
   ellipsisHorizontalCircleOutline,
-  shieldCheckmarkOutline
+  shieldCheckmarkOutline,
+  languageOutline
 } from 'ionicons/icons';
 
 import { ManagedFile } from '../../../models/managed-file.model';
@@ -235,7 +236,20 @@ export class ContextualQuickActionsComponent {
       }
     }
 
-    // 4. HERRAMIENTA TRANSVERSAL DE IA CONTEXTUAL (AUTO-NORMALIZAR NOMBRE)
+    // 4. TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO (PDF, DOCX, XLSX, PPTX, CSV, TXT, HTML, MD)
+    if (f.category !== 'IMAGE') {
+      tools.unshift({
+        id: 'translate-doc',
+        title: 'Traducir Documento (8 Idiomas)',
+        subtitle: 'Español, Inglés, Portugués, Francés, Alemán, Italiano y Chino',
+        icon: 'language-outline',
+        accentColor: 'warning',
+        badge: 'Traductor',
+        handler: () => this.navigateToTranslator(f)
+      });
+    }
+
+    // 5. HERRAMIENTA TRANSVERSAL DE IA CONTEXTUAL (AUTO-NORMALIZAR NOMBRE)
     tools.push({
       id: 'smart-normalize',
       title: 'Normalizar Nombre con IA Contextual',
@@ -268,7 +282,15 @@ export class ContextualQuickActionsComponent {
       trashOutline,
       downloadOutline,
       ellipsisHorizontalCircleOutline,
-      shieldCheckmarkOutline
+      shieldCheckmarkOutline,
+      languageOutline
+    });
+  }
+
+  navigateToTranslator(file: ManagedFile): void {
+    this.closeModal();
+    this.router.navigate(['/mobile/pdf-suite'], {
+      queryParams: { tool: 'translate', fileId: file.id }
     });
   }
 

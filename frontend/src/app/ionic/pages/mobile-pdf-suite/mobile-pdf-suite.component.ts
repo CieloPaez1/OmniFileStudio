@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ToastController,
   IonHeader,
@@ -12,7 +12,6 @@ import {
   IonMenuButton,
   IonButton,
   IonIcon,
-  IonLabel,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -21,8 +20,7 @@ import {
   IonItem,
   IonInput,
   IonSelect,
-  IonSelectOption,
-  IonChip
+  IonSelectOption
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -35,13 +33,26 @@ import {
   documentTextOutline,
   checkmarkCircle,
   moonOutline,
-  sunnyOutline
+  sunnyOutline,
+  languageOutline,
+  cloudUploadOutline,
+  downloadOutline,
+  eyeOutline,
+  shareSocialOutline,
+  logoWhatsapp,
+  sparklesOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ThemeService } from '../../../services/theme.service';
+import {
+  ManagedFile,
+  TranslateDocumentResult,
+  TranslationLangCode
+} from '../../../models/managed-file.model';
+import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
-export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert';
+export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert' | 'translate';
 
 export interface HeroToolCard {
   id: PdfSuiteTool;
@@ -52,9 +63,12 @@ export interface HeroToolCard {
 }
 
 // =============================================================================
-// [OMNIFILE STUDIO - TAB 4: SUITE PDF CON NAVEGACIÓN "HERO CARDS" + SELECTORES]
-// - [MEJORA UX #4] Navegación Superior Tipo "Hero Cards" táctiles e intuitivas
-// - [MEJORA UX #5] Selectores flotantes estilizados (píldoras y tarjetas) sin menús nativos
+// [OMNIFILE STUDIO - TAB 4: SUITE PDF + TRADUCTOR UNIVERSAL DE DOCUMENTOS]
+// - Navegación Superior Tipo "Hero Cards" responsiva (Unir, Dividir, Comprimir,
+//   Firmar, Conversor y Traductor Universal Multiformato).
+// - Traductor Universal: soporta Word (.docx), Excel (.xlsx/.csv), PowerPoint (.pptx),
+//   PDFs nativos o escaneados (.pdf), Texto plano (.txt) y Marcado (.html/.md).
+// - Barra de progreso animada, guardado en repositorio local y vista previa modal.
 // =============================================================================
 @Component({
   selector: 'app-mobile-pdf-suite',
@@ -71,7 +85,6 @@ export interface HeroToolCard {
     IonMenuButton,
     IonButton,
     IonIcon,
-    IonLabel,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -81,7 +94,7 @@ export interface HeroToolCard {
     IonInput,
     IonSelect,
     IonSelectOption,
-    IonChip
+    FilePreviewModalComponent
   ],
   templateUrl: './mobile-pdf-suite.component.html',
   styleUrls: ['./mobile-pdf-suite.component.css']
@@ -92,15 +105,27 @@ export class MobilePdfSuiteComponent implements OnInit {
   readonly themeService = inject(ThemeService);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   @ViewChild('signatureCanvas') signatureCanvas?: ElementRef<HTMLCanvasElement>;
 
-  activeTool = signal<PdfSuiteTool>('merge');
+  activeTool = signal<PdfSuiteTool>('translate');
   processing = signal<boolean>(false);
   successFeedback = signal<{ title: string; subtitle: string } | null>(null);
 
-  // [MEJORA UX #4] Definición de las Hero Cards de navegación superior
+  // Modal de Vista Previa Rápida (Quick Preview)
+  previewFile = signal<ManagedFile | null>(null);
+  previewOpen = signal<boolean>(false);
+
+  // [MEJORA UX] Hero Cards de navegación superior (6 herramientas clave)
   readonly heroTools: HeroToolCard[] = [
+    {
+      id: 'translate',
+      title: 'Traductor',
+      subtitle: 'Word, Excel, PDF',
+      icon: 'language-outline',
+      accentClass: 'hero-amber'
+    },
     {
       id: 'merge',
       title: 'Unir PDF',
@@ -164,13 +189,32 @@ export class MobilePdfSuiteComponent implements OnInit {
   convertFileId = signal<number | null>(null);
   convertTargetFormat = signal<string>('pdf');
 
+  // 6. TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO
+  translateFileId = signal<number | null>(null);
+  uploadedTranslateFile = signal<File | null>(null);
+  sourceLang = signal<TranslationLangCode>('auto');
+  targetLang = signal<Exclude<TranslationLangCode, 'auto'>>('en');
+  translateOutputFormat = signal<'preserve' | 'pdf' | 'docx' | 'xlsx' | 'pptx' | 'txt' | 'html' | 'md'>('preserve');
+  translateOutputTitle = signal<string>('');
+  translationProgress = signal<number>(0);
+  translationStepLabel = signal<string>('');
+  lastTranslationResult = signal<TranslateDocumentResult | null>(null);
+
   readonly pdfFiles = this.fileService.pdfFiles;
   readonly allFiles = this.fileService.files;
+  readonly translatableFiles = this.fileService.translatableFiles;
+  readonly sourceLanguages = this.fileService.supportedTranslationLanguages;
+  readonly targetLanguages = computed(() =>
+    this.fileService.supportedTranslationLanguages.filter(
+      (l): l is { code: Exclude<TranslationLangCode, 'auto'>; name: string; flag: string } =>
+        l.code !== 'auto'
+    )
+  );
 
   readonly availableTargetsForSelected = computed(() => {
     const id = Number(this.convertFileId());
     const found = this.allFiles().find(f => f.id === id);
-    return found ? found.availableTargets : ['pdf', 'png', 'jpg', 'txt', 'html', 'json'];
+    return found ? found.availableTargets : ['pdf', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'txt', 'html'];
   });
 
   constructor() {
@@ -184,7 +228,41 @@ export class MobilePdfSuiteComponent implements OnInit {
       documentTextOutline,
       checkmarkCircle,
       moonOutline,
-      sunnyOutline
+      sunnyOutline,
+      languageOutline,
+      cloudUploadOutline,
+      downloadOutline,
+      eyeOutline,
+      shareSocialOutline,
+      logoWhatsapp,
+      sparklesOutline
+    });
+  }
+
+  ngOnInit(): void {
+    if (this.allFiles().length === 0) {
+      this.fileService.getAll().subscribe(list => {
+        if (list.length > 0 && !this.translateFileId()) {
+          this.translateFileId.set(list[0].id);
+        }
+      });
+    } else if (!this.translateFileId() && this.allFiles().length > 0) {
+      this.translateFileId.set(this.allFiles()[0].id);
+    }
+
+    this.route.queryParams.subscribe(params => {
+      const requestedTool = params['tool'] as PdfSuiteTool | undefined;
+      const requestedFileId = params['fileId'] ? Number(params['fileId']) : null;
+      if (requestedTool && this.heroTools.some(h => h.id === requestedTool)) {
+        this.selectHeroTool(requestedTool);
+      }
+      if (requestedFileId) {
+        this.translateFileId.set(requestedFileId);
+        this.signFileId.set(requestedFileId);
+        this.compressFileId.set(requestedFileId);
+        this.splitSourceId.set(requestedFileId);
+        this.convertFileId.set(requestedFileId);
+      }
     });
   }
 
@@ -193,13 +271,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.successFeedback.set({ title, subtitle });
     setTimeout(() => {
       this.successFeedback.set(null);
-    }, 3600);
-  }
-
-  ngOnInit(): void {
-    if (this.allFiles().length === 0) {
-      this.fileService.getAll().subscribe();
-    }
+    }, 4000);
   }
 
   selectHeroTool(tool: PdfSuiteTool): void {
@@ -210,15 +282,101 @@ export class MobilePdfSuiteComponent implements OnInit {
     }
   }
 
-  onToolChange(event: any): void {
-    const val = event?.detail?.value as PdfSuiteTool;
-    if (val) {
-      this.selectHeroTool(val);
+  openQuickPreview(file: ManagedFile): void {
+    this.nativeService.triggerHapticImpact('light');
+    this.previewFile.set(file);
+    this.previewOpen.set(true);
+  }
+
+  // ==================== 6. TRADUCTOR UNIVERSAL MULTIFORMATO ====================
+  onTranslateFilePicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.nativeService.triggerHapticImpact('light');
+    this.uploadedTranslateFile.set(file);
+    const base = file.name.replace(/\.[^/.]+$/, '');
+    this.translateOutputTitle.set(`${base}_${this.targetLang().toUpperCase()}`);
+    this.presentToast(`Documento "${file.name}" cargado para traducir`, 'dark');
+  }
+
+  swapTranslationLanguages(): void {
+    this.nativeService.triggerHapticSelection();
+    const currentSrc = this.sourceLang();
+    const currentTarget = this.targetLang();
+    if (currentSrc === 'auto') {
+      this.sourceLang.set(currentTarget);
+      this.targetLang.set('es');
+    } else {
+      this.sourceLang.set(currentTarget);
+      this.targetLang.set(currentSrc);
     }
+  }
+
+  runDocumentTranslation(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    const selectedId = this.translateFileId();
+    const uploaded = this.uploadedTranslateFile();
+
+    if (!selectedId && !uploaded) {
+      this.presentToast('Seleccioná o subí un documento (.docx, .xlsx, .pptx, .pdf, .txt, .html)', 'danger');
+      return;
+    }
+
+    this.processing.set(true);
+    this.lastTranslationResult.set(null);
+    this.translationProgress.set(18);
+    this.translationStepLabel.set('Analizando estructura del documento y detectando idioma...');
+
+    setTimeout(() => {
+      this.translationProgress.set(52);
+      this.translationStepLabel.set('Traduciendo párrafos, encabezados y tablas multiformato...');
+    }, 320);
+
+    setTimeout(() => {
+      this.translationProgress.set(84);
+      this.translationStepLabel.set('Reconstruyendo documento traducido y guardando en repositorio...');
+    }, 640);
+
+    setTimeout(() => {
+      this.fileService
+        .translateDocument({
+          fileId: selectedId,
+          uploadedFile: uploaded,
+          sourceLang: this.sourceLang(),
+          targetLang: this.targetLang(),
+          outputFormat: this.translateOutputFormat(),
+          outputTitle: this.translateOutputTitle().trim() || undefined
+        })
+        .subscribe({
+          next: async res => {
+            this.translationProgress.set(100);
+            this.translationStepLabel.set('¡Traducción completada y guardada localmente!');
+            await this.nativeService.saveFileToDevice(
+              res.file.name,
+              res.file.dataUrl || '',
+              res.file.mimeType
+            );
+            this.processing.set(false);
+            this.lastTranslationResult.set(res);
+            this.triggerSuccessAnimation(
+              `¡Documento Traducido: ${res.file.name}!`,
+              `${res.detectedSourceLang} → ${res.targetLangName} · Guardado en el repositorio`
+            );
+            this.presentToast(`¡Traducido con éxito a ${res.targetLangName}!`, 'success');
+          },
+          error: () => {
+            this.processing.set(false);
+            this.translationProgress.set(0);
+            this.presentToast('No se pudo completar la traducción', 'danger');
+          }
+        });
+    }, 950);
   }
 
   // ==================== 1. UNIR PDFs ====================
   toggleMergeId(id: number): void {
+    this.nativeService.triggerHapticSelection();
     this.mergeIds.update(list =>
       list.includes(id) ? list.filter(x => x !== id) : [...list, id]
     );

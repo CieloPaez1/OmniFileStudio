@@ -8,6 +8,7 @@ export type ActivityActionType =
   | 'compress'
   | 'sign'
   | 'convert'
+  | 'translate'
   | 'upload'
   | 'share'
   | 'archive'
@@ -131,6 +132,8 @@ export class ActivityLogService {
         return 'create-outline';
       case 'convert':
         return 'swap-horizontal-outline';
+      case 'translate':
+        return 'language-outline';
       case 'share':
         return 'share-social-outline';
       case 'archive':
@@ -152,6 +155,7 @@ export class ActivityLogService {
       case 'scan':
         return 'fmt-image';
       case 'convert':
+      case 'translate':
       case 'share':
         return 'fmt-data';
       default:

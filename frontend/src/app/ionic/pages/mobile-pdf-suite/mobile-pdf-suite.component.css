@@ -1,7 +1,7 @@
 /* ============================================================================
-   [DISEÑO UX/UI] SUITE PDF CON NAVEGACIÓN "HERO CARDS" & SELECTORES FLOTANTES
-   - Paleta Slate & Índigo vibrante (#6366f1)
-   - Tarjetas táctiles Hero Cards con sombras sutiles y bordes redondeados (20px)
+   [DISEÑO UX/UI] SUITE PDF & TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO
+   - Maquetación 100% responsiva (Smartphones, Tablets y Escritorio)
+   - Barra de progreso animada, tarjetas de formatos Office/PDF y Modo Oscuro
    ============================================================================ */
 
 .hero-cards-header {
@@ -13,39 +13,31 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--omni-text-muted, #64748b);
   margin-bottom: 0.6rem;
   padding-left: 0.25rem;
-}
-
-.hero-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
-  gap: 0.7rem;
 }
 
 .hero-nav-card {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.9rem 0.95rem;
+  gap: 0.7rem;
+  padding: 0.85rem 0.9rem;
   border-radius: 20px;
-  background: #ffffff;
-  border: 1.5px solid rgba(226, 232, 240, 0.75);
-  color: #0f172a;
+  background: var(--omni-surface, #ffffff);
+  border: 1.5px solid var(--omni-border-subtle, rgba(226, 232, 240, 0.75));
+  color: var(--omni-text-main, #0f172a);
   text-align: left;
   cursor: pointer;
-  box-shadow:
-    0 4px 14px -2px rgba(15, 23, 42, 0.04),
-    0 2px 6px -2px rgba(15, 23, 42, 0.02);
+  box-shadow: var(--omni-shadow-sm);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .hero-nav-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -6px rgba(99, 102, 241, 0.16);
-  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: var(--omni-shadow-md);
+  border-color: rgba(99, 102, 241, 0.4);
 }
 
 .hero-nav-card.active {
@@ -57,36 +49,40 @@
 }
 
 .hero-icon-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
-  background: #eef2ff;
+  background: rgba(99, 102, 241, 0.14);
   color: #6366f1;
-  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.hero-nav-card.hero-amber .hero-icon-badge {
+  background: rgba(245, 158, 11, 0.16);
+  color: #d97706;
 }
 
 .hero-nav-card.hero-rose .hero-icon-badge {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
 }
 
 .hero-nav-card.hero-emerald .hero-icon-badge {
-  background: #ecfdf5;
+  background: rgba(16, 185, 129, 0.15);
   color: #10b981;
 }
 
 .hero-nav-card.hero-violet .hero-icon-badge {
-  background: #f5f3ff;
+  background: rgba(124, 58, 237, 0.15);
   color: #7c3aed;
 }
 
 .hero-nav-card.hero-blue .hero-icon-badge {
-  background: #eff6ff;
+  background: rgba(59, 130, 246, 0.15);
   color: #3b82f6;
 }
 
@@ -98,19 +94,19 @@
 .hero-card-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
+  gap: 0.1rem;
   min-width: 0;
 }
 
 .hero-card-copy strong {
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 800;
   line-height: 1.2;
 }
 
 .hero-card-copy small {
-  font-size: 0.71rem;
-  color: #64748b;
+  font-size: 0.69rem;
+  color: var(--omni-text-muted, #64748b);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -122,8 +118,8 @@
 
 .hero-active-dot {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 9px;
+  right: 9px;
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -131,19 +127,224 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
-/* Superficie Principal de cada Herramienta */
+/* Superficie Principal */
 .suite-surface-card {
   margin: 0 0.2rem 1.25rem;
   border-radius: 22px;
 }
 
+/* Traductor Universal de Documentos Multiformato */
+.supported-formats-grid {
+  margin-bottom: 1.15rem;
+}
+
+.format-family-card {
+  padding: 0.95rem 1.05rem;
+  border-radius: 18px;
+  background: var(--omni-surface-muted, #f8fafc);
+  border: 1px solid var(--omni-border-subtle);
+}
+
+.format-family-card strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--omni-text-main);
+  margin-bottom: 0.2rem;
+}
+
+.format-family-card p {
+  margin: 0 0 0.65rem;
+  font-size: 0.75rem;
+  color: var(--omni-text-muted);
+}
+
+.family-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.translator-inputs-grid {
+  margin-bottom: 0.5rem;
+}
+
+.translator-upload-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 52px;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  border: 1.5px dashed rgba(99, 102, 241, 0.55);
+  background: rgba(99, 102, 241, 0.06);
+  color: #6366f1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.translator-upload-dropzone:hover {
+  background: rgba(99, 102, 241, 0.12);
+  transform: translateY(-1px);
+}
+
+.translator-upload-dropzone ion-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+/* Barra de Idiomas Responsiva (Origen <-> Destino) */
+.language-bar-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 0.7rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 639px) {
+  .language-bar-grid {
+    grid-template-columns: 1fr;
+  }
+  .swap-langs-btn {
+    margin: 0 auto 0.5rem;
+  }
+}
+
+.swap-langs-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--omni-border-subtle);
+  background: var(--omni-surface-muted);
+  color: #6366f1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.swap-langs-btn:hover {
+  background: #6366f1;
+  color: #ffffff;
+  transform: rotate(180deg);
+}
+
+/* Barra de Progreso Animada */
+.translation-progress-box {
+  margin: 0.75rem 0 1rem;
+  padding: 0.9rem 1.05rem;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--omni-text-main);
+  margin-bottom: 0.45rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1 0%, #10b981 100%);
+  transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Panel de Resultado de Traducción */
+.translation-result-panel {
+  margin-top: 1.25rem;
+  padding: 1.15rem;
+  border-radius: 20px;
+  background: var(--omni-surface-muted);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  box-shadow: var(--omni-shadow-sm);
+}
+
+.result-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.result-kicker {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #10b981;
+}
+
+.result-top-bar h4 {
+  margin: 0.2rem 0 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--omni-text-main);
+}
+
+.comparison-snippets-grid {
+  margin-bottom: 0.95rem;
+}
+
+.snippet-box {
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: var(--omni-surface);
+  border: 1px solid var(--omni-border-subtle);
+}
+
+.snippet-box small {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--omni-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.snippet-box p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--omni-text-main);
+  white-space: pre-wrap;
+}
+
+.snippet-box.translated {
+  border-left: 4px solid #6366f1;
+}
+
+.result-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Resto de herramientas de la Suite PDF */
 .suite-help {
   font-size: 0.84rem;
-  color: #64748b;
+  color: var(--omni-text-muted);
   margin-bottom: 0.85rem;
 }
 
-/* Selector táctil de documentos PDF para Unir */
 .selectable-files-grid {
   display: flex;
   flex-direction: column;
@@ -157,22 +358,16 @@
   gap: 0.75rem;
   padding: 0.75rem 0.95rem;
   border-radius: 16px;
-  background: #f8fafc;
-  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  background: var(--omni-surface-muted);
+  border: 1.5px solid var(--omni-border-subtle);
   text-align: left;
   cursor: pointer;
   transition: all 0.16s ease;
 }
 
-.selectable-file-pill:hover {
-  background: #ffffff;
-  border-color: rgba(99, 102, 241, 0.4);
-}
-
 .selectable-file-pill.selected {
-  background: #eef2ff;
+  background: rgba(99, 102, 241, 0.12);
   border-color: #6366f1;
-  box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.22);
 }
 
 .selectable-file-text {
@@ -185,7 +380,7 @@
 
 .selectable-file-text strong {
   font-size: 0.86rem;
-  color: #0f172a;
+  color: var(--omni-text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -193,7 +388,7 @@
 
 .selectable-file-text small {
   font-size: 0.73rem;
-  color: #64748b;
+  color: var(--omni-text-muted);
 }
 
 .order-badge {
@@ -205,7 +400,6 @@
   border-radius: 999px;
 }
 
-/* Campos y Selectores Flotantes Estilizados */
 .modern-field-group {
   margin-bottom: 1rem;
 }
@@ -214,17 +408,16 @@
   display: block;
   font-size: 0.76rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--omni-text-muted);
   margin-bottom: 0.45rem;
-  letter-spacing: 0.01em;
 }
 
 .modern-input-item {
-  --background: #f8fafc;
+  --background: var(--omni-surface-muted);
   --border-radius: 14px;
   --padding-start: 14px;
   --inner-padding-end: 14px;
-  border: 1px solid rgba(226, 232, 240, 0.85);
+  border: 1px solid var(--omni-border-subtle);
   border-radius: 14px;
   box-shadow: none !important;
   margin-bottom: 0 !important;
@@ -247,9 +440,9 @@
   gap: 0.18rem;
   padding: 0.75rem 0.85rem;
   border-radius: 16px;
-  background: #f8fafc;
-  border: 1.5px solid rgba(226, 232, 240, 0.85);
-  color: #0f172a;
+  background: var(--omni-surface-muted);
+  border: 1.5px solid var(--omni-border-subtle);
+  color: var(--omni-text-main);
   text-align: left;
   cursor: pointer;
   transition: all 0.16s ease;
@@ -262,34 +455,27 @@
 
 .selector-card-option small {
   font-size: 0.69rem;
-  color: #64748b;
+  color: var(--omni-text-muted);
 }
 
 .selector-card-option.selected {
-  background: #eef2ff;
+  background: rgba(99, 102, 241, 0.14);
   border-color: #6366f1;
-  color: #312e81;
-  box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.22);
 }
 
-.selector-card-option.selected small {
-  color: #4f46e5;
-}
-
-/* Píldoras de formato en el Conversor */
 .format-target-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 .target-fmt-pill {
-  padding: 0.55rem 1rem;
-  border-radius: 14px;
-  background: #f8fafc;
-  border: 1.5px solid rgba(226, 232, 240, 0.9);
-  color: #334155;
-  font-size: 0.82rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 12px;
+  background: var(--omni-surface-muted);
+  border: 1.5px solid var(--omni-border-subtle);
+  color: var(--omni-text-main);
+  font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.16s ease;
@@ -299,17 +485,14 @@
   background: #6366f1;
   border-color: #6366f1;
   color: #ffffff;
-  box-shadow: 0 6px 16px -3px rgba(99, 102, 241, 0.38);
-  transform: translateY(-1px);
 }
 
-/* Pad de Firma Digital */
 .signature-pad-wrap {
   margin: 1rem 0;
   padding: 0.9rem;
-  border: 1px solid rgba(99, 102, 241, 0.22);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   border-radius: 18px;
-  background: #f8fafc;
+  background: var(--omni-surface-muted);
 }
 
 .signature-pad-header {
@@ -318,7 +501,7 @@
   align-items: center;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--omni-text-muted);
   margin-bottom: 0.45rem;
 }
 
