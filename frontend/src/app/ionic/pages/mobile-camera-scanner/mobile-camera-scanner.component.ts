@@ -38,10 +38,13 @@ import {
   closeOutline,
   shareSocialOutline,
   logoWhatsapp,
-  folderOpenOutline
+  folderOpenOutline,
+  moonOutline,
+  sunnyOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
+import { ThemeService } from '../../../services/theme.service';
 import { CameraPhotoItem, FileTagType, ManagedFile } from '../../../models/managed-file.model';
 
 // =============================================================================
@@ -83,6 +86,7 @@ import { CameraPhotoItem, FileTagType, ManagedFile } from '../../../models/manag
 export class MobileCameraScannerComponent {
   readonly fileService = inject(FileManagerService);
   readonly nativeService = inject(CapacitorNativeService);
+  readonly themeService = inject(ThemeService);
   private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
@@ -107,7 +111,9 @@ export class MobileCameraScannerComponent {
       closeOutline,
       shareSocialOutline,
       logoWhatsapp,
-      folderOpenOutline
+      folderOpenOutline,
+      moonOutline,
+      sunnyOutline
     });
   }
 
@@ -214,6 +220,7 @@ export class MobileCameraScannerComponent {
   }
 
   generatePdf(): void {
+    this.nativeService.triggerHapticImpact('medium');
     if (this.photos().length === 0) {
       this.presentToast('Capturá al menos una foto primero', 'danger');
       return;
@@ -236,6 +243,7 @@ export class MobileCameraScannerComponent {
             created.dataUrl || '',
             'application/pdf'
           );
+          await this.nativeService.triggerHapticSuccess();
           this.generating.set(false);
           this.lastCreatedPdf.set(created);
           this.photos.set([]);

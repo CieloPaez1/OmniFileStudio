@@ -51,10 +51,13 @@ import {
   documentOutline,
   imageOutline,
   statsChartOutline,
-  closeOutline
+  closeOutline,
+  moonOutline,
+  sunnyOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
+import { ThemeService } from '../../../services/theme.service';
 import { ManagedFile } from '../../../models/managed-file.model';
 import { ContextualQuickActionsComponent } from '../../components/contextual-quick-actions/contextual-quick-actions.component';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
@@ -106,6 +109,7 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
 export class MobileFileRepositoryComponent implements OnInit {
   readonly fileService = inject(FileManagerService);
   readonly nativeService = inject(CapacitorNativeService);
+  readonly themeService = inject(ThemeService);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
 
@@ -179,7 +183,9 @@ export class MobileFileRepositoryComponent implements OnInit {
       documentOutline,
       imageOutline,
       statsChartOutline,
-      closeOutline
+      closeOutline,
+      moonOutline,
+      sunnyOutline
     });
   }
 
@@ -212,6 +218,7 @@ export class MobileFileRepositoryComponent implements OnInit {
 
   openPreview(file: ManagedFile, slidingItem?: IonItemSliding): void {
     if (slidingItem) slidingItem.close();
+    this.nativeService.triggerHapticImpact('light');
     this.previewFile.set(file);
     this.previewOpen.set(true);
   }

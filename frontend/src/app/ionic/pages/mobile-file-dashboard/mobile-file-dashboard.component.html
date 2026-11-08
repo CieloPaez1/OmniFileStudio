@@ -5,6 +5,17 @@
     </ion-buttons>
     <ion-title>OmniFile Studio · Inicio</ion-title>
     <ion-buttons slot="end">
+      <!-- [REQUISITO 3] Botón Alternador de Modo Claro / Modo Oscuro Nativo -->
+      <ion-button
+        class="theme-toggle-btn"
+        (click)="themeService.toggleDarkLight()"
+        [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
+        <ion-icon
+          [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
+          slot="icon-only">
+        </ion-icon>
+      </ion-button>
+
       <ion-button routerLink="/files" title="Versión Web Escritorio">
         <ion-icon name="desktop-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -18,7 +29,7 @@
     <ion-refresher-content pullingText="Deslizá para actualizar desde json-server..."></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Píldoras de estado minimalistas (Slate + Esmeralda) sin bordes pesados -->
+  <!-- Píldoras de estado minimalistas (Slate + Esmeralda) -->
   <div class="status-pills-row">
     <div class="status-banner privacy-pill">
       <ion-icon name="checkmark-circle-outline"></ion-icon>
@@ -93,10 +104,10 @@
     </div>
   </div>
 
-  <!-- Accesos Rápidos (Tarjetas Modernas Slate + Índigo Vibrante #6366f1) -->
+  <!-- Accesos Rápidos (Tarjetas Modernas Slate + Índigo Vibrante #6366f1 + Feedback Háptico) -->
   <ion-card class="surface-card">
     <ion-card-header>
-      <ion-card-subtitle>ACCESOS RÁPIDOS</ion-card-subtitle>
+      <ion-card-subtitle>ACCESOS RÁPIDOS CON FEEDBACK HÁPTICO</ion-card-subtitle>
       <ion-card-title>¿Qué querés hacer hoy?</ion-card-title>
     </ion-card-header>
     <ion-card-content>
@@ -136,12 +147,49 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Archivos Recientes con Badges e Iconos de Formato Estilizados -->
+  <!-- [REQUISITO 2] HISTORIAL DE ACCIONES / AUDITORÍA LOCAL ("LOG DE ACTIVIDAD") -->
   <ion-card class="surface-card">
     <ion-card-header>
       <div class="section-row">
         <div>
-          <ion-card-subtitle>ACTIVIDAD RECIENTE</ion-card-subtitle>
+          <ion-card-subtitle>AUDITORÍA LOCAL · &#64;CAPACITOR/PREFERENCES</ion-card-subtitle>
+          <ion-card-title>Log de Actividad ({{ activityLog.totalActions() }})</ion-card-title>
+        </div>
+        @if (activityLog.entries().length > 0) {
+          <ion-button fill="clear" size="small" color="medium" (click)="activityLog.clearHistory()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Limpiar
+          </ion-button>
+        }
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="audit-timeline">
+        @for (item of activityLog.recentEntries(); track item.id) {
+          <div class="audit-log-row">
+            <span class="file-format-badge" [ngClass]="item.badgeClass">
+              <ion-icon [name]="item.icon"></ion-icon>
+            </span>
+            <div class="audit-log-copy">
+              <strong>{{ item.title }}</strong>
+              <p>{{ item.detail }}</p>
+            </div>
+            <span class="audit-log-time">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ item.timestamp | date:'HH:mm' }}
+            </span>
+          </div>
+        }
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Archivos Recientes con Badges e Iconos de Formato Estilizados + Quick Preview Modal -->
+  <ion-card class="surface-card">
+    <ion-card-header>
+      <div class="section-row">
+        <div>
+          <ion-card-subtitle>ACTIVIDAD RECIENTE · QUICK PREVIEW</ion-card-subtitle>
           <ion-card-title>Últimos Archivos</ion-card-title>
         </div>
         <ion-button fill="clear" size="small" routerLink="/mobile/repository">Ver todos</ion-button>
@@ -152,7 +200,6 @@
         @for (f of recentFiles(); track f.id) {
           <div class="recent-file-row" (click)="openPreview(f)">
             <div class="recent-file-info">
-              <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado por Formato -->
               <span class="file-format-badge" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
                 <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
                 .{{ f.ext | uppercase }}
@@ -183,7 +230,7 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Modal de Vista Previa Multiformato -->
+  <!-- [REQUISITO 1] Modal de Vista Previa Real (Quick Preview con HTML5 Canvas + Blob Stream) -->
   <app-file-preview-modal
     [file]="previewFile()"
     [isOpen]="previewOpen()"

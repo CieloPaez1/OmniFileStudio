@@ -38,17 +38,26 @@ import {
   createOutline,
   downloadOutline,
   desktopOutline,
-  eyeOutline
+  eyeOutline,
+  moonOutline,
+  sunnyOutline,
+  timeOutline,
+  trashOutline,
+  shareSocialOutline,
+  archiveOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { ThemeService } from '../../../services/theme.service';
+import { ActivityLogService } from '../../../services/activity-log.service';
+import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ManagedFile } from '../../../models/managed-file.model';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
 // =============================================================================
-// [OMNIFILE STUDIO - TAB 1: HOME / DASHBOARD CON DISEÑO SLATE & INDIGO (#6366f1)]
-// - Eliminación de cajas grises pesadas: tarjetas rounded-2xl (20px) + shadow-sm/md
-// - Badges e Iconos de Archivo Estilizados por formato (Rojo PDF, Azul Imagen, Verde CSV)
+// [OMNIFILE STUDIO - TAB 1: DASHBOARD + LOG DE ACTIVIDAD + DARK MODE + HAPTICS]
+// - Toggle de Modo Oscuro Nativo en el Header (ThemeService)
+// - Panel visual de Historial de Acciones / Auditoría Local (@capacitor/preferences)
+// - Vista Previa Real en Modal (Quick Preview) al hacer clic en archivos
 // =============================================================================
 @Component({
   selector: 'app-mobile-file-dashboard',
@@ -80,6 +89,8 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
 export class MobileFileDashboardComponent implements OnInit {
   readonly fileService = inject(FileManagerService);
   readonly themeService = inject(ThemeService);
+  readonly activityLog = inject(ActivityLogService);
+  readonly nativeService = inject(CapacitorNativeService);
   private readonly router = inject(Router);
 
   readonly recentFiles = computed(() => this.fileService.activeFiles().slice(0, 4));
@@ -105,17 +116,16 @@ export class MobileFileDashboardComponent implements OnInit {
       createOutline,
       downloadOutline,
       desktopOutline,
-      eyeOutline
+      eyeOutline,
+      moonOutline,
+      sunnyOutline,
+      timeOutline,
+      trashOutline,
+      shareSocialOutline,
+      archiveOutline
     });
   }
 
-  /**
-   * [MEJORA UX #3] Distintivo visual de color semántico según formato:
-   * - Rojo suave para PDF (.fmt-pdf)
-   * - Azul suave para Imágenes PNG/JPG/WEBP (.fmt-image)
-   * - Verde suave para Hojas de cálculo / Datos CSV/JSON (.fmt-data)
-   * - Índigo suave para Documentos de texto (.fmt-doc)
-   */
   getFormatBadgeClass(ext: string, category?: string): string {
     const clean = (ext || '').toLowerCase();
     if (clean === 'pdf' || category === 'pdf') return 'fmt-pdf';
@@ -137,6 +147,7 @@ export class MobileFileDashboardComponent implements OnInit {
   }
 
   openPreview(file: ManagedFile): void {
+    this.nativeService.triggerHapticImpact('light');
     this.previewFile.set(file);
     this.previewOpen.set(true);
   }
@@ -157,6 +168,7 @@ export class MobileFileDashboardComponent implements OnInit {
   }
 
   goTo(route: string): void {
+    this.nativeService.triggerHapticImpact('medium');
     this.router.navigate([route]);
   }
 }

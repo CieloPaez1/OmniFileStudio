@@ -10,11 +10,11 @@ import {
 import {
   Filesystem,
   Directory,
-  Encoding,
   WriteFileResult,
   ReadFileResult
 } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { FileTagType, FILE_TAGS, ManagedFile } from '../models/managed-file.model';
 
 export interface CapturedDocumentPhoto {
@@ -45,10 +45,12 @@ export interface ShareResultInfo {
 // Centraliza e integra de forma tipada y limpia:
 // 1. @capacitor/camera: Captura fotográfica de documentos en máxima calidad (95%).
 // 2. @capacitor/filesystem: Lectura/escritura de PDFs e imágenes en el
-//    almacenamiento interno del dispositivo (Directory.Data / Directory.Documents).
+//    almacenamiento interno del dispositivo (Directory.Data).
 // 3. @capacitor/preferences: Persistencia offline segura de metadatos de archivos,
 //    etiquetas personalizadas y estado de sincronización.
-// 4. Web Share API Level 2 + WhatsApp Export: Compartir archivos PDF/imágenes
+// 4. @capacitor/haptics: Feedback háptico y vibración táctil en botones CTA,
+//    capturas de escáner y confirmaciones de éxito.
+// 5. Web Share API Level 2 + WhatsApp Export: Compartir archivos PDF/imágenes
 //    nativamente desde Android o navegador web.
 // =============================================================================
 @Injectable({
@@ -71,14 +73,68 @@ export class CapacitorNativeService {
   }
 
   // ===========================================================================
+  // 0. FEEDBACK HÁPTICO CON @capacitor/haptics (BOTONES CTA, ESCÁNER Y ÉXITO)
+  // ===========================================================================
+
+  /**
+   * Ejecuta un impacto háptico físico (@capacitor/haptics + fallback navigator.vibrate)
+   * al presionar botones de acción principal (CTA) o capturar documentos.
+   */
+  async triggerHapticImpact(style: 'light' | 'medium' | 'heavy' = 'medium'): Promise<void> {
+    try {
+      const impactStyle =
+        style === 'light'
+          ? ImpactStyle.Light
+          : style === 'heavy'
+            ? ImpactStyle.Heavy
+            : ImpactStyle.Medium;
+      await Haptics.impact({ style: impactStyle });
+    } catch {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        try {
+          navigator.vibrate(style === 'light' ? 12 : style === 'heavy' ? 35 : 22);
+        } catch {}
+      }
+    }
+  }
+
+  /**
+   * Ejecuta una notificación háptica de confirmación al finalizar tareas
+   * de unión, división, compresión o firma de PDFs.
+   */
+  async triggerHapticSuccess(): Promise<void> {
+    try {
+      await Haptics.notification({ type: NotificationType.Success });
+    } catch {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        try {
+          navigator.vibrate([18, 40, 28]);
+        } catch {}
+      }
+    }
+  }
+
+  /**
+   * Vibración sutil al cambiar de herramienta o pestaña.
+   */
+  async triggerHapticSelection(): Promise<void> {
+    try {
+      await Haptics.selectionChanged();
+    } catch {}
+  }
+
+  // ===========================================================================
   // 1. CAPTURA DE DOCUMENTOS EN ALTA CALIDAD CON @capacitor/camera
   // ===========================================================================
 
   /**
    * Captura una fotografía en máxima calidad (95%) con corrección automática de
-   * orientación para escaneo de documentos y la guarda en @capacitor/filesystem.
+   * orientación para escaneo de documentos, emite vibración háptica y la guarda
+   * en @capacitor/filesystem.
    */
   async captureHighResDocument(source: CameraSource = CameraSource.Camera): Promise<CapturedDocumentPhoto> {
+    await this.triggerHapticImpact('medium');
+
     const photo: Photo = await Camera.getPhoto({
       quality: 95,
       allowEditing: false,
@@ -97,6 +153,7 @@ export class CapacitorNativeService {
 
     // Persistimos inmediatamente la captura en @capacitor/filesystem
     const saved = await this.saveFileToDevice(fileName, dataUrl, 'image/jpeg');
+    await this.triggerHapticSuccess();
 
     return {
       id: `cam-${Date.now()}`,
@@ -112,9 +169,6 @@ export class CapacitorNativeService {
   // 2. ALMACENAMIENTO INTERNO EN DISPOSITIVO CON @capacitor/filesystem
   // ===========================================================================
 
-  /**
-   * Crea el directorio base `omnifile_studio` en `Directory.Data` si no existe.
-   */
   private async ensureAppDirectory(): Promise<void> {
     try {
       await Filesystem.mkdir({
@@ -122,15 +176,9 @@ export class CapacitorNativeService {
         directory: Directory.Data,
         recursive: true
       });
-    } catch {
-      // El directorio ya existe o estamos en entorno sin permisos previos
-    }
+    } catch {}
   }
 
-  /**
-   * Guarda un archivo generado (PDF convertido, comprimido, firmado o imagen)
-   * directamente en el almacenamiento interno del dispositivo (`Directory.Data`).
-   */
   async saveFileToDevice(
     fileName: string,
     dataUrlOrText: string,
@@ -166,7 +214,6 @@ export class CapacitorNativeService {
       await this.registerSavedDeviceFile(info);
       return info;
     } catch {
-      // Fallback limpio cuando el navegador restringe Filesystem Web
       const fallbackInfo: SavedDeviceFileInfo = {
         name: safeName,
         uri: `indexeddb://${this.APP_FOLDER}/${safeName}`,
@@ -180,10 +227,6 @@ export class CapacitorNativeService {
     }
   }
 
-  /**
-   * Lee un archivo almacenado en `@capacitor/filesystem` y lo devuelve como DataURL
-   * listo para previsualizar, abrir o compartir.
-   */
   async readFileFromDevice(
     fileName: string,
     mimeType = 'application/pdf'
@@ -208,9 +251,6 @@ export class CapacitorNativeService {
     }
   }
 
-  /**
-   * Elimina un archivo del almacenamiento físico `@capacitor/filesystem`.
-   */
   async deleteFileFromDevice(fileName: string): Promise<boolean> {
     const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
     const relativePath = `${this.APP_FOLDER}/${safeName}`;
@@ -256,10 +296,6 @@ export class CapacitorNativeService {
   // 3. PERSISTENCIA OFFLINE CON @capacitor/preferences
   // ===========================================================================
 
-  /**
-   * Guarda el repositorio completo de archivos y metadatos en `@capacitor/preferences`
-   * (con espejo en `localStorage` para acceso síncrono inmediato).
-   */
   async saveRepositoryToPreferences(files: ManagedFile[]): Promise<void> {
     const serialized = JSON.stringify(files);
     try {
@@ -274,10 +310,6 @@ export class CapacitorNativeService {
     } catch {}
   }
 
-  /**
-   * Recupera el repositorio de archivos desde `@capacitor/preferences` cuando
-   * no hay conexión a internet o `json-server` no está disponible.
-   */
   async loadRepositoryFromPreferences(): Promise<ManagedFile[]> {
     try {
       const { value } = await Preferences.get({ key: this.REPO_PREF_KEY });
@@ -289,9 +321,6 @@ export class CapacitorNativeService {
     }
   }
 
-  /**
-   * Guarda las etiquetas activas y personalizadas en `@capacitor/preferences`.
-   */
   async saveTagsToPreferences(tags: (FileTagType | string)[]): Promise<void> {
     try {
       await Preferences.set({
@@ -314,20 +343,14 @@ export class CapacitorNativeService {
   // 4. COMPARTIR ARCHIVOS NATIVAMENTE (WEB SHARE API LEVEL 2 + WHATSAPP)
   // ===========================================================================
 
-  /**
-   * Comparte cualquier archivo gestionado (PDF, imagen, documento) utilizando
-   * el menú nativo del sistema operativo (`navigator.share` con soporte de `File`)
-   * o abre el envío directo por WhatsApp / descarga si el navegador no soporta File Share.
-   */
   async shareManagedFile(file: ManagedFile): Promise<ShareResultInfo> {
-    // 1. Aseguramos que el archivo también quede guardado en @capacitor/filesystem
+    await this.triggerHapticImpact('light');
     if (file.dataUrl) {
       await this.saveFileToDevice(file.name, file.dataUrl, file.mimeType);
     }
 
     const nav = typeof navigator !== 'undefined' ? (navigator as any) : null;
 
-    // 2. Intentamos compartir el binario real (PDF/Imagen) con Web Share API Level 2
     if (nav && typeof nav.share === 'function') {
       try {
         const physicalFile = await this.dataUrlToFile(
@@ -353,7 +376,6 @@ export class CapacitorNativeService {
           };
         }
 
-        // Si el navegador soporta navigator.share pero no archivos binarios directos
         await nav.share({
           title: file.name,
           text: `Te comparto el documento "${file.name}" [${file.tag || 'General'}] desde OmniFile Studio.`
@@ -374,13 +396,9 @@ export class CapacitorNativeService {
       }
     }
 
-    // 3. Fallback directo a WhatsApp Web / App + descarga local
     return this.shareViaWhatsApp(file);
   }
 
-  /**
-   * Permite exportar/compartir directamente hacia WhatsApp y descarga una copia local.
-   */
   shareViaWhatsApp(file: ManagedFile): ShareResultInfo {
     this.triggerBrowserDownload(file);
     const text = encodeURIComponent(

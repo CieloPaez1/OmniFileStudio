@@ -1,16 +1,26 @@
 import { Injectable, signal } from '@angular/core';
+import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 export type AppTheme = 'light' | 'dark' | 'minimal' | 'cyberpunk' | 'ocean' | 'sunset' | 'forest' | 'crimson' | 'cute';
 
+// =============================================================================
+// [OMNIFILE STUDIO · REQUISITO 3: SERVICIO DE MODO OSCURO NATIVO (DARK MODE)]
+// Gestiona la alternancia limpia entre el Modo Claro Minimalista y el Modo
+// Oscuro Slate/Zinc Profundo, aplicando las variables CSS de Ionic y
+// persistiendo la preferencia en @capacitor/preferences y localStorage.
+// =============================================================================
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
+  private readonly DARK_PREF_KEY = 'omnifile_dark_mode_v1';
+
   public readonly currentTheme = signal<AppTheme>('light');
   public readonly isDarkMode = signal<boolean>(false);
 
-  public readonly availableThemes: { id: AppTheme, name: string, color: string }[] = [
-    { id: 'light', name: '☀️ Claro', color: '#4f46e5' },
+  public readonly availableThemes: { id: AppTheme; name: string; color: string }[] = [
+    { id: 'light', name: '☀️ Claro', color: '#6366f1' },
     { id: 'dark', name: '🌙 Oscuro', color: '#6366f1' },
     { id: 'ocean', name: '🌊 Océano', color: '#0284c7' },
     { id: 'forest', name: '🌲 Esmeralda', color: '#059669' },
@@ -21,14 +31,30 @@ export class ThemeService {
     this.initTheme();
   }
 
-  private initTheme() {
+  private async initTheme(): Promise<void> {
     const allowedThemes: AppTheme[] = ['light', 'dark', 'ocean', 'forest', 'sunset'];
-    const rawTheme = localStorage.getItem('app-theme') as AppTheme;
+    const rawTheme = (typeof localStorage !== 'undefined' ? localStorage.getItem('app-theme') : 'light') as AppTheme;
     const savedTheme = allowedThemes.includes(rawTheme) ? rawTheme : 'light';
-    const savedDark = localStorage.getItem('planix_dark_mode') || localStorage.getItem('taskgo_dark_mode');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Temas que nacen oscuros por diseño
+    let savedDark: string | null =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem(this.DARK_PREF_KEY) ||
+          localStorage.getItem('planix_dark_mode') ||
+          localStorage.getItem('taskgo_dark_mode')
+        : null;
+
+    if (savedDark === null) {
+      try {
+        const { value } = await Preferences.get({ key: this.DARK_PREF_KEY });
+        if (value !== null) savedDark = value;
+      } catch {}
+    }
+
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     const isDarkInherently = savedTheme === 'dark';
     let shouldBeDark = false;
 
@@ -38,15 +64,14 @@ export class ThemeService {
       shouldBeDark = true;
     }
 
-    this.currentTheme.set(savedTheme);
+    this.currentTheme.set(shouldBeDark ? 'dark' : savedTheme);
     this.isDarkMode.set(shouldBeDark);
-    this.applyTheme(savedTheme, shouldBeDark);
+    this.applyTheme(shouldBeDark ? 'dark' : savedTheme, shouldBeDark);
   }
 
-  public setTheme(theme: AppTheme) {
+  public setTheme(theme: AppTheme): void {
     this.currentTheme.set(theme);
 
-    // Si el usuario elige temas de naturaleza oscura, activamos dark mode
     let darkState = this.isDarkMode();
     if (theme === 'dark' || theme === 'cyberpunk' || theme === 'crimson') {
       darkState = true;
@@ -59,11 +84,18 @@ export class ThemeService {
     this.applyTheme(theme, darkState);
   }
 
+  /**
+   * Alterna limpiamente entre Modo Claro Minimalista y Modo Oscuro Nativo Slate/Zinc
+   * con feedback háptico sutil (@capacitor/haptics).
+   */
   public toggleDarkLight(): void {
     const nextDark = !this.isDarkMode();
     this.isDarkMode.set(nextDark);
 
-    // Si estábamos en tema 'dark' puro y pasamos a claro, pasamos al base light
+    try {
+      Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+    } catch {}
+
     let theme = this.currentTheme();
     if (!nextDark && theme === 'dark') {
       theme = 'light';
@@ -76,9 +108,8 @@ export class ThemeService {
     this.applyTheme(theme, nextDark);
   }
 
-  private applyTheme(theme: AppTheme, isDark: boolean) {
+  private applyTheme(theme: AppTheme, isDark: boolean): void {
     if (typeof document !== 'undefined') {
-      // 1. Aplicar data-theme tanto en html como en body
       document.documentElement.removeAttribute('data-theme');
       document.body.removeAttribute('data-theme');
 
@@ -87,17 +118,24 @@ export class ThemeService {
         document.body.setAttribute('data-theme', theme);
       }
 
-      // 2. Aplicar modificador de modo oscuro (data-mode y class .dark)
       document.documentElement.setAttribute('data-mode', isDark ? 'dark' : 'light');
       document.body.setAttribute('data-mode', isDark ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('ion-palette-dark', isDark);
       document.body.classList.toggle('dark', isDark);
     }
 
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('app-theme', theme);
+      localStorage.setItem(this.DARK_PREF_KEY, isDark ? 'true' : 'false');
       localStorage.setItem('planix_dark_mode', isDark ? 'true' : 'false');
       localStorage.setItem('taskgo_dark_mode', isDark ? 'true' : 'false');
     }
+
+    Preferences.set({
+      key: this.DARK_PREF_KEY,
+      value: isDark ? 'true' : 'false'
+    }).catch(() => {});
   }
 
   public isDark(): boolean {

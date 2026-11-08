@@ -17,6 +17,7 @@ import {
   CompressPdfRequest,
   SignPdfRequest
 } from '../models/managed-file.model';
+import { ActivityLogService } from './activity-log.service';
 
 // =============================================================================
 // [OMNIFILE STUDIO · SERVICIO GESTOR DE ARCHIVOS + MOTOR DE IA CONTEXTUAL LOCAL]
@@ -35,6 +36,7 @@ import {
 })
 export class FileManagerService {
   private readonly http = inject(HttpClient);
+  private readonly activityLog = inject(ActivityLogService);
   readonly apiUrl = 'http://localhost:3000/files';
   private readonly CACHE_KEY = 'filestudio_files_preferences_v1';
 
@@ -542,7 +544,15 @@ export class FileManagerService {
       pageCount: targetExt === 'pdf' ? 1 : null,
       parentId: srcRecord?.id ?? null,
       dataUrl: generatedDataUrl
-    });
+    }).pipe(
+      tap(created => {
+        this.activityLog.recordAction(
+          `Se convirtió ${srcRecord?.name || baseName} a .${targetExt.toUpperCase()}`,
+          `Nuevo archivo: ${created.name} · Procesado localmente`,
+          'convert'
+        );
+      })
+    );
   }
 
   /**
@@ -663,7 +673,15 @@ export class FileManagerService {
       size: pagesCount * 112000,
       pageCount: pagesCount,
       dataUrl: pdfDataUrl
-    });
+    }).pipe(
+      tap(created => {
+        this.activityLog.recordAction(
+          'Se escaneó un documento con la cámara',
+          `${created.name} (${pagesCount} pág.) · Etiqueta: ${created.tag || 'Facturas'}`,
+          'scan'
+        );
+      })
+    );
   }
 
   // ===========================================================================
@@ -692,7 +710,15 @@ export class FileManagerService {
       size: totalSize,
       pageCount: totalPages,
       dataUrl
-    });
+    }).pipe(
+      tap(created => {
+        this.activityLog.recordAction(
+          `Se unieron ${sources.length} PDFs en un único documento`,
+          `${created.name} · ${totalPages} páginas combinadas en cliente`,
+          'merge'
+        );
+      })
+    );
   }
 
   splitPdf(payload: SplitPdfRequest): Observable<SplitPdfResponse> {
@@ -780,11 +806,19 @@ export class FileManagerService {
       compressed: true,
       signed: src?.signed || false,
       parentId: src?.id ?? null,
-      dataUrl:
-        src?.dataUrl ||
-        this.buildSamplePdfDataUrl(cleanTitle, `PDF Comprimido en cliente (-${savedPercent}%)`)
-    });
-  }
+        dataUrl:
+          src?.dataUrl ||
+          this.buildSamplePdfDataUrl(cleanTitle, `PDF Comprimido en cliente (-${savedPercent}%)`)
+      }).pipe(
+        tap(created => {
+          this.activityLog.recordAction(
+            `Se comprimió ${src?.name || created.name} (-${savedPercent}% peso)`,
+            `Resultado: ${created.name} (${this.formatBytes(created.size)})`,
+            'compress'
+          );
+        })
+      );
+    }
 
   signPdf(payload: SignPdfRequest): Observable<ManagedFile> {
     const src = this.files().find(f => f.id === Number(payload.fileId));
@@ -833,7 +867,15 @@ export class FileManagerService {
       compressed: src?.compressed || false,
       parentId: src?.id ?? null,
       dataUrl: pdfDataUrl
-    });
+    }).pipe(
+      tap(created => {
+        this.activityLog.recordAction(
+          `Se firmó digitalmente ${created.name}`,
+          `Firmante: ${payload.signerName} · Sello en lienzo HTML5 Canvas`,
+          'sign'
+        );
+      })
+    );
   }
 
   // ===========================================================================

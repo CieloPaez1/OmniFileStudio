@@ -5,6 +5,15 @@
     </ion-buttons>
     <ion-title>Repositorio ({{ filteredFiles().length }})</ion-title>
     <ion-buttons slot="end">
+      <ion-button
+        class="theme-toggle-btn"
+        (click)="themeService.toggleDarkLight()"
+        [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
+        <ion-icon
+          [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
+          slot="icon-only">
+        </ion-icon>
+      </ion-button>
       <ion-button (click)="toggleViewMode()" title="Cambiar Vista Lista/Cuadrícula">
         <ion-icon [name]="viewMode() === 'list' ? 'grid-outline' : 'list-outline'" slot="icon-only"></ion-icon>
       </ion-button>

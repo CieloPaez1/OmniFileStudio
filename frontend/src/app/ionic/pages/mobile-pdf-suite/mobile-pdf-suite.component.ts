@@ -33,9 +33,13 @@ import {
   swapHorizontalOutline,
   trashOutline,
   documentTextOutline,
-  checkmarkCircle
+  checkmarkCircle,
+  moonOutline,
+  sunnyOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
+import { CapacitorNativeService } from '../../../services/capacitor-native.service';
+import { ThemeService } from '../../../services/theme.service';
 
 export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert';
 
@@ -84,6 +88,8 @@ export interface HeroToolCard {
 })
 export class MobilePdfSuiteComponent implements OnInit {
   readonly fileService = inject(FileManagerService);
+  readonly nativeService = inject(CapacitorNativeService);
+  readonly themeService = inject(ThemeService);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
 
@@ -91,6 +97,7 @@ export class MobilePdfSuiteComponent implements OnInit {
 
   activeTool = signal<PdfSuiteTool>('merge');
   processing = signal<boolean>(false);
+  successFeedback = signal<{ title: string; subtitle: string } | null>(null);
 
   // [MEJORA UX #4] Definición de las Hero Cards de navegación superior
   readonly heroTools: HeroToolCard[] = [
@@ -175,8 +182,18 @@ export class MobilePdfSuiteComponent implements OnInit {
       swapHorizontalOutline,
       trashOutline,
       documentTextOutline,
-      checkmarkCircle
+      checkmarkCircle,
+      moonOutline,
+      sunnyOutline
     });
+  }
+
+  private triggerSuccessAnimation(title: string, subtitle: string): void {
+    this.nativeService.triggerHapticSuccess();
+    this.successFeedback.set({ title, subtitle });
+    setTimeout(() => {
+      this.successFeedback.set(null);
+    }, 3600);
   }
 
   ngOnInit(): void {
@@ -186,6 +203,7 @@ export class MobilePdfSuiteComponent implements OnInit {
   }
 
   selectHeroTool(tool: PdfSuiteTool): void {
+    this.nativeService.triggerHapticSelection();
     this.activeTool.set(tool);
     if (tool === 'sign') {
       setTimeout(() => this.initSignatureCanvas(), 80);
@@ -207,6 +225,7 @@ export class MobilePdfSuiteComponent implements OnInit {
   }
 
   runMerge(): void {
+    this.nativeService.triggerHapticImpact('medium');
     if (this.mergeIds().length < 2) {
       this.presentToast('Elegí al menos 2 archivos PDF para unirlos', 'danger');
       return;
@@ -221,14 +240,18 @@ export class MobilePdfSuiteComponent implements OnInit {
         next: created => {
           this.processing.set(false);
           this.mergeIds.set([]);
+          this.triggerSuccessAnimation(
+            `¡PDF Unido Creado: ${created.name}!`,
+            'Registrado en el Log de Actividad (@capacitor/preferences)'
+          );
           this.presentToast(`¡PDF unido creado: ${created.name}!`, 'success');
-          this.router.navigate(['/mobile/repository']);
         }
       });
   }
 
   // ==================== 2. DIVIDIR PDF ====================
   runSplit(): void {
+    this.nativeService.triggerHapticImpact('medium');
     const fileId = Number(this.splitSourceId());
     if (!fileId) {
       this.presentToast('Seleccioná el PDF que querés dividir', 'danger');
@@ -245,14 +268,18 @@ export class MobilePdfSuiteComponent implements OnInit {
       .subscribe({
         next: res => {
           this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡Se generaron ${res.files.length} archivo(s) PDF!`,
+            'Páginas extraídas localmente en cliente'
+          );
           this.presentToast(`¡Se generaron ${res.files.length} archivo(s) PDF!`, 'success');
-          this.router.navigate(['/mobile/repository']);
         }
       });
   }
 
   // ==================== 3. COMPRIMIR PDF ====================
   runCompress(): void {
+    this.nativeService.triggerHapticImpact('medium');
     const fileId = Number(this.compressFileId());
     if (!fileId) {
       this.presentToast('Seleccioná un PDF para comprimir', 'danger');
@@ -268,11 +295,14 @@ export class MobilePdfSuiteComponent implements OnInit {
       .subscribe({
         next: created => {
           this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡PDF Comprimido (${this.fileService.formatBytes(created.size)})!`,
+            `${created.name} optimizado y persistido en el dispositivo`
+          );
           this.presentToast(
             `¡PDF comprimido (${this.fileService.formatBytes(created.size)}) guardado!`,
             'success'
           );
-          this.router.navigate(['/mobile/repository']);
         }
       });
   }
@@ -337,6 +367,7 @@ export class MobilePdfSuiteComponent implements OnInit {
   }
 
   runSign(): void {
+    this.nativeService.triggerHapticImpact('medium');
     const fileId = Number(this.signFileId());
     if (!fileId) {
       this.presentToast('Seleccioná el PDF que querés firmar', 'danger');
@@ -362,14 +393,18 @@ export class MobilePdfSuiteComponent implements OnInit {
       .subscribe({
         next: signed => {
           this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡Documento "${signed.name}" Firmado!`,
+            `Firma de ${this.signerName()} estampada en cliente`
+          );
           this.presentToast(`¡Documento "${signed.name}" firmado digitalmente!`, 'success');
-          this.router.navigate(['/mobile/repository']);
         }
       });
   }
 
   // ==================== 5. CONVERSOR UNIVERSAL ====================
   runUniversalConvert(): void {
+    this.nativeService.triggerHapticImpact('medium');
     const fileId = Number(this.convertFileId());
     if (!fileId) {
       this.presentToast('Elegí un archivo para cambiarle el formato', 'danger');
@@ -384,8 +419,11 @@ export class MobilePdfSuiteComponent implements OnInit {
       .subscribe({
         next: created => {
           this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡Convertido a ${created.name}!`,
+            `Formato .${created.ext.toUpperCase()} generado en el dispositivo`
+          );
           this.presentToast(`¡Convertido a ${created.name}!`, 'success');
-          this.router.navigate(['/mobile/repository']);
         }
       });
   }

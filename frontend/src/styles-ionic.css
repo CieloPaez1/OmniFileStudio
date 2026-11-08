@@ -1,36 +1,25 @@
-/* ==========================================================================
-   [OMNIFILE STUDIO · DESIGN SYSTEM IONIC 9 (SLATE + INDIGO #6366F1)]
-   1. Eliminación de cajas grises pesadas: uso de whitespace, rounded-2xl (20px)
-      y sombras sutiles (shadow-sm / shadow-md).
-   2. Paleta Slate moderna (#f8fafc / #f1f5f9 / #0f172a) + Índigo vibrante (#6366f1).
-   3. Badges e iconos semánticos por formato (Rojo suave PDF, Azul Imagen,
-      Verde Esmeralda CSV/Datos, Índigo Documentos).
-   4. Modales y menús flotantes estilizados con esquinas redondeadas y blur.
-   ========================================================================== */
+/* ============================================================================
+   OMNIFILE STUDIO · SISTEMA DE DISEÑO IONIC 9 + CAPACITOR 8
+   1. Eliminación de cajas grises pesadas: tarjetas rounded-2xl (20px) + shadow-sm/md
+   2. Paleta Slate Moderna + Acento Índigo Vibrante (#6366f1)
+   3. Modo Oscuro Nativo (Dark Mode) con tonos Slate/Zinc profundos
+   4. Badges e Iconos de Archivo Estilizados por formato (PDF, Imagen, Datos, Texto)
+   5. Animaciones de Transición Suaves y Ticks de Confirmación SVG
+   ============================================================================ */
 
 @import '@ionic/angular/css/core.css';
-@import '@ionic/angular/css/normalize.css';
 @import '@ionic/angular/css/structure.css';
 @import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+
 @import '@ionic/angular/css/padding.css';
 @import '@ionic/angular/css/float-elements.css';
 @import '@ionic/angular/css/text-alignment.css';
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
-@import '@ionic/angular/css/display.css';
 
 :root {
-  /* Superficies Slate luminosas y limpias */
-  --ion-background-color: #f8fafc;
-  --ion-background-color-rgb: 248, 250, 252;
-  --ion-text-color: #0f172a;
-  --ion-text-color-rgb: 15, 23, 42;
-  --ion-card-background: #ffffff;
-  --ion-item-background: #ffffff;
-  --ion-toolbar-background: #ffffff;
-  --ion-tab-bar-background: rgba(255, 255, 255, 0.92);
-
-  /* Acento Principal: Índigo Vibrante (#6366f1) */
+  /* Paleta Índigo Vibrante (#6366f1) + Tonos Slate Modernos (Modo Claro) */
   --ion-color-primary: #6366f1;
   --ion-color-primary-rgb: 99, 102, 241;
   --ion-color-primary-contrast: #ffffff;
@@ -38,148 +27,389 @@
   --ion-color-primary-shade: #4f46e5;
   --ion-color-primary-tint: #818cf8;
 
-  /* Secundario y Terciario armónicos */
   --ion-color-secondary: #0ea5e9;
   --ion-color-secondary-rgb: 14, 165, 233;
-  --ion-color-tertiary: #8b5cf6;
-  --ion-color-tertiary-rgb: 139, 92, 246;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-shade: #0284c7;
+  --ion-color-secondary-tint: #38bdf8;
 
-  /* Semánticos */
+  --ion-color-tertiary: #7c3aed;
+  --ion-color-tertiary-rgb: 124, 58, 237;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-shade: #6d28d9;
+  --ion-color-tertiary-tint: #8b5cf6;
+
   --ion-color-success: #10b981;
-  --ion-color-success-rgb: 16, 185, 129;
   --ion-color-warning: #f59e0b;
-  --ion-color-warning-rgb: 245, 158, 11;
   --ion-color-danger: #ef4444;
-  --ion-color-danger-rgb: 239, 68, 68;
+  --ion-color-medium: #64748b;
+  --ion-color-light: #f1f5f9;
 
-  /* Tokens de Elevación y Bordes Redondeados (rounded-2xl) */
+  /* Superficies Slate Limpias (Whitespace & Minimalism) */
+  --ion-background-color: #f8fafc;
+  --ion-background-color-rgb: 248, 250, 252;
+  --ion-text-color: #0f172a;
+  --ion-text-color-rgb: 15, 23, 42;
+  --ion-card-background: #ffffff;
+  --ion-item-background: #ffffff;
+  --ion-toolbar-background: #ffffff;
+  --ion-tab-bar-background: #ffffff;
+
+  /* Tokens globales de OmniFile Studio */
+  --omni-surface: #ffffff;
+  --omni-surface-muted: #f1f5f9;
+  --omni-text-main: #0f172a;
+  --omni-text-muted: #64748b;
+  --omni-border-subtle: rgba(226, 232, 240, 0.7);
   --omni-radius-2xl: 20px;
   --omni-radius-xl: 16px;
-  --omni-radius-lg: 12px;
-  --omni-shadow-sm: 0 2px 10px -2px rgba(15, 23, 42, 0.05), 0 1px 4px -1px rgba(15, 23, 42, 0.03);
-  --omni-shadow-md: 0 12px 28px -6px rgba(15, 23, 42, 0.07), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-  --omni-shadow-indigo: 0 10px 25px -5px rgba(99, 102, 241, 0.28);
-
-  --ion-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --omni-shadow-sm: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -2px rgba(15, 23, 42, 0.03);
+  --omni-shadow-md: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
 }
 
+/* ============================================================================
+   [REQUISITO 3] MODO OSCURO NATIVO (DARK MODE) CON TONOS SLATE / ZINC PROFUNDOS
+   ============================================================================ */
 body.dark,
-[data-theme="dark"] {
-  --ion-background-color: #0f172a;
-  --ion-background-color-rgb: 15, 23, 42;
+html.dark,
+html[data-mode="dark"],
+body[data-mode="dark"] {
+  --ion-color-primary: #6366f1;
+  --ion-color-primary-rgb: 99, 102, 241;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #4f46e5;
+  --ion-color-primary-tint: #818cf8;
+
+  --ion-background-color: #090d16;
+  --ion-background-color-rgb: 9, 13, 22;
   --ion-text-color: #f8fafc;
   --ion-text-color-rgb: 248, 250, 252;
-  --ion-card-background: #1e293b;
-  --ion-item-background: #1e293b;
-  --ion-toolbar-background: #1e293b;
-  --ion-tab-bar-background: rgba(30, 41, 59, 0.94);
+
+  --ion-card-background: #131c2e;
+  --ion-item-background: #131c2e;
+  --ion-toolbar-background: #0f172a;
+  --ion-tab-bar-background: #0f172a;
+  --ion-border-color: rgba(51, 65, 85, 0.55);
+
+  --omni-surface: #131c2e;
+  --omni-surface-muted: #1e293b;
+  --omni-text-main: #f8fafc;
+  --omni-text-muted: #94a3b8;
+  --omni-border-subtle: rgba(51, 65, 85, 0.65);
+  --omni-shadow-sm: 0 6px 20px -2px rgba(0, 0, 0, 0.38);
+  --omni-shadow-md: 0 16px 34px -6px rgba(0, 0, 0, 0.52);
 }
 
-/* Tarjetas sin bordes grises pesados: whitespace + rounded-2xl + shadow-sm */
+/* Ajustes automáticos de componentes en Modo Oscuro */
+body.dark ion-content,
+html[data-mode="dark"] ion-content {
+  --background: #090d16;
+  --color: #f8fafc;
+}
+
+body.dark ion-card,
+html[data-mode="dark"] ion-card {
+  background: #131c2e !important;
+  border-color: rgba(51, 65, 85, 0.65) !important;
+  color: #f8fafc;
+}
+
+body.dark ion-card-title,
+html[data-mode="dark"] ion-card-title {
+  color: #f8fafc !important;
+}
+
+body.dark ion-item,
+html[data-mode="dark"] ion-item {
+  --background: #131c2e;
+  --color: #f8fafc;
+  border-color: rgba(51, 65, 85, 0.55) !important;
+}
+
+body.dark ion-tab-bar,
+html[data-mode="dark"] ion-tab-bar {
+  --background: rgba(15, 23, 42, 0.94);
+  border-top: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+body.dark ion-searchbar,
+html[data-mode="dark"] ion-searchbar {
+  --background: #131c2e;
+  --color: #f8fafc;
+  --placeholder-color: #94a3b8;
+  --icon-color: #818cf8;
+}
+
+/* Botón alternador de Modo Claro/Oscuro en el Header */
+.theme-toggle-btn {
+  --border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.9);
+}
+
+/* ============================================================================
+   1. ELIMINACIÓN DE CAJAS GRISES PESADAS -> TARJETAS ROUNDED-2XL + SOMBRAS
+   ============================================================================ */
+ion-content {
+  --background: var(--ion-background-color);
+}
+
 ion-card {
-  --background: var(--ion-card-background, #ffffff);
-  border: 1px solid rgba(226, 232, 240, 0.65);
-  border-radius: var(--omni-radius-2xl, 20px) !important;
+  border-radius: var(--omni-radius-2xl) !important;
   box-shadow: var(--omni-shadow-sm) !important;
-  margin: 14px 8px;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  border: 1px solid var(--omni-border-subtle) !important;
+  background: var(--ion-card-background, #ffffff);
+  margin: 0.75rem 0.25rem;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.25s ease;
 }
 
 ion-card:hover {
   box-shadow: var(--omni-shadow-md) !important;
 }
 
-/* Botones con estética moderna e Índigo vibrante */
-ion-button {
-  --border-radius: 12px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-transform: none;
+ion-card-header {
+  padding: 1.15rem 1.25rem 0.5rem;
 }
 
-/* Barra de pestañas inferior flotante/translúcida */
-ion-tab-bar {
-  --background: var(--ion-tab-bar-background, rgba(255, 255, 255, 0.92));
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(226, 232, 240, 0.7);
-  height: 62px;
-  min-height: 62px;
-  z-index: 1000;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+ion-card-content {
+  padding: 0.75rem 1.25rem 1.25rem;
 }
 
-ion-tab-button {
-  --color: #64748b;
-  --color-selected: #6366f1;
-  font-weight: 600;
-  font-size: 0.74rem;
+ion-card-subtitle {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #818cf8;
+  text-transform: uppercase;
 }
 
-/* Modales, Action Sheets y Popovers Flotantes Estilizados */
-ion-modal {
-  --border-radius: 24px 24px 0 0;
-  --box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.14);
+ion-card-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--omni-text-main);
 }
 
-ion-popover {
-  --border-radius: 18px;
-  --box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.14);
+ion-item {
+  --border-radius: var(--omni-radius-xl);
+  --background: var(--ion-item-background, #ffffff);
+  --border-color: transparent;
+  margin-bottom: 0.5rem;
+  border-radius: var(--omni-radius-xl);
+  box-shadow: var(--omni-shadow-sm);
+  border: 1px solid var(--omni-border-subtle);
 }
 
-ion-action-sheet {
-  --button-background-selected: #eef2ff;
-  --button-color: #0f172a;
-}
-
-/* ==========================================================================
-   BADGES E ICONOS DE ARCHIVO ESTILIZADOS (SEMÁNTICOS POR FORMATO)
-   - PDF: Rojo suave (#fef2f2 / #ef4444)
-   - Imagen (PNG, JPG, WEBP): Azul suave (#eff6ff / #3b82f6)
-   - Hoja de cálculo / Datos (CSV, JSON): Verde esmeralda (#ecfdf5 / #10b981)
-   - Documento / Texto (TXT, MD, HTML): Índigo suave (#eef2ff / #6366f1)
-   ========================================================================== */
+/* ============================================================================
+   3. BADGES E ICONOS DE ARCHIVO ESTILIZADOS (JERARQUÍA VISUAL POR FORMATO)
+   ============================================================================ */
 .file-format-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-width: 58px;
-  height: 44px;
-  padding: 0 12px;
-  border-radius: 14px;
-  font-size: 0.74rem;
+  gap: 0.32rem;
+  padding: 0.34rem 0.68rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  line-height: 1;
   flex-shrink: 0;
-  transition: transform 0.15s ease;
 }
 
 .file-format-badge ion-icon {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
 }
 
+/* Rojo suave para PDFs */
 .file-format-badge.fmt-pdf {
   background: #fef2f2;
   color: #ef4444;
   border: 1px solid #fecaca;
 }
 
+/* Azul suave para Imágenes (PNG, JPG, WEBP, SVG) */
 .file-format-badge.fmt-image {
   background: #eff6ff;
   color: #3b82f6;
   border: 1px solid #bfdbfe;
 }
 
+/* Verde suave para Hojas de Cálculo y Datos (CSV, JSON, XLSX) */
 .file-format-badge.fmt-data {
   background: #ecfdf5;
   color: #10b981;
   border: 1px solid #a7f3d0;
 }
 
+/* Índigo suave para Documentos de texto (TXT, MD, HTML, DOC) */
 .file-format-badge.fmt-doc {
   background: #eef2ff;
   color: #6366f1;
   border: 1px solid #c7d2fe;
+}
+
+body.dark .file-format-badge.fmt-pdf {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+
+body.dark .file-format-badge.fmt-image {
+  background: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.32);
+}
+
+body.dark .file-format-badge.fmt-data {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.32);
+}
+
+body.dark .file-format-badge.fmt-doc {
+  background: rgba(99, 102, 241, 0.18);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* ============================================================================
+   [REQUISITO 4] ANIMACIONES DE TRANSICIÓN SUAVES Y TICKS DE CONFIRMACIÓN
+   ============================================================================ */
+@keyframes checkmarkPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.75) translateY(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes strokeDraw {
+  0% {
+    stroke-dashoffset: 48;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.omni-success-feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(99, 102, 241, 0.12) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
+  margin: 0.25rem 0.2rem 1rem;
+  animation: checkmarkPop 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.22);
+}
+
+.omni-success-tick-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #10b981;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.45);
+}
+
+.omni-success-tick-circle svg {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: strokeDraw 0.45s 0.12s ease-out forwards;
+}
+
+.omni-success-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.omni-success-copy strong {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--omni-text-main);
+}
+
+.omni-success-copy small {
+  font-size: 0.76rem;
+  color: var(--omni-text-muted);
+}
+
+/* ============================================================================
+   5. MODALES, POPOVERS Y SELECTORES FLOTANTES ESTILIZADOS
+   ============================================================================ */
+ion-modal {
+  --border-radius: 24px 24px 0 0;
+  --box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+}
+
+ion-popover {
+  --background: var(--omni-surface);
+  --box-shadow: 0 20px 38px -8px rgba(15, 23, 42, 0.22);
+}
+
+ion-popover::part(content) {
+  border-radius: 18px;
+  border: 1px solid var(--omni-border-subtle);
+}
+
+ion-action-sheet {
+  --background: var(--omni-surface);
+  --button-color: var(--omni-text-main);
+  --button-background-selected: rgba(99, 102, 241, 0.12);
+}
+
+ion-searchbar {
+  --background: var(--omni-surface);
+  --border-radius: 16px;
+  --box-shadow: var(--omni-shadow-sm);
+  --placeholder-color: #94a3b8;
+  --icon-color: #6366f1;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+ion-button {
+  --border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+ion-tab-bar {
+  --background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(226, 232, 240, 0.7);
+  height: 62px;
+}
+
+ion-tab-button {
+  --color: #64748b;
+  --color-selected: #6366f1;
+  font-weight: 700;
+  font-size: 0.74rem;
 }

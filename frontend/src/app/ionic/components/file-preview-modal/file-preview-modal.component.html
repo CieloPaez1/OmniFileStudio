@@ -1,7 +1,8 @@
 <ion-modal
   [isOpen]="isOpen && !!file"
-  [breakpoints]="[0, 0.92, 1]"
-  [initialBreakpoint]="0.92"
+  [breakpoints]="[0, 0.94, 1]"
+  [initialBreakpoint]="0.94"
+  (didPresent)="onModalDidPresent()"
   (didDismiss)="close()">
 
   <ng-template>
@@ -20,6 +21,9 @@
           </div>
 
           <ion-buttons slot="end">
+            <ion-button fill="clear" color="light" title="Inspector Binario" (click)="toggleBinaryInspector()">
+              <ion-icon name="code-working-outline" slot="icon-only"></ion-icon>
+            </ion-button>
             <ion-button fill="clear" color="light" title="Compartir" (click)="shareCurrentFile()">
               <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
             </ion-button>
@@ -43,16 +47,14 @@
               <ion-button size="small" fill="clear" (click)="rotateRight()" title="Rotar 90°">
                 <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              @if (current.category === 'IMAGE') {
-                <ion-button size="small" fill="outline" color="tertiary" (click)="cycleFilter()">
-                  <ion-icon name="contrast-outline" slot="start"></ion-icon>
-                  Filtro: {{ imageFilter() | uppercase }}
-                </ion-button>
-              }
+              <ion-button size="small" fill="outline" color="primary" (click)="cycleFilter()">
+                <ion-icon name="contrast-outline" slot="start"></ion-icon>
+                Filtro: {{ imageFilter() | uppercase }}
+              </ion-button>
             </div>
 
             <div class="viewer-right-actions">
-              <ion-button size="small" color="tertiary" (click)="triggerContextualActions()">
+              <ion-button size="small" color="primary" (click)="triggerContextualActions()">
                 <ion-icon name="sparkles-outline" slot="start"></ion-icon>
                 Herramientas
               </ion-button>
@@ -70,63 +72,40 @@
       </ion-header>
 
       <ion-content class="ion-padding preview-stage">
-        <!-- ==================== 1. VISTA PREVIA DE ARCHIVOS PDF ==================== -->
+        <!-- Inspector de Flujo Binario en Cliente (ArrayBuffer / Hex Stream) -->
+        @if (showBinaryInspector()) {
+          <div class="binary-stream-box">
+            <div class="binary-stream-head">
+              <strong>🔍 Inspector de Flujo Binario en Cliente (Sin Descarga)</strong>
+              <span>{{ current.mimeType }}</span>
+            </div>
+            <pre>{{ binaryStreamSummary() }}</pre>
+          </div>
+        }
+
+        <!-- ==================== 1. VISTA PREVIA DE ARCHIVOS PDF (HTML5 CANVAS + BLOB STREAM) ==================== -->
         @if (current.ext === 'pdf' || current.category === 'PDF') {
           <div class="pdf-preview-container">
-            <!-- Hoja visual del Documento PDF con metadatos, páginas y firma -->
+            <!-- Renderizador HTML5 Canvas directo en el cliente -->
             <div
-              class="pdf-paper-sheet"
-              [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'">
-              <div class="pdf-paper-header">
-                <div class="pdf-brand-stamp">
-                  <ion-icon name="document-text-outline"></ion-icon>
-                  <span>OMNIFILE STUDIO · VISOR PDF LOCAL</span>
-                </div>
-                <ion-badge color="danger">PDF · {{ current.pageCount || 1 }} PÁG.</ion-badge>
-              </div>
-
-              <h2 class="pdf-doc-title">{{ current.name }}</h2>
-
-              <div class="pdf-meta-chips">
-                <ion-chip color="primary">
-                  <ion-label>Categoría: <strong>{{ current.tag || 'Trabajo' }}</strong></ion-label>
-                </ion-chip>
-                <ion-chip color="medium">
-                  <ion-label>Peso: <strong>{{ fileService.formatBytes(current.size) }}</strong></ion-label>
-                </ion-chip>
-                @if (current.compressed) {
-                  <ion-chip color="success">
-                    <ion-label>🗜️ PDF Optimizado</ion-label>
-                  </ion-chip>
-                }
-                @if (current.signed) {
-                  <ion-chip color="tertiary">
-                    <ion-label>✍️ Firmado Digitalmente</ion-label>
-                  </ion-chip>
-                }
-              </div>
-
-              <div class="pdf-body-text">
-                <p><strong>Resumen del documento:</strong></p>
-                <p>{{ current.description || 'Documento PDF gestionado y procesado 100% en tu dispositivo.' }}</p>
-                <p class="pdf-simulated-lines">
-                  Fecha de registro: {{ current.createdAt | date:'medium' }} · Origen: {{ current.origin }}
-                </p>
-              </div>
-
-              @if (current.signed) {
-                <div class="pdf-signature-seal">
-                  <div class="seal-title">FIRMA DIGITAL VERIFICADA EN CLIENTE</div>
-                  <div class="seal-cursive">Firma Digital OmniFile Studio</div>
-                  <small>Documento íntegro · Sin envío a servidores externos</small>
-                </div>
-              }
+              class="canvas-sheet-wrap"
+              [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
+              [style.filter]="cssImageFilter()">
+              <canvas
+                #pdfCanvasRenderer
+                width="560"
+                height="340"
+                class="pdf-html5-canvas">
+              </canvas>
             </div>
 
-            <!-- Visor nativo embebido si hay binario PDF generado con jsPDF -->
+            <!-- Visor nativo embebido si hay flujo binario Blob PDF generado con jsPDF -->
             @if (safePdfUrl(); as pdfResourceUrl) {
               <div class="embedded-pdf-frame-wrap">
-                <div class="frame-caption">Renderizado nativo del motor PDF local:</div>
+                <div class="frame-caption">
+                  <span>Flujo Binario PDF (Blob Stream en memoria local):</span>
+                  <ion-badge color="success">100% Client-Side</ion-badge>
+                </div>
                 <iframe
                   class="embedded-pdf-iframe"
                   [src]="pdfResourceUrl"

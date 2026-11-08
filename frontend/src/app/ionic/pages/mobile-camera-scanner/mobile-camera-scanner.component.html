@@ -4,10 +4,34 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Escáner HD a PDF</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        class="theme-toggle-btn"
+        (click)="themeService.toggleDarkLight()"
+        [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
+        <ion-icon
+          [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
+          slot="icon-only">
+        </ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  @if (lastCreatedPdf(); as createdBanner) {
+    <div class="omni-success-feedback">
+      <div class="omni-success-tick-circle">
+        <svg viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="omni-success-copy">
+        <strong>¡Escaneo PDF Completado: {{ createdBanner.name }}!</strong>
+        <small>Guardado en &#64;capacitor/filesystem y registrado en el Log de Actividad</small>
+      </div>
+    </div>
+  }
   <ion-card>
     <ion-card-header>
       <ion-card-subtitle>PLUGINS NATIVOS &#64;CAPACITOR/CAMERA + &#64;CAPACITOR/FILESYSTEM</ion-card-subtitle>
