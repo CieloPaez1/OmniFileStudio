@@ -1,0 +1,81 @@
+<ion-split-pane contentId="mobile-main-content" when="xl">
+
+  <!-- MENÚ LATERAL -->
+  <ion-menu contentId="mobile-main-content">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>FileStudio · Suite PDF</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-item button (click)="navegarDesdeMenu('/mobile/dashboard')">
+          <ion-icon name="home-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>1. Inicio / Dashboard</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="navegarDesdeMenu('/mobile/repository')">
+          <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>2. Repositorio de Archivos</ion-label>
+          <ion-badge color="primary" slot="end">{{ fileService.totalFiles() }}</ion-badge>
+        </ion-item>
+
+        <ion-item button (click)="navegarDesdeMenu('/mobile/scanner')">
+          <ion-icon name="camera-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>3. Escáner Cámara a PDF</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="navegarDesdeMenu('/mobile/pdf-suite')">
+          <ion-icon name="construct-outline" slot="start" color="secondary"></ion-icon>
+          <ion-label>4. Suite PDF (Unir/Dividir/Firmar)</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="navegarDesdeMenu('/mobile/file-form')">
+          <ion-icon name="add-circle-outline" slot="start" color="success"></ion-icon>
+          <ion-label>Nuevo Archivo (Formulario Reactivo)</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="navegarDesdeMenu('/files')">
+          <ion-icon name="desktop-outline" slot="start" color="medium"></ion-icon>
+          <ion-label>Vista Escritorio Web</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- CONTENEDOR PRINCIPAL DE LAS 4 PESTAÑAS (TABS) -->
+  <div class="ion-page" id="mobile-main-content">
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+
+        <!-- Tab 1: Home / Dashboard -->
+        <ion-tab-button tab="dashboard" href="/mobile/dashboard">
+          <ion-icon name="home-outline"></ion-icon>
+          <ion-label>Dashboard</ion-label>
+        </ion-tab-button>
+
+        <!-- Tab 2: Repositorio / Gestor de Archivos -->
+        <ion-tab-button tab="repository" href="/mobile/repository">
+          <ion-icon name="folder-open-outline"></ion-icon>
+          <ion-label>Repositorio</ion-label>
+          <ion-badge color="primary">{{ fileService.totalFiles() }}</ion-badge>
+        </ion-tab-button>
+
+        <!-- Tab 3: Escáner de Cámara -->
+        <ion-tab-button tab="scanner" href="/mobile/scanner">
+          <ion-icon name="camera-outline"></ion-icon>
+          <ion-label>Escáner</ion-label>
+        </ion-tab-button>
+
+        <!-- Tab 4: Suite PDF -->
+        <ion-tab-button tab="pdf-suite" href="/mobile/pdf-suite">
+          <ion-icon name="construct-outline"></ion-icon>
+          <ion-label>Suite PDF</ion-label>
+        </ion-tab-button>
+
+      </ion-tab-bar>
+    </ion-tabs>
+  </div>
+
+</ion-split-pane>

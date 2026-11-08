@@ -1,0 +1,7 @@
+{
+  "name": "filestudio-pdf-manager",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

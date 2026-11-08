@@ -1,0 +1,38 @@
+<nav class="navbar-top">
+  <div class="navbar-search-wrapper">
+    <div style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text-primary);">
+      <span>🛡️ OmniFile Studio · Procesamiento 100% Local (Privacy-First)</span>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <a routerLink="/mobile/dashboard" class="icon-btn mobile-mode-btn" title="Abrir Vista Móvil Ionic (4 Pestañas)">
+      <svg lucideSmartphone style="width: 20px; height: 20px;"></svg>
+    </a>
+
+    <div class="theme-menu-container">
+      <button class="icon-btn theme-toggle" (click)="toggleThemeMenu($event)">
+        <svg lucidePalette style="width: 20px; height: 20px;"></svg>
+      </button>
+
+      <div class="theme-dropdown" *ngIf="showThemeMenu">
+        <div class="theme-dropdown-header">Elegí tu tema</div>
+        <button class="theme-dropdown-item" *ngFor="let t of themeService.availableThemes" (click)="selectTheme(t.id)">
+          <span class="theme-color-dot" [style.background]="t.color"></span>
+          <span class="theme-name">{{ t.name }}</span>
+          <svg lucideCheck *ngIf="themeService.currentTheme() === t.id" class="theme-check"></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="user-menu-container">
+      <button class="navbar-user" (click)="toggleUserMenu($event)">
+        <div class="user-avatar">O</div>
+        <div class="user-info">
+          <div class="user-name">OmniFile Studio</div>
+          <div class="user-role">Suite PDF & Archivos</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</nav>

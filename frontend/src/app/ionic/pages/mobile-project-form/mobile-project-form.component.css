@@ -1,0 +1,78 @@
+.mobile-viewport {
+  --background: transparent;
+}
+
+.ionic-reactive-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 90px;
+}
+
+.project-photo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.85));
+  border: 1.5px dashed rgba(99, 102, 241, 0.4);
+  cursor: pointer;
+}
+
+.project-photo-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  object-fit: cover;
+  border: 3px solid var(--ion-color-primary, #6366f1);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+}
+
+.project-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted, #64748b);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.project-photo-placeholder ion-icon {
+  font-size: 2.2rem;
+  color: var(--ion-color-primary, #6366f1);
+}
+
+.error-banner {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  margin-bottom: 6px;
+}
+
+.form-item {
+  --background: var(--card-bg, rgba(255, 255, 255, 0.85));
+  --border-radius: 16px;
+  border-radius: 16px;
+  margin-bottom: 4px;
+}
+
+.validation-note {
+  display: block;
+  padding: 2px 14px 8px 14px;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.datetime-item {
+  padding-bottom: 12px;
+}
+
+.submit-btn {
+  --border-radius: 16px;
+  font-weight: 800;
+  height: 50px;
+}

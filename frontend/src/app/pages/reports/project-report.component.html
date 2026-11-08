@@ -1,0 +1,153 @@
+<div class="project-report-page" id="pdfContainer">
+  <header class="report-header">
+    <div>
+      <p>Reportes</p>
+      <h1>Reporte por proyecto</h1>
+    </div>
+
+    <div class="header-actions" style="display: flex; gap: 12px; align-items: center;" data-html2canvas-ignore="true">
+      <div class="select-wrapper" style="margin: 0;">
+        <select [ngModel]="selectedProjectId()" (ngModelChange)="selectedProjectId.set($event)">
+          @for (project of projects(); track project.id) {
+            <option [value]="project.id">{{ project.name }}</option>
+          }
+        </select>
+      </div>
+
+      <button class="btn-primary outline" (click)="exportToPDF()" [disabled]="!selectedProject()">
+        <svg lucideDownload></svg>
+        Descargar PDF
+      </button>
+    </div>
+  </header>
+
+  @if (!selectedProject()) {
+    <div class="empty-state">
+      <svg lucideClipboardList></svg>
+      <p>Todavía no hay proyectos para reportar.</p>
+    </div>
+  } @else {
+    <section class="project-card">
+      <div class="project-info">
+        <span class="label">Proyecto seleccionado</span>
+        <h2>{{ selectedProject()?.name }}</h2>
+        <p>{{ selectedProject()?.description || 'Sin descripción' }}</p>
+      </div>
+      <div class="project-progress">
+        <strong>{{ progress() }}%</strong>
+        <span>Completado</span>
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <div class="left-column">
+        <section class="report-metrics">
+          <article class="metric-card">
+            <div class="metric-icon total"><svg lucideClipboardList></svg></div>
+            <div class="metric-info">
+              <span>Total Tareas</span>
+              <strong>{{ totalTasks() }}</strong>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon done"><svg lucideCheckCircle></svg></div>
+            <div class="metric-info">
+              <span>Completadas</span>
+              <strong>{{ doneTasks() }}</strong>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon progress"><svg lucideActivity></svg></div>
+            <div class="metric-info">
+              <span>En Proceso</span>
+              <strong>{{ inProgressTasks() }}</strong>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon pending"><svg lucideClock></svg></div>
+            <div class="metric-info">
+              <span>Por Hacer</span>
+              <strong>{{ pendingTasks() }}</strong>
+            </div>
+          </article>
+        </section>
+
+        <section class="hours-card">
+          <div class="hours-header">
+            <h3>Distribución de Horas</h3>
+            <span class="badge">{{ totalHours() }}hs en total</span>
+          </div>
+          <div class="hours-stats">
+            <div class="stat">
+              <span>Completadas</span>
+              <strong>{{ doneHours() }}hs</strong>
+            </div>
+            <div class="stat">
+              <span>Restantes</span>
+              <strong>{{ totalHours() - doneHours() }}hs</strong>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div [style.width.%]="progress()"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="right-column">
+        <section class="chart-section">
+          <h3>Estado de Tareas</h3>
+          <div class="chart-content">
+            <div class="chart-container">
+              <canvas #statusChart></canvas>
+              <div class="chart-center">
+                <strong>{{ progress() }}%</strong>
+                <span>Avance</span>
+              </div>
+            </div>
+            <div class="legend-list">
+              <div class="legend-item">
+                <span class="dot bg-yellow border-yellow"></span>
+                <span>Por Hacer</span>
+                <strong>{{ pendingTasks() }}</strong>
+              </div>
+              <div class="legend-item">
+                <span class="dot bg-blue border-blue"></span>
+                <span>En Proceso</span>
+                <strong>{{ inProgressTasks() }}</strong>
+              </div>
+              <div class="legend-item">
+                <span class="dot bg-green border-green"></span>
+                <span>Terminadas</span>
+                <strong>{{ doneTasks() }}</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="tasks-card">
+      <h3>Lista de Tareas</h3>
+      @if (projectTasks().length === 0) {
+        <div class="empty-state">
+          <svg lucideListTodo></svg>
+          <p>Este proyecto todavía no tiene tareas.</p>
+        </div>
+      } @else {
+        <div class="tasks-list">
+          @for (task of projectTasks(); track task.id) {
+            <div class="task-row">
+              <div class="task-info">
+                <strong>{{ task.title }}</strong>
+                <span>{{ task.assignee || 'Sin asignar' }} &bull; {{ task.estimateHours }} hs</span>
+              </div>
+              <span class="status-badge" [class.status-todo]="task.status === 'TODO'" [class.status-progress]="task.status === 'IN_PROGRESS'" [class.status-done]="task.status === 'DONE'">
+                {{ task.status | taskStatus }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

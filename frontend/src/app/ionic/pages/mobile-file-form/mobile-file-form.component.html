@@ -1,0 +1,275 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/mobile/repository"></ion-back-button>
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>OmniFile Studio · Subida Inteligente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding file-form-content">
+  <div class="form-wrapper">
+
+    <!-- AVISO VISUAL DE PRIVACIDAD Y PROCESAMIENTO 100% LOCAL (PRIVACY-FIRST) -->
+    <div class="privacy-shield-banner" role="status" aria-live="polite">
+      <div class="privacy-icon-wrap">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+      </div>
+      <div class="privacy-text-wrap">
+        <div class="privacy-badge-row">
+          <span class="privacy-pill">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            PRIVACY-FIRST · 100% CLIENT-SIDE
+          </span>
+        </div>
+        <strong>{{ fileService.privacyStatement }}.</strong>
+        <p>
+          La auto-clasificación contextual, conversión a PDF, compresión y renombrado se ejecutan íntegramente en la memoria local de tu navegador/dispositivo mediante HTML5 Canvas y motores JS nativos.
+        </p>
+      </div>
+    </div>
+
+    <!-- DROPZONE INTERACTIVA DE SUBIDA Y ANÁLISIS LOCAL -->
+    <div
+      class="smart-dropzone"
+      [class.dropzone-active]="isDragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)">
+
+      <input
+        #filePicker
+        type="file"
+        hidden
+        (change)="onFileSelected($event)" />
+
+      <div class="dropzone-header">
+        <ion-icon name="cloud-upload-outline" class="dropzone-main-icon"></ion-icon>
+        <h3>Arrastrá y soltá cualquier archivo aquí</h3>
+        <p>PDF, imágenes (JPG, PNG, WEBP), CSV, JSON o documentos de texto</p>
+      </div>
+
+      <div class="attachment-actions">
+        <ion-button fill="solid" color="primary" size="small" (click)="filePicker.click()">
+          <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+          Seleccionar Archivo
+        </ion-button>
+
+        <ion-button fill="outline" color="tertiary" size="small" (click)="capturePhotoForForm()">
+          <ion-icon name="camera-outline" slot="start"></ion-icon>
+          Escáner Cámara
+        </ion-button>
+
+        <ion-button
+          fill="outline"
+          color="secondary"
+          size="small"
+          (click)="simulateSmartScanSample()">
+          <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+          Probar IA ("scan_2026_11_08_final.pdf")
+        </ion-button>
+      </div>
+
+      @if (selectedFile(); as file) {
+        <div class="selected-file-pill">
+          <ion-icon name="document-text-outline" color="primary"></ion-icon>
+          <div class="pill-info">
+            <strong>Archivo original: {{ file.name }}</strong>
+            <span>{{ fileService.formatBytes(file.size) }} · Analizado en memoria local</span>
+          </div>
+          <ion-button fill="clear" color="danger" size="small" (click)="clearAttachment()">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      }
+    </div>
+
+    <!-- TARJETA DE PREVISUALIZACIÓN INTELIGENTE (MOTOR CONTEXTUAL LOCAL) -->
+    @if (smartSuggestion(); as suggestion) {
+      <ion-card class="smart-preview-card">
+        <ion-card-header>
+          <div class="smart-card-top">
+            <ion-card-subtitle>
+              <ion-icon name="sparkles-outline"></ion-icon>
+              MOTOR DE INTELIGENCIA CONTEXTUAL LOCAL
+            </ion-card-subtitle>
+            <ion-badge color="success">{{ suggestion.confidence }}% confianza</ion-badge>
+          </div>
+          <ion-card-title>Sugerencia de Normalización y Clasificación</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="rename-comparison-box">
+            <div class="rename-col original-col">
+              <span class="col-label">Nombre original detectado</span>
+              <code>{{ suggestion.originalRawName }}</code>
+            </div>
+            <div class="rename-arrow">➔</div>
+            <div class="rename-col suggested-col">
+              <span class="col-label">Nombre normalizado sugerido</span>
+              <code>{{ suggestion.suggestedFullName }}</code>
+            </div>
+          </div>
+
+          <div class="smart-metadata-badges">
+            <ion-chip color="primary">
+              <ion-icon name="pricetag-outline"></ion-icon>
+              <ion-label>Categoría sugerida: <strong>{{ suggestion.suggestedTag }}</strong></ion-label>
+            </ion-chip>
+
+            <ion-chip color="tertiary">
+              <ion-label>Fecha ISO: <strong>{{ suggestion.detectedDate }}</strong></ion-label>
+            </ion-chip>
+
+            @if (suggestion.suggestedTargetFormat !== 'original') {
+              <ion-chip color="warning">
+                <ion-icon name="swap-horizontal-outline"></ion-icon>
+                <ion-label>Sugiere convertir a: <strong>.{{ suggestion.suggestedTargetFormat | uppercase }}</strong></ion-label>
+              </ion-chip>
+            }
+          </div>
+
+          <ul class="smart-reasons-list">
+            @for (reason of suggestion.reasons; track reason) {
+              <li>{{ reason }}</li>
+            }
+          </ul>
+
+          <div class="smart-card-actions">
+            <ion-button
+              size="small"
+              color="success"
+              [fill]="suggestionApplied() ? 'solid' : 'outline'"
+              (click)="applySmartSuggestion()">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              {{ suggestionApplied() ? 'Sugerencia Aplicada' : 'Aplicar Sugerencia' }}
+            </ion-button>
+
+            <ion-button
+              size="small"
+              fill="clear"
+              color="medium"
+              (click)="keepOriginalFileName()">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Usar nombre original
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- FORMULARIO REACTIVO DE ANGULAR -->
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <ion-list lines="full" class="form-list">
+
+        <!-- 1. Nombre del archivo (Obligatorio + minLength 3) -->
+        <ion-item [class.item-invalid]="name.invalid && name.touched">
+          <ion-input
+            label="Nombre normalizado del documento *"
+            labelPlacement="stacked"
+            placeholder="Ej: Factura_2026-11-08"
+            formControlName="name">
+          </ion-input>
+          <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            type="button"
+            title="Auto-normalizar nombre con IA local"
+            (click)="analyzeCurrentInputName()">
+            <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+            Normalizar
+          </ion-button>
+        </ion-item>
+        @if (name.invalid && name.touched) {
+          <div class="validation-error">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (name.errors?.['required']) {
+              <span>El nombre del archivo es obligatorio.</span>
+            } @else if (name.errors?.['minlength']) {
+              <span>El nombre debe tener al menos 3 caracteres.</span>
+            }
+          </div>
+        }
+
+        <!-- 2. Etiqueta / Categoría (Obligatoria) -->
+        <ion-item [class.item-invalid]="tag.invalid && tag.touched">
+          <ion-select
+            label="Etiqueta / Categoría inteligente *"
+            labelPlacement="stacked"
+            placeholder="Seleccioná una etiqueta"
+            formControlName="tag">
+            @for (itemTag of availableTags; track itemTag) {
+              <ion-select-option [value]="itemTag">{{ itemTag }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <!-- Chips rápidos para selección de etiqueta -->
+        <div class="quick-tags">
+          @for (itemTag of availableTags; track itemTag) {
+            <ion-chip
+              [color]="tag.value === itemTag ? (itemTag === 'Urgente' ? 'danger' : 'primary') : 'medium'"
+              [outline]="tag.value !== itemTag"
+              (click)="selectQuickTag(itemTag)">
+              <ion-icon name="pricetag-outline"></ion-icon>
+              <ion-label>{{ itemTag }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+
+        @if (tag.invalid && tag.touched) {
+          <div class="validation-error">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>Debés seleccionar una etiqueta de clasificación.</span>
+          </div>
+        }
+
+        <!-- 3. Formato de salida o conversión 100% en cliente -->
+        <ion-item>
+          <ion-select
+            label="Formato de salida / Conversión Local (Client-Side)"
+            labelPlacement="stacked"
+            formControlName="targetFormat">
+            <ion-select-option value="original">Mantener formato original (o PDF)</ion-select-option>
+            <ion-select-option value="pdf">Convertir localmente a PDF (.pdf)</ion-select-option>
+            <ion-select-option value="txt">Extraer texto plano (.txt)</ion-select-option>
+            <ion-select-option value="csv">Planilla CSV (.csv)</ion-select-option>
+            <ion-select-option value="json">Estructura JSON (.json)</ion-select-option>
+            <ion-select-option value="png">Imagen PNG (.png)</ion-select-option>
+            <ion-select-option value="jpg">Imagen JPG (.jpg)</ion-select-option>
+            <ion-select-option value="webp">Imagen WebP (.webp)</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- 4. Descripción / Notas opcionales -->
+        <ion-item>
+          <ion-textarea
+            label="Notas o resumen contextual (opcional)"
+            labelPlacement="stacked"
+            placeholder="Agregá observaciones sobre este documento..."
+            [rows]="3"
+            formControlName="description">
+          </ion-textarea>
+        </ion-item>
+        <ion-note class="char-counter">
+          {{ (description.value?.length || 0) }} / 200 caracteres
+        </ion-note>
+
+      </ion-list>
+
+      <div class="submit-actions">
+        <ion-button
+          expand="block"
+          type="submit"
+          color="primary"
+          [disabled]="submitting()">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          {{ submitting() ? 'Procesando en tu dispositivo...' : 'Guardar Archivo en Repositorio' }}
+        </ion-button>
+      </div>
+    </form>
+
+  </div>
+</ion-content>

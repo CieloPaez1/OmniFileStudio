@@ -1,0 +1,262 @@
+<!-- =======================================================================
+     [IONIC 9] DETALLE DE PROYECTO ADAPTADO 100% A CELULAR (/mobile/projects/:id)
+     ======================================================================= -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/mobile/projects"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ project()?.name || 'Detalle de Proyecto' }}</ion-title>
+    @if (project()?.id) {
+      <ion-buttons slot="end">
+        <ion-button (click)="compartirProyecto()" title="Compartir Proyecto">
+          <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+        </ion-button>
+        <ion-button [routerLink]="['/mobile/project-form', project()!.id]" title="Editar Proyecto">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mobile-viewport">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarDetalle($event)">
+    <ion-refresher-content pullingText="Deslizá para actualizar..."></ion-refresher-content>
+  </ion-refresher>
+
+  @if (error()) {
+    <div class="offline-alert">
+      <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
+      <ion-text color="danger">{{ error() }}</ion-text>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-box">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando proyecto y tareas...</p>
+    </div>
+  } @else if (project()) {
+    <!-- Tarjeta resumen del Proyecto -->
+    <ion-card class="project-hero-card">
+      <ion-card-header>
+        <div class="hero-top-row">
+          <ion-badge [color]="project()!.status === 'ACTIVE' ? 'success' : (project()!.status === 'PLANNED' ? 'warning' : 'medium')">
+            {{ project()!.status === 'ACTIVE' ? 'En Progreso' : (project()!.status === 'PLANNED' ? 'Planificado' : 'Cerrado') }}
+          </ion-badge>
+          <span class="progress-pill">{{ progressPercentage() }}% completado</span>
+        </div>
+        <ion-card-title>{{ project()!.name }}</ion-card-title>
+        @if (project()!.description) {
+          <ion-card-subtitle>{{ project()!.description }}</ion-card-subtitle>
+        }
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="progressPercentage()"></div>
+        </div>
+
+        <div class="dates-row">
+          <div class="date-chip">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Inicio: {{ project()!.startDate.split('T')[0] }}</span>
+          </div>
+          <div class="date-chip">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Fin: {{ project()!.endDate.split('T')[0] }}</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong>{{ totalTasks() }}</strong>
+            <span>Tareas</span>
+          </div>
+          <div class="stat-box">
+            <strong>{{ completedTasks() }}</strong>
+            <span>Hechas</span>
+          </div>
+          <div class="stat-box">
+            <strong>{{ totalHours() }}h</strong>
+            <span>Estimadas</span>
+          </div>
+        </div>
+
+        <div class="actions-group">
+          @if (project()!.status !== 'CLOSED') {
+            <ion-button
+              expand="block"
+              color="primary"
+              class="add-task-btn"
+              (click)="nuevaTareaEnProyecto()">
+              <ion-icon name="add-outline" slot="start"></ion-icon>
+              Nueva Tarea en este Proyecto
+            </ion-button>
+          }
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            color="secondary"
+            class="share-project-btn"
+            (click)="compartirProyecto()">
+            <ion-icon name="share-social-outline" slot="start"></ion-icon>
+            Compartir Resumen
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de Archivos y Documentos del Proyecto (PDF, Excel, PPTX, etc.) -->
+    <div class="attachments-section">
+      <div class="attachments-header-row">
+        <div class="attachments-title-wrap">
+          <ion-icon name="document-attach-outline" class="title-icon"></ion-icon>
+          <h3>Archivos y Documentos</h3>
+          <span class="attachment-count-pill">{{ attachments().length }}</span>
+        </div>
+        <ion-button size="small" fill="outline" color="primary" (click)="triggerFileInput(fileInput)">
+          <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+          Adjuntar
+        </ion-button>
+      </div>
+
+      <!-- Input de archivo oculto nativo/web -->
+      <input
+        type="file"
+        #fileInput
+        class="hidden-file-input"
+        (change)="onFileSelected($event)"
+        accept=".pdf,.xlsx,.xls,.pptx,.ppt,.docx,.doc,.txt,.png,.jpg,.jpeg" />
+
+      @if (attachments().length === 0) {
+        <div class="empty-attachments-box" (click)="triggerFileInput(fileInput)">
+          <ion-icon name="document-attach-outline" class="empty-att-icon"></ion-icon>
+          <p>Sin archivos adjuntos</p>
+          <small>Tocá acá para subir PDFs, Excel, PPTX, Docs o fotos al proyecto.</small>
+        </div>
+      } @else {
+        <ion-list [inset]="true" class="attachments-list">
+          @for (att of attachments(); track att.id) {
+            <ion-item lines="full" class="attachment-item">
+              <div slot="start" class="file-icon-badge" [attr.data-type]="att.type">
+                @if (att.type === 'pdf') {
+                  <span>PDF</span>
+                } @else if (att.type === 'excel') {
+                  <span>XLS</span>
+                } @else if (att.type === 'powerpoint') {
+                  <span>PPT</span>
+                } @else if (att.type === 'word') {
+                  <span>DOC</span>
+                } @else if (att.type === 'image') {
+                  <span>IMG</span>
+                } @else {
+                  <span>FILE</span>
+                }
+              </div>
+
+              <ion-label (click)="abrirArchivo(att)" class="file-info-label">
+                <h2>{{ att.name }}</h2>
+                <p>{{ att.size }} · {{ att.uploadedAt }}</p>
+              </ion-label>
+
+              <ion-buttons slot="end">
+                <ion-button fill="clear" color="primary" (click)="abrirArchivo(att)" title="Descargar / Abrir">
+                  <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" (click)="eliminarArchivo(att, $event)" title="Eliminar">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    </div>
+
+    <!-- Filtro de tareas del proyecto -->
+    <div class="tasks-section-header">
+      <h3>Tareas del Proyecto</h3>
+    </div>
+
+    <div class="segment-wrapper">
+      <ion-segment [value]="statusFilter()" (ionChange)="onFilterChange($event)">
+        <ion-segment-button value="ALL">
+          <ion-label>Todas</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="TODO">
+          <ion-label>Pendientes</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="IN_PROGRESS">
+          <ion-label>En Curso</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="DONE">
+          <ion-label>Hechas</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    @if (filteredTasks().length === 0) {
+      <div class="empty-tasks-box">
+        <ion-icon name="checkbox-outline" class="empty-icon"></ion-icon>
+        <p>No hay tareas en esta vista.</p>
+      </div>
+    } @else {
+      <ion-list [inset]="true" class="project-tasks-list">
+        @for (t of filteredTasks(); track t.id) {
+          <ion-item-sliding>
+            <ion-item lines="full" button="true" (click)="abrirDetalleTarea(t)">
+              <ion-checkbox
+                slot="start"
+                [checked]="t.status === 'DONE'"
+                (click)="$event.stopPropagation()"
+                (ionChange)="toggleCompletada(t)">
+              </ion-checkbox>
+
+              <ion-label [class.task-done]="t.status === 'DONE'">
+                <h2>{{ t.title }}</h2>
+                <p>
+                  {{ t.estimateHours }} hs · {{ t.assignee || 'Sin asignar' }}
+                  @if (t.photo || t.photoPreview) {
+                    · Con foto
+                  }
+                  @if (t.lat !== undefined && t.lng !== undefined) {
+                    · Con GPS
+                  }
+                </p>
+              </ion-label>
+
+              <ion-badge
+                slot="end"
+                [color]="t.status === 'DONE' ? 'success' : (t.status === 'IN_PROGRESS' ? 'primary' : 'warning')">
+                {{ t.status === 'DONE' ? 'Hecha' : (t.status === 'IN_PROGRESS' ? 'En Curso' : 'Pendiente') }}
+              </ion-badge>
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-item-option color="primary" (click)="editarTarea(t, $event)">
+                Editar
+              </ion-item-option>
+              <ion-item-option color="success" (click)="toggleCompletada(t, $event)">
+                Listo
+              </ion-item-option>
+              <ion-item-option color="danger" (click)="eliminarTarea(t, $event)">
+                Eliminar
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        }
+      </ion-list>
+    }
+  }
+
+  @if (project() && project()!.status !== 'CLOSED') {
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="project-fab">
+      <ion-fab-button color="primary" (click)="nuevaTareaEnProyecto()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+</ion-content>

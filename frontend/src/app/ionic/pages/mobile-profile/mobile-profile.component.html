@@ -1,0 +1,373 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Perfil de Usuario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cambiarFotoPerfil()" title="Cambiar foto con cámara">
+        <ion-icon slot="icon-only" name="camera-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mobile-viewport">
+  <div class="profile-shell">
+
+    <!-- Luces de fondo dinámicas -->
+    <div class="ambient-glow glow-indigo"></div>
+    <div class="ambient-glow glow-emerald"></div>
+
+    <!-- =====================================================================
+         1. ENCABEZADO DE PERFIL CON AVATAR + CÁMARA + BADGE DE ESTADO INTERACTIVO
+         ===================================================================== -->
+    <section class="profile-hero">
+      <div class="avatar-glow-container">
+        <div class="avatar-ring-glow"></div>
+
+        <div class="avatar-inner-frame" (click)="cambiarFotoPerfil()" title="Tocá para cambiar tu foto con Cámara">
+          @if (avatarUrl() || authService.currentUser()?.avatarUrl) {
+            <img
+              [src]="avatarUrl() || authService.currentUser()?.avatarUrl"
+              alt="Foto de perfil"
+              class="avatar-img" />
+          } @else {
+            <div class="avatar-letter">
+              {{ (authService.currentUser()?.name?.charAt(0) || 'A') | uppercase }}
+            </div>
+          }
+
+          <button
+            type="button"
+            class="camera-mini-btn"
+            (click)="cambiarFotoPerfil(); $event.stopPropagation()"
+            title="Tomar foto con cámara">
+            <ion-icon name="camera-outline"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Badge de Estado Interactivo: Clic para alternar entre En Foco, En Línea, En Reunión -->
+        <button
+          type="button"
+          class="status-pill-badge"
+          [class]="authService.currentStatusMeta().colorClass"
+          (click)="toggleUserStatus($event)"
+          title="Tocá para cambiar tu estado">
+          <ion-icon [name]="authService.currentStatusMeta().icon"></ion-icon>
+          <span>{{ authService.currentStatusMeta().text }}</span>
+        </button>
+      </div>
+
+      <h1 class="profile-name">
+        <span>{{ authService.currentUser()?.name || 'Administrador' }}</span>
+        <ion-icon name="checkmark-circle" class="verified-icon"></ion-icon>
+      </h1>
+
+      <p class="profile-role">{{ authService.currentUser()?.role || 'Gestor de Proyectos' }}</p>
+      <p class="profile-email">{{ authService.currentUser()?.email || 'admin@proyectos.com' }}</p>
+
+      <!-- Botones de Acción Rápida: Editar Perfil + Cámara + Compartir -->
+      <div class="hero-actions-row">
+        <button type="button" class="btn-primary-indigo" (click)="openEditModal()">
+          <ion-icon name="create-outline"></ion-icon>
+          <span>Editar Perfil</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn-glass-icon"
+          (click)="cambiarFotoPerfil()"
+          title="Cambiar foto con cámara">
+          <ion-icon name="camera-outline"></ion-icon>
+        </button>
+
+        <button
+          type="button"
+          class="btn-glass-icon"
+          (click)="shareProfile()"
+          title="Compartir perfil">
+          <ion-icon name="share-social-outline"></ion-icon>
+        </button>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         2. ESTADÍSTICAS DEL USUARIO (KPIS 2x2)
+         ===================================================================== -->
+    <section class="kpi-grid-2x2" style="margin-top: 16px;">
+      <!-- KPI 1: Tareas Completadas -->
+      <div class="glass-card kpi-box">
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap kpi-emerald">
+            <ion-icon name="checkmark-done-outline"></ion-icon>
+          </div>
+          <span class="kpi-pill pill-emerald">Resueltas</span>
+        </div>
+        <h4 class="kpi-value">{{ completedTasksCount() }}</h4>
+        <p class="kpi-label">Tareas Completadas</p>
+      </div>
+
+      <!-- KPI 2: Proyectos Activos -->
+      <div class="glass-card kpi-box">
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap kpi-indigo">
+            <ion-icon name="folder-open-outline"></ion-icon>
+          </div>
+          <span class="kpi-pill pill-slate">En curso</span>
+        </div>
+        <h4 class="kpi-value">{{ activeProjectsCount() }}</h4>
+        <p class="kpi-label">Proyectos Activos</p>
+      </div>
+
+      <!-- KPI 3: Racha de Foco -->
+      <div class="glass-card kpi-box">
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap kpi-amber">
+            <ion-icon name="flame-outline"></ion-icon>
+          </div>
+          <span class="kpi-pill pill-amber">Constancia</span>
+        </div>
+        <h4 class="kpi-value">{{ focusStreakDays() }} <small>días</small></h4>
+        <p class="kpi-label">Racha de foco</p>
+      </div>
+
+      <!-- KPI 4: Eficiencia -->
+      <div class="glass-card kpi-box">
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap kpi-purple">
+            <ion-icon name="pie-chart-outline"></ion-icon>
+          </div>
+          <span class="kpi-pill pill-purple">Objetivos</span>
+        </div>
+        <h4 class="kpi-value">{{ efficiencyRate() }}%</h4>
+        <p class="kpi-label">Eficiencia</p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4. PREFERENCIAS Y CUENTA
+         ===================================================================== -->
+    <section class="preferences-section">
+      <h3 class="prefs-heading">Preferencias y Cuenta</h3>
+
+      <!-- Selector de Paleta de Tema -->
+      <div class="glass-card pref-row">
+        <div class="pref-left">
+          <div class="pref-icon-box icon-indigo">
+            <ion-icon name="color-palette-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="pref-title">Paleta de Tema</p>
+            <p class="pref-sub">9 estilos disponibles</p>
+          </div>
+        </div>
+        <ion-select
+          [value]="themeService.currentTheme()"
+          interface="action-sheet"
+          class="theme-select-compact"
+          (ionChange)="onThemeChange($event)">
+          @for (t of themes; track t.id) {
+            <ion-select-option [value]="t.id">{{ t.name }}</ion-select-option>
+          }
+        </ion-select>
+      </div>
+
+      <!-- Notificaciones Push -->
+      <div class="glass-card pref-row">
+        <div class="pref-left">
+          <div class="pref-icon-box icon-indigo">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="pref-title">Notificaciones Push</p>
+            <p class="pref-sub">Alertas de tareas por vencer</p>
+          </div>
+        </div>
+        <ion-toggle
+          [checked]="pushEnabled()"
+          (ionChange)="togglePushNotifications($event)">
+        </ion-toggle>
+      </div>
+
+      <!-- Integraciones -->
+      <button type="button" class="glass-card pref-row pref-button" (click)="isIntegrationsModalOpen.set(true)">
+        <div class="pref-left">
+          <div class="pref-icon-box icon-emerald">
+            <ion-icon name="git-network-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="pref-title">Integraciones</p>
+            <p class="pref-sub">Slack, Google Calendar, GitHub</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="pref-arrow"></ion-icon>
+      </button>
+
+      <!-- Configuración General -->
+      <button type="button" class="glass-card pref-row pref-button" (click)="isSettingsModalOpen.set(true)">
+        <div class="pref-left">
+          <div class="pref-icon-box icon-slate">
+            <ion-icon name="settings-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="pref-title">Configuración General</p>
+            <p class="pref-sub">Seguridad, idioma y privacidad</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="pref-arrow"></ion-icon>
+      </button>
+
+      <!-- Cerrar Sesión -->
+      <button type="button" class="glass-card pref-row pref-logout-btn" (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </section>
+
+    <!-- =====================================================================
+         MODAL 1: EDITAR PERFIL Y ESTADO
+         ===================================================================== -->
+    @if (isEditModalOpen()) {
+      <div class="custom-modal-backdrop" (click)="closeEditModal()">
+        <div class="custom-modal-sheet" (click)="$event.stopPropagation()">
+          <div class="modal-sheet-header">
+            <h3>Editar Perfil</h3>
+            <button type="button" class="modal-close-btn" (click)="closeEditModal()">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="modal-form-body">
+            <label class="modal-field-label">Nombre Completo</label>
+            <input
+              type="text"
+              class="modal-text-input"
+              [ngModel]="editName()"
+              (ngModelChange)="editName.set($event)"
+              placeholder="Ej: Cielo Administrador" />
+
+            <label class="modal-field-label">Rol / Cargo Profesional</label>
+            <input
+              type="text"
+              class="modal-text-input"
+              [ngModel]="editRole()"
+              (ngModelChange)="editRole.set($event)"
+              placeholder="Ej: Gestor de Proyectos" />
+
+            <label class="modal-field-label">Estado Actual</label>
+            <div class="status-selector-grid">
+              @for (st of statusOptions; track st.id) {
+                <button
+                  type="button"
+                  class="status-option-chip"
+                  [class.active-chip]="editStatus() === st.id"
+                  [class]="st.colorClass"
+                  (click)="editStatus.set(st.id)">
+                  <ion-icon [name]="st.icon"></ion-icon>
+                  <span>{{ st.text }}</span>
+                </button>
+              }
+            </div>
+
+            <div class="modal-actions-row">
+              <button type="button" class="btn-modal-cancel" (click)="closeEditModal()">
+                Cancelar
+              </button>
+              <button type="button" class="btn-modal-save" (click)="saveProfileChanges()">
+                Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- =====================================================================
+         MODAL 2: INTEGRACIONES (Slack, Google Calendar, GitHub)
+         ===================================================================== -->
+    @if (isIntegrationsModalOpen()) {
+      <div class="custom-modal-backdrop" (click)="isIntegrationsModalOpen.set(false)">
+        <div class="custom-modal-sheet" (click)="$event.stopPropagation()">
+          <div class="modal-sheet-header">
+            <h3>Integraciones Conectadas</h3>
+            <button type="button" class="modal-close-btn" (click)="isIntegrationsModalOpen.set(false)">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="integrations-list">
+            @for (item of integrations(); track item.id) {
+              <div class="integration-item-row" (click)="toggleIntegration(item)">
+                <div class="pref-left">
+                  @if (item.details?.avatarUrl) {
+                    <img [src]="item.details!.avatarUrl" class="github-integration-avatar" alt="Avatar GitHub" />
+                  } @else {
+                    <div class="pref-icon-box" [class]="item.colorClass">
+                      <ion-icon [name]="item.icon"></ion-icon>
+                    </div>
+                  }
+                  <div class="pref-info-col">
+                    <p class="pref-title">{{ item.name }}</p>
+                    <p class="pref-sub">{{ item.subtitle || (item.connected ? 'Sincronización activa' : 'Sin vincular') }}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="integration-toggle-pill"
+                  [class.connected]="item.connected"
+                  (click)="toggleIntegration(item); $event.stopPropagation()">
+                  {{ item.statusText }}
+                </button>
+              </div>
+            }
+          </div>
+
+          <button type="button" class="btn-modal-full" (click)="isIntegrationsModalOpen.set(false)">
+            Listo
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- =====================================================================
+         MODAL 3: CONFIGURACIÓN GENERAL
+         ===================================================================== -->
+    @if (isSettingsModalOpen()) {
+      <div class="custom-modal-backdrop" (click)="isSettingsModalOpen.set(false)">
+        <div class="custom-modal-sheet" (click)="$event.stopPropagation()">
+          <div class="modal-sheet-header">
+            <h3>Configuración General</h3>
+            <button type="button" class="modal-close-btn" (click)="isSettingsModalOpen.set(false)">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="settings-summary-list">
+            <div class="settings-summary-row">
+              <span>Idioma del Sistema</span>
+              <strong>Español (AR)</strong>
+            </div>
+            <div class="settings-summary-row">
+              <span>Zona Horaria</span>
+              <strong>GMT-3 (Buenos Aires)</strong>
+            </div>
+            <div class="settings-summary-row">
+              <span>Almacenamiento Offline</span>
+              <strong class="text-emerald">Activo (Preferences + Data)</strong>
+            </div>
+            <div class="settings-summary-row">
+              <span>Versión de la App</span>
+              <strong class="text-indigo">v2.4.0 Pro (Ionic 9)</strong>
+            </div>
+          </div>
+
+          <button type="button" class="btn-modal-full" (click)="isSettingsModalOpen.set(false)">
+            Entendido
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+</ion-content>

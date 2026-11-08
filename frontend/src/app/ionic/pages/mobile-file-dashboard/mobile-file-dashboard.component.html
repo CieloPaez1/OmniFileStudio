@@ -1,0 +1,192 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>OmniFile Studio · Inicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/files" title="Versión Web Escritorio">
+        <ion-icon name="desktop-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- [REQUISITO 6] Pull-to-refresh con ion-refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingText="Deslizá para actualizar desde json-server..."></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Píldoras de estado minimalistas (Slate + Esmeralda) sin bordes pesados -->
+  <div class="status-pills-row">
+    <div class="status-banner privacy-pill">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <span><strong>Privacy-First 100% Local:</strong> {{ fileService.privacyStatement }}</span>
+    </div>
+
+    @if (fileService.usingOfflineFallback()) {
+      <div class="status-banner offline">
+        <ion-icon name="cloud-offline-outline"></ion-icon>
+        <span>{{ fileService.error() || 'Modo Offline activo (@capacitor/preferences)' }}</span>
+      </div>
+    } @else {
+      <div class="status-banner online">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <span>API REST (json-server) + Preferences sincronizados</span>
+      </div>
+    }
+  </div>
+
+  <!-- Indicador de carga -->
+  @if (fileService.loading()) {
+    <div class="loading-box">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <span>Sincronizando espacio de trabajo...</span>
+    </div>
+  }
+
+  <!-- Tarjetas KPI Redondeadas (rounded-2xl + shadow-sm) con acentos semánticos -->
+  <div class="kpi-grid">
+    <div class="kpi-card" (click)="goTo('/mobile/repository')">
+      <div class="kpi-top">
+        <span class="kpi-label">Total Archivos</span>
+        <span class="kpi-icon-dot dot-indigo">
+          <ion-icon name="folder-open-outline"></ion-icon>
+        </span>
+      </div>
+      <strong class="kpi-value">{{ fileService.totalFiles() }}</strong>
+      <small>{{ fileService.formatBytes(fileService.totalBytes()) }} en uso</small>
+    </div>
+
+    <div class="kpi-card" (click)="goTo('/mobile/pdf-suite')">
+      <div class="kpi-top">
+        <span class="kpi-label">Documentos PDF</span>
+        <span class="kpi-icon-dot dot-red">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </span>
+      </div>
+      <strong class="kpi-value text-red">{{ fileService.pdfFiles().length }}</strong>
+      <small>{{ fileService.signedFilesCount() }} firmados digitalmente</small>
+    </div>
+
+    <div class="kpi-card" (click)="goTo('/mobile/scanner')">
+      <div class="kpi-top">
+        <span class="kpi-label">Imágenes</span>
+        <span class="kpi-icon-dot dot-blue">
+          <ion-icon name="image-outline"></ion-icon>
+        </span>
+      </div>
+      <strong class="kpi-value text-blue">{{ fileService.imageFiles().length }}</strong>
+      <small>Listas para escáner PDF</small>
+    </div>
+
+    <div class="kpi-card" (click)="goTo('/mobile/repository')">
+      <div class="kpi-top">
+        <span class="kpi-label">Archivados</span>
+        <span class="kpi-icon-dot dot-emerald">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+        </span>
+      </div>
+      <strong class="kpi-value text-emerald">{{ fileService.archivedFiles().length }}</strong>
+      <small>Con deslizamiento táctil</small>
+    </div>
+  </div>
+
+  <!-- Accesos Rápidos (Tarjetas Modernas Slate + Índigo Vibrante #6366f1) -->
+  <ion-card class="surface-card">
+    <ion-card-header>
+      <ion-card-subtitle>ACCESOS RÁPIDOS</ion-card-subtitle>
+      <ion-card-title>¿Qué querés hacer hoy?</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="quick-actions-grid">
+        <button type="button" class="quick-btn cta-indigo" (click)="goTo('/mobile/file-form')">
+          <div class="quick-icon-wrap">
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </div>
+          <strong>Subir / Registrar</strong>
+          <small>Formulario Reactivo</small>
+        </button>
+
+        <button type="button" class="quick-btn" (click)="goTo('/mobile/scanner')">
+          <div class="quick-icon-wrap soft-blue">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <strong>Escáner a PDF</strong>
+          <small>&#64;capacitor/camera</small>
+        </button>
+
+        <button type="button" class="quick-btn" (click)="goTo('/mobile/pdf-suite')">
+          <div class="quick-icon-wrap soft-red">
+            <ion-icon name="construct-outline"></ion-icon>
+          </div>
+          <strong>Suite PDF</strong>
+          <small>Unir, Dividir, Firmar</small>
+        </button>
+
+        <button type="button" class="quick-btn" (click)="goTo('/mobile/repository')">
+          <div class="quick-icon-wrap soft-emerald">
+            <ion-icon name="swap-horizontal-outline"></ion-icon>
+          </div>
+          <strong>Repositorio</strong>
+          <small>Buscar y Convertir</small>
+        </button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Archivos Recientes con Badges e Iconos de Formato Estilizados -->
+  <ion-card class="surface-card">
+    <ion-card-header>
+      <div class="section-row">
+        <div>
+          <ion-card-subtitle>ACTIVIDAD RECIENTE</ion-card-subtitle>
+          <ion-card-title>Últimos Archivos</ion-card-title>
+        </div>
+        <ion-button fill="clear" size="small" routerLink="/mobile/repository">Ver todos</ion-button>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="recent-files-list">
+        @for (f of recentFiles(); track f.id) {
+          <div class="recent-file-row" (click)="openPreview(f)">
+            <div class="recent-file-info">
+              <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado por Formato -->
+              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
+                <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
+                .{{ f.ext | uppercase }}
+              </span>
+
+              <div class="recent-text-wrap">
+                <strong class="recent-title">{{ f.name }}</strong>
+                <div class="recent-meta">
+                  <span class="meta-tag">{{ f.tag || 'General' }}</span>
+                  <span>· {{ fileService.formatBytes(f.size) }}</span>
+                  @if (f.signed) { <span class="meta-pill signed">✍️ Firmado</span> }
+                  @if (f.compressed) { <span class="meta-pill compressed">🗜️ Comprimido</span> }
+                </div>
+              </div>
+            </div>
+
+            <div class="recent-actions" (click)="$event.stopPropagation()">
+              <ion-button size="small" fill="solid" color="primary" (click)="openPreview(f)" title="Vista Previa">
+                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button size="small" fill="clear" color="medium" [href]="f.downloadUrl" [download]="f.name" title="Descargar">
+                <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        }
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Modal de Vista Previa Multiformato -->
+  <app-file-preview-modal
+    [file]="previewFile()"
+    [isOpen]="previewOpen()"
+    (closed)="closePreview()">
+  </app-file-preview-modal>
+</ion-content>

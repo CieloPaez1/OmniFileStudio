@@ -1,0 +1,125 @@
+<div class="container py-5" style="max-width: 800px;">
+  <div class="mb-5 text-center">
+    <h1 class="mb-2" style="color: var(--text-primary); font-weight: 800; font-size: 2.25rem; letter-spacing: -0.025em;">
+      Editar Tarea
+    </h1>
+    <p style="color: var(--text-secondary); font-size: 1.1rem;">
+      Actualiza la estimación, el responsable o el estado de la tarea
+    </p>
+  </div>
+
+  @if (loading()) {
+    <div class="dashboard-card" style="padding: 60px 20px;">
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3 text-muted">Cargando datos de la tarea...</p>
+      </div>
+    </div>
+  } @else {
+    <div class="dashboard-card" style="padding: 40px;">
+      @if (error()) {
+        <div class="alert alert-danger" style="border-radius: 12px; font-weight: 500;">
+          {{ error() }}
+        </div>
+      }
+
+      @if (success()) {
+        <div class="alert alert-success" style="border-radius: 12px; font-weight: 500;">
+          Tarea actualizada con éxito. Redirigiendo...
+        </div>
+      }
+
+      @if (!initialLoadFailed()) {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-2">
+        
+        <div class="mb-4">
+          <label class="form-label">Título de la Tarea *</label>
+          <input 
+            type="text" 
+            formControlName="title" 
+            class="form-control" 
+            [class.is-invalid]="form.get('title')?.invalid && form.get('title')?.touched"
+          >
+          @if (form.get('title')?.errors?.['required'] && form.get('title')?.touched) {
+            <div class="invalid-feedback">El título es requerido.</div>
+          }
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label class="form-label">Horas Estimadas *</label>
+            <input 
+              type="number" 
+              formControlName="estimateHours" 
+              class="form-control" 
+              [class.is-invalid]="form.get('estimateHours')?.invalid && form.get('estimateHours')?.touched"
+              min="1"
+            >
+            @if (form.get('estimateHours')?.invalid && form.get('estimateHours')?.touched) {
+              <div class="invalid-feedback">Debe ingresar al menos 1 hora.</div>
+            }
+          </div>
+          
+          <div class="col-md-6 mb-4">
+            <label class="form-label">Responsable</label>
+            <input 
+              type="text" 
+              formControlName="assignee" 
+              class="form-control"
+              placeholder="Opcional"
+            >
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-5">
+            <label class="form-label">Estado *</label>
+            <select formControlName="status" class="form-select">
+              <option value="TODO">Por Hacer</option>
+              <option value="IN_PROGRESS">En Progreso</option>
+              <option value="DONE">Hecho</option>
+            </select>
+          </div>
+          
+          <div class="col-md-6 mb-5">
+            <label class="form-label">Fecha de Vencimiento</label>
+            <input 
+              type="date" 
+              formControlName="dueDate" 
+              class="form-control"
+            >
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-4" style="border-top: 1px solid #e5e7eb;">
+          <button 
+            type="button" 
+            class="btn-outline px-4 py-2 d-flex align-items-center" 
+            [disabled]="saving()"
+            [routerLink]="['/projects', projectId]"
+          >
+            <svg lucideX style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+            Cancelar
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn-primary px-4 py-2 d-flex align-items-center" 
+            [disabled]="form.invalid || saving()"
+          >
+            @if (saving()) {
+              <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+              Guardando...
+            } @else {
+              <svg lucideSave style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+              Actualizar Tarea
+            }
+          </button>
+        </div>
+      </form>
+      }
+    </div>
+  }
+</div>

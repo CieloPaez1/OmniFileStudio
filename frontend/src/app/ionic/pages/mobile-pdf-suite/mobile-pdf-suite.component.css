@@ -1,0 +1,342 @@
+/* ============================================================================
+   [DISEÑO UX/UI] SUITE PDF CON NAVEGACIÓN "HERO CARDS" & SELECTORES FLOTANTES
+   - Paleta Slate & Índigo vibrante (#6366f1)
+   - Tarjetas táctiles Hero Cards con sombras sutiles y bordes redondeados (20px)
+   ============================================================================ */
+
+.hero-cards-header {
+  margin: 0 0.2rem 1.2rem;
+}
+
+.hero-section-kicker {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-bottom: 0.6rem;
+  padding-left: 0.25rem;
+}
+
+.hero-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0.7rem;
+}
+
+.hero-nav-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0.95rem;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1.5px solid rgba(226, 232, 240, 0.75);
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    0 4px 14px -2px rgba(15, 23, 42, 0.04),
+    0 2px 6px -2px rgba(15, 23, 42, 0.02);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.hero-nav-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(99, 102, 241, 0.16);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.hero-nav-card.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 12px 26px -6px rgba(99, 102, 241, 0.42);
+  transform: translateY(-2px);
+}
+
+.hero-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  background: #eef2ff;
+  color: #6366f1;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.hero-nav-card.hero-rose .hero-icon-badge {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.hero-nav-card.hero-emerald .hero-icon-badge {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.hero-nav-card.hero-violet .hero-icon-badge {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.hero-nav-card.hero-blue .hero-icon-badge {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.hero-nav-card.active .hero-icon-badge {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+.hero-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.hero-card-copy strong {
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-card-copy small {
+  font-size: 0.71rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-nav-card.active .hero-card-copy small {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.hero-active-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+/* Superficie Principal de cada Herramienta */
+.suite-surface-card {
+  margin: 0 0.2rem 1.25rem;
+  border-radius: 22px;
+}
+
+.suite-help {
+  font-size: 0.84rem;
+  color: #64748b;
+  margin-bottom: 0.85rem;
+}
+
+/* Selector táctil de documentos PDF para Unir */
+.selectable-files-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+}
+
+.selectable-file-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.selectable-file-pill:hover {
+  background: #ffffff;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.selectable-file-pill.selected {
+  background: #eef2ff;
+  border-color: #6366f1;
+  box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.22);
+}
+
+.selectable-file-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.selectable-file-text strong {
+  font-size: 0.86rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectable-file-text small {
+  font-size: 0.73rem;
+  color: #64748b;
+}
+
+.order-badge {
+  background: #6366f1;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+}
+
+/* Campos y Selectores Flotantes Estilizados */
+.modern-field-group {
+  margin-bottom: 1rem;
+}
+
+.modern-field-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 0.45rem;
+  letter-spacing: 0.01em;
+}
+
+.modern-input-item {
+  --background: #f8fafc;
+  --border-radius: 14px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 14px;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+}
+
+.floating-pill-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem;
+}
+
+.floating-pill-selector.three-cols {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.selector-card-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.selector-card-option strong {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.selector-card-option small {
+  font-size: 0.69rem;
+  color: #64748b;
+}
+
+.selector-card-option.selected {
+  background: #eef2ff;
+  border-color: #6366f1;
+  color: #312e81;
+  box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.22);
+}
+
+.selector-card-option.selected small {
+  color: #4f46e5;
+}
+
+/* Píldoras de formato en el Conversor */
+.format-target-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.target-fmt-pill {
+  padding: 0.55rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.target-fmt-pill.selected {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 6px 16px -3px rgba(99, 102, 241, 0.38);
+  transform: translateY(-1px);
+}
+
+/* Pad de Firma Digital */
+.signature-pad-wrap {
+  margin: 1rem 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: 18px;
+  background: #f8fafc;
+}
+
+.signature-pad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 0.45rem;
+}
+
+.signature-canvas {
+  width: 100%;
+  max-width: 320px;
+  height: 120px;
+  border: 2px dashed rgba(99, 102, 241, 0.55);
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: crosshair;
+  display: block;
+  margin: 0 auto;
+  touch-action: none;
+}
+
+.cta-action-btn {
+  margin-top: 1.1rem;
+  --border-radius: 14px;
+  font-weight: 700;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "omnifile-studio-tp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OmniFile Studio - Gestor Universal de Archivos, Escáner de Cámara y Suite PDF (Ionic 9 + Angular Standalone + Capacitor 8)",
+  "scripts": {
+    "start": "node start-all.cjs",
+    "ionic": "npm --prefix frontend run ionic",
+    "api": "npm --prefix frontend run api",
+    "build": "npm --prefix frontend run build",
+    "test": "npm --prefix frontend test -- --watch=false",
+    "sync:android": "npx --prefix frontend cap sync android"
+  }
+}

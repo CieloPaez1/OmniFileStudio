@@ -1,0 +1,258 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestor & Suite PDF</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/files" title="Ir a vista Web">
+        <ion-icon name="desktop-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [value]="activeSegment()" (ionChange)="onSegmentChange($event)">
+      <ion-segment-button value="library">
+        <ion-label>Archivos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="convert">
+        <ion-label>Convertir</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="camera">
+        <ion-label>Cámara PDF</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pdf-tools">
+        <ion-label>Unir/Dividir</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ==================== 1. BIBLIOTECA DE ARCHIVOS ==================== -->
+  @if (activeSegment() === 'library') {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>SUBIR ARCHIVO CUALQUIERA</ion-card-subtitle>
+        <ion-card-title>Biblioteca ({{ files().length }})</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <label class="mobile-upload-box">
+          <ion-icon name="cloud-upload-outline" style="font-size: 2rem;"></ion-icon>
+          <span>Tocá para subir cualquier archivo</span>
+          <input type="file" multiple hidden (change)="onMobileFileUpload($event)" />
+        </label>
+      </ion-card-content>
+    </ion-card>
+
+    @for (f of files(); track f.id) {
+      <ion-card>
+        <ion-card-header>
+          <div class="mobile-file-head">
+            <ion-badge color="primary">.{{ f.ext | uppercase }}</ion-badge>
+            <ion-chip color="secondary">{{ f.origin }}</ion-chip>
+          </div>
+          <ion-card-title style="font-size: 1rem;">{{ f.name }}</ion-card-title>
+          <ion-card-subtitle>
+            {{ fileService.formatBytes(f.size) }}
+            @if (f.pageCount) { · {{ f.pageCount }} págs. }
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="mobile-file-actions">
+            <ion-button size="small" fill="outline" (click)="prepareConvert(f)">
+              <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+              Convertir
+            </ion-button>
+            <ion-button size="small" fill="solid" color="primary" [href]="f.downloadUrl">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Descargar
+            </ion-button>
+            <ion-button size="small" fill="clear" color="danger" (click)="deleteFile(f)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
+  }
+
+  <!-- ==================== 2. CONVERSOR UNIVERSAL ==================== -->
+  @if (activeSegment() === 'convert') {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>CAMBIAR FORMATO</ion-card-subtitle>
+        <ion-card-title>Conversor Universal</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Archivo de origen</ion-label>
+          <ion-select
+            [ngModel]="selectedFileIdForConvert()"
+            (ngModelChange)="selectedFileIdForConvert.set($event)"
+            placeholder="Seleccionar archivo">
+            @for (f of files(); track f.id) {
+              <ion-select-option [value]="f.id">{{ f.name }} (.{{ f.ext }})</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Formato de destino</ion-label>
+          <ion-select
+            [ngModel]="selectedTargetFormat()"
+            (ngModelChange)="selectedTargetFormat.set($event)">
+            @for (fmt of availableTargetsForSelected(); track fmt) {
+              <ion-select-option [value]="fmt">.{{ fmt | uppercase }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          [disabled]="converting()"
+          (click)="runMobileConversion()">
+          @if (converting()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            Convertir Ahora
+          }
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 3. CÁMARA NATIVA CAPACITOR A PDF ==================== -->
+  @if (activeSegment() === 'camera') {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>CAPACITOR CAMERA + FILESYSTEM</ion-card-subtitle>
+        <ion-card-title>Sacar Fotos y Hacerlas PDF</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="secondary" (click)="openCameraSheet()">
+          <ion-icon name="camera-outline" slot="start"></ion-icon>
+          Capturar Foto o Elegir de Galería
+        </ion-button>
+
+        @if (capturedPhotos().length > 0) {
+          <div class="mobile-photo-grid">
+            @for (p of capturedPhotos(); track p.id; let idx = $index) {
+              <div class="mobile-photo-item">
+                <img [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
+                <div class="mobile-photo-bar">
+                  <span>Pág. {{ idx + 1 }}</span>
+                  <button type="button" (click)="rotateCapturedPhoto(idx)">↻</button>
+                  <button type="button" (click)="removeCapturedPhoto(idx)">✖</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <ion-item class="ion-margin-top">
+          <ion-label position="stacked">Nombre del PDF</ion-label>
+          <ion-input [ngModel]="cameraPdfTitle()" (ngModelChange)="cameraPdfTitle.set($event)"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Tamaño de página</ion-label>
+          <ion-select [ngModel]="cameraPageSize()" (ngModelChange)="cameraPageSize.set($event)">
+            <ion-select-option value="A4">A4</ion-select-option>
+            <ion-select-option value="LETTER">Carta</ion-select-option>
+            <ion-select-option value="FIT">Ajustar a foto</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="ion-margin-top"
+          [disabled]="generatingPdf() || capturedPhotos().length === 0"
+          (click)="generateMobileCameraPdf()">
+          Generar PDF ({{ capturedPhotos().length }} pág.)
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 4. UNIR Y DIVIDIR PDFs ==================== -->
+  @if (activeSegment() === 'pdf-tools') {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>COMBINAR DOCUMENTOS</ion-card-subtitle>
+        <ion-card-title>Unir PDFs</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p style="font-size: 0.85rem; margin-bottom: 0.5rem;">Tocá los PDFs en el orden en que querés unirlos:</p>
+        @for (pdf of pdfFiles(); track pdf.id) {
+          <ion-chip
+            [color]="mergeSelectedIds().includes(pdf.id) ? 'primary' : 'medium'"
+            (click)="toggleMergePdfSelection(pdf.id)">
+            {{ pdf.name }} ({{ pdf.pageCount || '?' }}p)
+          </ion-chip>
+        }
+
+        <ion-item class="ion-margin-top">
+          <ion-label position="stacked">Nombre del PDF unido</ion-label>
+          <ion-input [ngModel]="mergeTitle()" (ngModelChange)="mergeTitle.set($event)"></ion-input>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          [disabled]="processingPdf() || mergeSelectedIds().length < 2"
+          (click)="runMobileMergePdfs()">
+          <ion-icon name="git-merge-outline" slot="start"></ion-icon>
+          Unir {{ mergeSelectedIds().length }} PDFs
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>SEPARAR O EXTRAER PÁGINAS</ion-card-subtitle>
+        <ion-card-title>Dividir PDF</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">PDF a dividir</ion-label>
+          <ion-select [ngModel]="splitFileId()" (ngModelChange)="splitFileId.set($event)">
+            @for (pdf of pdfFiles(); track pdf.id) {
+              <ion-select-option [value]="pdf.id">{{ pdf.name }} ({{ pdf.pageCount || '?' }} págs.)</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Rangos o páginas (ej: 1-2, 4)</ion-label>
+          <ion-input [ngModel]="splitRanges()" (ngModelChange)="splitRanges.set($event)"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Modo</ion-label>
+          <ion-select [ngModel]="splitMode()" (ngModelChange)="splitMode.set($event)">
+            <ion-select-option value="extract-single">Extraer en 1 solo PDF</ion-select-option>
+            <ion-select-option value="split-multiple">Separar en varios PDFs (+ ZIP)</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="secondary"
+          class="ion-margin-top"
+          [disabled]="processingPdf() || !splitFileId()"
+          (click)="runMobileSplitPdf()">
+          <ion-icon name="cut-outline" slot="start"></ion-icon>
+          Dividir / Extraer PDF
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

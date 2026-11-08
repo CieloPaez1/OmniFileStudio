@@ -1,0 +1,566 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+/* ==========================================================================
+   [AVANZADA 3] INTEGRACIÓN SEPARADA DE ESTILOS DE IONIC FRAMEWORK
+   ========================================================================== */
+@import './styles-ionic.css';
+
+/* ==========================================================================
+   PLANIX DESIGN SYSTEM (SaaS Pro - Linear / Jira / Asana / Notion / Monday)
+   ========================================================================== */
+:root {
+  /* LIGHT THEME (Predeterminado - Planix Claro) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-glow: rgba(79, 70, 229, 0.12);
+  --primary-soft: #eef2ff;
+  --primary-soft-text: #4338ca;
+
+  --danger-color: #ef4444;
+  --danger-soft: #fef2f2;
+  --success-color: #10b981;
+  --success-soft: #ecfdf5;
+  --warning-color: #f59e0b;
+  --warning-soft: #fffbeb;
+  --info-color: #0ea5e9;
+
+  --badge-planned-bg: #fef3c7;
+  --badge-planned-text: #92400e;
+  --badge-active-bg: #e0e7ff;
+  --badge-active-text: #3730a3;
+  --badge-closed-bg: #d1fae5;
+  --badge-closed-text: #065f46;
+
+  --status-todo: #f59e0b;
+  --status-progress: #4f46e5;
+  --status-done: #10b981;
+
+  --prio-high-bg: #fee2e2;
+  --prio-high-text: #991b1b;
+  --prio-mid-bg: #fef3c7;
+  --prio-mid-text: #92400e;
+  --prio-low-bg: #d1fae5;
+  --prio-low-text: #065f46;
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --glass-shadow: var(--shadow-sm);
+  --glass-backdrop: none;
+
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-card: 8px;
+  --radius-btn: 6px;
+  --radius-badge: 4px;
+  --hover-translate: none;
+
+  --theme-bg-pattern: none;
+  --theme-bg-size: auto;
+  --theme-blob-display: none;
+}
+
+/* ==========================================================================
+   5 TEMAS PROFESIONALES DE PLANIX
+   ========================================================================== */
+
+/* 1. OSCURO (Versión dark del Claro: grafito neutro, sin negro absoluto) */
+[data-theme="dark"],
+body.dark,
+[data-mode="dark"] {
+  --bg-primary: #0b0f19;
+  --bg-secondary: #131a29;
+  --card-bg: #111827;
+  --card-border: #1f293d;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --border-color: #1f293d;
+  --border-strong: #334155;
+
+  --primary-color: #6366f1;
+  --primary-hover: #818cf8;
+  --primary-glow: rgba(99, 102, 241, 0.18);
+  --primary-soft: rgba(99, 102, 241, 0.15);
+  --primary-soft-text: #c7d2fe;
+
+  --danger-color: #f87171;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  --success-color: #34d399;
+  --success-soft: rgba(16, 185, 129, 0.15);
+  --warning-color: #fbbf24;
+  --warning-soft: rgba(245, 158, 11, 0.15);
+
+  --badge-planned-bg: rgba(245, 158, 11, 0.15);
+  --badge-planned-text: #fde68a;
+  --badge-active-bg: rgba(99, 102, 241, 0.18);
+  --badge-active-text: #c7d2fe;
+  --badge-closed-bg: rgba(16, 185, 129, 0.15);
+  --badge-closed-text: #a7f3d0;
+
+  --status-todo: #fbbf24;
+  --status-progress: #818cf8;
+  --status-done: #34d399;
+
+  --prio-high-bg: rgba(239, 68, 68, 0.15);
+  --prio-high-text: #fca5a5;
+  --prio-mid-bg: rgba(245, 158, 11, 0.15);
+  --prio-mid-text: #fde68a;
+  --prio-low-bg: rgba(16, 185, 129, 0.15);
+  --prio-low-text: #a7f3d0;
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+
+  --input-bg: #0f172a;
+  --input-border: #334155;
+}
+
+/* 2. OCÉANO (Azul petróleo / azul profundo sobrio) */
+[data-theme="ocean"] {
+  --bg-primary: #071321;
+  --bg-secondary: #0c1f33;
+  --card-bg: #0d2238;
+  --card-border: #163656;
+  --text-primary: #f0f9ff;
+  --text-secondary: #93c5fd;
+  --text-tertiary: #60a5fa;
+  --border-color: #163656;
+  --border-strong: #1e4974;
+
+  --primary-color: #0284c7;
+  --primary-hover: #38bdf8;
+  --primary-glow: rgba(2, 132, 199, 0.2);
+  --primary-soft: rgba(2, 132, 199, 0.16);
+  --primary-soft-text: #bae6fd;
+
+  --input-bg: #071526;
+  --input-border: #1e4974;
+}
+
+/* 3. ESMERALDA / BOSQUE (Verde oscuro y verde esmeralda neutro) */
+[data-theme="forest"] {
+  --bg-primary: #061710;
+  --bg-secondary: #0c241a;
+  --card-bg: #0d2a1e;
+  --card-border: #164330;
+  --text-primary: #ecfdf5;
+  --text-secondary: #86efac;
+  --text-tertiary: #4ade80;
+  --border-color: #164330;
+  --border-strong: #1c5940;
+
+  --primary-color: #059669;
+  --primary-hover: #10b981;
+  --primary-glow: rgba(5, 150, 105, 0.2);
+  --primary-soft: rgba(5, 150, 105, 0.16);
+  --primary-soft-text: #a7f3d0;
+
+  --input-bg: #071a12;
+  --input-border: #1c5940;
+}
+
+/* 4. VIOLETA / SUNSET (Acento violeta sobrio) */
+[data-theme="sunset"] {
+  --bg-primary: #0f0a1c;
+  --bg-secondary: #17102b;
+  --card-bg: #1c1433;
+  --card-border: #2e2154;
+  --text-primary: #faf5ff;
+  --text-secondary: #d8b4fe;
+  --text-tertiary: #c084fc;
+  --border-color: #2e2154;
+  --border-strong: #44327a;
+
+  --primary-color: #7c3aed;
+  --primary-hover: #9333ea;
+  --primary-glow: rgba(124, 58, 237, 0.2);
+  --primary-soft: rgba(124, 58, 237, 0.16);
+  --primary-soft-text: #e9d5ff;
+
+  --input-bg: #120c24;
+  --input-border: #44327a;
+}
+
+/* 5. MINIMALISTA (Blanco y negro puro) */
+[data-theme="minimal"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f5;
+  --card-bg: #ffffff;
+  --card-border: #e4e4e7;
+  --text-primary: #18181b;
+  --text-secondary: #71717a;
+  --border-color: #e4e4e7;
+  --primary-color: #18181b;
+  --primary-hover: #27272a;
+}
+
+/* Temas heredados para compatibilidad */
+[data-theme="cyberpunk"] {
+  --bg-primary: #090014;
+  --bg-secondary: #17002b;
+  --card-bg: #150027;
+  --card-border: #3b0764;
+  --text-primary: #00ffcc;
+  --text-secondary: #e879f9;
+  --border-color: #3b0764;
+  --primary-color: #d946ef;
+}
+[data-theme="crimson"] {
+  --bg-primary: #0f0505;
+  --bg-secondary: #1a0a0a;
+  --card-bg: #1f0b0b;
+  --card-border: #3d1414;
+  --text-primary: #fef2f2;
+  --text-secondary: #fca5a5;
+  --border-color: #3d1414;
+  --primary-color: #dc2626;
+}
+[data-theme="cute"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --primary-color: #4f46e5;
+}
+
+/* ==========================================================================
+   BASE & TYPOGRAPHY
+   ========================================================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+p {
+  margin: 0;
+}
+
+/* Scrollbar limpia y delgada */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ==========================================================================
+   CARDS & SURFACES (Clean SaaS)
+   ========================================================================== */
+.dashboard-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* ==========================================================================
+   BUTTONS (Linear / Jira style: solid, crisp, 6px radius)
+   ========================================================================== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--primary-color);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-primary.outline {
+  background-color: var(--card-bg);
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color);
+}
+
+.btn-primary.outline:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+.btn-outline.danger {
+  color: var(--danger-color);
+}
+
+.btn-outline.danger:hover:not(:disabled) {
+  background-color: var(--danger-soft);
+  border-color: var(--danger-color);
+}
+
+.btn-icon-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.btn-icon-small:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-icon-small.danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+/* ==========================================================================
+   BADGES & STATUS PILLS (Monday / Jira / Asana)
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-badge);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge.todo, .badge.planned { background: var(--badge-planned-bg); color: var(--badge-planned-text); }
+.badge.progress, .badge.active { background: var(--badge-active-bg); color: var(--badge-active-text); }
+.badge.done, .badge.closed { background: var(--badge-closed-bg); color: var(--badge-closed-text); }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: var(--radius-badge);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.status-todo { background: var(--badge-planned-bg); color: var(--badge-planned-text); }
+.status-badge.status-progress,
+.status-badge.status-active { background: var(--badge-active-bg); color: var(--badge-active-text); }
+.status-badge.status-done { background: var(--badge-closed-bg); color: var(--badge-closed-text); }
+
+/* Status select interactivo */
+.status-select {
+  appearance: none;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-badge);
+  padding: 4px 24px 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  transition: all 0.15s ease;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.status-select.todo, .status-select.planned { background-color: var(--badge-planned-bg); color: var(--badge-planned-text); }
+.status-select.progress, .status-select.active, .status-select.in_progress { background-color: var(--badge-active-bg); color: var(--badge-active-text); }
+.status-select.done, .status-select.closed { background-color: var(--badge-closed-bg); color: var(--badge-closed-text); }
+
+/* ==========================================================================
+   FORM CONTROLS
+   ========================================================================== */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="datetime-local"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+label, .form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* ==========================================================================
+   TABLES & LISTS (Structured SaaS)
+   ========================================================================== */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.task-row:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.task-info strong {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.task-info span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary-color);
+  margin-bottom: 4px;
+}

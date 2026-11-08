@@ -1,0 +1,85 @@
+<aside class="sidebar" [class.collapsed]="collapsed()">
+  <!-- LOGO OMNIFILE STUDIO -->
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <svg lucideFolderKanban class="logo-svg"></svg>
+    </div>
+
+    @if (!collapsed()) {
+      <div class="logo-details">
+        <span class="logo-brand">OMNIFILE</span>
+        <span class="logo-tag">Gestor & Suite PDF</span>
+      </div>
+    }
+
+    <button
+      class="collapse-btn"
+      type="button"
+      (click)="toggle()"
+      [title]="collapsed() ? 'Expandir barra lateral' : 'Colapsar barra lateral'">
+      {{ collapsed() ? '→' : '←' }}
+    </button>
+  </div>
+
+  <!-- BOTONES DE ACCIÓN RÁPIDA -->
+  <div class="sidebar-quick-actions" *ngIf="!collapsed()">
+    <a routerLink="/mobile/file-form" class="btn-sidebar-action primary">
+      <svg lucidePlus style="width: 15px; height: 15px;"></svg>
+      <span>Subida Inteligente (IA)</span>
+    </a>
+    <a routerLink="/mobile/dashboard" class="btn-sidebar-action secondary">
+      <svg lucidePlus style="width: 15px; height: 15px;"></svg>
+      <span>App Ionic (4 Pestañas)</span>
+    </a>
+  </div>
+
+  <!-- NAVEGACIÓN UNIFICADA DE OMNIFILE STUDIO -->
+  <nav class="sidebar-nav">
+    <div class="nav-section-title" *ngIf="!collapsed()">OMNIFILE STUDIO</div>
+
+    <a routerLink="/files" routerLinkActive="active" class="nav-item" title="Panel Web Completo">
+      <svg lucideHome class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>Panel Web Completo</span>
+      }
+    </a>
+
+    <a routerLink="/mobile/dashboard" routerLinkActive="active" class="nav-item" title="Tab 1: Dashboard">
+      <svg lucideBarChart3 class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>1. Dashboard</span>
+      }
+    </a>
+
+    <a routerLink="/mobile/repository" routerLinkActive="active" class="nav-item" title="Tab 2: Repositorio">
+      <svg lucideFolderKanban class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>2. Repositorio de Archivos</span>
+      }
+    </a>
+
+    <a routerLink="/mobile/scanner" routerLinkActive="active" class="nav-item" title="Tab 3: Escáner Cámara a PDF">
+      <svg lucideCheckSquare class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>3. Escáner Cámara a PDF</span>
+      }
+    </a>
+
+    <a routerLink="/mobile/pdf-suite" routerLinkActive="active" class="nav-item" title="Tab 4: Suite PDF">
+      <svg lucideList class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>4. Suite PDF (Unir/Firmar)</span>
+      }
+    </a>
+  </nav>
+
+  <!-- PIE DE SIDEBAR -->
+  <div class="sidebar-footer">
+    <a routerLink="/mobile/file-form" class="nav-item" title="Formulario Reactivo">
+      <svg lucideSettings class="nav-icon"></svg>
+      @if (!collapsed()) {
+        <span>Formulario Reactivo</span>
+      }
+    </a>
+  </div>
+</aside>

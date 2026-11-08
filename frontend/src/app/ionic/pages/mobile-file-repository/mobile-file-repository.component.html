@@ -1,0 +1,284 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Repositorio ({{ filteredFiles().length }})</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleViewMode()" title="Cambiar Vista Lista/Cuadrícula">
+        <ion-icon [name]="viewMode() === 'list' ? 'grid-outline' : 'list-outline'" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Buscador instantáneo estilizado -->
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar
+      placeholder="Buscar por nombre, extensión o nota..."
+      [value]="searchQuery()"
+      (ionInput)="onSearchInput($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- [REQUISITO 6] Pull-to-refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingText="Actualizando repositorio..."></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Barra de subida rápida + acceso al Formulario Reactivo -->
+  <div class="repo-top-actions">
+    <ion-button size="small" color="primary" (click)="goToReactiveForm()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Subida Inteligente (Formulario Reactivo)
+    </ion-button>
+
+    <label class="upload-pill-btn">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+      <span>Auto-Subida Directa</span>
+      <input type="file" multiple hidden (change)="onDirectUpload($event)" />
+    </label>
+  </div>
+
+  <!-- Filtros por etiquetas (Píldoras flotantes Slate/Indigo) -->
+  <div class="tags-bar">
+    @for (t of tags; track t) {
+      <button
+        type="button"
+        class="tag-filter-pill"
+        [class.active]="selectedTag() === t"
+        [class.urgent]="t === 'Urgente' && selectedTag() === t"
+        (click)="selectedTag.set(t)">
+        {{ t }}
+      </button>
+    }
+  </div>
+
+  <!-- [MEJORA UX #5] Selector Flotante Estilizado de Conversión Rápida (Sin menú nativo antiguo) -->
+  @if (convertingFile(); as cf) {
+    <ion-card class="convert-floating-card">
+      <ion-card-header>
+        <div class="convert-head-row">
+          <div>
+            <ion-card-subtitle>CONVERSOR RÁPIDO EN CLIENTE</ion-card-subtitle>
+            <ion-card-title class="convert-card-title">{{ cf.name }}</ion-card-title>
+          </div>
+          <ion-button fill="clear" size="small" color="medium" (click)="convertingFile.set(null)">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <span class="pill-selector-label">Elegí el formato de destino:</span>
+        <div class="floating-format-pills">
+          @for (fmt of cf.availableTargets; track fmt) {
+            <button
+              type="button"
+              class="format-option-pill"
+              [class.selected]="targetFormat() === fmt"
+              (click)="targetFormat.set(fmt)">
+              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(fmt)">
+                <ion-icon [name]="getFormatIcon(fmt)"></ion-icon>
+                .{{ fmt | uppercase }}
+              </span>
+            </button>
+          }
+        </div>
+        <div class="convert-banner-btns">
+          <ion-button size="small" color="primary" (click)="confirmQuickConvert()">
+            <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+            Convertir ahora a .{{ targetFormat() | uppercase }}
+          </ion-button>
+          <ion-button size="small" fill="clear" color="medium" (click)="convertingFile.set(null)">
+            Cancelar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <p class="sliding-hint">
+    💡 <strong>Tip:</strong> Tocá un archivo para abrir su <strong>Vista Previa</strong> o deslizalo (<code>ion-item-sliding</code>) para <strong>Archivar</strong>, <strong>Compartir</strong> o <strong>Convertir</strong>.
+  </p>
+
+  <!-- ==================== VISTA LISTA CON ION-ITEM-SLIDING ==================== -->
+  @if (viewMode() === 'list') {
+    <ion-list class="repo-modern-list">
+      @for (f of filteredFiles(); track f.id) {
+        <ion-item-sliding #slidingItem class="repo-sliding-card">
+          <!-- Opciones al deslizar a la derecha (Start) -->
+          <ion-item-options side="start">
+            <ion-item-option color="secondary" (click)="archiveFromSliding(f, slidingItem)">
+              <ion-icon name="archive-outline" slot="start"></ion-icon>
+              {{ f.archived ? 'Restaurar' : 'Archivar' }}
+            </ion-item-option>
+            <ion-item-option color="success" (click)="saveToDeviceStorage(f, slidingItem)">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Filesystem
+            </ion-item-option>
+          </ion-item-options>
+
+          <ion-item button detail="false" (click)="openPreview(f)">
+            <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado por Formato -->
+            <span
+              slot="start"
+              class="file-format-badge"
+              [ngClass]="getFormatBadgeClass(f.ext, f.category)">
+              <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
+              .{{ f.ext | uppercase }}
+            </span>
+
+            <ion-label>
+              <h2 class="file-row-title">{{ f.name }}</h2>
+              <p class="file-row-meta">
+                <span class="row-tag-chip">{{ f.tag || 'Trabajo' }}</span>
+                <span>· {{ fileService.formatBytes(f.size) }}</span>
+                @if (f.pageCount) { <span>· {{ f.pageCount }} págs.</span> }
+                @if (f.signed) { <span class="status-mini signed">✍️ Firmado</span> }
+                @if (f.compressed) { <span class="status-mini compressed">🗜️ Comprimido</span> }
+              </p>
+              @if (f.description) {
+                <p class="item-desc">{{ f.description }}</p>
+              }
+            </ion-label>
+
+            <!-- Botón de Vista Previa del Archivo -->
+            <ion-button
+              slot="end"
+              fill="solid"
+              color="primary"
+              size="small"
+              (click)="$event.stopPropagation(); openPreview(f)"
+              title="Vista Previa del Archivo">
+              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <!-- Botón de Acciones Rápidas Contextuales (UX/UI) -->
+            <ion-button
+              slot="end"
+              fill="outline"
+              color="primary"
+              size="small"
+              (click)="$event.stopPropagation(); openContextualActions(f)"
+              title="Acciones Rápidas Contextuales">
+              <ion-icon name="flash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <!-- Botón Compartir Nativamente (Web Share API / Sistema) -->
+            <ion-button
+              slot="end"
+              fill="clear"
+              color="primary"
+              size="small"
+              (click)="$event.stopPropagation(); shareFileNatively(f)"
+              title="Compartir archivo nativamente">
+              <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <!-- Botón Enviar por WhatsApp -->
+            <ion-button
+              slot="end"
+              fill="clear"
+              color="success"
+              size="small"
+              (click)="$event.stopPropagation(); shareFileViaWhatsApp(f)"
+              title="Compartir por WhatsApp">
+              <ion-icon name="logo-whatsapp" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <ion-button
+              slot="end"
+              fill="clear"
+              color="medium"
+              size="small"
+              (click)="$event.stopPropagation()"
+              [href]="f.downloadUrl"
+              [download]="f.name">
+              <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- Opciones al deslizar a la izquierda (End) -->
+          <ion-item-options side="end">
+            <ion-item-option color="primary" (click)="shareFileNatively(f, slidingItem)">
+              <ion-icon name="share-social-outline" slot="start"></ion-icon>
+              Compartir
+            </ion-item-option>
+            <ion-item-option color="tertiary" (click)="openQuickConvert(f, slidingItem)">
+              <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+              Convertir
+            </ion-item-option>
+            <ion-item-option color="danger" expandable (click)="deleteFromSliding(f, slidingItem)">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              Borrar
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  } @else {
+    <!-- ==================== VISTA CUADRÍCULA (GRID) ==================== -->
+    <div class="repo-grid">
+      @for (f of filteredFiles(); track f.id) {
+        <ion-card class="grid-file-card" (click)="openPreview(f)">
+          <ion-card-header>
+            <div class="grid-head">
+              <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado -->
+              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
+                <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
+                .{{ f.ext | uppercase }}
+              </span>
+              <span class="grid-tag-pill">{{ f.tag || 'Trabajo' }}</span>
+            </div>
+            <ion-card-title class="grid-title">{{ f.name }}</ion-card-title>
+            <ion-card-subtitle>{{ fileService.formatBytes(f.size) }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="grid-actions" (click)="$event.stopPropagation()">
+              <ion-button size="small" fill="solid" color="primary" (click)="openPreview(f)">
+                <ion-icon name="eye-outline" slot="start"></ion-icon>
+                Ver
+              </ion-button>
+              <ion-button size="small" fill="outline" color="primary" (click)="openContextualActions(f)">
+                <ion-icon name="flash-outline" slot="start"></ion-icon>
+                Acciones
+              </ion-button>
+              <ion-button size="small" fill="clear" color="success" (click)="shareFileNatively(f)" title="Compartir">
+                <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button size="small" fill="clear" color="medium" [href]="f.downloadUrl" [download]="f.name">
+                <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button size="small" fill="clear" color="danger" (click)="deleteFromSliding(f)">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+  }
+
+  <!-- Modal de Vista Previa Multiformato (PDF, Imagen, CSV, JSON, Texto) -->
+  <app-file-preview-modal
+    [file]="previewFile()"
+    [isOpen]="previewOpen()"
+    (closed)="closePreview()"
+    (openActionsRequested)="openActionsFromPreview($event)">
+  </app-file-preview-modal>
+
+  <!-- Componente UX/UI de Acciones Rápidas Contextuales (Bottom Sheet + Action Sheet) -->
+  <app-contextual-quick-actions
+    [file]="quickActionFile()"
+    [isOpen]="quickActionsOpen()"
+    (closed)="closeContextualActions()">
+  </app-contextual-quick-actions>
+
+  <!-- Botón flotante para abrir el Formulario Reactivo -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="goToReactiveForm()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

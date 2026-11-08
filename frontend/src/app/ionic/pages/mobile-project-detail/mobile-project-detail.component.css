@@ -1,0 +1,320 @@
+.mobile-viewport {
+  --background: transparent;
+}
+
+.offline-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.loading-box,
+.empty-tasks-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--text-muted, #64748b);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.project-hero-card {
+  margin: 14px 16px;
+  border-radius: 22px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.92));
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+}
+
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.progress-pill {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--ion-color-primary, #6366f1);
+  background: rgba(99, 102, 241, 0.12);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.15);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 0.35s ease;
+}
+
+.dates-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--text-secondary, #475569);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.stat-box strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.stat-box span {
+  font-size: 0.74rem;
+  color: var(--text-muted, #64748b);
+}
+
+.actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.add-task-btn,
+.share-project-btn {
+  --border-radius: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ==========================================================================
+   SECCIÓN ARCHIVOS Y DOCUMENTOS ADJUNTOS
+   ========================================================================== */
+.attachments-section {
+  margin: 16px 16px 12px;
+}
+
+.attachments-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.attachments-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attachments-title-wrap h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.title-icon {
+  font-size: 1.25rem;
+  color: var(--ion-color-primary, #6366f1);
+}
+
+.attachment-count-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--ion-color-primary, #6366f1);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.empty-attachments-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  text-align: center;
+  border: 2px dashed rgba(99, 102, 241, 0.28);
+  border-radius: 18px;
+  background: rgba(99, 102, 241, 0.03);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.empty-attachments-box:active {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.empty-att-icon {
+  font-size: 2.2rem;
+  color: var(--ion-color-primary, #6366f1);
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.empty-attachments-box p {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary, #0f172a);
+}
+
+.empty-attachments-box small {
+  font-size: 0.78rem;
+  color: var(--text-muted, #64748b);
+  max-width: 260px;
+}
+
+.attachments-list {
+  margin: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+}
+
+.attachment-item {
+  --padding-start: 12px;
+  --inner-padding-end: 8px;
+}
+
+.file-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.file-icon-badge[data-type="pdf"] {
+  background: rgba(239, 68, 68, 0.16);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.file-icon-badge[data-type="excel"] {
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.file-icon-badge[data-type="powerpoint"] {
+  background: rgba(249, 115, 22, 0.16);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.file-icon-badge[data-type="word"] {
+  background: rgba(59, 130, 246, 0.16);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.file-icon-badge[data-type="image"] {
+  background: rgba(139, 92, 246, 0.16);
+  color: #8b5cf6;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.file-icon-badge[data-type="other"] {
+  background: rgba(107, 114, 128, 0.16);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.file-info-label {
+  cursor: pointer;
+}
+
+.file-info-label h2 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
+}
+
+.file-info-label p {
+  font-size: 0.74rem;
+  color: var(--text-muted, #64748b);
+}
+
+.tasks-section-header {
+  padding: 10px 20px 2px;
+}
+
+.tasks-section-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.segment-wrapper {
+  padding: 6px 16px;
+}
+
+.project-tasks-list {
+  margin-bottom: 90px;
+  border-radius: 18px;
+}
+
+.task-done h2 {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.project-fab {
+  margin-bottom: 10px;
+  margin-right: 6px;
+}

@@ -1,0 +1,158 @@
+<div class="reports-page" id="pdfContainer">
+  <header class="reports-header">
+    <div>
+      <p>Reportes</p>
+      <h1>Estado general del trabajo</h1>
+    </div>
+    <div class="header-actions" style="display: flex; gap: 12px;" data-html2canvas-ignore="true">
+      <button class="btn-primary outline" (click)="exportToPDF()">
+        <svg lucideDownload></svg>
+        Descargar PDF
+      </button>
+      <a routerLink="/reports/project" class="btn-primary">
+        <svg lucideBarChart3></svg>
+        Reporte por Proyecto
+      </a>
+    </div>
+  </header>
+
+  <section class="dashboard-grid top-grid">
+    <article class="metric-card main-metric">
+      <div class="metric-info">
+        <span class="label">Avance Global de Tareas</span>
+        <strong>{{ taskProgress() }}%</strong>
+      </div>
+      <div class="progress-track">
+        <div [style.width.%]="taskProgress()"></div>
+      </div>
+      <div class="metric-details">
+        <div class="detail-item">
+          <svg lucideCheckCircle class="icon-done"></svg>
+          <strong>{{ doneTasks() }}</strong>
+          <span>Hechas</span>
+        </div>
+        <div class="detail-item">
+          <svg lucideListTodo class="icon-progress"></svg>
+          <strong>{{ inProgressTasks() }}</strong>
+          <span>En proceso</span>
+        </div>
+        <div class="detail-item">
+          <svg lucideAlertTriangle class="icon-pending"></svg>
+          <strong>{{ pendingTasks() }}</strong>
+          <span>Por hacer</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="metric-card highlight-card">
+      <div class="metric-info">
+        <span class="label">Horas Invertidas</span>
+        <div class="hours-ratio">
+          <strong>{{ doneHours() }}</strong>
+          <span>/ {{ estimatedHours() }} hs</span>
+        </div>
+      </div>
+      <p class="card-note">Horas de tareas completadas respecto al total estimado en toda la plataforma.</p>
+    </article>
+  </section>
+
+  <section class="dashboard-grid charts-grid">
+    <article class="chart-card">
+      <div class="card-header">
+        <div class="icon-wrapper project-icon"><svg lucideBriefcase></svg></div>
+        <h2>Distribución de Proyectos</h2>
+      </div>
+      <div class="chart-content">
+        <div class="chart-container">
+          <canvas #projectChart></canvas>
+          <div class="chart-center">
+            <strong>{{ totalProjects() }}</strong>
+            <span>Total</span>
+          </div>
+        </div>
+        <div class="legend-list">
+          <div class="legend-item">
+            <span class="dot bg-slate"></span>
+            <span>Planificados</span>
+            <strong>{{ plannedProjects() }}</strong>
+          </div>
+          <div class="legend-item">
+            <span class="dot bg-blue"></span>
+            <span>En Proceso</span>
+            <strong>{{ activeProjects() }}</strong>
+          </div>
+          <div class="legend-item">
+            <span class="dot bg-green"></span>
+            <span>Terminados</span>
+            <strong>{{ closedProjects() }}</strong>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="chart-card">
+      <div class="card-header">
+        <div class="icon-wrapper task-icon"><svg lucidePieChart></svg></div>
+        <h2>Distribución de Tareas</h2>
+      </div>
+      <div class="chart-content">
+        <div class="chart-container">
+          <canvas #taskChart></canvas>
+          <div class="chart-center">
+            <strong>{{ totalTasks() }}</strong>
+            <span>Total</span>
+          </div>
+        </div>
+        <div class="legend-list">
+          <div class="legend-item">
+            <span class="dot bg-yellow border-yellow"></span>
+            <span>Por Hacer</span>
+            <strong>{{ pendingTasks() }}</strong>
+          </div>
+          <div class="legend-item">
+            <span class="dot bg-blue border-blue"></span>
+            <span>En Proceso</span>
+            <strong>{{ inProgressTasks() }}</strong>
+          </div>
+          <div class="legend-item">
+            <span class="dot bg-green border-green"></span>
+            <span>Terminadas</span>
+            <strong>{{ doneTasks() }}</strong>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="alerts-section">
+    <article class="alerts-card">
+      <div class="card-header">
+        <div class="icon-wrapper alert-icon"><svg lucideAlertTriangle></svg></div>
+        <h2>Alertas del Sistema</h2>
+      </div>
+      <div class="alerts-list">
+        <div class="alert-item" routerLink="/projects" [queryParams]="{filter: 'empty'}" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+          <div class="alert-info">
+            <strong>Proyectos vacíos</strong>
+            <span>Proyectos que no tienen tareas asignadas</span>
+          </div>
+          <span class="alert-value" [class.danger]="projectsWithoutTasks() > 0">{{ projectsWithoutTasks() }}</span>
+        </div>
+        <div class="alert-item" routerLink="/tasks/list" [queryParams]="{filter: 'unassigned'}" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+          <div class="alert-info">
+            <strong>Tareas huérfanas</strong>
+            <span>Tareas que no tienen un usuario asignado</span>
+          </div>
+          <span class="alert-value" [class.danger]="unassignedTasks() > 0">{{ unassignedTasks() }}</span>
+        </div>
+        <div class="alert-item" routerLink="/tasks/list" [queryParams]="{filter: 'todo'}" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+          <div class="alert-info">
+            <strong>Cuello de botella</strong>
+            <span>Cantidad de tareas pendientes (TODO) totales</span>
+          </div>
+          <span class="alert-value">{{ pendingTasks() }}</span>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>

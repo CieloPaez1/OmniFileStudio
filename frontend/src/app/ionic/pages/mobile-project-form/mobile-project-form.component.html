@@ -1,0 +1,105 @@
+<!-- =======================================================================
+     [IONIC 9 - CLASES 4 Y 8] FORMULARIO MÓVIL DE PROYECTO + FOTO DE PERFIL
+     ======================================================================= -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="editId() ? '/mobile/projects/' + editId() : '/mobile/projects'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ editId() ? 'Editar Proyecto' : 'Nuevo Proyecto' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding mobile-viewport">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="ionic-reactive-form">
+
+    @if (serverError()) {
+      <div class="error-banner">
+        <ion-note color="danger">{{ serverError() }}</ion-note>
+      </div>
+    }
+
+    <!-- [CLASE 8] Foto de Perfil / Portada del Proyecto con @capacitor/camera -->
+    <div class="project-photo-box" (click)="elegirFotoProyecto()">
+      @if (photoUrl()) {
+        <img [src]="photoUrl()" alt="Foto del proyecto" class="project-photo-preview" />
+      } @else {
+        <div class="project-photo-placeholder">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Tocá para agregar Foto de Perfil del Proyecto</span>
+        </div>
+      }
+      <ion-button type="button" fill="outline" size="small" color="primary">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        {{ photoUrl() ? 'Cambiar Foto del Proyecto' : 'Subir / Tomar Foto del Proyecto' }}
+      </ion-button>
+    </div>
+
+    <!-- Nombre del proyecto -->
+    <ion-item class="form-item">
+      <ion-label position="stacked">Nombre del Proyecto *</ion-label>
+      <ion-input
+        formControlName="name"
+        placeholder="Ej: Rediseño App Móvil">
+      </ion-input>
+    </ion-item>
+    @if (name.touched && name.invalid) {
+      <ion-note color="danger" class="validation-note">
+        El nombre del proyecto es obligatorio (mínimo 3 caracteres).
+      </ion-note>
+    }
+
+    <!-- Descripción -->
+    <ion-item class="form-item">
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea
+        formControlName="description"
+        [rows]="3"
+        placeholder="Describí el objetivo del proyecto...">
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Estado del Proyecto -->
+    <ion-item class="form-item">
+      <ion-label>Estado</ion-label>
+      <ion-select formControlName="status" interface="action-sheet">
+        <ion-select-option value="PLANNED">Planificado</ion-select-option>
+        <ion-select-option value="ACTIVE">En Progreso (Activo)</ion-select-option>
+        <ion-select-option value="CLOSED">Cerrado / Completado</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Fecha de Inicio -->
+    <ion-item class="form-item datetime-item">
+      <ion-label position="stacked">Fecha de Inicio *</ion-label>
+      <ion-datetime
+        formControlName="startDate"
+        presentation="date">
+      </ion-datetime>
+    </ion-item>
+
+    <!-- Fecha de Finalización -->
+    <ion-item class="form-item datetime-item">
+      <ion-label position="stacked">Fecha de Finalización *</ion-label>
+      <ion-datetime
+        formControlName="endDate"
+        presentation="date">
+      </ion-datetime>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      class="ion-margin-top submit-btn"
+      [disabled]="saving()">
+      @if (saving()) {
+        <ion-spinner name="crescent" slot="start"></ion-spinner>
+        Guardando...
+      } @else {
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        {{ editId() ? 'Guardar Cambios' : 'Crear Proyecto' }}
+      }
+    </ion-button>
+
+  </form>
+</ion-content>

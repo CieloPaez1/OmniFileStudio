@@ -1,0 +1,75 @@
+.scanner-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.empty-scanner-box {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-top: 0.85rem;
+  border: 2px dashed var(--border-color, #cbd5e1);
+  border-radius: 12px;
+  color: #64748b;
+}
+
+.empty-scanner-box ion-icon {
+  font-size: 2.3rem;
+  color: var(--ion-color-primary, #4f46e5);
+  margin-bottom: 0.35rem;
+}
+
+.scanner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.scanner-page-card {
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.scanner-img-wrap {
+  height: 115px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scanner-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.2s;
+}
+
+.scanner-page-num {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.scanner-controls {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px;
+  background: #1e293b;
+}
+
+.scanner-controls button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}

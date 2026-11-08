@@ -1,0 +1,145 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Escáner HD a PDF</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>PLUGINS NATIVOS &#64;CAPACITOR/CAMERA + &#64;CAPACITOR/FILESYSTEM</ion-card-subtitle>
+      <ion-card-title>Capturar Fotos HD y Crear PDF Local</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="scanner-btns">
+        <ion-button expand="block" color="primary" (click)="capturePhoto()">
+          <ion-icon name="camera-outline" slot="start"></ion-icon>
+          Tomar Fotografía HD (95%)
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" (click)="openCaptureMenu()">
+          <ion-icon name="image-outline" slot="start"></ion-icon>
+          Elegir Origen (Cámara / Galería)
+        </ion-button>
+      </div>
+
+      @if (photos().length === 0) {
+        <div class="empty-scanner-box">
+          <ion-icon name="camera-outline"></ion-icon>
+          <p>Todavía no hay fotos en la cola. Sacá una o varias fotos para armar las páginas de tu documento PDF local.</p>
+        </div>
+      } @else {
+        <div class="scanner-grid">
+          @for (p of photos(); track p.id; let idx = $index) {
+            <div class="scanner-page-card">
+              <div class="scanner-img-wrap">
+                <img [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
+                <span class="scanner-page-num">Pág. {{ idx + 1 }}</span>
+              </div>
+              <div class="scanner-controls">
+                <button type="button" (click)="movePhoto(idx, -1)" title="Subir">⬅️</button>
+                <button type="button" (click)="rotatePhoto(idx)" title="Rotar 90°">↻</button>
+                <button type="button" (click)="movePhoto(idx, 1)" title="Bajar">➡️</button>
+                <button type="button" (click)="removePhoto(idx)" title="Eliminar">🗑️</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tarjeta del último PDF generado con botones de Compartir Nativamente y WhatsApp -->
+  @if (lastCreatedPdf(); as created) {
+    <ion-card style="border: 1px solid #86efac; background: #f0fdf4;">
+      <ion-card-header>
+        <ion-card-subtitle style="color: #047857;">GUARDADO EN &#64;CAPACITOR/FILESYSTEM (Directory.Data)</ion-card-subtitle>
+        <ion-card-title style="font-size: 1rem;">{{ created.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p style="margin: 0 0 10px; font-size: 0.82rem; color: #065f46;">
+          URI Dispositivo: <code>{{ nativeService.lastSavedUri() }}</code>
+        </p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <ion-button size="small" color="primary" (click)="shareLastPdf()">
+            <ion-icon name="share-social-outline" slot="start"></ion-icon>
+            Compartir Nativo
+          </ion-button>
+
+          <ion-button size="small" color="success" (click)="shareLastPdfWhatsApp()">
+            <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+            Enviar por WhatsApp
+          </ion-button>
+
+          <ion-button size="small" fill="outline" routerLink="/mobile/repository">
+            <ion-icon name="folder-open-outline" slot="start"></ion-icon>
+            Ver en Repositorio
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>AJUSTES DEL DOCUMENTO</ion-card-subtitle>
+      <ion-card-title>Configuración del PDF ({{ photos().length }} págs.)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre normalizado del documento PDF</ion-label>
+        <ion-input
+          [ngModel]="pdfTitle()"
+          (ngModelChange)="pdfTitle.set($event)"
+          placeholder="Ej: Factura_2026-11-08">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Etiqueta / Categoría</ion-label>
+        <ion-select [ngModel]="selectedTag()" (ngModelChange)="selectedTag.set($event)">
+          <ion-select-option value="Facturas">Facturas</ion-select-option>
+          <ion-select-option value="Estudio">Estudio</ion-select-option>
+          <ion-select-option value="Trabajo">Trabajo</ion-select-option>
+          <ion-select-option value="Personal">Personal</ion-select-option>
+          <ion-select-option value="Legal">Legal</ion-select-option>
+          <ion-select-option value="Urgente">Urgente</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tamaño de página</ion-label>
+        <ion-select [ngModel]="pageSize()" (ngModelChange)="pageSize.set($event)">
+          <ion-select-option value="A4">A4 Estándar</ion-select-option>
+          <ion-select-option value="LETTER">Carta (Letter)</ion-select-option>
+          <ion-select-option value="FIT">Ajustar a la imagen</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Orientación</ion-label>
+        <ion-select [ngModel]="orientation()" (ngModelChange)="orientation.set($event)">
+          <ion-select-option value="portrait">Vertical</ion-select-option>
+          <ion-select-option value="landscape">Horizontal</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        color="primary"
+        class="ion-margin-top"
+        [disabled]="generating() || photos().length === 0"
+        (click)="generatePdf()">
+        @if (generating()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          Convertir Fotos a PDF y Guardar en Filesystem
+        }
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

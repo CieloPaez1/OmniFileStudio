@@ -1,0 +1,399 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Suite PDF & Conversor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- =========================================================================
+       [MEJORA UX #4] NAVEGACIÓN SUPERIOR TIPO "HERO CARDS"
+       Tarjetas táctiles grandes e intuitivas que reemplazan el texto plano
+       ========================================================================= -->
+  <div class="hero-cards-header">
+    <span class="hero-section-kicker">HERRAMIENTAS DEL ESTUDIO PDF</span>
+    <div class="hero-cards-grid">
+      @for (tool of heroTools; track tool.id) {
+        <button
+          type="button"
+          class="hero-nav-card"
+          [ngClass]="tool.accentClass"
+          [class.active]="activeTool() === tool.id"
+          (click)="selectHeroTool(tool.id)">
+          <div class="hero-icon-badge">
+            <ion-icon [name]="tool.icon"></ion-icon>
+          </div>
+          <div class="hero-card-copy">
+            <strong>{{ tool.title }}</strong>
+            <small>{{ tool.subtitle }}</small>
+          </div>
+          @if (activeTool() === tool.id) {
+            <span class="hero-active-dot"></span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- ==================== 1. UNIR PDFs ==================== -->
+  @if (activeTool() === 'merge') {
+    <ion-card class="suite-surface-card">
+      <ion-card-header>
+        <ion-card-subtitle>COMBINAR DOCUMENTOS</ion-card-subtitle>
+        <ion-card-title>Unir PDFs en un único documento</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="suite-help">Seleccioná al menos 2 archivos PDF en el orden en que querés unirlos:</p>
+
+        <div class="selectable-files-grid">
+          @for (pdf of pdfFiles(); track pdf.id) {
+            <button
+              type="button"
+              class="selectable-file-pill"
+              [class.selected]="mergeIds().includes(pdf.id)"
+              (click)="toggleMergeId(pdf.id)">
+              <span class="file-format-badge fmt-pdf">
+                <ion-icon name="document-text-outline"></ion-icon>
+                .PDF
+              </span>
+              <div class="selectable-file-text">
+                <strong>{{ pdf.name }}</strong>
+                <small>{{ pdf.pageCount || 1 }} págs. · {{ fileService.formatBytes(pdf.size) }}</small>
+              </div>
+              @if (mergeIds().includes(pdf.id)) {
+                <span class="order-badge">#{{ mergeIds().indexOf(pdf.id) + 1 }}</span>
+              }
+            </button>
+          }
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nombre del documento resultante</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input [ngModel]="mergeOutputTitle()" (ngModelChange)="mergeOutputTitle.set($event)"></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="cta-action-btn"
+          [disabled]="processing() || mergeIds().length < 2"
+          (click)="runMerge()">
+          <ion-icon name="git-merge-outline" slot="start"></ion-icon>
+          Unir {{ mergeIds().length }} PDFs Ahora
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 2. DIVIDIR PDF ==================== -->
+  @if (activeTool() === 'split') {
+    <ion-card class="suite-surface-card">
+      <ion-card-header>
+        <ion-card-subtitle>SEPARAR PÁGINAS Y RANGOS</ion-card-subtitle>
+        <ion-card-title>Dividir o Extraer PDF</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="modern-field-group">
+          <label class="modern-field-label">Documento PDF de origen</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-select
+              interface="popover"
+              [ngModel]="splitSourceId()"
+              (ngModelChange)="splitSourceId.set($event)"
+              placeholder="Seleccionar documento PDF...">
+              @for (pdf of pdfFiles(); track pdf.id) {
+                <ion-select-option [value]="pdf.id">{{ pdf.name }} ({{ pdf.pageCount || 1 }} págs.)</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Rangos o páginas (ej: 1-2, 4)</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input [ngModel]="splitRanges()" (ngModelChange)="splitRanges.set($event)"></ion-input>
+          </ion-item>
+        </div>
+
+        <!-- [MEJORA UX #5] Selector Flotante Estilizado para Modo de Salida -->
+        <div class="modern-field-group">
+          <label class="modern-field-label">Modo de salida</label>
+          <div class="floating-pill-selector">
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="splitMode() === 'extract-single'"
+              (click)="splitMode.set('extract-single')">
+              <strong>Extraer en 1 nuevo PDF</strong>
+              <small>Unifica las páginas elegidas</small>
+            </button>
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="splitMode() === 'split-multiple'"
+              (click)="splitMode.set('split-multiple')">
+              <strong>Dividir en múltiples PDFs</strong>
+              <small>Un archivo por cada rango</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nombre de salida</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input [ngModel]="splitOutputTitle()" (ngModelChange)="splitOutputTitle.set($event)"></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="cta-action-btn"
+          [disabled]="processing() || !splitSourceId()"
+          (click)="runSplit()">
+          <ion-icon name="cut-outline" slot="start"></ion-icon>
+          Dividir / Extraer PDF
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 3. COMPRIMIR PDF ==================== -->
+  @if (activeTool() === 'compress') {
+    <ion-card class="suite-surface-card">
+      <ion-card-header>
+        <ion-card-subtitle>OPTIMIZAR TAMAÑO</ion-card-subtitle>
+        <ion-card-title>Comprimir Documento PDF</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="modern-field-group">
+          <label class="modern-field-label">Documento PDF a comprimir</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-select
+              interface="popover"
+              [ngModel]="compressFileId()"
+              (ngModelChange)="compressFileId.set($event)"
+              placeholder="Seleccionar documento PDF...">
+              @for (pdf of pdfFiles(); track pdf.id) {
+                <ion-select-option [value]="pdf.id">
+                  {{ pdf.name }} ({{ fileService.formatBytes(pdf.size) }})
+                </ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <!-- [MEJORA UX #5] Selector Flotante Estilizado de Nivel de Compresión -->
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nivel de compresión</label>
+          <div class="floating-pill-selector three-cols">
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="compressLevel() === 'low'"
+              (click)="compressLevel.set('low')">
+              <strong>Baja (~22%)</strong>
+              <small>Alta calidad</small>
+            </button>
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="compressLevel() === 'medium'"
+              (click)="compressLevel.set('medium')">
+              <strong>Media (~42%)</strong>
+              <small>Balance ideal</small>
+            </button>
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="compressLevel() === 'extreme'"
+              (click)="compressLevel.set('extreme')">
+              <strong>Extrema (~62%)</strong>
+              <small>Mínimo peso</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nombre del PDF comprimido</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input [ngModel]="compressOutputTitle()" (ngModelChange)="compressOutputTitle.set($event)"></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="cta-action-btn"
+          [disabled]="processing() || !compressFileId()"
+          (click)="runCompress()">
+          <ion-icon name="contract-outline" slot="start"></ion-icon>
+          Comprimir PDF Ahora
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 4. FIRMAR PDF DIGITALMENTE ==================== -->
+  @if (activeTool() === 'sign') {
+    <ion-card class="suite-surface-card">
+      <ion-card-header>
+        <ion-card-subtitle>FIRMA ELECTRÓNICA EN DOCUMENTO</ion-card-subtitle>
+        <ion-card-title>Firmar PDF Digitalmente</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="modern-field-group">
+          <label class="modern-field-label">Documento PDF a firmar</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-select
+              interface="popover"
+              [ngModel]="signFileId()"
+              (ngModelChange)="signFileId.set($event)"
+              placeholder="Seleccionar documento PDF...">
+              @for (pdf of pdfFiles(); track pdf.id) {
+                <ion-select-option [value]="pdf.id">{{ pdf.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nombre y Aclaración del Firmante</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input
+              [ngModel]="signerName()"
+              (ngModelChange)="signerName.set($event)"
+              placeholder="Ej: Ing. María Cielo">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <div class="signature-pad-wrap">
+          <div class="signature-pad-header">
+            <span>Dibujá tu firma en el lienzo táctil:</span>
+            <ion-button size="small" fill="clear" color="primary" (click)="clearSignatureCanvas()">
+              Limpiar trazo
+            </ion-button>
+          </div>
+          <canvas
+            #signatureCanvas
+            width="320"
+            height="120"
+            class="signature-canvas"
+            (mousedown)="startDrawing($event)"
+            (mousemove)="draw($event)"
+            (mouseup)="stopDrawing()"
+            (mouseleave)="stopDrawing()"
+            (touchstart)="startDrawing($event)"
+            (touchmove)="draw($event)"
+            (touchend)="stopDrawing()">
+          </canvas>
+        </div>
+
+        <!-- [MEJORA UX #5] Selector Flotante Estilizado de Posición de Firma -->
+        <div class="modern-field-group">
+          <label class="modern-field-label">Posición de la firma en la hoja</label>
+          <div class="floating-pill-selector three-cols">
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="signPosition() === 'bottom-right'"
+              (click)="signPosition.set('bottom-right')">
+              <strong>Inferior Der.</strong>
+              <small>Estándar legal</small>
+            </button>
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="signPosition() === 'bottom-left'"
+              (click)="signPosition.set('bottom-left')">
+              <strong>Inferior Izq.</strong>
+              <small>Margen secundario</small>
+            </button>
+            <button
+              type="button"
+              class="selector-card-option"
+              [class.selected]="signPosition() === 'center'"
+              (click)="signPosition.set('center')">
+              <strong>Centro</strong>
+              <small>Pie central</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="modern-field-group">
+          <label class="modern-field-label">Nombre del PDF firmado</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-input [ngModel]="signOutputTitle()" (ngModelChange)="signOutputTitle.set($event)"></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="cta-action-btn"
+          [disabled]="processing() || !signFileId()"
+          (click)="runSign()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Estampar Firma y Guardar PDF
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- ==================== 5. CAMBIAR FORMATO UNIVERSAL ==================== -->
+  @if (activeTool() === 'convert') {
+    <ion-card class="suite-surface-card">
+      <ion-card-header>
+        <ion-card-subtitle>CONVERSOR MULTIFORMATO</ion-card-subtitle>
+        <ion-card-title>Cambiar Formato de Archivo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="modern-field-group">
+          <label class="modern-field-label">Seleccionar archivo del repositorio</label>
+          <ion-item lines="none" class="modern-input-item">
+            <ion-select
+              interface="popover"
+              [ngModel]="convertFileId()"
+              (ngModelChange)="convertFileId.set($event)"
+              placeholder="Elegir archivo...">
+              @for (f of allFiles(); track f.id) {
+                <ion-select-option [value]="f.id">{{ f.name }} (.{{ f.ext | uppercase }})</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <!-- [MEJORA UX #5] Píldoras Flotantes Estilizadas de Formato de Destino -->
+        <div class="modern-field-group">
+          <label class="modern-field-label">Convertir al formato</label>
+          <div class="format-target-pills">
+            @for (fmt of availableTargetsForSelected(); track fmt) {
+              <button
+                type="button"
+                class="target-fmt-pill"
+                [class.selected]="convertTargetFormat() === fmt"
+                (click)="convertTargetFormat.set(fmt)">
+                .{{ fmt | uppercase }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="cta-action-btn"
+          [disabled]="processing() || !convertFileId()"
+          (click)="runUniversalConvert()">
+          <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+          Convertir a .{{ convertTargetFormat() | uppercase }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

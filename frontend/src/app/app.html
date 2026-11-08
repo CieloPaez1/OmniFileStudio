@@ -1,0 +1,17 @@
+@if (isMobileView()) {
+  <!-- [IONIC 9] CONTENEDOR RAÍZ <ion-app> Y <ion-router-outlet> PARA OMNIFILE STUDIO -->
+  <ion-app class="ionic-mobile-container">
+    <ion-router-outlet></ion-router-outlet>
+  </ion-app>
+} @else {
+  <!-- Layout de escritorio de OMNIFILE STUDIO -->
+  <div class="app-layout" [class.sidebar-collapsed]="layoutService.collapsed()">
+    <app-sidebar></app-sidebar>
+    <div class="app-content">
+      <app-navbar></app-navbar>
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+}

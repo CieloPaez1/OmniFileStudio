@@ -1,0 +1,180 @@
+<!-- =======================================================================
+     [IONIC 9 - CLASES 2, 3, 5, 6 Y 10: PANTALLA DE TAREAS E INTERACCIÓN AVANZADA]
+     - ion-menu-button (Clase 3): Abre el menú lateral deslizable.
+     - ion-refresher (Clase 10): Gesto pull-to-refresh con slot="fixed".
+     - ion-item-sliding + ion-item-options (Clase 10): Deslizamiento lateral
+       (swipe) para revelar acciones "Eliminar" (con ion-alert) y "Listo".
+     - Click en ion-item (Clase 10): Abre ion-modal de detalle con animación
+       personalizada mediante createAnimation().
+     ======================================================================= -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <!-- [CLASE 3] Botón hamburguesa que abre el ion-menu automáticamente -->
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mis Tareas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/mobile/task-form">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Segmento deslizable para filtrar tareas -->
+  <ion-toolbar>
+    <ion-segment [value]="statusFilter()" (ionChange)="onFilterChange($event)">
+      <ion-segment-button value="ALL">
+        <ion-label>Todas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="TODO">
+        <ion-label>Pendientes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="IN_PROGRESS">
+        <ion-label>En Curso</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="DONE">
+        <ion-label>Hechas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+  <!-- Chips de filtro rápido por Prioridad y Vencimiento -->
+  <div class="priority-chips-bar no-scrollbar">
+    <button
+      type="button"
+      class="prio-chip"
+      [class.active-chip]="priorityFilter() === 'ALL'"
+      (click)="setPriorityFilter('ALL')">
+      <span>Todas</span>
+      <small class="chip-count">{{ tasks().length }}</small>
+    </button>
+    <button
+      type="button"
+      class="prio-chip prio-chip-high"
+      [class.active-chip]="priorityFilter() === 'ALTA'"
+      (click)="setPriorityFilter('ALTA')">
+      <span>Alta</span>
+      <small class="chip-count">{{ highPriorityCount() }}</small>
+    </button>
+    <button
+      type="button"
+      class="prio-chip prio-chip-med"
+      [class.active-chip]="priorityFilter() === 'MEDIA'"
+      (click)="setPriorityFilter('MEDIA')">
+      <span>Media</span>
+      <small class="chip-count">{{ medPriorityCount() }}</small>
+    </button>
+    <button
+      type="button"
+      class="prio-chip prio-chip-low"
+      [class.active-chip]="priorityFilter() === 'BAJA'"
+      (click)="setPriorityFilter('BAJA')">
+      <span>Baja</span>
+      <small class="chip-count">{{ lowPriorityCount() }}</small>
+    </button>
+    <button
+      type="button"
+      class="prio-chip prio-chip-today"
+      [class.active-chip]="priorityFilter() === 'TODAY'"
+      (click)="setPriorityFilter('TODAY')">
+      <span>Vencen hoy</span>
+      <small class="chip-count">{{ dueTodayCount() }}</small>
+    </button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mobile-viewport">
+  <!-- [CLASE 10] Pull-to-refresh como primer hijo de ion-content con slot="fixed" -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="Deslizá para actualizar..."></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- [CLASE 5 y 6] Estado de Error / Aviso de Caché Offline -->
+  @if (error()) {
+    <div class="offline-banner">
+      <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
+      <ion-text color="danger">{{ error() }}</ion-text>
+    </div>
+  }
+
+  <!-- [CLASE 5] Estado de Carga con ion-spinner -->
+  @if (loading()) {
+    <div class="loading-center">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando tareas...</p>
+    </div>
+  } @else {
+    <div class="tasks-container">
+      @if (filteredTasks().length === 0) {
+        <div class="empty-box">
+          <ion-icon name="checkbox-outline" class="empty-icon"></ion-icon>
+          <p>No hay tareas en esta categoría.</p>
+        </div>
+      } @else {
+        <!-- [CLASE 2 Y CLASE 10] Lista con @for + ion-item-sliding (swipe) -->
+        <ion-list [inset]="true" class="tasks-card-list">
+          @for (t of filteredTasks(); track t.id) {
+            <ion-item-sliding>
+              <ion-item lines="full" class="task-row" button="true" (click)="abrirDetalle(t)">
+                <!-- [CLASE 2 - EJERCICIO 8] ion-checkbox en slot="start" -->
+                <ion-checkbox
+                  slot="start"
+                  [checked]="t.status === 'DONE'"
+                  (click)="$event.stopPropagation()"
+                  (ionChange)="toggleCompletada(t)">
+                </ion-checkbox>
+
+                <ion-label [class.task-done]="t.status === 'DONE'">
+                  <h2>{{ t.title }}</h2>
+                  <p>
+                    {{ t.estimateHours }} hs · {{ t.assignee || 'Sin asignar' }}
+                    @if (t.photo || t.photoPreview) {
+                      · Con foto
+                    }
+                    @if (t.lat !== undefined && t.lng !== undefined) {
+                      · Con GPS
+                    }
+                  </p>
+                </ion-label>
+
+                <!-- [CLASE 2 - EJERCICIO 8] ion-badge en slot="end" según estado -->
+                <ion-badge
+                  slot="end"
+                  [color]="t.status === 'DONE' ? 'success' : (t.status === 'IN_PROGRESS' ? 'primary' : 'warning')">
+                  {{ t.status === 'DONE' ? 'Hecha' : (t.status === 'IN_PROGRESS' ? 'En Curso' : 'Pendiente') }}
+                </ion-badge>
+
+                <ion-button
+                  slot="end"
+                  fill="clear"
+                  color="danger"
+                  size="small"
+                  (click)="eliminarTarea(t, $event)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <!-- [CLASE 10 - EJERCICIO GUIADO] Opciones al deslizar hacia la izquierda -->
+              <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="eliminarTarea(t, $event)">
+                  Eliminar
+                </ion-item-option>
+                <ion-item-option color="success" (click)="toggleCompletada(t, $event)">
+                  Listo
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ion-list>
+      }
+    </div>
+  }
+
+  <!-- [CLASE 2 - PATRÓN FAB] FLOATING ACTION BUTTON (ION-FAB) -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="tasks-fab">
+    <ion-fab-button routerLink="/mobile/task-form" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

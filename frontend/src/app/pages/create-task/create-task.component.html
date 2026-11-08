@@ -1,0 +1,134 @@
+<div class="create-task-page">
+
+  <div class="page-header">
+    <div>
+      <p>GESTIÓN DE TAREAS</p>
+      <h1>Crear Tarea</h1>
+    </div>
+  </div>
+
+  <div class="dashboard-card">
+    @if (success()) {
+      <div class="alert-success">
+        <svg lucideCheckCircle style="width: 20px; height: 20px;"></svg>
+        {{ success() }}
+      </div>
+    }
+
+    @if (error()) {
+      <div class="alert-error">
+        <svg lucideXCircle style="width: 20px; height: 20px;"></svg>
+        {{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div style="margin-bottom: 24px;">
+        <label class="form-label">Proyecto <span style="color: #ef4444;">*</span></label>
+        <select formControlName="projectId" class="form-control" [class.is-invalid]="isInvalid('projectId')">
+          <option value="" disabled>-- Seleccioná un proyecto --</option>
+          @for (p of activeProjects(); track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+        @if (isInvalid('projectId')) { <span class="error-text">El proyecto es obligatorio.</span> }
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="form-label">Título <span style="color: #ef4444;">*</span></label>
+        <input type="text" formControlName="title" class="form-control" [class.is-invalid]="isInvalid('title')" placeholder="Ej: Rediseñar landing page" />
+        @if (isInvalid('title')) { <span class="error-text">El título es obligatorio.</span> }
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <div>
+          <label class="form-label">Horas estimadas <span style="color: #ef4444;">*</span></label>
+          <input type="number" formControlName="estimateHours" class="form-control" [class.is-invalid]="isInvalid('estimateHours')" placeholder="Ej: 8" min="1" />
+          @if (isInvalid('estimateHours')) { <span class="error-text">Las horas deben ser mayor a 0.</span> }
+        </div>
+
+        <div>
+          <label class="form-label">Asignado a</label>
+          <input type="text" formControlName="assignee" class="form-control" placeholder="Ej: alice" />
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+        <div>
+          <label class="form-label">Estado <span style="color: #ef4444;">*</span></label>
+          <select formControlName="status" class="form-control" [class.is-invalid]="isInvalid('status')">
+            <option value="" disabled>-- Seleccioná un estado --</option>
+            <option value="TODO">Por hacer</option>
+            <option value="IN_PROGRESS">En progreso</option>
+            <option value="DONE">Hecho</option>
+          </select>
+          @if (isInvalid('status')) { <span class="error-text">El estado es obligatorio.</span> }
+        </div>
+
+        <div>
+          <label class="form-label">Vencimiento</label>
+          <input type="datetime-local" formControlName="dueDate" class="form-control" />
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 16px;">
+        <button type="submit" class="btn-primary" [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            Guardando...
+          } @else {
+            <svg lucideSave style="width: 18px; height: 18px;"></svg>
+            Guardar Tarea
+          }
+        </button>
+
+        <button type="button" class="btn-outline" (click)="cancelar()" [disabled]="loading()">
+          <svg lucideX style="width: 18px; height: 18px;"></svg>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="list-section">
+    <div class="list-title">
+      <h2>Tareas existentes</h2>
+    </div>
+
+    @if (recentTasks().length === 0) {
+      <div class="empty-state">
+        No hay tareas creadadas aún.
+      </div>
+    } @else {
+      <div class="floating-list">
+        @for (t of recentTasks(); track t.id) {
+          <div class="floating-row" [routerLink]="['/tasks', t.id]" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="row-main">
+              <strong class="row-title">{{ t.title }}</strong>
+              <span class="row-desc">Proyecto: {{ projects().find(p => p.id === t.projectId)?.name ?? '-' }}</span>
+            </div>
+            <div class="row-meta">
+              <div class="meta-item">
+                <span class="meta-label">Horas</span>
+                <span class="meta-val">{{ t.estimateHours }}h</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Asignado</span>
+                <span class="meta-val">{{ t.assignee ?? '-' }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Vencimiento</span>
+                <span class="meta-val">{{ t.dueDate ? (t.dueDate | date:'short') : '-' }}</span>
+              </div>
+              <div class="meta-badge">
+                <span class="badge" [class.todo]="t.status === 'TODO'" [class.progress]="t.status === 'IN_PROGRESS'" [class.done]="t.status === 'DONE'">
+                  {{ t.status === 'TODO' ? 'POR HACER' : t.status === 'IN_PROGRESS' ? 'EN PROCESO' : 'HECHA' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>

@@ -1,0 +1,199 @@
+<ion-modal
+  [isOpen]="isOpen && !!file"
+  [breakpoints]="[0, 0.92, 1]"
+  [initialBreakpoint]="0.92"
+  (didDismiss)="close()">
+
+  <ng-template>
+    @if (file; as current) {
+      <ion-header>
+        <ion-toolbar color="primary">
+          <div class="preview-header-info" slot="start">
+            <ion-badge color="light" class="preview-ext-badge">.{{ current.ext | uppercase }}</ion-badge>
+            <div class="preview-title-col">
+              <ion-title class="preview-title">{{ current.name }}</ion-title>
+              <span class="preview-subtitle">
+                {{ current.tag || 'Trabajo' }} · {{ fileService.formatBytes(current.size) }}
+                @if (current.pageCount) { · {{ current.pageCount }} pág. }
+              </span>
+            </div>
+          </div>
+
+          <ion-buttons slot="end">
+            <ion-button fill="clear" color="light" title="Compartir" (click)="shareCurrentFile()">
+              <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="light" title="Cerrar" (click)="close()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+
+        <!-- Barra de herramientas del Visor (Zoom, Rotación, Filtro y Acciones) -->
+        <ion-toolbar class="viewer-controls-bar">
+          <div class="viewer-controls-row">
+            <div class="zoom-controls">
+              <ion-button size="small" fill="clear" (click)="zoomOut()" title="Alejar">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <span class="zoom-label">{{ zoomLevel() }}%</span>
+              <ion-button size="small" fill="clear" (click)="zoomIn()" title="Acercar">
+                <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button size="small" fill="clear" (click)="rotateRight()" title="Rotar 90°">
+                <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              @if (current.category === 'IMAGE') {
+                <ion-button size="small" fill="outline" color="tertiary" (click)="cycleFilter()">
+                  <ion-icon name="contrast-outline" slot="start"></ion-icon>
+                  Filtro: {{ imageFilter() | uppercase }}
+                </ion-button>
+              }
+            </div>
+
+            <div class="viewer-right-actions">
+              <ion-button size="small" color="tertiary" (click)="triggerContextualActions()">
+                <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+                Herramientas
+              </ion-button>
+              <ion-button
+                size="small"
+                fill="outline"
+                color="primary"
+                [href]="current.downloadUrl"
+                [download]="current.name">
+                <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding preview-stage">
+        <!-- ==================== 1. VISTA PREVIA DE ARCHIVOS PDF ==================== -->
+        @if (current.ext === 'pdf' || current.category === 'PDF') {
+          <div class="pdf-preview-container">
+            <!-- Hoja visual del Documento PDF con metadatos, páginas y firma -->
+            <div
+              class="pdf-paper-sheet"
+              [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'">
+              <div class="pdf-paper-header">
+                <div class="pdf-brand-stamp">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  <span>OMNIFILE STUDIO · VISOR PDF LOCAL</span>
+                </div>
+                <ion-badge color="danger">PDF · {{ current.pageCount || 1 }} PÁG.</ion-badge>
+              </div>
+
+              <h2 class="pdf-doc-title">{{ current.name }}</h2>
+
+              <div class="pdf-meta-chips">
+                <ion-chip color="primary">
+                  <ion-label>Categoría: <strong>{{ current.tag || 'Trabajo' }}</strong></ion-label>
+                </ion-chip>
+                <ion-chip color="medium">
+                  <ion-label>Peso: <strong>{{ fileService.formatBytes(current.size) }}</strong></ion-label>
+                </ion-chip>
+                @if (current.compressed) {
+                  <ion-chip color="success">
+                    <ion-label>🗜️ PDF Optimizado</ion-label>
+                  </ion-chip>
+                }
+                @if (current.signed) {
+                  <ion-chip color="tertiary">
+                    <ion-label>✍️ Firmado Digitalmente</ion-label>
+                  </ion-chip>
+                }
+              </div>
+
+              <div class="pdf-body-text">
+                <p><strong>Resumen del documento:</strong></p>
+                <p>{{ current.description || 'Documento PDF gestionado y procesado 100% en tu dispositivo.' }}</p>
+                <p class="pdf-simulated-lines">
+                  Fecha de registro: {{ current.createdAt | date:'medium' }} · Origen: {{ current.origin }}
+                </p>
+              </div>
+
+              @if (current.signed) {
+                <div class="pdf-signature-seal">
+                  <div class="seal-title">FIRMA DIGITAL VERIFICADA EN CLIENTE</div>
+                  <div class="seal-cursive">Firma Digital OmniFile Studio</div>
+                  <small>Documento íntegro · Sin envío a servidores externos</small>
+                </div>
+              }
+            </div>
+
+            <!-- Visor nativo embebido si hay binario PDF generado con jsPDF -->
+            @if (safePdfUrl(); as pdfResourceUrl) {
+              <div class="embedded-pdf-frame-wrap">
+                <div class="frame-caption">Renderizado nativo del motor PDF local:</div>
+                <iframe
+                  class="embedded-pdf-iframe"
+                  [src]="pdfResourceUrl"
+                  title="Vista previa PDF">
+                </iframe>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ==================== 2. VISTA PREVIA DE IMÁGENES ==================== -->
+        @else if (current.category === 'IMAGE') {
+          <div class="image-preview-stage">
+            <div class="image-canvas-box">
+              <img
+                [src]="previewImageSource()"
+                [alt]="current.name"
+                [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
+                [style.filter]="cssImageFilter()" />
+            </div>
+            <p class="image-caption">
+              {{ current.name }} · {{ fileService.formatBytes(current.size) }} · Filtro activo: <strong>{{ imageFilter() | uppercase }}</strong>
+            </p>
+          </div>
+        }
+
+        <!-- ==================== 3. VISTA PREVIA DE TABLAS CSV ==================== -->
+        @else if (current.ext === 'csv' && csvTableRows().length > 0) {
+          <div class="data-preview-card">
+            <div class="data-preview-header">
+              <strong>📊 Vista Previa de Planilla CSV ({{ csvTableRows().length }} filas)</strong>
+            </div>
+            <div class="csv-table-scroll">
+              <table class="csv-preview-table">
+                <thead>
+                  <tr>
+                    @for (headerCell of csvTableRows()[0]; track $index) {
+                      <th>{{ headerCell }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of csvTableRows().slice(1); track $index) {
+                    <tr>
+                      @for (cell of row; track $index) {
+                        <td>{{ cell }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- ==================== 4. VISTA PREVIA DE TEXTO / JSON / MD / HTML ==================== -->
+        @else {
+          <div class="text-preview-card">
+            <div class="data-preview-header">
+              <strong>📝 Vista Previa de Contenido (.{{ current.ext | uppercase }})</strong>
+            </div>
+            <pre
+              class="code-preview-box"
+              [style.fontSize.%]="zoomLevel()">{{ decodedTextContent() }}</pre>
+          </div>
+        }
+      </ion-content>
+    }
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,51 @@
+# ==============================================================================
+# .gitignore - Proyecto FileStudio (Ionic 9 Standalone + Angular 21 + Capacitor 8 + Spring Boot)
+# ==============================================================================
+
+# Dependencias Node / Frontend
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compilados y cachés de Angular / Ionic
+dist/
+frontend/dist/
+.angular/
+frontend/.angular/
+tmp/
+out-tsc/
+
+# Compilados Android / Capacitor temporales
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/app/build/
+frontend/android/local.properties
+frontend/android/captures/
+*.apk
+*.aab
+
+# Compilados Java / Maven (Backend Hexagonal)
+backend/target/
+backend/Core/target/
+backend/Adapter/target/
+*.class
+*.jar
+*.war
+
+# Almacenamiento temporal de archivos subidos en tiempo de ejecución
+storage/
+backend/storage/
+
+# Entornos e IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.env
+*.log

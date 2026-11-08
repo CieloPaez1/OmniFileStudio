@@ -1,0 +1,1090 @@
+<div class="project-detail-page" *ngIf="project(); else loadingTemplate">
+
+  <!-- =======================================================================
+       ENCABEZADO DE PROYECTO ESTILO MONDAY.COM CON SUGERENCIAS IA Y ACCIONES
+       ======================================================================= -->
+  <div class="page-header monday-header">
+    <div>
+      <div class="eyebrow-project">ESPACIO DE TRABAJO · PROYECTO #PLX-{{ project()?.id }}</div>
+      <div class="monday-title-row">
+        <h1 class="project-title monday-main-title">
+          <span>{{ project()?.name }}</span>
+          <svg lucideChevronDown class="monday-title-chevron"></svg>
+        </h1>
+        @if (project()?.status === 'CLOSED') {
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge closed">Completado</span>
+            <button class="btn-icon-small" (click)="reabrirProyecto()" title="Reabrir proyecto">
+              <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+            </button>
+          </div>
+        } @else if (project()) {
+          <select class="status-select" 
+                  [ngClass]="project()!.status.toLowerCase()" 
+                  [ngModel]="project()!.status" 
+                  (ngModelChange)="cambiarEstadoProyecto($event)">
+            <option value="PLANNED">Planificado</option>
+            <option value="ACTIVE">En Progreso</option>
+            <option value="CLOSED">Completado</option>
+          </select>
+        }
+      </div>
+    </div>
+
+    <!-- Acciones superiores estilo Monday: Sugerencias de IA, Integrar, Automatizar -->
+    <div class="monday-header-right-actions">
+      <button type="button" class="btn-monday-pill ai-btn" (click)="toggleAiModal()">
+        <svg lucideSparkles class="ai-sparkle-icon"></svg>
+        <span>Sugerencias de IA</span>
+        <span class="pill-badge-new">Nuevo</span>
+      </button>
+
+      <button type="button" class="btn-monday-pill" title="Integraciones con herramientas externas">
+        <svg lucideZap class="pill-ico"></svg>
+        <span>Integrar</span>
+      </button>
+
+      <button type="button" class="btn-monday-pill" title="Reglas y automatizaciones de flujo">
+        <svg lucideBot class="pill-ico"></svg>
+        <span>Automatizar</span>
+      </button>
+
+      <div class="header-divider"></div>
+
+      <button class="btn-outline" routerLink="/projects" title="Volver a proyectos">
+        <svg lucideArrowLeft style="width: 16px; height: 16px;"></svg>
+        <span>Volver</span>
+      </button>
+      @if (project()?.status !== 'CLOSED') {
+        <button class="btn-outline" [routerLink]="['/projects/edit', project()?.id]" title="Editar proyecto">
+          <svg lucideEdit style="width: 16px; height: 16px;"></svg>
+          <span>Editar</span>
+        </button>
+      }
+      <button class="btn-outline danger" (click)="deleteProject()" [disabled]="isLoading()" title="Eliminar proyecto">
+        <svg lucideTrash2 style="width: 16px; height: 16px;"></svg>
+        <span>Eliminar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       PESTAÑAS DE VISTA ESTILO MONDAY.COM (Tabla principal, Cronograma, Kanban, Lista)
+       ======================================================================= -->
+  <div class="monday-views-tabs-bar">
+    <button
+      type="button"
+      class="monday-tab-btn"
+      [class.active]="viewMode() === 'TABLE'"
+      (click)="viewMode.set('TABLE')"
+    >
+      <svg lucideTable class="tab-icon"></svg>
+      <span>Tabla principal</span>
+      <svg lucideMoreHorizontal class="tab-more-dots"></svg>
+    </button>
+
+    <button
+      type="button"
+      class="monday-tab-btn"
+      [class.active]="viewMode() === 'TIMELINE'"
+      (click)="viewMode.set('TIMELINE')"
+    >
+      <svg lucideClock class="tab-icon"></svg>
+      <span>Cronograma</span>
+    </button>
+
+    <button
+      type="button"
+      class="monday-tab-btn"
+      [class.active]="viewMode() === 'BOARD'"
+      (click)="viewMode.set('BOARD')"
+    >
+      <svg lucideKanban class="tab-icon"></svg>
+      <span>Tablero Kanban</span>
+    </button>
+
+    <button
+      type="button"
+      class="monday-tab-btn"
+      [class.active]="viewMode() === 'LIST'"
+      (click)="viewMode.set('LIST')"
+    >
+      <svg lucideList class="tab-icon"></svg>
+      <span>Lista</span>
+    </button>
+
+    <button type="button" class="monday-tab-add-btn" (click)="addCustomGroup()" title="Agregar nuevo grupo o vista">
+      <svg lucidePlus class="add-plus-svg"></svg>
+    </button>
+  </div>
+
+  <!-- =======================================================================
+       BARRA DE ACCIONES SECUNDARIA: Agregar tarea, Buscar, Persona, Filtrar, Ordenar, Ocultar, Agrupar
+       ======================================================================= -->
+  <div class="monday-action-bar">
+    <!-- Botón Agregar tarea con selector rápido -->
+    <div class="monday-split-add-btn">
+      <button type="button" class="btn-monday-add-main" (click)="toggleAddTask()">
+        <span>Agregar tarea</span>
+        <svg lucideChevronDown class="split-caret"></svg>
+      </button>
+    </div>
+
+    <!-- Barra de búsqueda rápida -->
+    <div class="monday-search-box">
+      <svg lucideSearch class="monday-search-icon"></svg>
+      <input
+        type="text"
+        placeholder="Buscar"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        class="monday-search-field"
+      />
+    </div>
+
+    <!-- Selector de Persona -->
+    <div class="monday-tool-filter-wrapper">
+      <svg lucideUser class="tool-prefix-icon"></svg>
+      <select
+        class="monday-filter-select"
+        [ngModel]="assigneeFilter()"
+        (ngModelChange)="assigneeFilter.set($event)"
+      >
+        <option value="ALL">Persona</option>
+        @for (a of uniqueAssignees(); track a) {
+          <option [value]="a">{{ a }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Selector de Filtrar (Prioridad) -->
+    <div class="monday-tool-filter-wrapper">
+      <svg lucideFilter class="tool-prefix-icon"></svg>
+      <select
+        class="monday-filter-select"
+        [ngModel]="priorityFilter()"
+        (ngModelChange)="priorityFilter.set($event)"
+      >
+        <option value="ALL">Filtrar</option>
+        <option value="alta">🔴 Alta</option>
+        <option value="media">🟡 Media</option>
+        <option value="baja">🟢 Baja</option>
+      </select>
+    </div>
+
+    <!-- Botón Ordenar -->
+    <button type="button" class="monday-tool-action-btn">
+      <svg lucideArrowUpDown class="tool-prefix-icon"></svg>
+      <span>Ordenar</span>
+    </button>
+
+    <!-- Botón Ocultar -->
+    <button type="button" class="monday-tool-action-btn">
+      <svg lucideEye class="tool-prefix-icon"></svg>
+      <span>Ocultar</span>
+    </button>
+
+    <!-- Botón Agrupar por -->
+    <button type="button" class="monday-tool-action-btn">
+      <svg lucideLayers class="tool-prefix-icon"></svg>
+      <span>Agrupar por</span>
+    </button>
+
+    <!-- Más opciones -->
+    <button type="button" class="monday-tool-action-btn icon-only" title="Más opciones">
+      <svg lucideMoreHorizontal class="tool-prefix-icon"></svg>
+    </button>
+
+    @if (searchTerm() || priorityFilter() !== 'ALL' || assigneeFilter() !== 'ALL') {
+      <button type="button" class="btn-clear-filter" (click)="resetFilters()" title="Limpiar filtros">
+        <svg lucideX style="width: 14px; height: 14px;"></svg>
+        <span>Limpiar</span>
+      </button>
+    }
+  </div>
+
+  <!-- Formulario desplegable Nueva Tarea -->
+  @if (isAddingTask()) {
+    <div class="dashboard-card add-task-card" style="margin: 20px 0; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h4 style="margin: 0; color: var(--text-primary); font-weight: 800; font-size: 1.2rem;">
+          Agregar Nueva Tarea
+        </h4>
+        <button type="button" class="btn-icon-small" (click)="toggleAddTask()">
+          <svg lucideX style="width: 18px; height: 18px;"></svg>
+        </button>
+      </div>
+
+      <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label">Título de la tarea</label>
+            <input type="text" formControlName="title" class="form-control" placeholder="Ej: Diseñar flujo de autenticación" />
+          </div>
+          <div>
+            <label class="form-label">Asignado a</label>
+            <input type="text" formControlName="assignee" class="form-control" placeholder="Ej: Cielo Páez" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+          <div>
+            <label class="form-label">Prioridad</label>
+            <select formControlName="priority" class="form-control">
+              <option value="alta">🔴 Alta</option>
+              <option value="media">🟡 Media</option>
+              <option value="baja">🟢 Baja</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Horas Estimadas</label>
+            <input type="number" formControlName="estimateHours" class="form-control" min="1" />
+          </div>
+          <div>
+            <label class="form-label">Vencimiento</label>
+            <input type="datetime-local" formControlName="dueDate" class="form-control" />
+          </div>
+          <div>
+            <label class="form-label">Estado Inicial</label>
+            <select formControlName="status" class="form-control">
+              <option value="TODO">Por Hacer</option>
+              <option value="IN_PROGRESS">En Progreso</option>
+              <option value="DONE">Terminado</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button type="submit" class="btn-primary" [disabled]="taskForm.invalid || isLoading()">
+            <svg lucideSave style="width: 16px; height: 16px;"></svg>
+            Guardar Tarea
+          </button>
+          <button type="button" class="btn-outline" (click)="toggleAddTask()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- =======================================================================
+       VISTA 1: TABLA PRINCIPAL ESTILO MONDAY.COM (CAPTURA EXACTA)
+       ======================================================================= -->
+  @if (viewMode() === 'TABLE') {
+    <div class="monday-main-table-container">
+      @for (grp of groups(); track grp.id) {
+        <div class="monday-group-block" [style.--group-accent]="grp.color">
+          
+          <!-- Encabezado de grupo colapsable con color (ej: "Pendientes", "Completado", "Grupo nuevo") -->
+          <div class="monday-group-heading" (click)="toggleGroup(grp.id)">
+            <button type="button" class="group-arrow-toggle">
+              @if (isGroupCollapsed(grp.id)) {
+                <svg lucideChevronRight class="grp-arrow-svg" [style.color]="grp.color"></svg>
+              } @else {
+                <svg lucideChevronDown class="grp-arrow-svg" [style.color]="grp.color"></svg>
+              }
+            </button>
+            <span class="group-title-text" [style.color]="grp.color">{{ grp.name }}</span>
+            <span class="group-badge-count">{{ getTasksByGroup(grp).length }}</span>
+          </div>
+
+          <!-- Tabla del Grupo con Barra lateral de color -->
+          @if (!isGroupCollapsed(grp.id)) {
+            <div class="monday-table-scroll-wrapper">
+              <table class="monday-interactive-table">
+                <thead>
+                  <tr class="th-row">
+                    <th class="th-check">
+                      <input
+                        type="checkbox"
+                        [checked]="isGroupAllSelected(getTasksByGroup(grp))"
+                        (change)="toggleGroupSelection(getTasksByGroup(grp), $event)"
+                      />
+                    </th>
+                    <th class="th-task">Tarea</th>
+                    <th class="th-chat" title="Comentarios y subtareas">
+                      <svg lucideMessageSquare class="th-ico"></svg>
+                    </th>
+                    <th class="th-assignee">Responsable</th>
+                    <th class="th-status">Estado <span class="th-info-circle">ⓘ</span></th>
+                    <th class="th-due">Vencimiento <span class="th-info-circle">ⓘ</span></th>
+                    <th class="th-priority">Prioridad</th>
+                    <th class="th-notes">Notas</th>
+                    <th class="th-budget">Presupuesto</th>
+                    <th class="th-files">Archivos</th>
+                    <th class="th-timeline">Cronograma</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (t of getTasksByGroup(grp); track t.id) {
+                    <tr class="monday-data-row" [class.row-selected]="isTaskSelected(t.id!)">
+                      
+                      <!-- Columna Checkbox -->
+                      <td class="td-check">
+                        <input
+                          type="checkbox"
+                          [checked]="isTaskSelected(t.id!)"
+                          (change)="toggleTaskSelection(t.id!, $event)"
+                        />
+                      </td>
+
+                      <!-- Columna Tarea -->
+                      <td class="td-task" (click)="openTaskDrawer(t, $event)">
+                        <div class="task-title-cell">
+                          <span class="task-text-title" [class.done-line]="t.status === 'DONE'">{{ t.title }}</span>
+                        </div>
+                      </td>
+
+                      <!-- Columna Chat / Notas -->
+                      <td class="td-chat" (click)="openTaskDrawer(t, $event)">
+                        <button type="button" class="btn-cell-chat" title="Abrir notas y subtareas">
+                          <svg lucideMessageSquare class="cell-chat-svg"></svg>
+                          <span class="chat-plus-badge">+</span>
+                        </button>
+                      </td>
+
+                      <!-- Columna Responsable -->
+                      <td class="td-assignee">
+                        @if (t.assignee) {
+                          <div class="assignee-avatar-circle" [title]="t.assignee">
+                            {{ t.assignee.slice(0, 2).toUpperCase() }}
+                          </div>
+                        } @else {
+                          <div class="assignee-avatar-circle unassigned" title="Sin asignar">
+                            <svg lucideUser class="unassigned-svg"></svg>
+                          </div>
+                        }
+                      </td>
+
+                      <!-- Columna Estado (Pastilla vibrante Monday con dropdown en celda) -->
+                      <td class="td-status" (click)="openStatusPicker(t.id!, $event)">
+                        <div
+                          class="monday-status-pill"
+                          [class.status-listo]="t.status === 'DONE'"
+                          [class.status-en-curso]="t.status === 'IN_PROGRESS'"
+                          [class.status-detenido]="t.status === 'TODO'"
+                        >
+                          @if (t.status === 'DONE') { Listo }
+                          @else if (t.status === 'IN_PROGRESS') { En curso }
+                          @else { Detenido }
+                        </div>
+
+                        <!-- Dropdown flotante selector de Estado -->
+                        @if (activeStatusMenuTaskId() === t.id) {
+                          <div class="monday-cell-dropdown" (click)="$event.stopPropagation()">
+                            <div class="dd-item item-en-curso" (click)="setQuickStatus(t, 'IN_PROGRESS', $event)">En curso</div>
+                            <div class="dd-item item-listo" (click)="setQuickStatus(t, 'DONE', $event)">Listo</div>
+                            <div class="dd-item item-detenido" (click)="setQuickStatus(t, 'TODO', $event)">Detenido</div>
+                          </div>
+                        }
+                      </td>
+
+                      <!-- Columna Vencimiento -->
+                      <td class="td-due">
+                        @if (t.dueDate) {
+                          <div class="cell-due-chip">
+                            @if (t.status === 'DONE') {
+                              <span class="due-indicator-icon done">✓</span>
+                            } @else if (t.status === 'TODO') {
+                              <span class="due-indicator-icon alert">!</span>
+                            } @else {
+                              <span class="due-indicator-icon clock">🕒</span>
+                            }
+                            <span class="due-date-label">{{ t.dueDate | date:'d MMM' }}</span>
+                          </div>
+                        } @else {
+                          <span class="cell-dash">-</span>
+                        }
+                      </td>
+
+                      <!-- Columna Prioridad (Pastilla Monday en bloque con dropdown) -->
+                      <td class="td-priority" (click)="openPriorityPicker(t.id!, $event)">
+                        <div
+                          class="monday-prio-pill"
+                          [class.prio-alta]="t.priority === 'alta'"
+                          [class.prio-media]="t.priority === 'media' || !t.priority"
+                          [class.prio-baja]="t.priority === 'baja'"
+                        >
+                          {{ t.priority === 'alta' ? 'Alta' : (t.priority === 'baja' ? 'Baja' : 'Media') }}
+                        </div>
+
+                        <!-- Dropdown flotante selector de Prioridad -->
+                        @if (activePriorityMenuTaskId() === t.id) {
+                          <div class="monday-cell-dropdown" (click)="$event.stopPropagation()">
+                            <div class="dd-item item-prio-alta" (click)="setQuickPriority(t, 'alta', $event)">Alta</div>
+                            <div class="dd-item item-prio-media" (click)="setQuickPriority(t, 'media', $event)">Media</div>
+                            <div class="dd-item item-prio-baja" (click)="setQuickPriority(t, 'baja', $event)">Baja</div>
+                          </div>
+                        }
+                      </td>
+
+                      <!-- Columna Notas -->
+                      <td class="td-notes" (click)="openTaskDrawer(t, $event)">
+                        <span class="cell-notes-preview">
+                          {{ t.title ? 'Elementos de acc...' : '-' }}
+                        </span>
+                      </td>
+
+                      <!-- Columna Presupuesto -->
+                      <td class="td-budget">
+                        ${{ ((t.estimateHours || 1) * 50).toLocaleString() }}
+                      </td>
+
+                      <!-- Columna Archivos -->
+                      <td class="td-files">
+                        @if (t.photo || t.photoPreview) {
+                          <div class="file-badge-preview" title="Archivo adjunto">
+                            <span class="file-drive-icon">📄</span>
+                          </div>
+                        } @else {
+                          <span class="cell-dash">-</span>
+                        }
+                      </td>
+
+                      <!-- Columna Cronograma -->
+                      <td class="td-timeline">
+                        <div class="timeline-bar-pill" [class.timeline-done]="t.status === 'DONE'">
+                          <span>{{ t.dueDate ? (t.dueDate | date:'d MMM') : 'nov. 1' }}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+
+                  <!-- Fila en línea "+ Agregar tarea" -->
+                  <tr class="monday-inline-add-row">
+                    <td class="td-check"></td>
+                    <td class="td-task-add-cell" colspan="10">
+                      <div class="inline-add-container">
+                        <span class="add-plus-symbol">+</span>
+                        <input
+                          type="text"
+                          placeholder="Agregar tarea"
+                          [value]="quickTaskTitles()[grp.id] || ''"
+                          (input)="updateQuickTaskTitle(grp.id, $event)"
+                          (keydown.enter)="submitQuickTask(grp)"
+                          class="inline-task-text-input"
+                        />
+                        @if (quickTaskTitles()[grp.id]) {
+                          <button type="button" class="btn-inline-add-submit" (click)="submitQuickTask(grp)">
+                            Guardar
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <!-- Pie de Grupo / Barra de Resumen y Métricas (Monday Summary Footer) -->
+                <tfoot>
+                  <tr class="monday-summary-row">
+                    <td class="td-check"></td>
+                    <td class="td-task"></td>
+                    <td class="td-chat"></td>
+                    <td class="td-assignee"></td>
+                    
+                    <!-- Barra de progreso segmentada de Estado -->
+                    <td class="td-status">
+                      <div class="summary-segmented-bar">
+                        @for (seg of getGroupStatusSegments(getTasksByGroup(grp)); track seg.label) {
+                          <div class="seg-block" [style.background]="seg.color" [style.width.%]="seg.pct" [title]="seg.label"></div>
+                        }
+                      </div>
+                    </td>
+
+                    <!-- Rango de Vencimientos -->
+                    <td class="td-due">
+                      <span class="summary-range-pill">{{ getGroupDateRange(getTasksByGroup(grp)) }}</span>
+                    </td>
+
+                    <!-- Barra de espectro de Prioridad -->
+                    <td class="td-priority">
+                      <div class="summary-segmented-bar">
+                        @for (seg of getGroupPrioritySegments(getTasksByGroup(grp)); track seg.label) {
+                          <div class="seg-block" [style.background]="seg.color" [style.width.%]="seg.pct" [title]="seg.label"></div>
+                        }
+                      </div>
+                    </td>
+
+                    <!-- Total de Presupuesto -->
+                    <td class="td-budget">
+                      <div class="summary-metric-box">
+                        <span class="metric-val">{{ getGroupBudget(getTasksByGroup(grp)) }}</span>
+                        <span class="metric-lbl">Total</span>
+                      </div>
+                    </td>
+
+                    <!-- Total de Archivos -->
+                    <td class="td-files">
+                      <div class="summary-metric-box">
+                        <span class="metric-val">{{ getGroupFilesCount(getTasksByGroup(grp)) }}</span>
+                        <span class="metric-lbl">archivos</span>
+                      </div>
+                    </td>
+
+                    <!-- Total Cronograma -->
+                    <td class="td-timeline">
+                      <div class="summary-timeline-chip">-</div>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Botón inferior "+ Agregar grupo nuevo" -->
+      <div class="monday-bottom-add-group">
+        <button type="button" class="btn-add-group-outline" (click)="addCustomGroup()">
+          <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+          <span>Agregar grupo nuevo</span>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- =======================================================================
+       VISTA 2: TABLERO KANBAN (ESTILO TRELLO / JIRA)
+       ======================================================================= -->
+  @if (viewMode() === 'BOARD') {
+    <div class="kanban-board-container" style="margin-top: 24px;">
+
+      <!-- COLUMNA 1: POR HACER -->
+      <div class="kanban-column col-todo">
+        <div class="kanban-column-header">
+          <div class="col-header-left">
+            <span class="col-indicator todo"></span>
+            <span class="col-name">Por Hacer</span>
+            <span class="col-count-badge">{{ todoTasks().length }}</span>
+          </div>
+          <button
+            type="button"
+            class="btn-col-add"
+            (click)="openQuickAddTask('TODO')"
+            title="Agregar tarea en Por Hacer">
+            <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+          </button>
+        </div>
+
+        <div class="kanban-cards-stack">
+          @if (todoTasks().length === 0) {
+            <div class="empty-column-box">Sin tareas pendientes</div>
+          }
+          @for (t of todoTasks(); track t.id) {
+            <div class="kanban-card" (click)="openTaskDrawer(t, $event)">
+              <div class="card-top-row">
+                <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                  {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                </span>
+              </div>
+
+              <h4 class="card-task-title">{{ t.title }}</h4>
+
+              <div class="card-meta-row">
+                <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                  <div class="assignee-avatar">
+                    {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                  </div>
+                  <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                </div>
+
+                <span class="estimate-pill">
+                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  {{ t.estimateHours }}h
+                </span>
+              </div>
+
+              @if (t.dueDate) {
+                <div class="card-due-date">
+                  <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                  <span>{{ t.dueDate | date:'shortDate' }}</span>
+                </div>
+              }
+
+              <!-- Controles de Columna -->
+              <div class="card-footer-actions" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="btn-move-col"
+                  (click)="moverColumna(t, 'next', $event)"
+                  title="Mover a En Progreso →">
+                  <span>En curso</span>
+                  <svg lucideChevronRight style="width: 14px; height: 14px;"></svg>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- COLUMNA 2: EN PROGRESO -->
+      <div class="kanban-column col-progress">
+        <div class="kanban-column-header">
+          <div class="col-header-left">
+            <span class="col-indicator prog"></span>
+            <span class="col-name">En Progreso</span>
+            <span class="col-count-badge">{{ inProgressTasks().length }}</span>
+          </div>
+          <button
+            type="button"
+            class="btn-col-add"
+            (click)="openQuickAddTask('IN_PROGRESS')"
+            title="Agregar tarea en En Progreso">
+            <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+          </button>
+        </div>
+
+        <div class="kanban-cards-stack">
+          @if (inProgressTasks().length === 0) {
+            <div class="empty-column-box">Sin tareas en curso</div>
+          }
+          @for (t of inProgressTasks(); track t.id) {
+            <div class="kanban-card in-prog-border" (click)="openTaskDrawer(t, $event)">
+              <div class="card-top-row">
+                <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                  {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                </span>
+              </div>
+
+              <h4 class="card-task-title">{{ t.title }}</h4>
+
+              <div class="card-meta-row">
+                <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                  <div class="assignee-avatar">
+                    {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                  </div>
+                  <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                </div>
+
+                <span class="estimate-pill">
+                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  {{ t.estimateHours }}h
+                </span>
+              </div>
+
+              @if (t.dueDate) {
+                <div class="card-due-date">
+                  <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                  <span>{{ t.dueDate | date:'shortDate' }}</span>
+                </div>
+              }
+
+              <!-- Controles de Columna -->
+              <div class="card-footer-actions" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="btn-move-col secondary"
+                  (click)="moverColumna(t, 'prev', $event)"
+                  title="← Volver a Por Hacer">
+                  <svg lucideChevronLeft style="width: 14px; height: 14px;"></svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-move-col success"
+                  (click)="moverColumna(t, 'next', $event)"
+                  title="Completar tarea ✓">
+                  <span>Completar</span>
+                  <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- COLUMNA 3: COMPLETADO -->
+      <div class="kanban-column col-done">
+        <div class="kanban-column-header">
+          <div class="col-header-left">
+            <span class="col-indicator done"></span>
+            <span class="col-name">Completado</span>
+            <span class="col-count-badge">{{ doneTasks().length }}</span>
+          </div>
+        </div>
+
+        <div class="kanban-cards-stack">
+          @if (doneTasks().length === 0) {
+            <div class="empty-column-box">Sin tareas completadas</div>
+          }
+          @for (t of doneTasks(); track t.id) {
+            <div class="kanban-card done-card" (click)="openTaskDrawer(t, $event)">
+              <div class="card-top-row">
+                <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                <span class="badge done">Completada</span>
+              </div>
+
+              <h4 class="card-task-title is-done">{{ t.title }}</h4>
+
+              <div class="card-meta-row">
+                <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                  <div class="assignee-avatar">
+                    {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                  </div>
+                  <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                </div>
+
+                <span class="estimate-pill">
+                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  {{ t.estimateHours }}h
+                </span>
+              </div>
+
+              <!-- Reabrir a En Progreso -->
+              <div class="card-footer-actions" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="btn-move-col"
+                  (click)="moverColumna(t, 'prev', $event)"
+                  title="Reabrir a En Progreso">
+                  <svg lucideRotateCcw style="width: 13px; height: 13px;"></svg>
+                  <span>Reabrir</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- =======================================================================
+       VISTA 3: CRONOGRAMA / TIMELINE (GANTT ESTILO MONDAY)
+       ======================================================================= -->
+  @if (viewMode() === 'TIMELINE') {
+    <div class="monday-timeline-view-container" style="margin-top: 24px;">
+      <div class="timeline-header-bar">
+        <h3>Cronograma de Entregas</h3>
+        <span class="timeline-subtitle">Visualización temporal de fechas y dependencias</span>
+      </div>
+
+      <div class="timeline-chart-wrapper">
+        <div class="timeline-grid-header">
+          <span class="grid-col-task-name">Elemento</span>
+          <span class="grid-date-slot">Semana 1</span>
+          <span class="grid-date-slot">Semana 2</span>
+          <span class="grid-date-slot">Semana 3</span>
+          <span class="grid-date-slot">Semana 4</span>
+        </div>
+
+        @for (t of filteredTasks(); track t.id) {
+          <div class="timeline-row-item">
+            <div class="timeline-task-info">
+              <span class="timeline-task-name">{{ t.title }}</span>
+              <span class="timeline-task-assignee">👤 {{ t.assignee || 'Sin asignar' }}</span>
+            </div>
+            <div class="timeline-track-lane">
+              <div
+                class="timeline-block"
+                [class.block-done]="t.status === 'DONE'"
+                [class.block-prog]="t.status === 'IN_PROGRESS'"
+                [class.block-todo]="t.status === 'TODO'"
+                [style.width.%]="t.estimateHours ? (t.estimateHours * 8 > 80 ? 80 : t.estimateHours * 8 + 15) : 30"
+              >
+                <span>{{ t.dueDate ? (t.dueDate | date:'d MMM') : 'Plazo estándar' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- =======================================================================
+       VISTA 4: LISTA ESTRUCTURADA
+       ======================================================================= -->
+  @if (viewMode() === 'LIST') {
+    <div class="list-section" style="margin-top: 24px;">
+      @if (filteredTasks().length === 0) {
+        <div class="empty-state">
+          No se encontraron tareas con los filtros aplicados.
+        </div>
+      } @else {
+        <div class="floating-list">
+          @for (t of filteredTasks(); track t.id) {
+            <div class="floating-row" (click)="openTaskDrawer(t, $event)" style="cursor: pointer;">
+              
+              <!-- Ticket Jira + Título -->
+              <div class="row-main">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                  <span class="row-title" [class.is-done]="t.status === 'DONE'">{{ t.title }}</span>
+                </div>
+                <div class="row-desc" style="display: flex; gap: 12px; align-items: center; margin-top: 4px;">
+                  <span>👤 {{ t.assignee || 'Sin asignar' }}</span>
+                  <span>•</span>
+                  <span>⏱️ {{ t.estimateHours }} hs</span>
+                  @if (t.dueDate) {
+                    <span>•</span>
+                    <span>📅 {{ t.dueDate | date:'shortDate' }}</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Prioridad + Pastilla Monday de Estado + Acciones -->
+              <div class="row-meta" style="display: flex; align-items: center; gap: 16px;">
+                <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                  {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                </span>
+
+                <div class="meta-badge" (click)="$event.stopPropagation()">
+                  @if (t.status === 'DONE') {
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="monday-pill pill-done">
+                        <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                        Hecho
+                      </span>
+                      <button class="btn-icon-small" (click)="reabrirTarea(t)" title="Reabrir tarea">
+                        <svg lucideRotateCcw class="rotate-icon" style="width: 14px; height: 14px;"></svg>
+                      </button>
+                    </div>
+                  } @else {
+                    <select
+                      class="task-status-select"
+                      [ngModel]="t.status"
+                      (ngModelChange)="cambiarEstadoTarea(t, $event)">
+                      <option value="TODO">Por Hacer</option>
+                      <option value="IN_PROGRESS">En Progreso</option>
+                      <option value="DONE">Listo</option>
+                    </select>
+                  }
+                </div>
+
+                <button class="btn-icon-small danger" (click)="deleteTask(t, $event)" title="Eliminar tarea">
+                  <svg lucideTrash2 style="width: 16px; height: 16px;"></svg>
+                </button>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- =======================================================================
+       DRAWER / PANEL LATERAL DE TAREA (ESTILO NOTION)
+       ======================================================================= -->
+  <div class="drawer-overlay" [class.open]="isDrawerOpen()" (click)="closeTaskDrawer()">
+    <div class="task-drawer-content" (click)="$event.stopPropagation()">
+      @if (selectedTask()) {
+        <div class="drawer-header">
+          <div>
+            <span class="drawer-ticket-badge">#PLX-{{ selectedTask()?.id }}</span>
+            <span class="drawer-project-name">📁 {{ project()?.name }}</span>
+          </div>
+          <button class="btn-icon-close" (click)="closeTaskDrawer()" title="Cerrar panel">
+            <svg lucideX style="width: 20px; height: 20px;"></svg>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <!-- Título Editable -->
+          <h2 class="drawer-task-title">{{ selectedTask()?.title }}</h2>
+
+          <!-- Propiedades Estilo Notion -->
+          <div class="notion-properties-grid">
+            <div class="notion-property-row">
+              <span class="prop-label">
+                <svg lucideUser style="width: 15px; height: 15px;"></svg>
+                Responsable
+              </span>
+              <div class="prop-value">
+                <span class="prop-text">{{ selectedTask()?.assignee || 'Sin asignar' }}</span>
+              </div>
+            </div>
+
+            <div class="notion-property-row">
+              <span class="prop-label">
+                <svg lucideTag style="width: 15px; height: 15px;"></svg>
+                Estado
+              </span>
+              <div class="prop-value">
+                <select
+                  class="notion-select-status"
+                  [ngModel]="selectedTask()?.status"
+                  (ngModelChange)="updateDrawerTaskStatus($event)">
+                  <option value="TODO">Por Hacer</option>
+                  <option value="IN_PROGRESS">En Progreso</option>
+                  <option value="DONE">Completada</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="notion-property-row">
+              <span class="prop-label">
+                <svg lucideClock style="width: 15px; height: 15px;"></svg>
+                Prioridad
+              </span>
+              <div class="prop-value">
+                <select
+                  class="notion-select-priority"
+                  [ngModel]="selectedTask()?.priority || 'media'"
+                  (ngModelChange)="updateDrawerPriority($event)">
+                  <option value="alta">🔴 Alta</option>
+                  <option value="media">🟡 Media</option>
+                  <option value="baja">🟢 Baja</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="notion-property-row">
+              <span class="prop-label">
+                <svg lucideClock style="width: 15px; height: 15px;"></svg>
+                Horas Estimadas
+              </span>
+              <div class="prop-value">
+                <span class="prop-text">{{ selectedTask()?.estimateHours }} horas</span>
+              </div>
+            </div>
+
+            @if (selectedTask()?.dueDate) {
+              <div class="notion-property-row">
+                <span class="prop-label">
+                  <svg lucideCalendar style="width: 15px; height: 15px;"></svg>
+                  Vencimiento
+                </span>
+                <div class="prop-value">
+                  <span class="prop-text">{{ selectedTask()?.dueDate | date:'mediumDate' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <hr class="drawer-divider" />
+
+          <!-- Checklist de Subtareas -->
+          <div class="drawer-checklist-section">
+            <div class="checklist-header">
+              <span class="checklist-title">Subtareas / Entregables</span>
+              <span class="checklist-count">{{ completedSubtasksCount() }}/{{ taskSubtasks().length }} ({{ subtaskProgressPct() }}%)</span>
+            </div>
+
+            <div class="subtask-progress-track">
+              <div class="subtask-progress-fill" [style.width.%]="subtaskProgressPct()"></div>
+            </div>
+
+            <div class="subtasks-list">
+              @for (st of taskSubtasks(); track st.id) {
+                <div class="subtask-row">
+                  <input
+                    type="checkbox"
+                    [checked]="st.done"
+                    (change)="toggleSubtask(st)"
+                    class="subtask-checkbox" />
+                  <span class="subtask-text" [class.done]="st.done">{{ st.text }}</span>
+                  <button class="btn-subtask-del" (click)="deleteSubtask(st.id)" title="Eliminar subtarea">
+                    <svg lucideTrash2 style="width: 14px; height: 14px;"></svg>
+                  </button>
+                </div>
+              }
+            </div>
+
+            <!-- Agregar Subtarea -->
+            <div class="add-subtask-box">
+              <input
+                type="text"
+                placeholder="Agregar una subtarea y presionar Enter..."
+                [ngModel]="newSubtaskText()"
+                (ngModelChange)="newSubtaskText.set($event)"
+                (keydown.enter)="addSubtask()"
+                class="subtask-input" />
+              <button class="btn-add-subtask" (click)="addSubtask()" [disabled]="!newSubtaskText().trim()">
+                <svg lucidePlus style="width: 15px; height: 15px;"></svg>
+              </button>
+            </div>
+          </div>
+
+          <hr class="drawer-divider" />
+
+          <!-- Notas / Documentación de la Tarea -->
+          <div class="drawer-notes-section">
+            <div class="notes-header">
+              <span class="notes-title">Notas de la Tarea</span>
+              <span class="notes-sub">Markdown y notas enriquecidas</span>
+            </div>
+            <textarea
+              class="notes-textarea"
+              placeholder="Escribe detalles, requerimientos o notas sobre esta tarea..."
+              [ngModel]="taskNotes()"
+              (ngModelChange)="taskNotes.set($event)"
+              (blur)="saveDrawerNotes()"
+              rows="6">
+            </textarea>
+            <div class="notes-footer-hint">Se guarda automáticamente al hacer clic fuera.</div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL DE SUGERENCIAS IA (MONDAY AI STYLE)
+       ======================================================================= -->
+  @if (isAiModalOpen()) {
+    <div class="ai-modal-backdrop" (click)="toggleAiModal()">
+      <div class="ai-modal-card" (click)="$event.stopPropagation()">
+        <div class="ai-modal-header">
+          <div class="ai-title-wrap">
+            <div class="ai-spark-box">
+              <svg lucideSparkles class="ai-sparkle-big"></svg>
+            </div>
+            <div>
+              <h3>Sugerencias de IA · Planix Assistant</h3>
+              <p class="ai-sub">Optimización inteligente basada en el avance del proyecto</p>
+            </div>
+          </div>
+          <button type="button" class="btn-icon-close" (click)="toggleAiModal()">
+            <svg lucideX style="width: 18px; height: 18px;"></svg>
+          </button>
+        </div>
+
+        <div class="ai-modal-body">
+          <p class="ai-intro-text">
+            Analizamos las tareas y métricas de <strong>{{ project()?.name }}</strong>. Estas son las oportunidades detectadas:
+          </p>
+
+          <div class="ai-suggs-stack">
+            <div class="ai-card-item">
+              <div class="ai-card-title">
+                <span class="ai-badge-chip">Prioridad</span>
+                <span>Desglose de tareas con estimación alta</span>
+              </div>
+              <p>Detectamos tareas con más de 3 horas estimadas. Recomendamos dividirlas en hitos más pequeños para un seguimiento ágil.</p>
+            </div>
+
+            <div class="ai-card-item">
+              <div class="ai-card-title">
+                <span class="ai-badge-chip balance">Equipo</span>
+                <span>Equilibrio en la asignación de responsables</span>
+              </div>
+              <p>Podés asignar colaboradores adicionales en las tareas pendientes para acelerar la entrega prevista para el hito principal.</p>
+            </div>
+
+            <div class="ai-card-item">
+              <div class="ai-card-title">
+                <span class="ai-badge-chip success">Ritmo</span>
+                <span>Pronóstico de cumplimiento</span>
+              </div>
+              <p>Con un progreso actual del <strong>{{ progressPercentage() }}%</strong>, el tablero se encuentra en una curva de entrega saludable sin desvíos críticos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-modal-footer">
+          <button type="button" class="btn-outline" (click)="toggleAiModal()">Cerrar</button>
+          <button type="button" class="btn-primary" (click)="toggleAiModal()">Aplicar Optimizaciones</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando espacio de trabajo y tablero...</p>
+  </div>
+</ng-template>

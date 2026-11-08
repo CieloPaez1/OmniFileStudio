@@ -1,0 +1,391 @@
+<!-- =======================================================================
+     ENCABEZADO MÓVIL PLANIX (SAAS PRO)
+     ======================================================================= -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>PLANIX · Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mobile-viewport" (click)="closeNotificationsPanel()">
+
+  <!-- Gesto táctil Pull-To-Refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="refresh-outline"
+      pullingText="Deslizá para actualizar..."
+      refreshingSpinner="crescent"
+      refreshingText="Sincronizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  @if (error()) {
+    <div class="offline-alert">
+      <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
+      <ion-text color="danger">{{ error() }}</ion-text>
+    </div>
+  }
+
+  <!-- =====================================================================
+       1. BARRA SUPERIOR Y SALUDO + ACCIONES
+       ===================================================================== -->
+  <header class="top-greeting-header" (click)="$event.stopPropagation()">
+    <div class="greeting-info">
+      <div class="greeting-name-row">
+        <h1>Hola, {{ authService.currentUser()?.name || 'Cielo' }}</h1>
+      </div>
+
+      <div class="greeting-meta-row">
+        <span class="user-role-label">
+          {{ authService.currentUser()?.role || 'Gestor de Proyectos' }}
+        </span>
+        <span class="meta-dot">•</span>
+        <button
+          type="button"
+          class="inline-status-chip"
+          [class]="authService.currentStatusMeta().colorClass"
+          (click)="cambiarEstadoRapido($event)"
+          title="Tocá para cambiar tu estado">
+          <ion-icon [name]="authService.currentStatusMeta().icon"></ion-icon>
+          <span>{{ authService.currentStatusMeta().text }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-right-actions">
+      <!-- Botón Modo Oscuro / Claro -->
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        [class.dark-active]="isDarkMode()"
+        (click)="toggleDarkMode($event)"
+        [title]="isDarkMode() ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'"
+        aria-label="Alternar modo oscuro y claro">
+        <ion-icon [name]="isDarkMode() ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </button>
+
+      <!-- Botón de Notificaciones -->
+      <button
+        type="button"
+        class="notif-bell-btn"
+        [class.active]="isNotificationsOpen()"
+        (click)="toggleNotificationsPanel($event)"
+        aria-label="Notificaciones"
+        title="Ver notificaciones recientes">
+        <ion-icon name="notifications-outline"></ion-icon>
+        @if (unreadNotificationsCount() > 0) {
+          <span class="notif-badge-dot">{{ unreadNotificationsCount() }}</span>
+        }
+      </button>
+
+      <!-- Avatar de Usuario -->
+      <button
+        type="button"
+        class="header-avatar-btn"
+        (click)="irAPerfil()"
+        title="Ir a mi Perfil">
+        @if (avatarUrl() || authService.currentUser()?.avatarUrl) {
+          <img
+            [src]="avatarUrl() || authService.currentUser()?.avatarUrl"
+            alt="Avatar de usuario"
+            class="header-avatar-img" />
+        } @else {
+          <div class="header-avatar-fallback">
+            {{ (authService.currentUser()?.name?.charAt(0) || 'C') | uppercase }}
+          </div>
+        }
+        <span
+          class="avatar-status-dot"
+          [class]="authService.currentStatusMeta().colorClass">
+        </span>
+      </button>
+    </div>
+
+    <!-- PANEL FLOTANTE DE NOTIFICACIONES -->
+    @if (isNotificationsOpen()) {
+      <div class="notifications-floating-panel" (click)="$event.stopPropagation()">
+        <div class="notif-panel-header">
+          <div>
+            <h4>Notificaciones</h4>
+            <span>{{ unreadNotificationsCount() }} pendientes</span>
+          </div>
+          @if (unreadNotificationsCount() > 0) {
+            <button
+              type="button"
+              class="mark-read-btn"
+              (click)="markAllNotificationsAsRead($event)">
+              <ion-icon name="checkmark-done-outline"></ion-icon>
+              <span>Leer todas</span>
+            </button>
+          }
+        </div>
+
+        <div class="notif-panel-list">
+          @for (n of notifications(); track n.id) {
+            <div
+              class="notif-item-card"
+              [class.unread]="!n.read"
+              (click)="onNotificationClick(n)">
+              <div class="notif-icon-circle" [class]="n.colorClass">
+                <ion-icon [name]="n.icon"></ion-icon>
+              </div>
+              <div class="notif-item-body">
+                <div class="notif-item-top">
+                  <h5>{{ n.title }}</h5>
+                  <span class="notif-time">{{ n.timeAgo }}</span>
+                </div>
+                <p>{{ n.message }}</p>
+              </div>
+              @if (!n.read) {
+                <span class="unread-pip"></span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="mobile-loading-box">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando métricas móviles...</p>
+    </div>
+  } @else {
+
+    <!-- =====================================================================
+         2. INDICADORES FUNCIONALES (KPIS 2x2 SOBRIOS Y LIMPIOS)
+         ===================================================================== -->
+    <section class="mobile-kpi-section">
+      <div class="mobile-kpi-grid">
+        <!-- KPI 1: Pendientes -->
+        <div class="mobile-kpi-card" routerLink="/mobile/tasks">
+          <div class="kpi-card-header">
+            <span class="kpi-card-label">Tareas pendientes</span>
+            <span class="kpi-status-dot amber"></span>
+          </div>
+          <div class="kpi-card-number">{{ pendingTodayCount() }}</div>
+          <span class="kpi-card-hint">Por resolver</span>
+        </div>
+
+        <!-- KPI 2: En curso -->
+        <div class="mobile-kpi-card" routerLink="/mobile/projects">
+          <div class="kpi-card-header">
+            <span class="kpi-card-label">Proyectos activos</span>
+            <span class="kpi-status-dot indigo"></span>
+          </div>
+          <div class="kpi-card-number">{{ activeProjects() }}</div>
+          <span class="kpi-card-hint">En ejecución</span>
+        </div>
+
+        <!-- KPI 3: Completadas -->
+        <div class="mobile-kpi-card" routerLink="/mobile/tasks">
+          <div class="kpi-card-header">
+            <span class="kpi-card-label">Completadas</span>
+            <span class="kpi-status-dot emerald"></span>
+          </div>
+          <div class="kpi-card-number">{{ completedTasks() }}</div>
+          <span class="kpi-card-hint">{{ completionPercentage() }}% resuelto</span>
+        </div>
+
+        <!-- KPI 4: Horas de foco -->
+        <div class="mobile-kpi-card" routerLink="/mobile/profile">
+          <div class="kpi-card-header">
+            <span class="kpi-card-label">Horas estimadas</span>
+            <span class="kpi-status-dot blue"></span>
+          </div>
+          <div class="kpi-card-number">{{ estimatedHours() }}<small style="font-size: 0.9rem;">h</small></div>
+          <span class="kpi-card-hint">{{ investedHours() }}h invertidas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         3. PROYECTOS DESTACADOS
+         ===================================================================== -->
+    <section class="featured-section">
+      <div class="section-header-row">
+        <div>
+          <h3 class="section-title">Proyectos Destacados</h3>
+          <span class="section-subtitle">Tus proyectos principales en curso</span>
+        </div>
+        <a routerLink="/mobile/projects" class="section-link">Ver todos</a>
+      </div>
+
+      <div class="projects-carousel no-scrollbar">
+        @if (projects().length > 0) {
+          @for (p of projects(); track p.id) {
+            <div
+              class="featured-project-card"
+              (click)="irADetalleProyecto(p.id)">
+              <div class="featured-card-top">
+                <span class="jira-ticket-tag">#PLX-PRJ-{{ p.id }}</span>
+                <span
+                  class="project-status-chip"
+                  [class.status-closed]="p.status === 'CLOSED'"
+                  [class.status-active]="p.status === 'ACTIVE'"
+                  [class.status-planned]="p.status === 'PLANNED'">
+                  {{ p.status === 'CLOSED' ? 'Completado' : (p.status === 'ACTIVE' ? 'En Curso' : 'Planificado') }}
+                </span>
+              </div>
+
+              <h4 class="featured-project-title">{{ p.name }}</h4>
+              <p class="featured-project-desc">{{ p.description || 'Proyecto activo en Planix' }}</p>
+
+              <div class="featured-progress-info">
+                <span>Avance</span>
+                <strong>{{ getProjectProgress(p.id) }}%</strong>
+              </div>
+              <div class="featured-progress-track">
+                <div
+                  class="featured-progress-bar"
+                  [style.width.%]="getProjectProgress(p.id)">
+                </div>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="featured-project-card" routerLink="/mobile/project-form">
+            <div class="featured-card-top">
+              <span class="jira-ticket-tag">+ Nuevo</span>
+            </div>
+            <h4 class="featured-project-title">Crear Primer Proyecto</h4>
+            <p class="featured-project-desc">Comenzá a organizar tus tareas y objetivos</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4. LISTA DE TAREAS DE HOY (CON FILTROS Y ACCIÓN RÁPIDA)
+         ===================================================================== -->
+    <section class="todays-tasks-section">
+      <div class="section-header-bar">
+        <div>
+          <h3 class="section-main-title">Tareas de Hoy</h3>
+          <p class="section-sub-caption">Prioridades del día asignadas para resolución</p>
+        </div>
+        <a routerLink="/mobile/task-form" class="see-all-link">+ Nueva tarea</a>
+      </div>
+
+      <!-- Filtros: Todas | Pendientes | Completadas -->
+      <div class="task-filter-tabs">
+        <button
+          type="button"
+          class="filter-tab-btn"
+          [class.active]="selectedTaskFilter() === 'ALL'"
+          (click)="setTaskFilter('ALL')">
+          <span>Todas</span>
+          <small class="tab-count">{{ totalTasks() }}</small>
+        </button>
+
+        <button
+          type="button"
+          class="filter-tab-btn"
+          [class.active]="selectedTaskFilter() === 'TODO'"
+          (click)="setTaskFilter('TODO')">
+          <span>Pendientes</span>
+          <small class="tab-count">{{ pendingTodayCount() }}</small>
+        </button>
+
+        <button
+          type="button"
+          class="filter-tab-btn"
+          [class.active]="selectedTaskFilter() === 'DONE'"
+          (click)="setTaskFilter('DONE')">
+          <span>Completadas</span>
+          <small class="tab-count">{{ completedTasks() }}</small>
+        </button>
+      </div>
+
+      <!-- Lista de Tareas -->
+      @if (filteredTodayTasks().length === 0) {
+        <div class="empty-state-box">
+          <ion-icon name="checkmark-circle-outline" class="empty-icon"></ion-icon>
+          <p>
+            @if (selectedTaskFilter() === 'DONE') {
+              Aún no tenés tareas completadas hoy.
+            } @else if (selectedTaskFilter() === 'TODO') {
+              No tenés tareas pendientes para hoy.
+            } @else {
+              No hay tareas registradas. Creá una con el botón +
+            }
+          </p>
+        </div>
+      } @else {
+        <div class="today-tasks-list">
+          @for (t of filteredTodayTasks(); track t.id; let idx = $index) {
+            <div
+              class="today-task-card"
+              [class.is-completed]="t.status === 'DONE'"
+              (click)="toggleTaskCompletion(t, $event)">
+
+              <!-- Casilla Checkbox -->
+              <button
+                type="button"
+                class="custom-task-checkbox"
+                [class.checked]="t.status === 'DONE'"
+                (click)="toggleTaskCompletion(t, $event)"
+                [attr.aria-label]="t.status === 'DONE' ? 'Desmarcar tarea' : 'Completar tarea'">
+                @if (t.status === 'DONE') {
+                  <ion-icon name="checkmark-outline"></ion-icon>
+                }
+              </button>
+
+              <!-- Contenido de la Tarea -->
+              <div class="today-task-content">
+                <div class="today-task-top-row">
+                  <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                    <span class="jira-ticket-tag">#PLX-{{ t.id }}</span>
+                    <h4 class="today-task-title" [class.strike-text]="t.status === 'DONE'">
+                      {{ t.title }}
+                    </h4>
+                  </div>
+
+                  <span
+                    class="priority-tag"
+                    [class]="getTaskPriority(t, idx).cssClass">
+                    {{ getTaskPriority(t, idx).label }}
+                  </span>
+                </div>
+
+                <div class="today-task-meta-row">
+                  <span class="meta-chip">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ getTaskTimeLabel(t, idx) }}
+                  </span>
+
+                  <span class="meta-chip">
+                    <ion-icon name="person-outline"></ion-icon>
+                    {{ t.assignee || 'Sin asignar' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+  }
+
+  <!-- Botón flotante FAB para creación rápida -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="mobile-fab">
+    <ion-fab-button color="primary">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button routerLink="/mobile/project-form" color="light" title="Nuevo Proyecto">
+        <ion-icon name="briefcase-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button routerLink="/mobile/task-form" color="light" title="Nueva Tarea">
+        <ion-icon name="checkbox-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>

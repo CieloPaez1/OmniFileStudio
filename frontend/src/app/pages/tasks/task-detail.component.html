@@ -1,0 +1,78 @@
+<div class="task-detail-page" *ngIf="task(); else loadingTemplate">
+  <div class="page-header">
+    <div>
+      <p>DETALLE DE TAREA</p>
+      <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+        <h1>{{ task()?.title }}</h1>
+        @if (task()?.status === 'DONE') {
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge done">Hecha</span>
+            <button class="btn-icon-small" (click)="reabrirTarea()" title="Reabrir tarea">
+              <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+            </button>
+          </div>
+        } @else if (task()) {
+          <select class="status-select" 
+                  [ngClass]="task()!.status.toLowerCase()" 
+                  [ngModel]="task()!.status" 
+                  (ngModelChange)="cambiarEstado($event)">
+            <option value="TODO">Por Hacer</option>
+            <option value="IN_PROGRESS">En Progreso</option>
+            <option value="DONE">Hecho</option>
+          </select>
+        }
+      </div>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-outline" routerLink="/tasks/list">
+        <svg lucideArrowLeft style="width: 18px; height: 18px;"></svg>
+        Volver
+      </button>
+      @if (task()?.status !== 'DONE') {
+        <button class="btn-outline" [routerLink]="['/projects', task()?.projectId, 'tasks', 'edit', task()?.id]">
+          <svg lucideEdit style="width: 18px; height: 18px;"></svg>
+          Editar
+        </button>
+      }
+      <button class="btn-outline danger" (click)="deleteTask()" [disabled]="isLoading()">
+        <svg lucideTrash2 style="width: 18px; height: 18px;"></svg>
+        Eliminar
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-card" style="margin-top: 24px;">
+    <div class="info-grid">
+      <div class="info-block">
+        <label>Proyecto Asignado</label>
+        <p>
+          @if (task()?.projectId) {
+            <a [routerLink]="['/projects', task()?.projectId]" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+              {{ projectName() }}
+            </a>
+          } @else {
+            {{ projectName() }}
+          }
+        </p>
+      </div>
+      <div class="info-block">
+        <label>Responsable</label>
+        <p>{{ task()?.assignee || 'Sin asignar' }}</p>
+      </div>
+      <div class="info-block">
+        <label>Horas Estimadas</label>
+        <p>{{ task()?.estimateHours || 0 }} hs</p>
+      </div>
+      <div class="info-block">
+        <label>Vencimiento</label>
+        <p>{{ task()?.dueDate ? (task()?.dueDate | date:'short') : 'Sin fecha' }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-state">
+    <p>Cargando detalle de la tarea...</p>
+  </div>
+</ng-template>

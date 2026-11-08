@@ -1,0 +1,859 @@
+.tasks-page-container {
+  animation: fadeIn 0.25s ease-out;
+  padding-bottom: 40px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.eyebrow-tasks {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary-color);
+}
+
+.tasks-page-title {
+  margin: 2px 0 0 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.tasks-page-sub {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* MONDAY PROGRESS BOX */
+.monday-progress-card {
+  padding: 16px 20px;
+}
+
+.monday-progress-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress-labels-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.progress-stats-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-headline {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.progress-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.progress-legend-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.leg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.leg-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.leg-dot.done { background: var(--success-color); }
+.leg-dot.prog { background: var(--primary-color); }
+.leg-dot.todo { background: var(--warning-color); }
+
+.monday-pulse-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  display: flex;
+  overflow: hidden;
+}
+
+.track-segment {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.segment-done { background: var(--success-color); }
+.segment-prog { background: var(--primary-color); }
+.segment-todo { background: var(--warning-color); }
+
+/* TOOLBAR */
+.tasks-toolbar-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.asana-view-switcher {
+  display: flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.view-tab-btn.active {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.jira-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-ico {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.toolbar-search-input {
+  padding: 7px 12px 7px 30px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  outline: none;
+  width: 220px;
+  transition: all 0.15s ease;
+}
+
+.toolbar-search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.toolbar-select {
+  padding: 7px 10px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.toolbar-select:focus {
+  border-color: var(--primary-color);
+}
+
+.btn-clear-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-clear-filter:hover {
+  background: var(--bg-secondary);
+  color: var(--danger-color);
+}
+
+/* KANBAN */
+.kanban-board-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.kanban-column {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 480px;
+}
+
+.kanban-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.col-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.col-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.col-indicator.todo { background: var(--warning-color); }
+.col-indicator.prog { background: var(--primary-color); }
+.col-indicator.done { background: var(--success-color); }
+
+.col-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.col-count-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.kanban-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-column-box {
+  padding: 24px 12px;
+  text-align: center;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-btn);
+  color: var(--text-tertiary);
+  font-size: 0.78rem;
+}
+
+.kanban-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.kanban-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.kanban-card.in-prog-border {
+  border-left: 3px solid var(--primary-color);
+}
+
+.kanban-card.done-card {
+  border-left: 3px solid var(--success-color);
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jira-ticket-id {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.card-project-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--primary-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.priority-chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-badge);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.priority-chip.alta {
+  background: var(--prio-high-bg);
+  color: var(--prio-high-text);
+}
+
+.priority-chip.media {
+  background: var(--prio-mid-bg);
+  color: var(--prio-mid-text);
+}
+
+.priority-chip.baja {
+  background: var(--prio-low-bg);
+  color: var(--prio-low-text);
+}
+
+.card-task-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.card-task-title.is-done {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+.card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assignee-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.assignee-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assignee-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.estimate-pill, .card-due-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.card-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-color);
+}
+
+.card-footer-actions.two-actions {
+  justify-content: space-between;
+}
+
+.btn-move-col {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-move-col:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+}
+
+.btn-move-col.primary {
+  background: var(--success-soft);
+  color: var(--success-color);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.btn-move-col.primary:hover {
+  background: var(--success-color);
+  color: #ffffff;
+}
+
+/* LISTA */
+.list-section {
+  width: 100%;
+}
+
+.floating-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.floating-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  transition: background-color 0.15s ease;
+  gap: 12px;
+}
+
+.floating-row:hover {
+  background: var(--bg-secondary);
+}
+
+.row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.row-title.is-done {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+.row-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* MONDAY */
+.monday-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.monday-pill.pill-done {
+  background: var(--badge-closed-bg);
+  color: var(--badge-closed-text);
+}
+
+.monday-status-select {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-badge);
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.monday-status-select.todo {
+  background: var(--badge-planned-bg);
+  color: var(--badge-planned-text);
+}
+
+.monday-status-select.in_progress {
+  background: var(--badge-active-bg);
+  color: var(--badge-active-text);
+}
+
+.monday-status-select.done {
+  background: var(--badge-closed-bg);
+  color: var(--badge-closed-text);
+}
+
+/* NOTION DRAWER */
+.notion-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.15s ease;
+}
+
+.notion-drawer-sheet {
+  width: 100%;
+  max-width: 520px;
+  height: 100%;
+  background: var(--card-bg);
+  border-left: 1px solid var(--border-color);
+  padding: 24px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-ticket-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-task-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.notion-properties-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  padding: 12px 14px;
+}
+
+.prop-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.prop-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.prop-value {
+  color: var(--text-primary);
+}
+
+.prop-user-pill {
+  background: var(--card-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+.drawer-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}
+
+.subtasks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subtasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subtasks-header h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtasks-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.subtasks-progress-bar {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.subtasks-progress-fill {
+  height: 100%;
+  background: var(--success-color);
+  transition: width 0.25s ease;
+}
+
+.subtasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-btn);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.subtask-item.is-done .subtask-text {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+.subtask-checkbox {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.subtask-text {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.btn-delete-subtask {
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.btn-delete-subtask:hover {
+  color: var(--danger-color);
+}
+
+.add-subtask-row {
+  display: flex;
+  gap: 6px;
+}
+
+.add-subtask-input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  outline: none;
+}
+
+.add-subtask-input:focus {
+  border-color: var(--primary-color);
+}
+
+.btn-add-subtask {
+  padding: 6px 12px;
+  border-radius: var(--radius-btn);
+  border: none;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.task-notes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.task-notes-section h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.task-notes-textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.825rem;
+  resize: vertical;
+  outline: none;
+}
+
+.task-notes-textarea:focus {
+  border-color: var(--primary-color);
+}
+
+.notes-hint {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+.loading-state-card, .empty-state-card {
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1024px) {
+  .kanban-board-container {
+    grid-template-columns: 1fr;
+  }
+}

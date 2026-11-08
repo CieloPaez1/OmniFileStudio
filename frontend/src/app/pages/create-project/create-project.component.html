@@ -1,0 +1,1138 @@
+<div class="create-space-container">
+
+  <!-- Top bar con selector de modo (Asistente vs Clásico) -->
+  <header class="wizard-top-header">
+    <div class="header-left">
+      <span class="planix-pill">PLANIX · ESPACIOS</span>
+      <h2>Creación de Espacios</h2>
+    </div>
+
+    <button type="button" class="btn-mode-toggle" (click)="toggleWizardMode()">
+      @if (isWizardMode()) {
+        <span>Ver formulario clásico</span>
+      } @else {
+        <svg lucideSparkles class="icon-sparkle"></svg>
+        <span>Asistente interactivo</span>
+      }
+    </button>
+  </header>
+
+  <!-- =========================================================================
+       MODO ASISTENTE INTERACTIVO (JIRA / ASANA / LINEAR STYLE)
+       ========================================================================= -->
+  @if (isWizardMode()) {
+    <div class="wizard-wrapper">
+
+      <!-- Notificaciones de éxito o error -->
+      @if (success()) {
+        <div class="wizard-alert success">
+          <svg lucideCheckCircle class="alert-icon"></svg>
+          <span>{{ success() }}</span>
+        </div>
+      }
+      @if (error()) {
+        <div class="wizard-alert error">
+          <svg lucideXCircle class="alert-icon"></svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <!-- Indicador de Pasos / Stepper de 8 Pasos -->
+      <nav class="stepper-bar">
+        <div class="step-node" [class.active]="currentStep() === 1" [class.completed]="currentStep() > 1" (click)="goToStep(1)">
+          <span class="step-num">1</span>
+          <span class="step-label">Plantilla</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 1"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 2" [class.completed]="currentStep() > 2" (click)="goToStep(2)">
+          <span class="step-num">2</span>
+          <span class="step-label">Nombre</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 2"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 3" [class.completed]="currentStep() > 3" (click)="goToStep(3)">
+          <span class="step-num">3</span>
+          <span class="step-label">Columnas</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 3"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 4" [class.completed]="currentStep() > 4" (click)="goToStep(4)">
+          <span class="step-num">4</span>
+          <span class="step-label">Flujo</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 4"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 5" [class.completed]="currentStep() > 5" (click)="goToStep(5)">
+          <span class="step-num">5</span>
+          <span class="step-label">Vistas</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 5"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 6" [class.completed]="currentStep() > 6" (click)="goToStep(6)">
+          <span class="step-num">6</span>
+          <span class="step-label">Paneles</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 6"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 7" [class.completed]="currentStep() > 7" (click)="goToStep(7)">
+          <span class="step-num">7</span>
+          <span class="step-label">Equipo</span>
+        </div>
+        <div class="step-divider" [class.completed]="currentStep() > 7"></div>
+
+        <div class="step-node" [class.active]="currentStep() === 8" (click)="goToStep(8)">
+          <span class="step-num">8</span>
+          <span class="step-label">Lanzar</span>
+        </div>
+      </nav>
+
+      <!-- =====================================================================
+           PASO 1: SELECCIONE UNA PLANTILLA PARA COMENZAR
+           ===================================================================== -->
+      @if (currentStep() === 1) {
+        <div class="step-content step-1-template">
+          <div class="step-header-center">
+            <h1>Seleccione una plantilla para comenzar</h1>
+            <p class="step-subtitle">
+              Siempre puedes cambiar esto más tarde. Seleccionar una plantilla no limitará lo que puedes hacer.
+            </p>
+
+            <div class="template-category-badge">
+              <span class="badge-accent-square"></span>
+              <span class="badge-category-text">Gestión de proyectos</span>
+            </div>
+          </div>
+
+          <div class="template-grid">
+            @for (tmpl of templates; track tmpl.id) {
+              <div
+                class="template-card"
+                [class.selected]="selectedTemplate().id === tmpl.id"
+                (click)="selectTemplate(tmpl)"
+              >
+                <div class="template-visual-container">
+                  <div class="backdrop-shape shape-yellow"></div>
+                  <div class="backdrop-shape shape-purple"></div>
+
+                  <div class="mockup-canvas">
+                    @if (tmpl.id === 'kanban') {
+                      <div class="kanban-mini-board">
+                        <div class="kanban-col">
+                          <div class="col-bar"></div>
+                          <div class="mini-card"><span class="chip-color chip-green"></span><span class="wire-line"></span></div>
+                          <div class="mini-card"><span class="chip-color chip-green"></span><span class="wire-line"></span></div>
+                          <div class="mini-card"><span class="chip-color chip-orange"></span><span class="wire-line"></span></div>
+                        </div>
+                        <div class="kanban-col">
+                          <div class="col-bar"></div>
+                          <div class="mini-card"><span class="chip-color chip-blue"></span><span class="wire-line"></span></div>
+                          <div class="mini-card"><span class="chip-color chip-blue"></span><span class="wire-line"></span></div>
+                        </div>
+                        <div class="kanban-col">
+                          <div class="col-bar"></div>
+                          <div class="mini-card"><span class="chip-color chip-green"></span><span class="wire-line"></span></div>
+                          <div class="mini-card"><span class="chip-color chip-blue"></span><span class="wire-line"></span></div>
+                        </div>
+                      </div>
+                    } @else if (tmpl.id === 'project') {
+                      <div class="list-mini-board">
+                        <div class="list-header-bar"></div>
+                        <div class="list-row"><span class="chip-color chip-blue"></span><span class="wire-line long"></span><span class="dot-cell"></span><span class="chip-color chip-orange right"></span></div>
+                        <div class="list-row"><span class="chip-color chip-blue"></span><span class="wire-line mid"></span><span class="dot-cell"></span><span class="chip-color chip-green right"></span></div>
+                        <div class="list-row"><span class="chip-color chip-blue"></span><span class="wire-line long"></span><span class="dot-cell"></span><span class="chip-color chip-blue right"></span></div>
+                      </div>
+                    } @else {
+                      <div class="scrum-mini-board">
+                        <div class="scrum-header-bar"></div>
+                        <div class="scrum-row">
+                          <span class="chip-color chip-blue"></span>
+                          <span class="scrum-block block-orange"></span>
+                          <svg class="curved-arrow" viewBox="0 0 40 20"><path d="M 5,5 Q 20,20 35,5" fill="none" stroke="#64748b" stroke-width="1.5"/></svg>
+                          <span class="scrum-block block-green"></span>
+                        </div>
+                        <div class="scrum-row">
+                          <span class="chip-color chip-blue"></span>
+                          <span class="wire-line mid"></span>
+                          <span class="scrum-block block-gray"></span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="template-card-body">
+                  <h3>{{ tmpl.name }}</h3>
+                  <p>{{ tmpl.description }}</p>
+                </div>
+
+                @if (selectedTemplate().id === tmpl.id) {
+                  <div class="selected-check-badge">
+                    <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="step-footer-actions right-only">
+            <button type="button" class="btn-primary-blue" (click)="nextStep()">
+              <span>Continuar</span>
+              <svg lucideArrowRight class="btn-arrow-icon"></svg>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 2: NOMBRA TU ESPACIO (CON LIVE PREVIEW INTERACTIVO)
+           ===================================================================== -->
+      @if (currentStep() === 2) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>Nombra tu espacio</h1>
+            <p class="step-subtitle">
+              Aquí es donde ayudarás a tu equipo a realizar un seguimiento del progreso, mantenerse organizado y gestionar las tareas.
+            </p>
+
+            <form [formGroup]="form" class="space-form-block">
+              <div class="form-group">
+                <label for="spaceNameInput" class="input-label">Nombra tu espacio</label>
+                <input
+                  id="spaceNameInput"
+                  type="text"
+                  formControlName="name"
+                  class="space-text-input"
+                  [class.has-error]="isInvalid('name')"
+                  placeholder="My Project Management Team"
+                  autofocus
+                />
+                @if (isInvalid('name')) {
+                  <small class="field-error">Por favor ingresá un nombre para tu espacio.</small>
+                }
+              </div>
+
+              <div class="suggestions-section">
+                <span class="suggestions-title">Ejemplos de nombres de espacios:</span>
+                <div class="chips-container">
+                  @for (suggestion of nameSuggestions; track suggestion) {
+                    <button
+                      type="button"
+                      class="name-chip-btn"
+                      [class.chip-active]="form.get('name')?.value === suggestion"
+                      (click)="applyNameSuggestion(suggestion)"
+                    >
+                      {{ suggestion }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <details class="advanced-settings-accordion">
+                <summary>Configuraciones de calendario y fechas</summary>
+                <div class="advanced-grid">
+                  <div class="sub-form-group">
+                    <label>Fecha de inicio</label>
+                    <input type="date" formControlName="startDate" class="date-input" />
+                  </div>
+                  <div class="sub-form-group">
+                    <label>Fecha de entrega estimada</label>
+                    <input type="date" formControlName="endDate" class="date-input" />
+                  </div>
+                </div>
+              </details>
+            </form>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">{{ spaceNamePreview() }}</h4>
+
+                    <div class="pointer-arrow-doodle">
+                      <svg viewBox="0 0 48 32" class="doodle-svg">
+                        <path d="M 40,6 C 30,2 15,10 6,24 M 6,24 L 14,19 M 6,24 L 8,30" fill="none" stroke="#09090b" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="board-views-tabs">
+                    <span class="view-tab active">Board</span>
+                    <span class="view-tab">List</span>
+                    <span class="view-tab">Timeline</span>
+                    <span class="view-tab">Backlog</span>
+                    <div class="tab-trailing-blocks">
+                      <span class="block-dot"></span>
+                      <span class="block-dot"></span>
+                      <span class="block-dot"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="board-columns-preview">
+                  <div class="preview-col">
+                    <span class="col-title">TO DO</span>
+                    <div class="preview-card">
+                      <div class="card-sketch-line"></div>
+                      <div class="card-footer-meta">
+                        <span class="p-square square-blue"></span>
+                        <span class="p-dash"></span>
+                      </div>
+                    </div>
+                    <div class="preview-card">
+                      <div class="card-sketch-line"></div>
+                      <div class="card-footer-meta">
+                        <span class="p-square square-orange"></span>
+                        <span class="p-dash"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="preview-col">
+                    <span class="col-title">IN PROGRESS</span>
+                    <div class="preview-card">
+                      <div class="card-sketch-line"></div>
+                      <div class="card-footer-meta">
+                        <span class="p-square square-green"></span>
+                        <span class="p-dash"></span>
+                      </div>
+                    </div>
+                    <div class="preview-card">
+                      <div class="card-sketch-line"></div>
+                      <div class="card-footer-meta">
+                        <span class="p-square square-blue"></span>
+                        <span class="p-dash"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="preview-col">
+                    <span class="col-title">DONE</span>
+                    <div class="preview-card">
+                      <div class="card-sketch-line"></div>
+                      <div class="card-footer-meta">
+                        <span class="p-square square-blue"></span>
+                        <span class="p-dash"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 3: SELECCIONA LAS COLUMNAS RELEVANTES PARA TU TABLERO (NUEVO)
+           ===================================================================== -->
+      @if (currentStep() === 3) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>Selecciona las columnas relevantes para tu tablero</h1>
+            <p class="step-subtitle">
+              Elige las columnas más populares para tu trabajo. Podrás personalizarlas o agregar más en cualquier momento.
+            </p>
+
+            <div class="board-columns-selector-grid">
+              @for (col of availableColumns; track col.id) {
+                <button
+                  type="button"
+                  class="board-column-chip-btn"
+                  [class.selected]="isColumnSelected(col.id)"
+                  (click)="toggleColumn(col.id)"
+                >
+                  <span class="col-chip-icon-box" [style.background]="col.iconBg" [style.color]="col.color">
+                    @if (col.id === 'assignee') { <svg lucideUser class="chip-svg"></svg> }
+                    @else if (col.id === 'status') { <svg lucideCheckSquare class="chip-svg"></svg> }
+                    @else if (col.id === 'dueDate') { <svg lucideCalendar class="chip-svg"></svg> }
+                    @else if (col.id === 'timeline') { <svg lucideClock class="chip-svg"></svg> }
+                    @else if (col.id === 'lastUpdated') { <svg lucideHistory class="chip-svg"></svg> }
+                    @else if (col.id === 'notes') { <svg lucideFileText class="chip-svg"></svg> }
+                    @else if (col.id === 'files') { <svg lucidePaperclip class="chip-svg"></svg> }
+                    @else if (col.id === 'budget') { <svg lucideCoins class="chip-svg"></svg> }
+                    @else if (col.id === 'priority') { <svg lucideTriangle class="chip-svg"></svg> }
+                  </span>
+                  <span class="board-column-chip-label">{{ col.label }}</span>
+                </button>
+              }
+            </div>
+
+            <div class="columns-selection-summary">
+              <span class="summary-check-dot"></span>
+              <span><strong>{{ selectedColumns().length }}</strong> columnas activadas para tu espacio.</span>
+            </div>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Live Preview con columnas seleccionadas en el tablero -->
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">{{ spaceNamePreview() }}</h4>
+                  </div>
+                  <div class="board-views-tabs">
+                    <span class="view-tab active">Tabla</span>
+                    <span class="view-tab">Kanban</span>
+                    <span class="view-tab">Cronograma</span>
+                  </div>
+                </div>
+
+                <!-- Preview de columnas del tablero en formato tabla estructurada -->
+                <div class="live-columns-table-mockup">
+                  <div class="dynamic-col-header-row">
+                    <span class="d-head-item task-col">Tarea</span>
+                    @for (cid of selectedColumns(); track cid) {
+                      <span class="d-head-item">{{ cid }}</span>
+                    }
+                  </div>
+
+                  <div class="dynamic-col-body-row">
+                    <span class="d-body-item task-col"><span class="c-box"></span> Relevamiento</span>
+                    @for (cid of selectedColumns(); track cid) {
+                      <span class="d-body-item">
+                        @if (cid === 'assignee') { <span class="c-avatar av-blue">C</span> }
+                        @else if (cid === 'status') { <span class="c-badge badge-green">Listo</span> }
+                        @else if (cid === 'dueDate') { <span class="cell-text-date">15 Nov</span> }
+                        @else if (cid === 'priority') { <span class="c-badge badge-blue">Alta</span> }
+                        @else { <span class="wire-cell"></span> }
+                      </span>
+                    }
+                  </div>
+
+                  <div class="dynamic-col-body-row">
+                    <span class="d-body-item task-col"><span class="c-box"></span> Desarrollo UI</span>
+                    @for (cid of selectedColumns(); track cid) {
+                      <span class="d-body-item">
+                        @if (cid === 'assignee') { <span class="c-avatar av-purple">A</span> }
+                        @else if (cid === 'status') { <span class="c-badge badge-blue">En curso</span> }
+                        @else if (cid === 'dueDate') { <span class="cell-text-date">22 Nov</span> }
+                        @else if (cid === 'priority') { <span class="c-badge badge-gray">Media</span> }
+                        @else { <span class="wire-cell"></span> }
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 4: ¿CÓMO SE REALIZA EL SEGUIMIENTO DEL TRABAJO? (ESTADOS EN VIVO)
+           ===================================================================== -->
+      @if (currentStep() === 4) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>¿Cómo se realiza el seguimiento del trabajo?</h1>
+            <p class="step-subtitle">
+              A medida que completa el trabajo, se mueve a través de estos estados.
+            </p>
+
+            <div class="states-editor-list">
+              @for (st of workflowStates(); track $index) {
+                <div class="state-item-row">
+                  <input
+                    type="text"
+                    [value]="st"
+                    (input)="updateWorkflowState($index, $event)"
+                    class="state-name-input"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove-state"
+                    [disabled]="workflowStates().length <= 2"
+                    (click)="removeWorkflowState($index)"
+                    title="Eliminar estado"
+                  >
+                    <svg lucideX class="remove-x-icon"></svg>
+                  </button>
+                </div>
+              }
+
+              <button type="button" class="btn-add-state" (click)="addWorkflowState()">
+                <svg lucidePlus class="add-icon"></svg>
+                <span>Agregar nuevo estado</span>
+              </button>
+            </div>
+
+            <p class="states-helper-note">No te preocupes, puedes cambiarlos más tarde.</p>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">{{ spaceNamePreview() }}</h4>
+                  </div>
+                  <div class="board-views-tabs">
+                    <span class="view-tab active">Board</span>
+                    <span class="view-tab">List</span>
+                    <span class="view-tab">Timeline</span>
+                  </div>
+                </div>
+
+                <div class="board-columns-preview dynamic-columns">
+                  @for (st of workflowStates(); track $index) {
+                    <div class="preview-col">
+                      <span class="col-title">{{ st | uppercase }}</span>
+                      <div class="preview-card">
+                        <div class="card-sketch-line"></div>
+                        <div class="card-footer-meta">
+                          <span
+                            class="p-square"
+                            [class.square-blue]="$index % 3 === 0"
+                            [class.square-green]="$index % 3 === 1"
+                            [class.square-orange]="$index % 3 === 2"
+                          ></span>
+                          <span class="p-dash"></span>
+                        </div>
+                      </div>
+                      <div class="preview-card">
+                        <div class="card-sketch-line"></div>
+                        <div class="card-footer-meta">
+                          <span class="p-square square-blue"></span>
+                          <span class="p-dash"></span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 5: AGREGA UN DISEÑO DE VISTA (TABLA, KANBAN, CALENDARIO, CRONOGRAMA, ETC.)
+           ===================================================================== -->
+      @if (currentStep() === 5) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>Agrega un diseño de vista</h1>
+            <p class="step-subtitle">
+              Transforma la manera de ver y gestionar tu trabajo con más vistas únicas. Puedes agregar otras después.
+            </p>
+
+            <div class="view-options-grid">
+              @for (vo of viewOptions; track vo.id) {
+                <button
+                  type="button"
+                  class="view-chip-btn"
+                  [class.selected]="selectedView().id === vo.id"
+                  (click)="selectView(vo)"
+                >
+                  <span class="view-chip-icon-box" [style.background]="vo.iconBg" [style.color]="vo.color">
+                    @if (vo.id === 'table') { <svg lucideTable class="chip-svg"></svg> }
+                    @else if (vo.id === 'kanban') { <svg lucideKanban class="chip-svg"></svg> }
+                    @else if (vo.id === 'calendar') { <svg lucideCalendar class="chip-svg"></svg> }
+                    @else if (vo.id === 'cards') { <svg lucideLayoutGrid class="chip-svg"></svg> }
+                    @else if (vo.id === 'gantt') { <svg lucideBarChart2 class="chip-svg"></svg> }
+                    @else if (vo.id === 'timeline') { <svg lucideClock class="chip-svg"></svg> }
+                  </span>
+                  <span class="view-chip-label">{{ vo.label }}</span>
+                </button>
+              }
+            </div>
+
+            <div class="view-description-banner" [style.border-left-color]="selectedView().color">
+              <p>{{ selectedView().bannerText }}</p>
+            </div>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">{{ spaceNamePreview() }}</h4>
+                  </div>
+
+                  <div class="board-views-tabs">
+                    <span class="view-tab" [class.active]="selectedView().id === 'kanban'">Kanban</span>
+                    <span class="view-tab" [class.active]="selectedView().id === 'table'">Tabla</span>
+                    <span class="view-tab" [class.active]="selectedView().id === 'timeline' || selectedView().id === 'gantt'">Cronograma</span>
+                    <span class="view-tab" [class.active]="selectedView().id === 'calendar'">Calendario</span>
+                    <span class="view-tab" [class.active]="selectedView().id === 'cards'">Fichas</span>
+                  </div>
+                </div>
+
+                <div class="view-mode-canvas">
+                  @if (selectedView().id === 'timeline' || selectedView().id === 'gantt') {
+                    <div class="timeline-mockup">
+                      <div class="timeline-axis-header">
+                        <span>Sem 1</span><span>Sem 2</span><span>Sem 3</span><span>Sem 4</span>
+                      </div>
+                      <div class="timeline-row">
+                        <span class="t-label">Diseño UI</span>
+                        <div class="t-bar-track">
+                          <span class="t-bar" style="width: 48%; left: 0%; background: #f59e0b;"></span>
+                        </div>
+                      </div>
+                      <div class="timeline-row">
+                        <span class="t-label">Frontend</span>
+                        <div class="t-bar-track">
+                          <span class="t-bar" style="width: 55%; left: 35%; background: #0052cc;"></span>
+                        </div>
+                      </div>
+                      <div class="timeline-row">
+                        <span class="t-label">Testing QA</span>
+                        <div class="t-bar-track">
+                          <span class="t-bar" style="width: 38%; left: 60%; background: #10b981;"></span>
+                        </div>
+                      </div>
+                    </div>
+                  } @else if (selectedView().id === 'table') {
+                    <div class="table-mockup">
+                      <div class="table-m-header">
+                        <span>Tarea</span><span>Estado</span><span>Asignado</span>
+                      </div>
+                      <div class="table-m-row">
+                        <span class="cell-task"><span class="c-box"></span> Relevamiento inicial</span>
+                        <span class="c-badge badge-green">Listo</span>
+                        <span class="c-avatar av-blue">C</span>
+                      </div>
+                      <div class="table-m-row">
+                        <span class="cell-task"><span class="c-box"></span> Arquitectura base</span>
+                        <span class="c-badge badge-blue">En curso</span>
+                        <span class="c-avatar av-purple">A</span>
+                      </div>
+                      <div class="table-m-row">
+                        <span class="cell-task"><span class="c-box"></span> Pruebas finales</span>
+                        <span class="c-badge badge-gray">Pendiente</span>
+                        <span class="c-avatar av-teal">E</span>
+                      </div>
+                    </div>
+                  } @else if (selectedView().id === 'calendar') {
+                    <div class="calendar-mockup">
+                      <div class="cal-days-header">
+                        <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                      </div>
+                      <div class="cal-grid">
+                        @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14]; track i) {
+                          <div class="cal-cell" [class.has-event]="i === 4 || i === 9 || i === 12">
+                            <span class="cal-num">{{ i }}</span>
+                            @if (i === 4) { <span class="cal-dot dot-pink"></span> }
+                            @if (i === 9) { <span class="cal-dot dot-blue"></span> }
+                            @if (i === 12) { <span class="cal-dot dot-green"></span> }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  } @else if (selectedView().id === 'cards') {
+                    <div class="cards-grid-mockup">
+                      <div class="card-tile">
+                        <div class="tile-cover cover-blue"></div>
+                        <span class="tile-line"></span>
+                        <span class="tile-line short"></span>
+                      </div>
+                      <div class="card-tile">
+                        <div class="tile-cover cover-orange"></div>
+                        <span class="tile-line"></span>
+                        <span class="tile-line short"></span>
+                      </div>
+                      <div class="card-tile">
+                        <div class="tile-cover cover-green"></div>
+                        <span class="tile-line"></span>
+                        <span class="tile-line short"></span>
+                      </div>
+                      <div class="card-tile">
+                        <div class="tile-cover cover-purple"></div>
+                        <span class="tile-line"></span>
+                        <span class="tile-line short"></span>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="board-columns-preview">
+                      <div class="preview-col">
+                        <span class="col-title">TO DO</span>
+                        <div class="preview-card"><div class="card-sketch-line"></div></div>
+                        <div class="preview-card"><div class="card-sketch-line"></div></div>
+                      </div>
+                      <div class="preview-col">
+                        <span class="col-title">IN PROGRESS</span>
+                        <div class="preview-card"><div class="card-sketch-line"></div></div>
+                      </div>
+                      <div class="preview-col">
+                        <span class="col-title">DONE</span>
+                        <div class="preview-card"><div class="card-sketch-line"></div></div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 6: OBTÉN DATOS EN TIEMPO REAL CON LOS PANELES (WIDGETS)
+           ===================================================================== -->
+      @if (currentStep() === 6) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>Obtén datos en tiempo real con los paneles</h1>
+            <p class="step-subtitle">
+              Personaliza los widgets que quieres ver en tu panel.
+            </p>
+
+            <div class="widgets-options-grid">
+              @for (w of widgetOptions; track w.id) {
+                <button
+                  type="button"
+                  class="widget-chip-btn"
+                  [class.selected]="isWidgetSelected(w.id)"
+                  (click)="toggleWidget(w.id)"
+                >
+                  <span class="widget-chip-icon-box" [style.background]="w.iconBg" [style.color]="w.color">
+                    @if (w.id === 'overview') { <svg lucideCheckSquare class="chip-svg"></svg> }
+                    @else if (w.id === 'by-status') { <svg lucideBarChart2 class="chip-svg"></svg> }
+                    @else if (w.id === 'by-assignee') { <svg lucideUser class="chip-svg"></svg> }
+                    @else if (w.id === 'overdue') { <svg lucideAlertTriangle class="chip-svg"></svg> }
+                    @else if (w.id === 'by-due-date') { <svg lucideTimer class="chip-svg"></svg> }
+                  </span>
+                  <span class="widget-chip-label">{{ w.label }}</span>
+                </button>
+              }
+            </div>
+
+            <div class="widget-info-tip">
+              <span class="tip-dot"></span>
+              <span>Podés alternar y activar los widgets para que tu dashboard se arme a tu medida.</span>
+            </div>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">Panel · {{ spaceNamePreview() }}</h4>
+                  </div>
+                  <div class="dashboard-badge-indicator">
+                    <span class="live-dot"></span>
+                    <span>Métricas en tiempo real</span>
+                  </div>
+                </div>
+
+                <div class="dashboard-widgets-live-grid">
+                  @if (isWidgetSelected('overview')) {
+                    <div class="widget-live-card">
+                      <span class="w-card-title">Resumen de tareas</span>
+                      <div class="w-kpi-row">
+                        <div class="kpi-block"><span class="kpi-num">12</span><span class="kpi-lbl">Total</span></div>
+                        <div class="kpi-block green"><span class="kpi-num">8</span><span class="kpi-lbl">Hechas</span></div>
+                        <div class="kpi-block blue"><span class="kpi-num">4</span><span class="kpi-lbl">En curso</span></div>
+                      </div>
+                    </div>
+                  }
+
+                  @if (isWidgetSelected('by-status')) {
+                    <div class="widget-live-card">
+                      <span class="w-card-title">Distribución por estado</span>
+                      <div class="status-bars-preview">
+                        <div class="s-bar-item"><span class="s-name">Listo</span><div class="s-track"><span class="s-fill green" style="width: 65%;"></span></div><span class="s-val">65%</span></div>
+                        <div class="s-bar-item"><span class="s-name">En curso</span><div class="s-track"><span class="s-fill blue" style="width: 25%;"></span></div><span class="s-val">25%</span></div>
+                        <div class="s-bar-item"><span class="s-name">Pendiente</span><div class="s-track"><span class="s-fill amber" style="width: 10%;"></span></div><span class="s-val">10%</span></div>
+                      </div>
+                    </div>
+                  }
+
+                  @if (isWidgetSelected('by-assignee')) {
+                    <div class="widget-live-card">
+                      <span class="w-card-title">Carga por integrante</span>
+                      <div class="team-load-list">
+                        <div class="team-load-item"><span class="t-avatar">CP</span><span class="t-name">Cielo</span><span class="t-badge">5 tareas</span></div>
+                        <div class="team-load-item"><span class="t-avatar alt">AD</span><span class="t-name">Admin</span><span class="t-badge">4 tareas</span></div>
+                      </div>
+                    </div>
+                  }
+
+                  @if (isWidgetSelected('overdue')) {
+                    <div class="widget-live-card alert-mode">
+                      <span class="w-card-title">Tareas vencidas</span>
+                      <div class="overdue-content">
+                        <span class="overdue-count">0</span>
+                        <span class="overdue-text">¡Todo al día! Sin retrasos críticos.</span>
+                      </div>
+                    </div>
+                  }
+
+                  @if (isWidgetSelected('by-due-date')) {
+                    <div class="widget-live-card">
+                      <span class="w-card-title">Próximos vencimientos</span>
+                      <div class="due-dates-preview">
+                        <div class="due-item"><span class="due-dot orange"></span><span>Entrega de hito 1</span><span class="due-tag">Viernes</span></div>
+                        <div class="due-item"><span class="due-dot blue"></span><span>Revisión de sprint</span><span class="due-tag">Próx. semana</span></div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 7: ¿QUIÉN MÁS ESTÁ EN TU EQUIPO? (NUEVO)
+           ===================================================================== -->
+      @if (currentStep() === 7) {
+        <div class="step-content step-two-column">
+          <div class="column-left-form">
+            <h1>¿Quién más está en tu equipo?</h1>
+            <p class="step-subtitle">
+              Invita a las personas de tu equipo para colaborar, asignar tareas y dar seguimiento al trabajo en tiempo real.
+            </p>
+
+            <!-- Lista de filas de invitación (exacto a captura 1) -->
+            <div class="team-invite-rows-list">
+              @for (m of teamInvites(); track $index) {
+                <div class="team-member-input-row">
+                  <div class="invite-email-input-wrapper">
+                    <svg lucideMail class="invite-mail-icon"></svg>
+                    <input
+                      type="email"
+                      [value]="m.email"
+                      (input)="updateTeamMemberEmail($index, $event)"
+                      placeholder="Agregar el correo electrónico aquí"
+                      class="invite-email-input"
+                    />
+                  </div>
+
+                  <div class="invite-role-select-wrapper">
+                    <select
+                      [value]="m.role"
+                      (change)="updateTeamMemberRole($index, $event)"
+                      class="invite-role-select"
+                    >
+                      <option value="Administrador">Administrador</option>
+                      <option value="Miembro">Miembro</option>
+                      <option value="Observador">Observador</option>
+                    </select>
+                  </div>
+
+                  @if (teamInvites().length > 1) {
+                    <button
+                      type="button"
+                      class="btn-remove-invite"
+                      (click)="removeTeamMember($index)"
+                      title="Quitar"
+                    >
+                      <svg lucideX class="remove-x-icon"></svg>
+                    </button>
+                  }
+                </div>
+              }
+
+              <!-- Botón + Agregar otro -->
+              <button type="button" class="btn-add-another-member" (click)="addTeamMember()">
+                <svg lucidePlus class="add-icon"></svg>
+                <span>Agregar otro</span>
+              </button>
+            </div>
+
+            <div class="step-footer-actions">
+              <button type="button" class="btn-secondary-link" (click)="prevStep()">
+                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <span>Atrás</span>
+              </button>
+              <button type="button" class="btn-primary-blue" (click)="nextStep()">
+                <span>Continuar</span>
+                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Live Preview del Equipo -->
+          <div class="column-right-preview">
+            <div class="preview-backdrop-container">
+              <div class="accent-bg-box blue-box"></div>
+              <div class="accent-bg-box orange-box"></div>
+
+              <div class="live-board-mockup">
+                <div class="board-mockup-header">
+                  <div class="board-title-row">
+                    <h4 class="live-title">{{ spaceNamePreview() }}</h4>
+                  </div>
+                  <div class="team-collab-badge">
+                    <svg lucideUser style="width: 14px; height: 14px; color: #0052cc;"></svg>
+                    <span>Equipo y Colaboradores</span>
+                  </div>
+                </div>
+
+                <div class="team-preview-showcase">
+                  <div class="owner-pill-box">
+                    <span class="team-avatar-big owner">Tú</span>
+                    <div class="owner-info">
+                      <span class="owner-name">Propietario del espacio</span>
+                      <span class="owner-role-tag">Acceso total</span>
+                    </div>
+                  </div>
+
+                  <div class="invited-members-preview-list">
+                    <span class="invited-sub-title">Invitaciones preparadas:</span>
+                    @for (m of teamInvites(); track $index) {
+                      <div class="invited-member-item">
+                        <span class="member-initial-circle">{{ m.email ? m.email[0].toUpperCase() : ('M' + ($index + 1)) }}</span>
+                        <div class="member-email-box">
+                          <span class="member-email-text">{{ m.email || ('colaborador' + ($index + 1) + '@equipo.com') }}</span>
+                          <span class="member-role-sub">{{ m.role }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           PASO 8: CONFIRMACIÓN Y CREACIÓN DEL ESPACIO
+           ===================================================================== -->
+      @if (currentStep() === 8) {
+        <div class="step-content step-confirmation">
+          <div class="step-header-center">
+            <h1>Todo listo para lanzar tu espacio</h1>
+            <p class="step-subtitle">
+              Revisá el resumen de tu nuevo espacio y comenzá a gestionar proyectos y tareas de forma profesional.
+            </p>
+          </div>
+
+          <div class="summary-cards-grid">
+            <div class="summary-card">
+              <span class="summary-label">Nombre del Espacio</span>
+              <strong class="summary-value">{{ spaceNamePreview() }}</strong>
+            </div>
+
+            <div class="summary-card">
+              <span class="summary-label">Plantilla Seleccionada</span>
+              <strong class="summary-value">{{ selectedTemplate().name }}</strong>
+            </div>
+
+            <div class="summary-card">
+              <span class="summary-label">Diseño de Vista</span>
+              <div class="summary-view-pill">
+                <span class="pill-dot" [style.background]="selectedView().color"></span>
+                <strong>{{ selectedView().label }}</strong>
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <span class="summary-label">Columnas del Tablero</span>
+              <strong class="summary-value">{{ selectedColumns().length }} columnas activas</strong>
+            </div>
+
+            <div class="summary-card">
+              <span class="summary-label">Widgets del Panel</span>
+              <strong class="summary-value">{{ selectedWidgets().length }} widgets activados</strong>
+            </div>
+
+            <div class="summary-card">
+              <span class="summary-label">Equipo</span>
+              <strong class="summary-value">{{ teamInvites().length }} invitaciones</strong>
+            </div>
+          </div>
+
+          <!-- Opción de tareas iniciales de muestra -->
+          <div class="suggested-tasks-box">
+            <div class="tasks-box-header">
+              <div>
+                <h3>Tareas iniciales de muestra</h3>
+                <p>Generar automáticamente 3 tareas de ejemplo basadas en la plantilla {{ selectedTemplate().name }}.</p>
+              </div>
+
+              <label class="switch-toggle-label">
+                <input
+                  type="checkbox"
+                  [checked]="includeSuggestedTasks()"
+                  (change)="includeSuggestedTasks.set(!includeSuggestedTasks())"
+                />
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            @if (includeSuggestedTasks()) {
+              <ul class="tasks-preview-list">
+                @for (t of selectedTemplate().suggestedTasks; track t.title) {
+                  <li>
+                    <span class="task-bullet"></span>
+                    <span class="task-title">{{ t.title }}</span>
+                    <span class="task-meta">{{ t.hours }}h · {{ t.assignee }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div class="step-footer-actions">
+            <button type="button" class="btn-secondary-link" (click)="prevStep()">
+              <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+              <span>Atrás</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn-primary-blue btn-large"
+              [disabled]="loading()"
+              (click)="submitFromWizard()"
+            >
+              @if (loading()) {
+                <span class="btn-spinner"></span>
+                <span>Creando espacio...</span>
+              } @else {
+                <svg lucideCheck class="btn-icon"></svg>
+                <span>Crear Espacio y Comenzar</span>
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- =========================================================================
+       MODO CLÁSICO (FORMULARIO ORIGINAL DE AVANZADA 2)
+       ========================================================================= -->
+  @if (!isWizardMode()) {
+    <div class="classic-form-container">
+      @if (success()) {
+        <div class="wizard-alert success">
+          <svg lucideCheckCircle class="alert-icon"></svg>
+          <span>{{ success() }}</span>
+        </div>
+      }
+      @if (error()) {
+        <div class="wizard-alert error">
+          <svg lucideXCircle class="alert-icon"></svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <div class="classic-card">
+        <h3>Formulario tradicional de proyecto</h3>
+        <p class="classic-sub">Podés crear un proyecto cargando todos sus campos de forma manual.</p>
+
+        <form [formGroup]="form" (ngSubmit)="submitClassic()">
+          <div class="form-group-classic">
+            <label>Nombre del proyecto *</label>
+            <input type="text" formControlName="name" class="form-control-classic" placeholder="Ej: Rediseño de plataforma" />
+          </div>
+
+          <div class="dates-grid-classic">
+            <div>
+              <label>Fecha de inicio *</label>
+              <input type="date" formControlName="startDate" class="form-control-classic" />
+            </div>
+            <div>
+              <label>Fecha de fin *</label>
+              <input type="date" formControlName="endDate" class="form-control-classic" />
+            </div>
+          </div>
+
+          <div class="form-group-classic">
+            <label>Estado inicial *</label>
+            <select formControlName="status" class="form-control-classic">
+              <option value="PLANNED">Planificado</option>
+              <option value="ACTIVE">Activo</option>
+              <option value="CLOSED">Cerrado</option>
+            </select>
+          </div>
+
+          <div class="form-group-classic">
+            <label>Descripción</label>
+            <textarea formControlName="description" rows="3" class="form-control-classic" placeholder="Detalles opcionales..."></textarea>
+          </div>
+
+          <div class="classic-actions">
+            <button type="button" class="btn-cancel" (click)="cancelar()">Limpiar</button>
+            <button type="submit" class="btn-save" [disabled]="loading() || form.invalid">
+              @if (loading()) { Guardando... } @else { Guardar Proyecto }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+</div>

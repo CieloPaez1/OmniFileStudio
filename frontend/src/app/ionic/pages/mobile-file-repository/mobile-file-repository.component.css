@@ -1,0 +1,248 @@
+/* ============================================================================
+   [DISEÑO UX/UI] REPOSITORIO MODERNO SLATE & INDIGO (#6366f1)
+   - Tarjetas redondeadas (rounded-2xl), sombras sutiles y badges por formato
+   - Selector flotante de formato estilizado (píldoras interactivas)
+   ============================================================================ */
+
+.search-toolbar {
+  --background: var(--ion-background-color, #f8fafc);
+  --border-width: 0;
+  padding: 0.2rem 0.5rem;
+}
+
+.repo-top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0 0.25rem 0.85rem;
+}
+
+.upload-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.52rem 0.95rem;
+  border-radius: 14px;
+  background: #eef2ff;
+  border: 1px dashed rgba(99, 102, 241, 0.45);
+  color: #4f46e5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.16s ease, background 0.16s ease;
+}
+
+.upload-pill-btn:hover {
+  background: #e0e7ff;
+  transform: translateY(-1px);
+}
+
+/* Barra de filtros por etiquetas (Píldoras minimalistas) */
+.tags-bar {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding: 0.15rem 0.25rem 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag-filter-pill {
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.18s ease;
+}
+
+.tag-filter-pill:hover {
+  color: #4f46e5;
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.tag-filter-pill.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 6px 14px -3px rgba(99, 102, 241, 0.35);
+}
+
+.tag-filter-pill.urgent {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+/* Selector Flotante Estilizado para Conversión Rápida */
+.convert-floating-card {
+  margin: 0 0.25rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.18);
+}
+
+.convert-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.convert-card-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.pill-selector-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.floating-format-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.format-option-pill {
+  background: #f8fafc;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  border-radius: 14px;
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.format-option-pill.selected {
+  background: #eef2ff;
+  border-color: #6366f1;
+  box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.25);
+  transform: translateY(-1px);
+}
+
+.convert-banner-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sliding-hint {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0.15rem 0.35rem 0.75rem;
+}
+
+/* Lista Moderna con Tarjetas Deslizables Redondeadas */
+.repo-modern-list {
+  background: transparent;
+  padding: 0 0.15rem;
+}
+
+.repo-sliding-card {
+  margin-bottom: 0.65rem;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px -3px rgba(15, 23, 42, 0.05);
+}
+
+.file-row-title {
+  font-weight: 700 !important;
+  color: #0f172a;
+  font-size: 0.92rem !important;
+  margin-bottom: 0.2rem;
+}
+
+.file-row-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.row-tag-chip {
+  font-weight: 700;
+  color: #475569;
+}
+
+.status-mini {
+  padding: 0.08rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.status-mini.signed {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.status-mini.compressed {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.item-desc {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  margin-top: 0.18rem;
+}
+
+/* Vista Cuadrícula (Grid) con tarjetas rounded-2xl y sombras suaves */
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 0.85rem;
+  padding: 0 0.15rem;
+}
+
+.grid-file-card {
+  margin: 0;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.grid-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.grid-tag-pill {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.grid-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-top: 0.25rem;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.grid-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  align-items: center;
+}

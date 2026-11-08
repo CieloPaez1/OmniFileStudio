@@ -1,0 +1,164 @@
+<!-- =======================================================================
+     [IONIC 9 - CLASES 4, 8 Y 9: FORMULARIO REACTIVO + PLUGINS NATIVOS]
+     - Clase 4: ion-input, ion-select, ion-datetime e ion-toggle con
+       [formControlName] + ion-note color="danger" cuando touched && invalid.
+     - Clase 8: Captura de foto con @capacitor/camera + guardado en
+       Directory.Data (@capacitor/filesystem) + Capacitor.convertFileSrc().
+     - Clase 9: Geolocalización con @capacitor/geolocation + programación de
+       notificación local con @capacitor/local-notifications.
+     ======================================================================= -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/mobile/tasks"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nueva Tarea (Móvil)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding mobile-viewport">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="ionic-reactive-form">
+
+    <!-- Campo 1: Título (con validación required y minLength(3)) -->
+    <ion-item class="form-item">
+      <ion-label position="stacked">Título de la tarea *</ion-label>
+      <ion-input
+        formControlName="title"
+        placeholder="Ej: Entregar informe final">
+      </ion-input>
+    </ion-item>
+    @if (title.touched && title.invalid) {
+      <ion-note color="danger" class="validation-note">
+        El título es obligatorio (mínimo 3 caracteres).
+      </ion-note>
+    }
+
+    <!-- Campo 2: Proyecto asociado (ion-select) -->
+    <ion-item class="form-item">
+      <ion-label position="stacked">Proyecto</ion-label>
+      <ion-select formControlName="projectId" interface="action-sheet">
+        @for (p of projects(); track p.id) {
+          <ion-select-option [value]="p.id">{{ p.name }}</ion-select-option>
+        }
+        @if (projects().length === 0) {
+          <ion-select-option [value]="1">Proyecto General</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <!-- Campo 3: Responsable y Horas Estimadas -->
+    <ion-item class="form-item">
+      <ion-label position="stacked">Responsable / Asignado a</ion-label>
+      <ion-input
+        formControlName="assignee"
+        placeholder="Ej: Cielo Páez">
+      </ion-input>
+    </ion-item>
+
+    <ion-item class="form-item">
+      <ion-label position="stacked">Horas Estimadas *</ion-label>
+      <ion-input
+        type="number"
+        formControlName="estimateHours"
+        placeholder="Ej: 4">
+      </ion-input>
+    </ion-item>
+    @if (estimateHours.touched && estimateHours.invalid) {
+      <ion-note color="danger" class="validation-note">
+        Ingresá al menos 1 hora estimada.
+      </ion-note>
+    }
+
+    <!-- Campo 4: Prioridad (ion-select según guía Clase 4) -->
+    <ion-item class="form-item">
+      <ion-label>Prioridad</ion-label>
+      <ion-select formControlName="priority">
+        <ion-select-option value="alta">Alta</ion-select-option>
+        <ion-select-option value="media">Media</ion-select-option>
+        <ion-select-option value="baja">Baja</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Campo 5: Fecha de Vencimiento con ion-datetime (Clase 4 y Clase 9) -->
+    <ion-item class="form-item datetime-item">
+      <ion-label position="stacked">Fecha de Vencimiento (programa Notificación Local)</ion-label>
+      <ion-datetime
+        formControlName="dueDate"
+        presentation="date">
+      </ion-datetime>
+    </ion-item>
+
+    <!-- Campo 6: Estado Completada con ion-toggle (Clase 4) -->
+    <ion-item class="form-item">
+      <ion-label>Marcar como completada</ion-label>
+      <ion-toggle formControlName="done" slot="end" color="success"></ion-toggle>
+    </ion-item>
+
+    <!-- =====================================================================
+         [CLASE 8 Y CLASE 9] ACCIONES NATIVAS DE CAPACITOR (CÁMARA Y GPS)
+         Aplicadas al dominio del Gestor de Proyectos:
+         1) Cámara + Filesystem: Adjuntar foto de evidencia o avance de la tarea.
+         2) Geolocalización: Registrar ubicación del cliente, obra o sucursal.
+         ===================================================================== -->
+    <div class="native-plugins-box">
+      <small style="font-weight: 700; color: var(--ion-color-primary); padding: 0 4px;">
+        Evidencia de Avance y Ubicación de Campo (Capacitor 8)
+      </small>
+      <div class="native-buttons-row">
+        <!-- [CLASE 8] Botón para tomar foto o elegir de galería -->
+        <ion-button
+          type="button"
+          fill="outline"
+          color="secondary"
+          class="native-btn"
+          (click)="elegirOrigenFoto()">
+          <ion-icon name="camera-outline" slot="start"></ion-icon>
+          Adjuntar Evidencia
+        </ion-button>
+
+        <!-- [CLASE 9] Botón para capturar coordenadas GPS -->
+        <ion-button
+          type="button"
+          fill="outline"
+          color="tertiary"
+          class="native-btn"
+          (click)="guardarUbicacion()">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          Ubicación / Sede
+        </ion-button>
+      </div>
+
+      <!-- [CLASE 8] Vista previa de la foto renderizada con Capacitor.convertFileSrc() -->
+      @if (photoUrl()) {
+        <div class="photo-preview-card">
+          <img [src]="photoUrl()" alt="Adjunto de la tarea" class="task-photo-img" />
+          <span class="photo-meta">Archivo en Directory.Data: {{ form.value.photo }}</span>
+        </div>
+      }
+
+      <!-- [CLASE 9] Chip con las coordenadas obtenidas del GPS -->
+      @if (locationStatus()) {
+        <ion-chip color="tertiary" class="gps-chip">
+          <ion-icon name="location-outline"></ion-icon>
+          <ion-label>{{ locationStatus() }}</ion-label>
+        </ion-chip>
+      }
+    </div>
+
+    <!-- Botón de envío expand="block" -->
+    <ion-button
+      expand="block"
+      type="submit"
+      class="ion-margin-top submit-btn"
+      [disabled]="saving()">
+      @if (saving()) {
+        <ion-spinner name="crescent" slot="start"></ion-spinner>
+        Guardando...
+      } @else {
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Guardar Tarea
+      }
+    </ion-button>
+
+  </form>
+</ion-content>

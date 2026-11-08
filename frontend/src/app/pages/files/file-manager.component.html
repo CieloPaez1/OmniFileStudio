@@ -1,0 +1,607 @@
+<div class="fm-wrapper">
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="fm-header">
+    <div>
+      <span class="fm-kicker">SUITE MULTIMEDIA & PDF · HEXAGONAL ENGINE</span>
+      <h1 class="fm-title">Gestor y Conversor de Archivos</h1>
+      <p class="fm-subtitle">
+        Subí cualquier archivo, cambiale el formato, escaneá fotos con la cámara a PDF, uní o dividí documentos PDF.
+      </p>
+    </div>
+
+    <div class="fm-header-actions">
+      <a routerLink="/mobile/files" class="fm-btn fm-btn-outline">
+        📱 Abrir Versión Móvil (Ionic 9)
+      </a>
+      <label class="fm-btn fm-btn-primary">
+        ⬆️ Subir Archivos
+        <input type="file" multiple hidden (change)="onUploadFiles($event)" />
+      </label>
+    </div>
+  </header>
+
+  @if (statusMessage(); as msg) {
+    <div class="fm-alert" [class]="'fm-alert-' + msg.type">
+      <span>{{ msg.text }}</span>
+    </div>
+  }
+
+  <!-- MÉTRICAS RÁPIDAS -->
+  <section class="fm-stats-row">
+    <div class="fm-stat-card">
+      <span class="fm-stat-label">Total Archivos</span>
+      <strong class="fm-stat-val">{{ fileService.totalFiles() }}</strong>
+    </div>
+    <div class="fm-stat-card">
+      <span class="fm-stat-label">Documentos PDF</span>
+      <strong class="fm-stat-val">{{ pdfFiles().length }}</strong>
+    </div>
+    <div class="fm-stat-card">
+      <span class="fm-stat-label">Imágenes</span>
+      <strong class="fm-stat-val">{{ imageFiles().length }}</strong>
+    </div>
+    <div class="fm-stat-card">
+      <span class="fm-stat-label">Espacio Utilizado</span>
+      <strong class="fm-stat-val">{{ fileService.formatBytes(fileService.totalBytes()) }}</strong>
+    </div>
+  </section>
+
+  <!-- NAVEGACIÓN DE PESTAÑAS -->
+  <nav class="fm-tabs">
+    <button
+      type="button"
+      class="fm-tab"
+      [class.active]="activeTab() === 'library'"
+      (click)="setTab('library')">
+      📁 Mis Archivos ({{ fileService.totalFiles() }})
+    </button>
+    <button
+      type="button"
+      class="fm-tab"
+      [class.active]="activeTab() === 'converter'"
+      (click)="setTab('converter')">
+      🔄 Cambiar Formato
+    </button>
+    <button
+      type="button"
+      class="fm-tab"
+      [class.active]="activeTab() === 'camera'"
+      (click)="setTab('camera')">
+      📸 Cámara y Fotos a PDF
+    </button>
+    <button
+      type="button"
+      class="fm-tab"
+      [class.active]="activeTab() === 'merge'"
+      (click)="setTab('merge')">
+      🔗 Unir PDFs
+    </button>
+    <button
+      type="button"
+      class="fm-tab"
+      [class.active]="activeTab() === 'split'"
+      (click)="setTab('split')">
+      ✂️ Dividir / Extraer PDF
+    </button>
+  </nav>
+
+  <!-- ==================== PESTAÑA 1: BIBLIOTECA ==================== -->
+  @if (activeTab() === 'library') {
+    <section class="fm-panel">
+      <div
+        class="fm-dropzone"
+        (drop)="onDropFiles($event)"
+        (dragover)="onDragOver($event)">
+        <div class="fm-dropzone-icon">☁️</div>
+        <h3>Arrastrá y soltá cualquier archivo acá</h3>
+        <p>Imágenes (PNG, JPG, WEBP, GIF, BMP), Documentos PDF, Planillas (CSV, JSON) y Textos (TXT, MD, HTML)</p>
+        <label class="fm-btn fm-btn-secondary">
+          Seleccionar desde tu equipo
+          <input type="file" multiple hidden (change)="onUploadFiles($event)" />
+        </label>
+      </div>
+
+      <div class="fm-toolbar">
+        <div class="fm-filter-pills">
+          <button class="fm-pill" [class.active]="selectedCategory() === 'ALL'" (click)="selectedCategory.set('ALL')">Todos</button>
+          <button class="fm-pill" [class.active]="selectedCategory() === 'PDF'" (click)="selectedCategory.set('PDF')">PDFs</button>
+          <button class="fm-pill" [class.active]="selectedCategory() === 'IMAGE'" (click)="selectedCategory.set('IMAGE')">Imágenes</button>
+          <button class="fm-pill" [class.active]="selectedCategory() === 'DATA'" (click)="selectedCategory.set('DATA')">Datos (CSV/JSON)</button>
+          <button class="fm-pill" [class.active]="selectedCategory() === 'DOCUMENT'" (click)="selectedCategory.set('DOCUMENT')">Textos / Docs</button>
+          <button class="fm-pill" [class.active]="selectedCategory() === 'CONVERTED'" (click)="selectedCategory.set('CONVERTED')">Convertidos / Procesados</button>
+        </div>
+
+        <input
+          type="search"
+          class="fm-input fm-search-input"
+          placeholder="Buscar archivo por nombre o extensión..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)" />
+      </div>
+
+      @if (filteredFiles().length === 0) {
+        <div class="fm-empty">
+          No hay archivos que coincidan con el filtro. ¡Subí un archivo arriba para comenzar!
+        </div>
+      } @else {
+        <div class="fm-files-grid">
+          @for (file of filteredFiles(); track file.id) {
+            <article class="fm-file-card">
+              <div class="fm-file-thumb" (click)="openPreview(file)">
+                @if (file.category === 'IMAGE') {
+                  <img [src]="file.viewUrl" [alt]="file.name" loading="lazy" />
+                } @else {
+                  <span class="fm-file-icon">
+                    {{ file.ext === 'pdf' ? '📕' : file.category === 'DATA' ? '📊' : file.ext === 'zip' ? '🗜️' : '📄' }}
+                  </span>
+                }
+                <span class="fm-ext-badge">.{{ file.ext }}</span>
+                <span class="fm-origin-badge">{{ file.origin }}</span>
+              </div>
+
+              <div class="fm-file-body">
+                <div class="fm-file-name" [title]="file.name">{{ file.name }}</div>
+                <div class="fm-file-meta">
+                  <span>{{ fileService.formatBytes(file.size) }}</span>
+                  @if (file.pageCount) {
+                    <span>{{ file.pageCount }} pág(s)</span>
+                  } @else if (file.width && file.height) {
+                    <span>{{ file.width }}×{{ file.height }}</span>
+                  }
+                </div>
+
+                <div class="fm-file-actions">
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="openPreview(file)">👁️ Ver</button>
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-secondary" (click)="sendToConverter(file)">🔄 Convertir</button>
+                  @if (file.ext === 'pdf') {
+                    <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="sendToSplit(file)">✂️ Dividir</button>
+                    <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="sendToMerge(file)">🔗 Unir</button>
+                  }
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="renameFilePrompt(file)" title="Renombrar">✏️</button>
+                  <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="file.downloadUrl">⬇️</a>
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-danger" (click)="deleteFile(file)" title="Eliminar">🗑️</button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <!-- ==================== PESTAÑA 2: CONVERSOR UNIVERSAL ==================== -->
+  @if (activeTab() === 'converter') {
+    <section class="fm-two-cols">
+      <div class="fm-card">
+        <h2>1. Archivo de Origen</h2>
+        <p class="fm-muted">Subí un archivo desde tu equipo o seleccioná uno guardado en tu biblioteca.</p>
+
+        <label class="fm-dropzone compact">
+          <div class="fm-dropzone-icon">📄</div>
+          <h4>{{ convSourceFile() ? convSourceFile()!.name : 'Hacé clic para elegir un archivo nuevo' }}</h4>
+          <p class="fm-muted">Imágenes, PDF, CSV, JSON, TXT, Markdown o HTML</p>
+          <input type="file" hidden (change)="onConverterFilePicked($event)" />
+        </label>
+
+        <div class="fm-field">
+          <label>O elegir de Mis Archivos</label>
+          <select
+            class="fm-input"
+            [ngModel]="convSourceRecordId()"
+            (ngModelChange)="onConverterRecordSelected($event)">
+            <option [ngValue]="null">-- Seleccionar archivo de la biblioteca --</option>
+            @for (f of files(); track f.id) {
+              <option [ngValue]="f.id">{{ f.name }} (.{{ f.ext | uppercase }} · {{ fileService.formatBytes(f.size) }})</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="fm-card">
+        <h2>2. Nuevo Formato de Salida</h2>
+        <p class="fm-muted">Elegí el formato al que querés transformar tu archivo.</p>
+
+        <div class="fm-field">
+          <label>Formatos disponibles</label>
+          <div class="fm-format-pills">
+            @for (fmt of availableConverterTargets(); track fmt) {
+              <button
+                type="button"
+                class="fm-format-btn"
+                [class.selected]="convTargetFormat() === fmt"
+                (click)="convTargetFormat.set(fmt)">
+                .{{ fmt | uppercase }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="fm-two-inputs">
+          <div class="fm-field">
+            <label>Ancho opcional (px, imágenes)</label>
+            <input type="number" class="fm-input" placeholder="Original" [ngModel]="convWidth()" (ngModelChange)="convWidth.set($event)" />
+          </div>
+          <div class="fm-field">
+            <label>Alto opcional (px, imágenes)</label>
+            <input type="number" class="fm-input" placeholder="Original" [ngModel]="convHeight()" (ngModelChange)="convHeight.set($event)" />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="fm-btn fm-btn-primary fm-full"
+          [disabled]="convLoading()"
+          (click)="runConversion()">
+          {{ convLoading() ? '⏳ Convirtiendo en Backend...' : '⚡ Convertir Archivo Ahora' }}
+        </button>
+
+        @if (convResult(); as res) {
+          <div class="fm-result-box">
+            <div>
+              <strong>✅ {{ res.name }}</strong>
+              <div class="fm-muted">{{ fileService.formatBytes(res.size) }} · Guardado en Mis Archivos</div>
+            </div>
+            <div class="fm-row-btns">
+              <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="openPreview(res)">👁️ Ver</button>
+              <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="res.downloadUrl">⬇️ Descargar</a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ==================== PESTAÑA 3: CÁMARA Y FOTOS A PDF ==================== -->
+  @if (activeTab() === 'camera') {
+    <section class="fm-two-cols">
+      <div class="fm-card">
+        <div class="fm-card-head">
+          <h2>📸 Capturar con Cámara o Subir Fotos</h2>
+          <div class="fm-row-btns">
+            <button type="button" class="fm-btn fm-btn-primary fm-btn-sm" (click)="captureWithCapacitorCamera()">
+              📷 Cámara Capacitor
+            </button>
+            @if (!cameraActive()) {
+              <button type="button" class="fm-btn fm-btn-secondary fm-btn-sm" (click)="startWebcam()">
+                🎥 Cámara Web en Vivo
+              </button>
+            } @else {
+              <button type="button" class="fm-btn fm-btn-danger fm-btn-sm" (click)="stopWebcam()">
+                ⏹ Apagar Cámara
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="fm-camera-stage">
+          @if (cameraActive()) {
+            <video #videoElement autoplay playsinline muted></video>
+          } @else {
+            <div class="fm-camera-placeholder">
+              <div style="font-size: 2.5rem;">📷</div>
+              <p>Usá la cámara en vivo o Capacitor Camera para escanear apuntes, recibos o documentos y convertirlos en páginas de un PDF.</p>
+            </div>
+          }
+        </div>
+
+        <div class="fm-two-inputs">
+          <button
+            type="button"
+            class="fm-btn fm-btn-primary"
+            [disabled]="!cameraActive()"
+            (click)="takeWebcamSnapshot()">
+            📸 Capturar Foto de Cámara
+          </button>
+          <label class="fm-btn fm-btn-secondary">
+            🖼️ Subir Fotos del Equipo
+            <input type="file" accept="image/*" multiple hidden (change)="onAddPhotosFromDisk($event)" />
+          </label>
+        </div>
+
+        <div class="fm-field mt-1">
+          <label>O incluir una imagen ya guardada en Mis Archivos</label>
+          <select
+            class="fm-input"
+            [ngModel]="cameraSelectedLibraryId()"
+            (ngModelChange)="cameraSelectedLibraryId.set($event)">
+            <option [ngValue]="null">-- Ninguna seleccionada --</option>
+            @for (img of imageFiles(); track img.id) {
+              <option [ngValue]="img.id">{{ img.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="fm-card">
+        <div class="fm-card-head">
+          <h2>📄 Páginas del Documento PDF ({{ photoQueue().length }})</h2>
+          <button type="button" class="fm-btn fm-btn-outline fm-btn-sm" (click)="photoQueue.set([])">Vaciar</button>
+        </div>
+
+        @if (photoQueue().length === 0) {
+          <div class="fm-empty">
+            Todavía no capturaste ni agregaste fotos. Sacá una foto o subí imágenes para armar el PDF.
+          </div>
+        } @else {
+          <div class="fm-photo-grid">
+            @for (item of photoQueue(); track item.id; let idx = $index) {
+              <div class="fm-photo-card">
+                <div class="fm-photo-preview">
+                  <img [src]="item.dataUrl" [style.transform]="'rotate(' + item.rotation + 'deg)'" [alt]="item.name" />
+                  <span class="fm-page-badge">Pág. {{ idx + 1 }}</span>
+                </div>
+                <div class="fm-photo-controls">
+                  <button type="button" (click)="movePhoto(idx, -1)" title="Mover antes">⬅️</button>
+                  <button type="button" (click)="rotatePhoto(idx)" title="Rotar 90°">↻</button>
+                  <button type="button" (click)="movePhoto(idx, 1)" title="Mover después">➡️</button>
+                  <button type="button" (click)="removePhoto(idx)" title="Quitar">🗑️</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="fm-field mt-1">
+          <label>Nombre del PDF resultante</label>
+          <input type="text" class="fm-input" [ngModel]="cameraPdfTitle()" (ngModelChange)="cameraPdfTitle.set($event)" />
+        </div>
+
+        <div class="fm-three-inputs">
+          <div class="fm-field">
+            <label>Tamaño de hoja</label>
+            <select class="fm-input" [ngModel]="cameraPageSize()" (ngModelChange)="cameraPageSize.set($event)">
+              <option value="A4">A4 Estándar</option>
+              <option value="LETTER">Carta (Letter)</option>
+              <option value="FIT">Ajustar a foto</option>
+            </select>
+          </div>
+          <div class="fm-field">
+            <label>Orientación</label>
+            <select class="fm-input" [ngModel]="cameraOrientation()" (ngModelChange)="cameraOrientation.set($event)">
+              <option value="portrait">Vertical</option>
+              <option value="landscape">Horizontal</option>
+            </select>
+          </div>
+          <div class="fm-field">
+            <label>Margen (pt)</label>
+            <input type="number" class="fm-input" [ngModel]="cameraMargin()" (ngModelChange)="cameraMargin.set($event)" />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="fm-btn fm-btn-primary fm-full"
+          [disabled]="cameraGenerating()"
+          (click)="generatePdfFromPhotos()">
+          {{ cameraGenerating() ? '⏳ Generando PDF con iText 8...' : '📑 Crear y Guardar PDF' }}
+        </button>
+
+        @if (cameraResult(); as res) {
+          <div class="fm-result-box">
+            <div>
+              <strong>✅ {{ res.name }}</strong>
+              <div class="fm-muted">{{ res.pageCount }} página(s) · {{ fileService.formatBytes(res.size) }}</div>
+            </div>
+            <div class="fm-row-btns">
+              <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="openPreview(res)">👁️ Ver PDF</button>
+              <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="res.downloadUrl">⬇️ Descargar</a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ==================== PESTAÑA 4: UNIR PDFs ==================== -->
+  @if (activeTab() === 'merge') {
+    <section class="fm-two-cols">
+      <div class="fm-card">
+        <h2>1. Seleccionar PDFs para combinar</h2>
+        <p class="fm-muted">Elegí documentos PDF de tu biblioteca o subí nuevos archivos `.pdf`.</p>
+
+        <label class="fm-dropzone compact">
+          <div class="fm-dropzone-icon">📚</div>
+          <h4>Subir archivos PDF desde tu equipo</h4>
+          <p class="fm-muted">Se sumarán automáticamente a la cola de unión</p>
+          <input type="file" accept="application/pdf,.pdf" multiple hidden (change)="onUploadPdfsForMerge($event)" />
+        </label>
+
+        <div class="fm-field">
+          <label>Agregar PDF existente en Mis Archivos</label>
+          <div class="fm-row-btns">
+            <select class="fm-input" [ngModel]="mergeSelectedId()" (ngModelChange)="mergeSelectedId.set($event)">
+              <option [ngValue]="null">-- Seleccionar PDF --</option>
+              @for (p of pdfFiles(); track p.id) {
+                <option [ngValue]="p.id">{{ p.name }} ({{ p.pageCount || '?' }} págs.)</option>
+              }
+            </select>
+            <button type="button" class="fm-btn fm-btn-secondary" (click)="addSelectedPdfToMerge()">➕ Agregar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fm-card">
+        <div class="fm-card-head">
+          <h2>2. Orden de Unión ({{ mergeQueueFiles().length }} PDFs)</h2>
+          <button type="button" class="fm-btn fm-btn-outline fm-btn-sm" (click)="mergeQueueIds.set([])">Limpiar</button>
+        </div>
+
+        @if (mergeQueueFiles().length === 0) {
+          <div class="fm-empty">Agregá al menos 2 archivos PDF para combinarlos en uno solo.</div>
+        } @else {
+          <div class="fm-queue-list">
+            @for (item of mergeQueueFiles(); track $index; let idx = $index) {
+              <div class="fm-queue-row">
+                <div>
+                  <strong>#{{ idx + 1 }} · {{ item.name }}</strong>
+                  <div class="fm-muted">{{ item.pageCount || '?' }} páginas · {{ fileService.formatBytes(item.size) }}</div>
+                </div>
+                <div class="fm-row-btns">
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="moveMergeItem(idx, -1)">⬆️</button>
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="moveMergeItem(idx, 1)">⬇️</button>
+                  <button type="button" class="fm-btn fm-btn-sm fm-btn-danger" (click)="removeMergeItem(idx)">🗑️</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="fm-field mt-1">
+          <label>Nombre del PDF unido</label>
+          <input type="text" class="fm-input" [ngModel]="mergeOutputTitle()" (ngModelChange)="mergeOutputTitle.set($event)" />
+        </div>
+
+        <button
+          type="button"
+          class="fm-btn fm-btn-primary fm-full"
+          [disabled]="mergeLoading() || mergeQueueFiles().length < 2"
+          (click)="runMergePdfs()">
+          {{ mergeLoading() ? '⏳ Uniendo con iText 8...' : '🔗 Unir PDFs Ahora' }}
+        </button>
+
+        @if (mergeResult(); as res) {
+          <div class="fm-result-box">
+            <div>
+              <strong>✅ {{ res.name }}</strong>
+              <div class="fm-muted">{{ res.pageCount }} páginas totales · {{ fileService.formatBytes(res.size) }}</div>
+            </div>
+            <div class="fm-row-btns">
+              <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="openPreview(res)">👁️ Ver PDF</button>
+              <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="res.downloadUrl">⬇️ Descargar</a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ==================== PESTAÑA 5: DIVIDIR / EXTRAER PDF ==================== -->
+  @if (activeTab() === 'split') {
+    <section class="fm-two-cols">
+      <div class="fm-card">
+        <h2>1. Archivo PDF a Dividir o Extraer</h2>
+        <p class="fm-muted">Seleccioná un PDF de tu biblioteca o subí uno nuevo.</p>
+
+        <div class="fm-field">
+          <label>PDF de origen</label>
+          <select
+            class="fm-input"
+            [ngModel]="splitSourceId()"
+            (ngModelChange)="splitSourceId.set($event)">
+            <option [ngValue]="null">-- Seleccionar PDF --</option>
+            @for (p of pdfFiles(); track p.id) {
+              <option [ngValue]="p.id">{{ p.name }} ({{ p.pageCount || '?' }} páginas)</option>
+            }
+          </select>
+        </div>
+
+        <label class="fm-dropzone compact">
+          <div class="fm-dropzone-icon">✂️</div>
+          <h4>O subir otro archivo PDF desde tu equipo</h4>
+          <input type="file" accept="application/pdf,.pdf" hidden (change)="onUploadPdfForSplit($event)" />
+        </label>
+
+        @if (selectedSplitFile(); as sel) {
+          <div class="fm-info-banner">
+            <strong>📄 {{ sel.name }}</strong>
+            <span>Total de páginas detectadas: <strong>{{ sel.pageCount || 1 }}</strong></span>
+          </div>
+        }
+      </div>
+
+      <div class="fm-card">
+        <h2>2. Configurar Rangos, Modo y Rotación</h2>
+
+        <div class="fm-field">
+          <label>Modo de operación</label>
+          <select class="fm-input" [ngModel]="splitMode()" (ngModelChange)="splitMode.set($event)">
+            <option value="extract-single">Extraer páginas/rangos seleccionados en 1 solo PDF</option>
+            <option value="split-multiple">Separar cada página o rango en PDFs independientes (+ ZIP)</option>
+          </select>
+        </div>
+
+        <div class="fm-field">
+          <label>Páginas o rangos (ej: <code>1-3, 5, 7-8</code>)</label>
+          <input
+            type="text"
+            class="fm-input"
+            placeholder="1-2, 4"
+            [ngModel]="splitRanges()"
+            (ngModelChange)="splitRanges.set($event)" />
+        </div>
+
+        <div class="fm-field">
+          <label>Rotar página específica (opcional)</label>
+          <div class="fm-row-btns">
+            <input
+              type="number"
+              class="fm-input"
+              min="1"
+              placeholder="Nº Pág."
+              [ngModel]="splitPageRotationPage()"
+              (ngModelChange)="splitPageRotationPage.set($event)" />
+            <select class="fm-input" [ngModel]="splitPageRotationDeg()" (ngModelChange)="splitPageRotationDeg.set($event)">
+              <option [ngValue]="90">90° Derecha</option>
+              <option [ngValue]="180">180° Invertir</option>
+              <option [ngValue]="270">270° Izquierda</option>
+            </select>
+            <button type="button" class="fm-btn fm-btn-secondary" (click)="addPageRotationRule()">↻ Aplicar</button>
+            <button type="button" class="fm-btn fm-btn-outline" (click)="clearPageRotations()">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="fm-field">
+          <label>Nombre base de salida</label>
+          <input type="text" class="fm-input" [ngModel]="splitOutputTitle()" (ngModelChange)="splitOutputTitle.set($event)" />
+        </div>
+
+        <button
+          type="button"
+          class="fm-btn fm-btn-primary fm-full"
+          [disabled]="splitLoading() || !splitSourceId()"
+          (click)="runSplitPdf()">
+          {{ splitLoading() ? '⏳ Procesando páginas...' : '✂️ Dividir / Extraer Páginas Ahora' }}
+        </button>
+
+        @if (splitResultFiles().length > 0) {
+          <div class="fm-result-box">
+            <div>
+              <strong>✅ Se generaron {{ splitResultFiles().length }} archivo(s) PDF</strong>
+              <div class="fm-muted">Disponibles en Mis Archivos</div>
+            </div>
+            <div class="fm-row-btns">
+              @if (splitResultZip(); as zip) {
+                <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="zip.downloadUrl">⬇️ Descargar Todo (.ZIP)</a>
+              } @else {
+                <button type="button" class="fm-btn fm-btn-sm fm-btn-outline" (click)="openPreview(splitResultFiles()[0])">👁️ Ver PDF</button>
+                <a class="fm-btn fm-btn-sm fm-btn-primary" [href]="splitResultFiles()[0].downloadUrl">⬇️ Descargar PDF</a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- MODAL DE VISTA PREVIA -->
+  @if (previewFile(); as pf) {
+    <div class="fm-modal-backdrop" (click)="closePreview()">
+      <div class="fm-modal" (click)="$event.stopPropagation()">
+        <div class="fm-modal-head">
+          <h3>{{ pf.name }}</h3>
+          <div class="fm-row-btns">
+            <a class="fm-btn fm-btn-primary fm-btn-sm" [href]="pf.downloadUrl">⬇️ Descargar</a>
+            <button type="button" class="fm-btn fm-btn-outline fm-btn-sm" (click)="closePreview()">✖ Cerrar</button>
+          </div>
+        </div>
+        <div class="fm-modal-body">
+          @if (pf.category === 'IMAGE') {
+            <img [src]="pf.viewUrl" [alt]="pf.name" />
+          } @else if (previewSafeUrl()) {
+            <iframe [src]="previewSafeUrl()"></iframe>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

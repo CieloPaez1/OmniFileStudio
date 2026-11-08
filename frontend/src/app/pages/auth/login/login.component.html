@@ -1,0 +1,101 @@
+<div class="auth-card">
+  <div class="auth-header">
+    <div class="brand-badge">
+      <svg lucideSparkles class="sparkle-icon"></svg>
+      <span>GestorProyectos · Ionic 9</span>
+    </div>
+    <h1>Bienvenido de nuevo</h1>
+    <p class="subtitle">Ingresá tus credenciales para acceder a la app</p>
+  </div>
+
+  @if (error()) {
+    <div class="auth-alert danger">
+      <svg lucideAlertCircle class="alert-icon"></svg>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit('/mobile/dashboard')" class="auth-form">
+    <div class="form-group">
+      <label for="email">Correo Electrónico</label>
+      <div class="input-wrapper" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
+        <svg lucideMail class="input-icon"></svg>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="nombre@ejemplo.com"
+          autocomplete="email"
+        />
+      </div>
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <small class="error-text">
+          @if (form.get('email')?.errors?.['required']) { El correo es obligatorio. }
+          @else if (form.get('email')?.errors?.['email']) { Formato de correo inválido. }
+        </small>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <div class="input-wrapper" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
+        <svg lucideLock class="input-icon"></svg>
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          autocomplete="current-password"
+        />
+        <button
+          type="button"
+          class="eye-btn"
+          (click)="togglePasswordVisibility()"
+          tabindex="-1"
+          aria-label="Alternar visibilidad de contraseña"
+        >
+          @if (showPassword()) {
+            <svg lucideEyeOff class="eye-icon"></svg>
+          } @else {
+            <svg lucideEye class="eye-icon"></svg>
+          }
+        </button>
+      </div>
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <small class="error-text">
+          @if (form.get('password')?.errors?.['required']) { La contraseña es obligatoria. }
+          @else if (form.get('password')?.errors?.['minlength']) { Debe tener al menos 6 caracteres. }
+        </small>
+      }
+    </div>
+
+    <button
+      type="submit"
+      class="btn-submit"
+      [disabled]="form.invalid || loading()"
+    >
+      @if (loading()) {
+        <span class="spinner"></span>
+        <span>Iniciando sesión...</span>
+      } @else {
+        <span>Ingresar a la App</span>
+        <svg lucideArrowRight class="btn-icon"></svg>
+      }
+    </button>
+  </form>
+
+  <div class="demo-box">
+    <div class="demo-info">
+      <strong>Credenciales Iniciales:</strong>
+      <code>admin&#64;proyectos.com</code> / <code>admin123</code>
+    </div>
+    <button type="button" class="btn-autofill" (click)="fillDemoCredentials()">
+      Autocompletar
+    </button>
+  </div>
+
+  <div class="auth-footer">
+    <span>¿No tenés una cuenta?</span>
+    <a routerLink="/register" class="auth-link">Registrate acá</a>
+  </div>
+</div>

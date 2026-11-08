@@ -1,0 +1,25 @@
+# Compilados y dependencias de Angular / Ionic / Capacitor
+/node_modules
+/dist
+/tmp
+/out-tsc
+/.angular
+
+# Android / Capacitor build artifacts
+/android/.gradle
+/android/build
+/android/app/build
+/android/local.properties
+*.apk
+*.aab
+
+# IDEs y logs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+npm-debug.log*

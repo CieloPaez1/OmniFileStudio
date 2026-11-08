@@ -1,0 +1,653 @@
+<div class="tasks-page-container">
+
+  <!-- =======================================================================
+       ENCABEZADO DE TAREAS
+       ======================================================================= -->
+  <div class="page-header">
+    <div>
+      <div class="eyebrow-tasks">TAREAS · GESTIÓN INTEGRAL</div>
+      <h1 class="tasks-page-title">
+        @if (filter() === 'unassigned') {
+          Tareas Huérfanas
+        } @else if (filter() === 'todo') {
+          Cuello de Botella (Pendientes)
+        } @else {
+          Todas las Tareas
+        }
+      </h1>
+      <p class="tasks-page-sub">
+        @if (filter() === 'unassigned') {
+          Tareas sin responsable asignado para su resolución inmediata.
+        } @else if (filter() === 'todo') {
+          Listado de tareas en el sistema que aún no han sido iniciadas.
+        } @else {
+          Controlá, filtrá y gestioná las tareas de todos tus proyectos activos.
+        }
+      </p>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       BARRA DE AVANCE VISUAL ESTILO MONDAY.COM
+       ======================================================================= -->
+  <div class="dashboard-card monday-progress-card" style="margin-top: 24px;">
+    <div class="monday-progress-box">
+      <div class="progress-labels-row">
+        <div class="progress-stats-col">
+          <span class="progress-headline">Avance General del Sistema</span>
+          <span class="progress-sub">
+            <strong>{{ completedTasksCount() }}</strong> de <strong>{{ totalTasksCount() }}</strong> tareas completadas ({{ progressPercentage() }}%)
+          </span>
+        </div>
+        <div class="progress-legend-pills">
+          <span class="leg-pill pill-done">
+            <span class="leg-dot done"></span> {{ completedTasksCount() }} Hechas
+          </span>
+          <span class="leg-pill pill-prog">
+            <span class="leg-dot prog"></span> {{ inProgressTasksCount() }} En Curso
+          </span>
+          <span class="leg-pill pill-todo">
+            <span class="leg-dot todo"></span> {{ todoTasksCount() }} Pendientes
+          </span>
+        </div>
+      </div>
+
+      <div class="monday-pulse-track">
+        <div class="track-segment segment-done" [style.width.%]="progressPercentage()" title="Completadas: {{ progressPercentage() }}%"></div>
+        <div class="track-segment segment-prog" [style.width.%]="inProgressPercentage()" title="En curso: {{ inProgressPercentage() }}%"></div>
+        <div class="track-segment segment-todo" [style.width.%]="todoPercentage()" title="Por hacer: {{ todoPercentage() }}%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       BARRA DE HERRAMIENTAS: SELECTOR DE VISTAS (ASANA) + FILTROS RÁPIDOS (JIRA)
+       ======================================================================= -->
+  <div class="tasks-toolbar-wrapper" style="margin-top: 28px;">
+    
+    <!-- Selector de Vistas estilo Asana -->
+    <div class="asana-view-switcher">
+      <button
+        type="button"
+        class="view-tab-btn"
+        [class.active]="viewMode() === 'BOARD'"
+        (click)="viewMode.set('BOARD')">
+        <svg lucideKanban style="width: 17px; height: 17px;"></svg>
+        <span>Tablero Kanban</span>
+      </button>
+
+      <button
+        type="button"
+        class="view-tab-btn"
+        [class.active]="viewMode() === 'LIST'"
+        (click)="viewMode.set('LIST')">
+        <svg lucideList style="width: 17px; height: 17px;"></svg>
+        <span>Lista</span>
+      </button>
+    </div>
+
+    <!-- Controles de Filtros estilo Jira -->
+    <div class="jira-filter-controls">
+      <!-- Buscador -->
+      <div class="search-input-wrap">
+        <svg lucideSearch class="search-ico"></svg>
+        <input
+          type="text"
+          placeholder="Buscar tarea, proyecto, responsable..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          class="toolbar-search-input" />
+      </div>
+
+      <!-- Filtro Estado -->
+      <select
+        class="toolbar-select"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+        title="Filtrar por Estado">
+        <option value="ALL">Todos los estados</option>
+        <option value="TODO">Por Hacer</option>
+        <option value="IN_PROGRESS">En Progreso</option>
+        <option value="DONE">Hecho</option>
+      </select>
+
+      <!-- Filtro Prioridad -->
+      <select
+        class="toolbar-select"
+        [ngModel]="priorityFilter()"
+        (ngModelChange)="priorityFilter.set($event)"
+        title="Filtrar por Prioridad">
+        <option value="ALL">Todas las prioridades</option>
+        <option value="alta">🔴 Alta</option>
+        <option value="media">🟡 Media</option>
+        <option value="baja">🟢 Baja</option>
+      </select>
+
+      <!-- Filtro Proyecto -->
+      @if (projects().length > 0) {
+        <select
+          class="toolbar-select"
+          [ngModel]="projectFilter()"
+          (ngModelChange)="projectFilter.set($event)"
+          title="Filtrar por Proyecto">
+          <option value="ALL">Todos los proyectos</option>
+          @for (p of projects(); track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      }
+
+      <!-- Limpiar Filtros -->
+      @if (searchTerm() || statusFilter() !== 'ALL' || priorityFilter() !== 'ALL' || projectFilter() !== 'ALL') {
+        <button type="button" class="btn-clear-filter" (click)="resetFilters()" title="Limpiar filtros">
+          <svg lucideX style="width: 15px; height: 15px;"></svg>
+          Limpiar
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       ESTADO DE CARGA Y ERROR
+       ======================================================================= -->
+  @if (loading()) {
+    <div class="loading-state-card" style="margin-top: 24px;">
+      <div class="spinner"></div>
+      <p>Cargando tareas...</p>
+    </div>
+  } @else if (error()) {
+    <div class="alert-box-danger" style="margin-top: 24px;">
+      {{ error() }}
+    </div>
+  } @else if (filteredTasks().length === 0) {
+    <div class="empty-state-card" style="margin-top: 24px;">
+      <svg lucideList style="width: 48px; height: 48px; opacity: 0.4; margin-bottom: 12px;"></svg>
+      <h3>No se encontraron tareas</h3>
+      <p>Probá cambiando los filtros o agregá nuevas tareas desde el detalle de cada proyecto.</p>
+    </div>
+  } @else {
+
+    <!-- =======================================================================
+         VISTA 1: TABLERO KANBAN (TRELLO / JIRA)
+         ======================================================================= -->
+    @if (viewMode() === 'BOARD') {
+      <div class="kanban-board-container" style="margin-top: 24px;">
+
+        <!-- COLUMNA 1: POR HACER -->
+        <div class="kanban-column col-todo">
+          <div class="kanban-column-header">
+            <div class="col-header-left">
+              <span class="col-indicator todo"></span>
+              <span class="col-name">Por Hacer</span>
+              <span class="col-count-badge">{{ todoTasks().length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack">
+            @if (todoTasks().length === 0) {
+              <div class="empty-column-box">Sin tareas pendientes</div>
+            }
+            @for (t of todoTasks(); track t.id) {
+              <div class="kanban-card" (click)="openTaskDrawer(t, $event)">
+                <div class="card-top-row">
+                  <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                  <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                    {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                  </span>
+                </div>
+
+                <div class="card-project-pill">
+                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <span>{{ getProjectName(t.projectId) }}</span>
+                </div>
+
+                <h4 class="card-task-title">{{ t.title }}</h4>
+
+                <div class="card-meta-row">
+                  <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                    <div class="assignee-avatar">
+                      {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                    </div>
+                    <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                  </div>
+
+                  <span class="estimate-pill">
+                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    {{ t.estimateHours }}h
+                  </span>
+                </div>
+
+                @if (t.dueDate) {
+                  <div class="card-due-date">
+                    <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                    <span>{{ t.dueDate | date:'shortDate' }}</span>
+                  </div>
+                }
+
+                <!-- Mover hacia En Progreso -->
+                <div class="card-footer-actions" (click)="$event.stopPropagation()">
+                  <button
+                    type="button"
+                    class="btn-move-col"
+                    (click)="moverColumna(t, 'next', $event)"
+                    title="Mover a En Progreso →">
+                    <span>En curso</span>
+                    <svg lucideChevronRight style="width: 14px; height: 14px;"></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- COLUMNA 2: EN PROGRESO -->
+        <div class="kanban-column col-progress">
+          <div class="kanban-column-header">
+            <div class="col-header-left">
+              <span class="col-indicator prog"></span>
+              <span class="col-name">En Progreso</span>
+              <span class="col-count-badge">{{ inProgressTasks().length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack">
+            @if (inProgressTasks().length === 0) {
+              <div class="empty-column-box">Sin tareas en curso</div>
+            }
+            @for (t of inProgressTasks(); track t.id) {
+              <div class="kanban-card in-prog-border" (click)="openTaskDrawer(t, $event)">
+                <div class="card-top-row">
+                  <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                  <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                    {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                  </span>
+                </div>
+
+                <div class="card-project-pill">
+                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <span>{{ getProjectName(t.projectId) }}</span>
+                </div>
+
+                <h4 class="card-task-title">{{ t.title }}</h4>
+
+                <div class="card-meta-row">
+                  <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                    <div class="assignee-avatar">
+                      {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                    </div>
+                    <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                  </div>
+
+                  <span class="estimate-pill">
+                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    {{ t.estimateHours }}h
+                  </span>
+                </div>
+
+                @if (t.dueDate) {
+                  <div class="card-due-date">
+                    <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                    <span>{{ t.dueDate | date:'shortDate' }}</span>
+                  </div>
+                }
+
+                <!-- Mover a Por Hacer o a Completado -->
+                <div class="card-footer-actions two-actions" (click)="$event.stopPropagation()">
+                  <button
+                    type="button"
+                    class="btn-move-col"
+                    (click)="moverColumna(t, 'prev', $event)"
+                    title="← Volver a Por Hacer">
+                    <svg lucideChevronLeft style="width: 14px; height: 14px;"></svg>
+                    <span>Por Hacer</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-move-col primary"
+                    (click)="moverColumna(t, 'next', $event)"
+                    title="Completar tarea →">
+                    <span>Hecho</span>
+                    <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- COLUMNA 3: COMPLETADO -->
+        <div class="kanban-column col-done">
+          <div class="kanban-column-header">
+            <div class="col-header-left">
+              <span class="col-indicator done"></span>
+              <span class="col-name">Completado</span>
+              <span class="col-count-badge">{{ doneTasks().length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack">
+            @if (doneTasks().length === 0) {
+              <div class="empty-column-box">Sin tareas terminadas</div>
+            }
+            @for (t of doneTasks(); track t.id) {
+              <div class="kanban-card done-card" (click)="openTaskDrawer(t, $event)">
+                <div class="card-top-row">
+                  <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                  <span class="badge done">Completada</span>
+                </div>
+
+                <div class="card-project-pill">
+                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <span>{{ getProjectName(t.projectId) }}</span>
+                </div>
+
+                <h4 class="card-task-title is-done">{{ t.title }}</h4>
+
+                <div class="card-meta-row">
+                  <div class="assignee-pill" [title]="t.assignee || 'Sin asignar'">
+                    <div class="assignee-avatar">
+                      {{ (t.assignee ? t.assignee.charAt(0) : 'U') | uppercase }}
+                    </div>
+                    <span class="assignee-name">{{ t.assignee || 'Sin asignar' }}</span>
+                  </div>
+
+                  <span class="estimate-pill">
+                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    {{ t.estimateHours }}h
+                  </span>
+                </div>
+
+                <!-- Reabrir a En Progreso -->
+                <div class="card-footer-actions" (click)="$event.stopPropagation()">
+                  <button
+                    type="button"
+                    class="btn-move-col"
+                    (click)="moverColumna(t, 'prev', $event)"
+                    title="Reabrir a En Progreso">
+                    <svg lucideRotateCcw style="width: 13px; height: 13px;"></svg>
+                    <span>Reabrir</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+    }
+
+    <!-- =======================================================================
+         VISTA 2: LISTA ESTRUCTURADA (ASANA / MONDAY)
+         ======================================================================= -->
+    @if (viewMode() === 'LIST') {
+      <div class="list-section" style="margin-top: 24px;">
+        <div class="floating-list">
+          @for (t of filteredTasks(); track t.id) {
+            <div class="floating-row" (click)="openTaskDrawer(t, $event)" style="cursor: pointer;">
+              
+              <!-- Ticket Jira + Título + Proyecto -->
+              <div class="row-main">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
+                  <span class="card-project-pill">
+                    <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                    {{ getProjectName(t.projectId) }}
+                  </span>
+                  <span class="row-title" [class.is-done]="t.status === 'DONE'">{{ t.title }}</span>
+                </div>
+                <div class="row-desc" style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                  <span>👤 {{ t.assignee || 'Sin asignar' }}</span>
+                  <span>•</span>
+                  <span>⏱️ {{ t.estimateHours }} hs</span>
+                  @if (t.dueDate) {
+                    <span>•</span>
+                    <span>📅 {{ t.dueDate | date:'shortDate' }}</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Prioridad + Pastilla Monday de Estado + Acciones -->
+              <div class="row-meta" style="display: flex; align-items: center; gap: 16px;">
+                <span class="priority-chip" [ngClass]="t.priority || 'media'">
+                  {{ t.priority === 'alta' ? '🔴 Alta' : (t.priority === 'baja' ? '🟢 Baja' : '🟡 Media') }}
+                </span>
+
+                <div class="meta-badge" (click)="$event.stopPropagation()">
+                  @if (t.status === 'DONE') {
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="monday-pill pill-done">
+                        <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                        Hecho
+                      </span>
+                      <button class="btn-icon-small" (click)="reabrirTarea(t)" title="Reabrir tarea">
+                        <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+                      </button>
+                    </div>
+                  } @else {
+                    <select class="monday-status-select" 
+                            [ngClass]="t.status.toLowerCase()" 
+                            [ngModel]="t.status" 
+                            (ngModelChange)="cambiarEstado(t, $event)">
+                      <option value="TODO">Por Hacer</option>
+                      <option value="IN_PROGRESS">En Progreso</option>
+                      <option value="DONE">Hecho</option>
+                    </select>
+                  }
+                </div>
+
+                @if (t.status !== 'DONE') {
+                  <button class="btn-icon-small" (click)="goToEdit(t, $event)" title="Editar tarea">
+                    <svg lucideEdit style="width: 16px; height: 16px;"></svg>
+                  </button>
+                }
+                <button class="btn-icon-small danger" (click)="eliminarTarea(t, $event)" title="Eliminar tarea">
+                  <svg lucideTrash2 class="trash-icon" style="width: 16px; height: 16px;"></svg>
+                </button>
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  }
+
+  <!-- =======================================================================
+       DRAWER / PANEL LATERAL DE TAREA ENRIQUECIDA (ESTILO NOTION)
+       ======================================================================= -->
+  @if (isDrawerOpen() && selectedTask()) {
+    <div class="notion-drawer-backdrop" (click)="closeTaskDrawer()">
+      <div class="notion-drawer-sheet" (click)="$event.stopPropagation()">
+        
+        <!-- Drawer Header -->
+        <div class="drawer-header">
+          <div class="drawer-ticket-badge">
+            <span class="jira-ticket-id">#PLX-{{ selectedTask()?.id }}</span>
+            <span class="priority-chip" [ngClass]="selectedTask()?.priority || 'media'">
+              {{ selectedTask()?.priority === 'alta' ? '🔴 Prioridad Alta' : (selectedTask()?.priority === 'baja' ? '🟢 Prioridad Baja' : '🟡 Prioridad Media') }}
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button
+              type="button"
+              class="btn-icon-small danger"
+              (click)="eliminarTarea(selectedTask()!, $event)"
+              title="Eliminar tarea">
+              <svg lucideTrash2 style="width: 17px; height: 17px;"></svg>
+            </button>
+            <button
+              type="button"
+              class="btn-icon-small"
+              (click)="closeTaskDrawer()"
+              title="Cerrar panel">
+              <svg lucideX style="width: 18px; height: 18px;"></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Título de Tarea -->
+        <h2 class="drawer-task-title">{{ selectedTask()?.title }}</h2>
+
+        <!-- Tabla de Propiedades estilo Notion -->
+        <div class="notion-properties-table">
+          <!-- Propiedad: Proyecto -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideFolder style="width: 15px; height: 15px;"></svg>
+              <span>Proyecto</span>
+            </div>
+            <div class="prop-value">
+              <span class="prop-user-pill">{{ getProjectName(selectedTask()?.projectId) }}</span>
+            </div>
+          </div>
+
+          <!-- Propiedad: Estado -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideTag style="width: 15px; height: 15px;"></svg>
+              <span>Estado</span>
+            </div>
+            <div class="prop-value">
+              <select
+                class="monday-status-select"
+                [ngModel]="selectedTask()?.status"
+                (ngModelChange)="updateDrawerTaskStatus($event)">
+                <option value="TODO">Por Hacer</option>
+                <option value="IN_PROGRESS">En Progreso</option>
+                <option value="DONE">Hecho</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Propiedad: Responsable -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideUser style="width: 15px; height: 15px;"></svg>
+              <span>Responsable</span>
+            </div>
+            <div class="prop-value">
+              <span class="prop-user-pill">{{ selectedTask()?.assignee || 'Sin asignar' }}</span>
+            </div>
+          </div>
+
+          <!-- Propiedad: Prioridad -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideFilter style="width: 15px; height: 15px;"></svg>
+              <span>Prioridad</span>
+            </div>
+            <div class="prop-value">
+              <select
+                class="toolbar-select"
+                [ngModel]="selectedTask()?.priority || 'media'"
+                (ngModelChange)="updateDrawerPriority($event)">
+                <option value="alta">🔴 Alta</option>
+                <option value="media">🟡 Media</option>
+                <option value="baja">🟢 Baja</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Propiedad: Estimación -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideClock style="width: 15px; height: 15px;"></svg>
+              <span>Estimación</span>
+            </div>
+            <div class="prop-value">
+              <strong>{{ selectedTask()?.estimateHours }} horas</strong>
+            </div>
+          </div>
+
+          <!-- Propiedad: Vencimiento -->
+          <div class="prop-row">
+            <div class="prop-label">
+              <svg lucideCalendar style="width: 15px; height: 15px;"></svg>
+              <span>Vencimiento</span>
+            </div>
+            <div class="prop-value">
+              <span>{{ selectedTask()?.dueDate ? (selectedTask()?.dueDate | date:'mediumDate') : 'Sin fecha asignada' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="drawer-divider" />
+
+        <!-- CHECKLIST DE SUBTAREAS (NOTION STYLE) -->
+        <div class="subtasks-section">
+          <div class="subtasks-header">
+            <h4>Checklist de Subtareas</h4>
+            @if (taskSubtasks().length > 0) {
+              <span class="subtasks-badge">{{ completedSubtasksCount() }} / {{ taskSubtasks().length }} ({{ subtaskProgressPct() }}%)</span>
+            }
+          </div>
+
+          @if (taskSubtasks().length > 0) {
+            <div class="subtasks-progress-bar">
+              <div class="subtasks-progress-fill" [style.width.%]="subtaskProgressPct()"></div>
+            </div>
+          }
+
+          <div class="subtasks-list">
+            @for (sub of taskSubtasks(); track sub.id) {
+              <div class="subtask-item" [class.is-done]="sub.done">
+                <input
+                  type="checkbox"
+                  [checked]="sub.done"
+                  (change)="toggleSubtask(sub)"
+                  class="subtask-checkbox" />
+                <span class="subtask-text">{{ sub.text }}</span>
+                <button
+                  type="button"
+                  class="btn-delete-subtask"
+                  (click)="deleteSubtask(sub.id)"
+                  title="Eliminar subtarea">
+                  <svg lucideX style="width: 14px; height: 14px;"></svg>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Agregar Subtarea -->
+          <div class="add-subtask-row">
+            <input
+              type="text"
+              placeholder="+ Añadir un paso o subtarea..."
+              [ngModel]="newSubtaskText()"
+              (ngModelChange)="newSubtaskText.set($event)"
+              (keydown.enter)="addSubtask()"
+              class="add-subtask-input" />
+            <button
+              type="button"
+              class="btn-add-subtask"
+              (click)="addSubtask()"
+              [disabled]="!newSubtaskText().trim()">
+              Añadir
+            </button>
+          </div>
+        </div>
+
+        <hr class="drawer-divider" />
+
+        <!-- NOTAS / DESCRIPCIÓN RÁPIDA (NOTION STYLE) -->
+        <div class="task-notes-section">
+          <h4>Notas y Apuntes</h4>
+          <textarea
+            class="task-notes-textarea"
+            rows="4"
+            placeholder="Escribí apuntes, acuerdos o detalles sobre esta tarea..."
+            [ngModel]="taskNotes()"
+            (ngModelChange)="taskNotes.set($event)"
+            (blur)="saveDrawerNotes()">
+          </textarea>
+          <small class="notes-hint">Guardado automático local.</small>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

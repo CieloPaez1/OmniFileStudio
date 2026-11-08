@@ -1,0 +1,89 @@
+<!-- [IONIC 9 - CLASES 2, 3, 5, 6 Y 10] Listado de Proyectos 100% Móvil -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Proyectos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/mobile/project-form" title="Nuevo Proyecto">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Buscar proyecto..."
+      (ionInput)="onSearch($event)"
+      [debounce]="150">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mobile-viewport">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarProyectos($event)">
+    <ion-refresher-content pullingText="Deslizá para actualizar..."></ion-refresher-content>
+  </ion-refresher>
+
+  @if (error()) {
+    <div class="offline-alert">
+      <ion-icon name="cloud-offline-outline" color="warning"></ion-icon>
+      <ion-text color="danger">{{ error() }}</ion-text>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="empty-box">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando proyectos...</p>
+    </div>
+  } @else {
+    <div class="projects-list">
+      @if (filteredProjects().length === 0) {
+        <div class="empty-box">
+          <ion-icon name="folder-open-outline" class="empty-icon"></ion-icon>
+          <p>No se encontraron proyectos.</p>
+        </div>
+      } @else {
+        @for (p of filteredProjects(); track p.id) {
+          <ion-card class="project-mobile-card" button="true" (click)="abrirProyecto(p)">
+            <ion-card-header>
+              <div class="card-top-row">
+                <ion-card-title>{{ p.name }}</ion-card-title>
+                <ion-badge [color]="p.status === 'ACTIVE' ? 'success' : (p.status === 'PLANNED' ? 'warning' : 'medium')">
+                  {{ p.status === 'ACTIVE' ? 'En Progreso' : (p.status === 'PLANNED' ? 'Planificado' : 'Completado') }}
+                </ion-badge>
+              </div>
+              @if (p.description) {
+                <ion-card-subtitle>{{ p.description }}</ion-card-subtitle>
+              }
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="card-footer-row">
+                <span class="date-text">
+                  Inicio: {{ p.startDate ? (p.startDate.split('T')[0]) : 'Sin fecha' }}
+                </span>
+                <div class="action-buttons">
+                  <ion-button fill="clear" size="small" (click)="editarProyecto(p, $event)" color="primary">
+                    <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" (click)="eliminarProyecto(p, $event)" color="danger">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      }
+    </div>
+  }
+
+  <!-- Botón flotante para crear un nuevo proyecto en móvil -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button routerLink="/mobile/project-form" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

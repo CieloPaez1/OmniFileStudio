@@ -1,0 +1,333 @@
+/* ============================================================================
+   [DISEÑO UX/UI] DASHBOARD SLATE & INDIGO (#6366f1)
+   - Sin bordes grises pesados: espacios en blanco (whitespace), rounded-2xl (20px)
+   - Sombras sutiles (shadow-sm / shadow-md) y badges de formato semánticos
+   ============================================================================ */
+
+.status-pills-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 0.25rem 1.1rem;
+}
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.68rem 1rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+.status-banner.privacy-pill {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.status-banner.online {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-banner.offline {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Tarjetas KPI Redondeadas (rounded-2xl) sin bordes grises marcados */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin: 0 0.25rem 1.15rem;
+}
+
+.kpi-card {
+  background: var(--ion-card-background, #ffffff);
+  border: 1px solid rgba(226, 232, 240, 0.55);
+  border-radius: 20px;
+  padding: 1.05rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  cursor: pointer;
+  box-shadow:
+    0 4px 16px -2px rgba(15, 23, 42, 0.05),
+    0 2px 6px -2px rgba(15, 23, 42, 0.03);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 25px -4px rgba(99, 102, 241, 0.12),
+    0 4px 10px -4px rgba(15, 23, 42, 0.05);
+}
+
+.kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.15rem;
+}
+
+.kpi-label {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.kpi-icon-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.dot-indigo {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.dot-red {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.dot-blue {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.dot-emerald {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #6366f1;
+  line-height: 1.15;
+}
+
+.kpi-value.text-red {
+  color: #ef4444;
+}
+
+.kpi-value.text-blue {
+  color: #3b82f6;
+}
+
+.kpi-value.text-emerald {
+  color: #10b981;
+}
+
+.kpi-card small {
+  font-size: 0.73rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Superficies y Accesos Rápidos */
+.surface-card {
+  border-radius: 20px;
+  margin: 0 0.25rem 1.15rem;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 1.05rem;
+  border-radius: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  background: #f8fafc;
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.quick-btn:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  box-shadow: 0 10px 22px -6px rgba(99, 102, 241, 0.15);
+}
+
+.quick-btn.cta-indigo {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.38);
+}
+
+.quick-btn.cta-indigo small {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.quick-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  margin-bottom: 0.2rem;
+}
+
+.quick-icon-wrap ion-icon {
+  font-size: 1.35rem;
+  color: #ffffff;
+}
+
+.quick-icon-wrap.soft-blue {
+  background: #eff6ff;
+}
+.quick-icon-wrap.soft-blue ion-icon {
+  color: #3b82f6;
+}
+
+.quick-icon-wrap.soft-red {
+  background: #fef2f2;
+}
+.quick-icon-wrap.soft-red ion-icon {
+  color: #ef4444;
+}
+
+.quick-icon-wrap.soft-emerald {
+  background: #ecfdf5;
+}
+.quick-icon-wrap.soft-emerald ion-icon {
+  color: #10b981;
+}
+
+.quick-btn strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.quick-btn small {
+  font-size: 0.73rem;
+  color: #64748b;
+}
+
+.section-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Filas de archivos recientes como tarjetas flotantes suaves */
+.recent-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.recent-file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.55);
+  cursor: pointer;
+  transition: transform 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.recent-file-row:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06);
+}
+
+.recent-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.recent-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  overflow: hidden;
+}
+
+.recent-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.meta-tag {
+  font-weight: 700;
+  color: #475569;
+}
+
+.meta-pill {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.meta-pill.signed {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.meta-pill.compressed {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.recent-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}

@@ -1,0 +1,130 @@
+<div class="project-list-page">
+
+  <div class="page-header-row">
+    <div>
+      <span class="eyebrow">GESTIÓN DE PROYECTOS</span>
+      <h1 class="page-title">
+        @if (filter() === 'empty') {
+          Proyectos Vacíos
+        } @else {
+          Lista de Proyectos
+        }
+      </h1>
+      <p class="page-subtitle">
+        @if (filter() === 'empty') {
+          Proyectos registrados que no poseen ninguna tarea planificada.
+        } @else {
+          Administrá el estado, las fechas y los equipos de tus proyectos.
+        }
+      </p>
+    </div>
+
+    <div class="toolbar-actions">
+      <!-- Filtro Estado -->
+      <select [(ngModel)]="statusFilter" class="toolbar-select">
+        <option value="ALL">Todos los estados</option>
+        <option value="PLANNED">Planificado</option>
+        <option value="ACTIVE">En Progreso</option>
+        <option value="CLOSED">Completado</option>
+      </select>
+
+      <!-- Buscador -->
+      <div class="search-wrap">
+        <svg lucideSearch class="search-ico"></svg>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Buscar proyecto..."
+          class="toolbar-input" />
+      </div>
+
+      <a routerLink="/projects/create" class="btn-primary">
+        <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+        <span>Nuevo Proyecto</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-card" style="margin-top: 20px; padding: 0; overflow: hidden;">
+
+    @if (loading()) {
+      <div class="empty-state">
+        <div class="spinner"></div>
+        <p>Cargando proyectos...</p>
+      </div>
+    } @else if (error()) {
+      <div class="empty-state" style="color: var(--danger-color);">{{ error() }}</div>
+    } @else if (projects().length === 0) {
+      <div class="empty-state">
+        <svg lucideFolderKanban style="width: 44px; height: 44px; color: var(--text-tertiary); margin-bottom: 12px;"></svg>
+        <p style="margin: 0; font-weight: 600; color: var(--text-primary);">No hay proyectos creados aún.</p>
+        <a routerLink="/projects/create" class="btn-primary" style="margin-top: 14px;">
+          Creá tu primer proyecto
+        </a>
+      </div>
+    } @else {
+      <div class="projects-table-list">
+        @for (p of filteredProjects(); track p.id) {
+          <div class="project-table-row" [routerLink]="['/projects', p.id]">
+            
+            <!-- ID + Nombre -->
+            <div class="col-main">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="ticket-tag">#PLX-PRJ-{{ p.id }}</span>
+                <strong class="project-name">{{ p.name }}</strong>
+              </div>
+              <span class="project-desc">{{ p.description || 'Sin descripción detallada.' }}</span>
+            </div>
+
+            <!-- Fechas -->
+            <div class="col-dates">
+              <div class="date-item">
+                <span class="date-label">Inicio:</span>
+                <span class="date-val">{{ p.startDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="date-item">
+                <span class="date-label">Entrega:</span>
+                <span class="date-val">{{ p.endDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            
+            <!-- Estado -->
+            <div class="col-status" (click)="$event.stopPropagation()">
+              @if (p.status === 'CLOSED') {
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="status-badge status-done">Completado</span>
+                  <button class="btn-icon-small" (click)="reabrirProyecto(p)" title="Reabrir proyecto">
+                    <svg lucideRotateCcw style="width: 14px; height: 14px;"></svg>
+                  </button>
+                </div>
+              } @else {
+                <select class="status-select" 
+                        [ngClass]="p.status.toLowerCase()" 
+                        [ngModel]="p.status" 
+                        (ngModelChange)="cambiarEstado(p, $event)">
+                  <option value="PLANNED">Planificado</option>
+                  <option value="ACTIVE">En Progreso</option>
+                  <option value="CLOSED">Completado</option>
+                </select>
+              }
+            </div>
+            
+            <!-- Acciones -->
+            <div class="col-actions" (click)="$event.stopPropagation()">
+              @if (p.status !== 'CLOSED') {
+                <button class="btn-icon-small" [routerLink]="['/projects', 'edit', p.id]" title="Editar proyecto">
+                  <svg lucideEdit style="width: 15px; height: 15px;"></svg>
+                </button>
+              }
+              <button class="btn-icon-small danger" (click)="eliminarProyecto(p)" title="Eliminar proyecto">
+                <svg lucideTrash2 style="width: 15px; height: 15px;"></svg>
+              </button>
+            </div>
+            
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>

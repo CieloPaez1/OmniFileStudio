@@ -1,0 +1,125 @@
+<!-- ==========================================================================
+     MODAL DESLIZABLE (BOTTOM SHEET) DE ACCIONES RÁPIDAS CONTEXTUALES
+     ========================================================================== -->
+<ion-modal
+  [isOpen]="isOpen && !!file"
+  [breakpoints]="[0, 0.68, 0.92]"
+  [initialBreakpoint]="0.68"
+  (didDismiss)="closeModal()">
+
+  <ng-template>
+    @if (file; as selected) {
+      <ion-header class="ion-no-border">
+        <ion-toolbar class="sheet-toolbar">
+          <div class="sheet-file-header" slot="start">
+            <ion-badge color="primary" class="ext-pill">.{{ selected.ext | uppercase }}</ion-badge>
+            <div class="sheet-title-wrap">
+              <ion-title class="sheet-file-name">{{ selected.name }}</ion-title>
+              <span class="sheet-file-meta">
+                {{ selected.tag || 'General' }} · {{ fileService.formatBytes(selected.size) }}
+                @if (selected.pageCount) { · {{ selected.pageCount }} pág. }
+              </span>
+            </div>
+          </div>
+
+          <ion-buttons slot="end">
+            <ion-button
+              fill="clear"
+              color="primary"
+              title="Abrir Action Sheet Nativo"
+              (click)="presentNativeActionSheet(selected)">
+              <ion-icon name="ellipsis-horizontal-circle-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="medium" (click)="closeModal()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding sheet-content">
+        <!-- Chip detector inteligente del tipo de archivo -->
+        <div class="detector-banner">
+          <ion-icon name="flash-outline"></ion-icon>
+          <span>{{ detectedTypeLabel() }}</span>
+        </div>
+
+        <!-- Aviso de procesamiento 100% local -->
+        <div class="privacy-mini-note">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Procesamiento 100% en tu dispositivo: tus archivos nunca se envían a servidores externos.</span>
+        </div>
+
+        @if (processingAction(); as statusMsg) {
+          <div class="processing-pill">{{ statusMsg }}</div>
+        }
+
+        <!-- Grilla de Herramientas Específicas según el Tipo de Archivo -->
+        <h4 class="sheet-section-title">Herramientas recomendadas para .{{ selected.ext | uppercase }}</h4>
+        <div class="contextual-tools-list">
+          @for (tool of contextualTools(); track tool.id) {
+            <button
+              type="button"
+              class="contextual-tool-card"
+              (click)="tool.handler()">
+              <div class="tool-icon-box" [attr.data-color]="tool.accentColor">
+                <ion-icon [name]="tool.icon"></ion-icon>
+              </div>
+              <div class="tool-info-box">
+                <div class="tool-title-row">
+                  <strong>{{ tool.title }}</strong>
+                  @if (tool.badge) {
+                    <ion-badge [color]="tool.accentColor">{{ tool.badge }}</ion-badge>
+                  }
+                </div>
+                <span>{{ tool.subtitle }}</span>
+              </div>
+            </button>
+          }
+        </div>
+
+        <!-- Barra rápida de Exportación, Capacitor Filesystem y Compartir -->
+        <h4 class="sheet-section-title">Exportar, Compartir y Almacenamiento</h4>
+        <div class="quick-share-grid">
+          <ion-button fill="outline" color="primary" size="small" (click)="shareNatively()">
+            <ion-icon name="share-social-outline" slot="start"></ion-icon>
+            Compartir
+          </ion-button>
+
+          <ion-button fill="outline" color="success" size="small" (click)="shareWhatsApp()">
+            <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+            WhatsApp
+          </ion-button>
+
+          <ion-button fill="outline" color="tertiary" size="small" (click)="saveInFilesystem()">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Filesystem
+          </ion-button>
+
+          <ion-button
+            fill="outline"
+            color="medium"
+            size="small"
+            [href]="selected.downloadUrl"
+            [download]="selected.name">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            Descargar
+          </ion-button>
+        </div>
+
+        <!-- Acciones de Gestión del Repositorio -->
+        <div class="sheet-footer-actions">
+          <ion-button fill="clear" color="medium" size="small" (click)="toggleArchive()">
+            <ion-icon name="archive-outline" slot="start"></ion-icon>
+            {{ selected.archived ? 'Restaurar archivo' : 'Archivar' }}
+          </ion-button>
+
+          <ion-button fill="clear" color="danger" size="small" (click)="deleteFile()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar
+          </ion-button>
+        </div>
+      </ion-content>
+    }
+  </ng-template>
+</ion-modal>
