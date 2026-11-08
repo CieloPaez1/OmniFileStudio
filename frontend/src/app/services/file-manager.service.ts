@@ -41,7 +41,7 @@ import { ActivityLogService } from './activity-log.service';
 export class FileManagerService {
   private readonly http = inject(HttpClient);
   private readonly activityLog = inject(ActivityLogService);
-  readonly apiUrl = 'http://localhost:3000/files';
+  readonly apiUrl = `http://${typeof window !== 'undefined' && window.location?.hostname ? window.location.hostname : 'localhost'}:3000/files`;
   private readonly CACHE_KEY = 'filestudio_files_preferences_v1';
 
   // Indicador de Privacidad Client-Side (Privacy-First)
@@ -371,10 +371,174 @@ export class FileManagerService {
     try {
       const raw = localStorage.getItem(this.CACHE_KEY);
       if (raw) {
-        return (JSON.parse(raw) as ManagedFile[]).map(item => this.normalizeRecord(item));
+        const parsed = (JSON.parse(raw) as ManagedFile[]).map(item => this.normalizeRecord(item));
+        if (parsed.length > 0) return parsed;
       }
     } catch {}
-    return this.files();
+    if (this.files().length > 0) return this.files();
+    const seed = this.getDefaultSeedFiles();
+    this.saveToLocalFallback(seed);
+    return seed;
+  }
+
+  private getDefaultSeedFiles(): ManagedFile[] {
+    const rawSeed: ManagedFile[] = [
+      {
+        id: 1,
+        name: 'Informe_Arquitectura_Hexagonal.pdf',
+        ext: 'pdf',
+        mimeType: 'application/pdf',
+        category: 'PDF',
+        origin: 'UPLOADED',
+        tag: 'Estudio',
+        description: 'Apuntes de cátedra sobre Arquitectura Hexagonal e Ionic 9 Standalone.',
+        size: 245760,
+        pageCount: 6,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['docx', 'txt', 'html', 'png', 'jpg'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T14:20:00.000Z'
+      },
+      {
+        id: 2,
+        name: 'Factura_Servicios_Cloud_Nov2026.pdf',
+        ext: 'pdf',
+        mimeType: 'application/pdf',
+        category: 'PDF',
+        origin: 'CAMERA_PDF',
+        tag: 'Facturas',
+        description: 'Comprobante escaneado con cámara desde el módulo @capacitor/camera.',
+        size: 184320,
+        pageCount: 2,
+        archived: false,
+        signed: true,
+        compressed: false,
+        availableTargets: ['docx', 'txt', 'html', 'png', 'jpg'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T15:10:00.000Z'
+      },
+      {
+        id: 3,
+        name: 'Diagrama_Casos_De_Uso.png',
+        ext: 'png',
+        mimeType: 'image/png',
+        category: 'IMAGE',
+        origin: 'UPLOADED',
+        tag: 'Trabajo',
+        description: 'Diagrama de componentes para la entrega del Trabajo Práctico.',
+        size: 98304,
+        pageCount: null,
+        width: 1280,
+        height: 720,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['pdf', 'jpg', 'webp', 'bmp'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T16:05:00.000Z'
+      },
+      {
+        id: 4,
+        name: 'Presupuesto_Anual_2026.csv',
+        ext: 'csv',
+        mimeType: 'text/csv',
+        category: 'DATA',
+        origin: 'CONVERTED',
+        tag: 'Trabajo',
+        description: 'Planilla exportada lista para traducir o convertir a PDF, XLSX, JSON o HTML.',
+        size: 16384,
+        pageCount: null,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['pdf', 'xlsx', 'json', 'html', 'txt'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T16:45:00.000Z'
+      },
+      {
+        id: 5,
+        name: 'Contrato_Confidencialidad_NDA.pdf',
+        ext: 'pdf',
+        mimeType: 'application/pdf',
+        category: 'PDF',
+        origin: 'SIGNED_PDF',
+        tag: 'Legal',
+        description: 'Documento legal firmado digitalmente desde la Suite PDF.',
+        size: 312400,
+        pageCount: 4,
+        archived: false,
+        signed: true,
+        compressed: true,
+        availableTargets: ['docx', 'txt', 'html', 'png'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T17:15:00.000Z'
+      },
+      {
+        id: 6,
+        name: 'Propuesta_Comercial_Corporativa.docx',
+        ext: 'docx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        category: 'DOCUMENT',
+        origin: 'UPLOADED',
+        tag: 'Trabajo',
+        description: 'Documento Microsoft Word (.docx) con propuesta técnica y alcance del proyecto.',
+        size: 142800,
+        pageCount: 5,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['pdf', 'html', 'txt', 'md'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T18:00:00.000Z'
+      },
+      {
+        id: 7,
+        name: 'Balance_Trimestral_Finanzas.xlsx',
+        ext: 'xlsx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        category: 'DATA',
+        origin: 'UPLOADED',
+        tag: 'Facturas',
+        description: 'Hoja de cálculo Excel (.xlsx) con estados financieros, flujo de caja y proyecciones.',
+        size: 86400,
+        pageCount: null,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['pdf', 'csv', 'json', 'html'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T18:25:00.000Z'
+      },
+      {
+        id: 8,
+        name: 'Presentacion_Ejecutiva_Q4.pptx',
+        ext: 'pptx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        category: 'DOCUMENT',
+        origin: 'UPLOADED',
+        tag: 'Trabajo',
+        description: 'Presentación de diapositivas (.pptx) con hoja de ruta de producto y métricas UX/UI.',
+        size: 412000,
+        pageCount: 12,
+        archived: false,
+        signed: false,
+        compressed: false,
+        availableTargets: ['pdf', 'html', 'txt'],
+        viewUrl: '',
+        downloadUrl: '',
+        createdAt: '2026-11-08T18:40:00.000Z'
+      }
+    ];
+    return rawSeed.map(item => this.normalizeRecord(item));
   }
 
   // ===========================================================================
