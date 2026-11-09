@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ActivaChilecito</string>
+    <string name="title_activity_main">ActivaChilecito</string>
+    <string name="package_name">com.undec.activachilecito</string>
+    <string name="custom_url_scheme">com.undec.activachilecito</string>
+</resources>

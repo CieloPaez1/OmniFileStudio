@@ -27,3 +27,10 @@ dependencies {
     implementation project(':capacitor-android')
     implementation project(':capacitor-cordova-android-plugins')
 }
+
+try {
+    apply from: 'capacitor.build.gradle'
+} catch (Exception e) {
+    logger.info("capacitor.build.gradle not found, skipping")
+}
+

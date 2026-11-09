@@ -1,0 +1,13 @@
+{
+	"appId": "com.filestudio.app",
+	"appName": "FileStudio PDF Manager",
+	"webDir": "dist/IntegradorProgAvz2026Front/browser",
+	"server": {
+		"androidScheme": "https"
+	},
+	"plugins": {
+		"Camera": {
+			"presentationStyle": "fullscreen"
+		}
+	}
+}
