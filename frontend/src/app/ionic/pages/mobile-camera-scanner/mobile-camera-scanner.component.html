@@ -67,6 +67,7 @@
                 <button type="button" (click)="movePhoto(idx, -1)" title="Subir">⬅️</button>
                 <button type="button" (click)="rotatePhoto(idx)" title="Rotar 90°">↻</button>
                 <button type="button" (click)="movePhoto(idx, 1)" title="Bajar">➡️</button>
+                <button type="button" class="btn-ocr-photo" (click)="runOcrOnPhoto(p)" title="Extraer texto OCR de esta foto">🔍 OCR</button>
                 <button type="button" (click)="removePhoto(idx)" title="Eliminar">🗑️</button>
               </div>
             </div>
@@ -75,6 +76,45 @@
       }
     </ion-card-content>
   </ion-card>
+
+  <!-- Panel de Resultado OCR sobre foto capturada -->
+  @if (ocrExtracting()) {
+    <ion-card class="scanner-ocr-card">
+      <ion-card-content style="display: flex; align-items: center; gap: 10px; padding: 14px;">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <span style="font-size: 0.85rem; font-weight: 600;">Extrayendo caracteres y palabras con motor OCR...</span>
+      </ion-card-content>
+    </ion-card>
+  } @else if (activeOcrResult(); as ocrRes) {
+    <ion-card class="scanner-ocr-card" style="border: 1px solid #818cf8; background: var(--omni-surface, #ffffff);">
+      <ion-card-header style="padding-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <ion-card-subtitle style="color: #6366f1; font-weight: 800;">TEXTO EXTRAÍDO CON OCR ({{ ocrRes.wordsCount }} palabras)</ion-card-subtitle>
+          <button type="button" (click)="closeOcrModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--omni-text-muted, #64748b);">✕</button>
+        </div>
+        <ion-card-title style="font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          Precisión del reconocimiento: {{ ocrRes.confidence }}%
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <textarea
+          style="width: 100%; border-radius: 10px; border: 1px solid var(--omni-border, #e2e8f0); padding: 10px; font-size: 0.84rem; line-height: 1.45; background: var(--omni-surface-muted, #f8fafc); color: var(--omni-text, #0f172a);"
+          rows="5"
+          [(ngModel)]="ocrRes.text"></textarea>
+        <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+          <ion-button size="small" fill="outline" (click)="copyExtractedOcrText()">
+            <ion-icon name="copy-outline" slot="start"></ion-icon>
+            Copiar Texto
+          </ion-button>
+          <ion-button size="small" color="primary" (click)="saveOcrPhotoAsTxt()">
+            <ion-icon name="document-text-outline" slot="start"></ion-icon>
+            Guardar como .TXT en Repositorio
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
 
   <!-- Tarjeta del último PDF generado con botones de Compartir Nativamente y WhatsApp -->
   @if (lastCreatedPdf(); as created) {

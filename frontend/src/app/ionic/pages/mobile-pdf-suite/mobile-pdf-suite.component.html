@@ -64,6 +64,186 @@
     </div>
 
     <!-- =========================================================================
+         [MÓDULO OCR] RECONOCIMIENTO ÓPTICO DE CARACTERES (TESSERACT.JS WASM)
+         Extrae texto de fotos tomadas con la cámara, recibos, imágenes y PDFs
+         ========================================================================= -->
+    @if (activeTool() === 'ocr') {
+      <ion-card class="suite-surface-card ocr-card">
+        <ion-card-header>
+          <ion-card-subtitle>MOTOR OCR UNIVERSAL · TESSERACT.JS WASM EN CLIENTE</ion-card-subtitle>
+          <ion-card-title>Extraer Texto de Fotos, Recibos y Documentos Escaneados</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Grilla de entrada: Repositorio o Subida directa -->
+          <div class="grid grid-cols-1 md:grid-cols-2 translator-inputs-grid">
+            <div class="modern-field-group">
+              <label class="modern-field-label">1. Elegir imagen o documento del Repositorio</label>
+              <ion-item lines="none" class="modern-input-item">
+                <ion-select
+                  interface="popover"
+                  [ngModel]="ocrFileId()"
+                  (ngModelChange)="onOcrRepoFileChanged($event)"
+                  placeholder="Seleccionar imagen o PDF...">
+                  @for (doc of allFiles(); track doc.id) {
+                    <ion-select-option [value]="doc.id">
+                      {{ doc.name }} (.{{ doc.ext | uppercase }})
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <div class="modern-field-group">
+              <label class="modern-field-label">O cargar foto desde la Galería / Dispositivo</label>
+              <label class="translator-upload-dropzone">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                @if (uploadedOcrFile(); as uf) {
+                  <span><strong>{{ uf.name }}</strong> ({{ fileService.formatBytes(uf.size) }})</span>
+                } @else {
+                  <span>Seleccionar imagen (.png, .jpg, .jpeg, .webp, .pdf)...</span>
+                }
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  (change)="onOcrFilePicked($event)"
+                  style="display:none;" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Previsualización de la imagen a procesar -->
+          @if (ocrPreviewUrl(); as prevUrl) {
+            <div class="ocr-preview-box">
+              <div class="ocr-preview-thumb-wrap">
+                <img [src]="prevUrl" alt="Previsualización OCR" class="ocr-preview-thumb" />
+              </div>
+              <div class="ocr-preview-info">
+                <strong>Documento listo para análisis OCR</strong>
+                <p>Las letras y números serán segmentados y vectorizados en cliente sin enviar datos a servidores externos.</p>
+              </div>
+            </div>
+          }
+
+          <!-- Idioma y optimizaciones de imagen -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ocr-controls-row">
+            <div class="modern-field-group">
+              <label class="modern-field-label">Idioma del documento</label>
+              <ion-item lines="none" class="modern-input-item">
+                <ion-select
+                  interface="popover"
+                  [ngModel]="ocrLang()"
+                  (ngModelChange)="ocrLang.set($event)">
+                  @for (lang of ocrLanguages; track lang.code) {
+                    <ion-select-option [value]="lang.code">
+                      {{ lang.flag }} {{ lang.name }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <div class="modern-field-group">
+              <label class="modern-field-label">Título para el archivo .TXT</label>
+              <ion-item lines="none" class="modern-input-item">
+                <ion-input
+                  [ngModel]="ocrOutputTitle()"
+                  (ionInput)="ocrOutputTitle.set($any($event.target).value)"
+                  placeholder="Nombre del archivo...">
+                </ion-input>
+              </ion-item>
+            </div>
+
+            <div class="modern-field-group ocr-filter-toggle-group">
+              <label class="modern-field-label">Filtro de Alto Contraste</label>
+              <button
+                type="button"
+                class="ocr-filter-btn"
+                [class.active]="ocrEnhanceContrast()"
+                (click)="toggleOcrContrast()">
+                <ion-icon [name]="ocrEnhanceContrast() ? 'checkbox-outline' : 'sparkles-outline'"></ion-icon>
+                <span>{{ ocrEnhanceContrast() ? 'Nitidez + Binarización Activa' : 'Filtro Desactivado' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botón de acción principal (CTA) -->
+          <div class="ocr-action-container">
+            <button
+              class="btn-primary-indigo w-full ocr-cta-btn"
+              [disabled]="ocrRunning()"
+              (click)="runOcrExtraction()">
+              @if (ocrRunning()) {
+                <span class="ocr-spinner"></span>
+                <span>Procesando caracteres con Tesseract...</span>
+              } @else {
+                <ion-icon name="scan-outline"></ion-icon>
+                <span>Extraer Texto con OCR</span>
+              }
+            </button>
+          </div>
+
+          <!-- Barra de progreso animada -->
+          @if (ocrRunning()) {
+            <div class="ocr-progress-shell">
+              <div class="ocr-progress-header">
+                <span class="ocr-progress-status-txt">{{ ocrProgressStatus() }}</span>
+                <span class="ocr-progress-pct">{{ ocrProgressPercent() }}%</span>
+              </div>
+              <div class="omni-progress-track">
+                <div class="omni-progress-fill" [style.width.%]="ocrProgressPercent()"></div>
+              </div>
+            </div>
+          }
+
+          <!-- Tarjeta de Resultados del OCR -->
+          @if (ocrResult(); as res) {
+            <div class="ocr-results-card">
+              <div class="ocr-results-header">
+                <div class="ocr-metrics-row">
+                  <span class="ocr-stat-chip">
+                    <strong>{{ res.wordsCount }}</strong> palabras
+                  </span>
+                  <span class="ocr-stat-chip">
+                    <strong>{{ res.linesCount }}</strong> líneas
+                  </span>
+                  <span class="ocr-confidence-badge" [class.high]="res.confidence >= 80" [class.medium]="res.confidence < 80">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    {{ res.confidence }}% precisión
+                  </span>
+                </div>
+
+                <div class="ocr-quick-actions">
+                  <button type="button" class="ocr-tool-btn" (click)="copyOcrText()" title="Copiar al portapapeles">
+                    <ion-icon name="copy-outline"></ion-icon>
+                    <span>Copiar</span>
+                  </button>
+                  <button type="button" class="ocr-tool-btn primary" (click)="saveOcrAsTxt()" title="Guardar como archivo .txt">
+                    <ion-icon name="download-outline"></ion-icon>
+                    <span>Guardar .TXT</span>
+                  </button>
+                  <button type="button" class="ocr-tool-btn accent" (click)="sendOcrToTranslator()" title="Enviar al Traductor Universal">
+                    <ion-icon name="language-outline"></ion-icon>
+                    <span>Traducir</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Editor del texto extraído -->
+              <div class="ocr-textarea-wrapper">
+                <textarea
+                  class="ocr-textarea"
+                  rows="7"
+                  [(ngModel)]="res.text"
+                  placeholder="Texto reconocido por el OCR..."></textarea>
+              </div>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- =========================================================================
          [REQUISITO 1] TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO
          Soporta: Word (.docx), Excel (.xlsx/.csv), PowerPoint (.pptx), PDF (.pdf),
          Texto plano (.txt) y Marcado (.html/.md)

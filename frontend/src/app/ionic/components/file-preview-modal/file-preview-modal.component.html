@@ -51,6 +51,12 @@
                 <ion-icon name="contrast-outline" slot="start"></ion-icon>
                 Filtro: {{ imageFilter() | uppercase }}
               </ion-button>
+              @if (current.category === 'IMAGE' || current.ext === 'pdf') {
+                <ion-button size="small" fill="outline" color="tertiary" (click)="goToOcr(current)" title="Extraer texto OCR de este archivo">
+                  <ion-icon name="scan-outline" slot="start"></ion-icon>
+                  OCR
+                </ion-button>
+              }
             </div>
 
             <div class="viewer-right-actions">

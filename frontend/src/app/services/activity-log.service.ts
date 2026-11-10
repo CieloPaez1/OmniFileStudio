@@ -9,10 +9,12 @@ export type ActivityActionType =
   | 'sign'
   | 'convert'
   | 'translate'
+  | 'ocr'
   | 'upload'
   | 'share'
   | 'archive'
   | 'delete';
+
 
 export interface ActivityLogEntry {
   id: string;
@@ -134,6 +136,8 @@ export class ActivityLogService {
         return 'swap-horizontal-outline';
       case 'translate':
         return 'language-outline';
+      case 'ocr':
+        return 'scan-outline';
       case 'share':
         return 'share-social-outline';
       case 'archive':

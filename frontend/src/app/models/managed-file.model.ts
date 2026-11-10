@@ -8,7 +8,34 @@ export type FileOriginType =
   | 'SPLIT_PDF'
   | 'COMPRESSED_PDF'
   | 'SIGNED_PDF'
-  | 'TRANSLATED_DOC';
+  | 'TRANSLATED_DOC'
+  | 'OCR_EXTRACTED';
+
+export type OcrLangCode = 'spa' | 'eng' | 'por' | 'fra' | 'deu' | 'ita';
+
+export interface OcrLanguageOption {
+  code: OcrLangCode;
+  name: string;
+  flag: string;
+}
+
+export interface OcrResult {
+  text: string;
+  confidence: number;
+  wordsCount: number;
+  linesCount: number;
+  paragraphsCount: number;
+  language: OcrLangCode;
+  processingTimeMs: number;
+  timestamp: string;
+}
+
+export interface OcrProgress {
+  status: string;
+  progress: number;
+  percentage: number;
+}
+
 
 export type FileTagType = 'Trabajo' | 'Estudio' | 'Facturas' | 'Personal' | 'Legal' | 'Urgente';
 

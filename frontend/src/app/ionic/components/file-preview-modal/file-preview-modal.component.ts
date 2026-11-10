@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import {
   IonModal,
   IonHeader,
@@ -42,7 +43,8 @@ import {
   openOutline,
   sparklesOutline,
   shieldCheckmarkOutline,
-  codeWorkingOutline
+  codeWorkingOutline,
+  scanOutline
 } from 'ionicons/icons';
 
 import { ManagedFile } from '../../../models/managed-file.model';
@@ -80,6 +82,7 @@ export class FilePreviewModalComponent implements OnDestroy {
   readonly fileService = inject(FileManagerService);
   readonly nativeService = inject(CapacitorNativeService);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly router = inject(Router);
 
   @ViewChild('pdfCanvasRenderer') pdfCanvasRef?: ElementRef<HTMLCanvasElement>;
 
@@ -259,7 +262,8 @@ export class FilePreviewModalComponent implements OnDestroy {
       openOutline,
       sparklesOutline,
       shieldCheckmarkOutline,
-      codeWorkingOutline
+      codeWorkingOutline,
+      scanOutline
     });
   }
 
@@ -432,5 +436,12 @@ export class FilePreviewModalComponent implements OnDestroy {
     const f = this._file();
     if (!f) return;
     this.nativeService.shareViaWhatsApp(f);
+  }
+
+  goToOcr(f: ManagedFile): void {
+    this.close();
+    this.router.navigate(['/mobile/pdf-suite'], {
+      queryParams: { tool: 'ocr', fileId: f.id }
+    });
   }
 }

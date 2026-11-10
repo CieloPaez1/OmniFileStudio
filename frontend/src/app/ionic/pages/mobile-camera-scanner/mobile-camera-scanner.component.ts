@@ -40,12 +40,21 @@ import {
   logoWhatsapp,
   folderOpenOutline,
   moonOutline,
-  sunnyOutline
+  sunnyOutline,
+  scanOutline,
+  copyOutline,
+  checkmarkCircle
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ThemeService } from '../../../services/theme.service';
-import { CameraPhotoItem, FileTagType, ManagedFile } from '../../../models/managed-file.model';
+import { OcrService } from '../../../services/ocr.service';
+import {
+  CameraPhotoItem,
+  FileTagType,
+  ManagedFile,
+  OcrResult
+} from '../../../models/managed-file.model';
 
 // =============================================================================
 // [OMNIFILE STUDIO - TAB 3: ESCÁNER DE CÁMARA HD + @capacitor/filesystem + SHARE]
@@ -87,6 +96,7 @@ export class MobileCameraScannerComponent {
   readonly fileService = inject(FileManagerService);
   readonly nativeService = inject(CapacitorNativeService);
   readonly themeService = inject(ThemeService);
+  readonly ocrService = inject(OcrService);
   private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
@@ -98,6 +108,11 @@ export class MobileCameraScannerComponent {
   orientation = signal<'portrait' | 'landscape'>('portrait');
   generating = signal<boolean>(false);
   lastCreatedPdf = signal<ManagedFile | null>(null);
+
+  // OCR sobre foto seleccionada
+  activeOcrPhotoId = signal<string | null>(null);
+  ocrExtracting = signal<boolean>(false);
+  activeOcrResult = signal<OcrResult | null>(null);
 
   constructor() {
     addIcons({
@@ -113,7 +128,10 @@ export class MobileCameraScannerComponent {
       logoWhatsapp,
       folderOpenOutline,
       moonOutline,
-      sunnyOutline
+      sunnyOutline,
+      scanOutline,
+      copyOutline,
+      checkmarkCircle
     });
   }
 
@@ -217,6 +235,49 @@ export class MobileCameraScannerComponent {
 
   removePhoto(index: number): void {
     this.photos.update(list => list.filter((_, i) => i !== index));
+  }
+
+  // ==================== OCR SOBRE FOTO INDIVIDUAL ====================
+  async runOcrOnPhoto(photo: CameraPhotoItem): Promise<void> {
+    this.nativeService.triggerHapticImpact('medium');
+    this.activeOcrPhotoId.set(photo.id);
+    this.ocrExtracting.set(true);
+    this.activeOcrResult.set(null);
+
+    try {
+      const res = await this.ocrService.recognize(photo.dataUrl, 'spa', {
+        enhanceContrast: true
+      });
+      this.activeOcrResult.set(res);
+      this.presentToast(`¡OCR: ${res.wordsCount} palabras extraídas!`, 'success');
+    } catch {
+      this.presentToast('No se pudo extraer el texto de la foto', 'danger');
+    } finally {
+      this.ocrExtracting.set(false);
+    }
+  }
+
+  async copyExtractedOcrText(): Promise<void> {
+    const res = this.activeOcrResult();
+    if (!res) return;
+    await this.ocrService.copyToClipboard(res.text);
+    this.presentToast('📋 ¡Texto copiado al portapapeles!', 'success');
+  }
+
+  saveOcrPhotoAsTxt(): void {
+    const res = this.activeOcrResult();
+    if (!res || !res.text.trim()) return;
+    const title = `${this.pdfTitle() || 'Scan'}_OCR`;
+    this.ocrService.saveAsTxtFile(res.text, title, this.selectedTag()).subscribe({
+      next: file => {
+        this.presentToast(`Archivo ${file.name} guardado en el repositorio`, 'success');
+      }
+    });
+  }
+
+  closeOcrModal(): void {
+    this.activeOcrPhotoId.set(null);
+    this.activeOcrResult.set(null);
   }
 
   generatePdf(): void {

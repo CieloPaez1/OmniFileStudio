@@ -40,19 +40,26 @@ import {
   eyeOutline,
   shareSocialOutline,
   logoWhatsapp,
-  sparklesOutline
+  sparklesOutline,
+  scanOutline,
+  copyOutline,
+  checkboxOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ThemeService } from '../../../services/theme.service';
+import { OcrService } from '../../../services/ocr.service';
 import {
   ManagedFile,
   TranslateDocumentResult,
-  TranslationLangCode
+  TranslationLangCode,
+  OcrLangCode,
+  OcrResult,
+  OcrProgress
 } from '../../../models/managed-file.model';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
-export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert' | 'translate';
+export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert' | 'translate' | 'ocr';
 
 export interface HeroToolCard {
   id: PdfSuiteTool;
@@ -63,12 +70,13 @@ export interface HeroToolCard {
 }
 
 // =============================================================================
-// [OMNIFILE STUDIO - TAB 4: SUITE PDF + TRADUCTOR UNIVERSAL DE DOCUMENTOS]
-// - Navegación Superior Tipo "Hero Cards" responsiva (Unir, Dividir, Comprimir,
-//   Firmar, Conversor y Traductor Universal Multiformato).
+// [OMNIFILE STUDIO - TAB 4: SUITE PDF + TRADUCTOR UNIVERSAL + MOTOR OCR]
+// - Navegación Superior Tipo "Hero Cards" responsiva (OCR, Traductor, Unir,
+//   Dividir, Comprimir, Firmar y Conversor Universal).
+// - OCR Universal: Extracción de texto neuronal (Tesseract.js WebAssembly) con
+//   pre-procesamiento Canvas de alto contraste, guardado como .txt y traducción 1-click.
 // - Traductor Universal: soporta Word (.docx), Excel (.xlsx/.csv), PowerPoint (.pptx),
 //   PDFs nativos o escaneados (.pdf), Texto plano (.txt) y Marcado (.html/.md).
-// - Barra de progreso animada, guardado en repositorio local y vista previa modal.
 // =============================================================================
 @Component({
   selector: 'app-mobile-pdf-suite',
@@ -103,13 +111,14 @@ export class MobilePdfSuiteComponent implements OnInit {
   readonly fileService = inject(FileManagerService);
   readonly nativeService = inject(CapacitorNativeService);
   readonly themeService = inject(ThemeService);
+  readonly ocrService = inject(OcrService);
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   @ViewChild('signatureCanvas') signatureCanvas?: ElementRef<HTMLCanvasElement>;
 
-  activeTool = signal<PdfSuiteTool>('translate');
+  activeTool = signal<PdfSuiteTool>('ocr');
   processing = signal<boolean>(false);
   successFeedback = signal<{ title: string; subtitle: string } | null>(null);
 
@@ -117,8 +126,15 @@ export class MobilePdfSuiteComponent implements OnInit {
   previewFile = signal<ManagedFile | null>(null);
   previewOpen = signal<boolean>(false);
 
-  // [MEJORA UX] Hero Cards de navegación superior (6 herramientas clave)
+  // [MEJORA UX] Hero Cards de navegación superior (7 herramientas clave)
   readonly heroTools: HeroToolCard[] = [
+    {
+      id: 'ocr',
+      title: 'OCR Texto',
+      subtitle: 'Fotos, Recibos, PDF',
+      icon: 'scan-outline',
+      accentClass: 'hero-cyan'
+    },
     {
       id: 'translate',
       title: 'Traductor',
@@ -162,6 +178,20 @@ export class MobilePdfSuiteComponent implements OnInit {
       accentClass: 'hero-blue'
     }
   ];
+
+  // 0. OCR (RECONOCIMIENTO ÓPTICO DE CARACTERES)
+  ocrFileId = signal<number | null>(null);
+  uploadedOcrFile = signal<File | null>(null);
+  ocrPreviewUrl = signal<string | null>(null);
+  ocrLang = signal<OcrLangCode>('spa');
+  ocrEnhanceContrast = signal<boolean>(true);
+  ocrRunning = signal<boolean>(false);
+  ocrProgressPercent = signal<number>(0);
+  ocrProgressStatus = signal<string>('');
+  ocrResult = signal<OcrResult | null>(null);
+  ocrOutputTitle = signal<string>('Texto_Escaneado_OCR');
+  readonly ocrLanguages = this.ocrService.supportedLanguages;
+
 
   // 1. Unir PDFs
   mergeIds = signal<number[]>([]);
@@ -235,7 +265,10 @@ export class MobilePdfSuiteComponent implements OnInit {
       eyeOutline,
       shareSocialOutline,
       logoWhatsapp,
-      sparklesOutline
+      sparklesOutline,
+      scanOutline,
+      copyOutline,
+      checkboxOutline
     });
   }
 
@@ -286,6 +319,135 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.nativeService.triggerHapticImpact('light');
     this.previewFile.set(file);
     this.previewOpen.set(true);
+  }
+
+  // ==================== 0. OCR (RECONOCIMIENTO ÓPTICO DE CARACTERES) ====================
+  onOcrFilePicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.nativeService.triggerHapticImpact('light');
+    this.uploadedOcrFile.set(file);
+    this.ocrFileId.set(null);
+
+    const reader = new FileReader();
+    reader.onload = () => this.ocrPreviewUrl.set(reader.result as string);
+    reader.readAsDataURL(file);
+
+    const base = file.name.replace(/\.[^/.]+$/, '');
+    this.ocrOutputTitle.set(`${base}_OCR`);
+    this.presentToast(`Imagen "${file.name}" cargada para OCR`, 'dark');
+  }
+
+  onOcrRepoFileChanged(id: number | null): void {
+    this.ocrFileId.set(id);
+    if (!id) {
+      this.ocrPreviewUrl.set(null);
+      return;
+    }
+    const found = this.allFiles().find(f => f.id === Number(id));
+    if (found) {
+      this.uploadedOcrFile.set(null);
+      this.ocrPreviewUrl.set(found.dataUrl || found.viewUrl);
+      this.ocrOutputTitle.set(`${found.name.replace(/\.[^/.]+$/, '')}_OCR`);
+    }
+  }
+
+  toggleOcrContrast(): void {
+    this.nativeService.triggerHapticSelection();
+    this.ocrEnhanceContrast.update(v => !v);
+  }
+
+  async runOcrExtraction(): Promise<void> {
+    this.nativeService.triggerHapticImpact('medium');
+    let source: string | File | Blob | null = null;
+    const uploaded = this.uploadedOcrFile();
+    const fileId = this.ocrFileId();
+
+    if (uploaded) {
+      source = uploaded;
+    } else if (fileId) {
+      const found = this.allFiles().find(f => f.id === Number(fileId));
+      if (found) {
+        source = found.dataUrl || found.viewUrl;
+      }
+    }
+
+    if (!source) {
+      this.presentToast('Seleccioná un documento del repositorio o subí una imagen', 'danger');
+      return;
+    }
+
+    this.ocrRunning.set(true);
+    this.ocrResult.set(null);
+    this.ocrProgressPercent.set(10);
+    this.ocrProgressStatus.set('Inicializando motor neuronal OCR...');
+
+    try {
+      const res = await this.ocrService.recognize(source, this.ocrLang(), {
+        enhanceContrast: this.ocrEnhanceContrast(),
+        onProgress: p => {
+          this.ocrProgressPercent.set(p.percentage);
+          this.ocrProgressStatus.set(p.status);
+        }
+      });
+      this.ocrResult.set(res);
+      this.triggerSuccessAnimation(
+        `¡OCR Exitoso: ${res.wordsCount} palabras extraídas!`,
+        `Confianza estimada: ${res.confidence}% · Idioma: ${res.language.toUpperCase()}`
+      );
+      this.presentToast(`¡Texto extraído (${res.wordsCount} palabras) con éxito!`, 'success');
+    } catch {
+      this.presentToast('No se pudo completar el reconocimiento óptico', 'danger');
+    } finally {
+      this.ocrRunning.set(false);
+    }
+  }
+
+  async copyOcrText(): Promise<void> {
+    const res = this.ocrResult();
+    if (!res) return;
+    const ok = await this.ocrService.copyToClipboard(res.text);
+    if (ok) {
+      this.presentToast('📋 ¡Texto copiado al portapapeles!', 'success');
+    }
+  }
+
+  saveOcrAsTxt(): void {
+    const res = this.ocrResult();
+    if (!res || !res.text.trim()) {
+      this.presentToast('No hay texto para guardar', 'danger');
+      return;
+    }
+    this.ocrService
+      .saveAsTxtFile(res.text, this.ocrOutputTitle() || 'Texto_OCR', 'Trabajo')
+      .subscribe({
+        next: file => {
+          this.triggerSuccessAnimation(
+            `¡Guardado en Repositorio: ${file.name}!`,
+            'Texto plano .txt disponible para descargar o compartir'
+          );
+          this.presentToast(`Archivo ${file.name} guardado con éxito`, 'success');
+        },
+        error: () => {
+          this.presentToast('Error al guardar el archivo', 'danger');
+        }
+      });
+  }
+
+  sendOcrToTranslator(): void {
+    const res = this.ocrResult();
+    if (!res || !res.text.trim()) return;
+    this.nativeService.triggerHapticSelection();
+
+    const title = this.ocrOutputTitle() || 'Texto_OCR';
+    const blob = new Blob([res.text], { type: 'text/plain;charset=utf-8' });
+    const file = new File([blob], `${title}.txt`, { type: 'text/plain' });
+
+    this.uploadedTranslateFile.set(file);
+    this.translateOutputTitle.set(`${title}_TRADUCIDO`);
+    this.selectHeroTool('translate');
+    this.presentToast('Texto OCR transferido al Traductor Universal', 'dark');
   }
 
   // ==================== 6. TRADUCTOR UNIVERSAL MULTIFORMATO ====================
