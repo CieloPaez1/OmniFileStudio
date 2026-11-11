@@ -448,12 +448,12 @@ export class MobileFileRepositoryComponent implements OnInit {
   // [@capacitor/filesystem] Guardar explícitamente en almacenamiento interno del dispositivo
   async saveToDeviceStorage(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
-    const saved = await this.nativeService.saveFileToDevice(
-      file.name,
-      file.dataUrl || file.downloadUrl || file.name,
-      file.mimeType
-    );
-    await this.presentToast(`Guardado en dispositivo: ${saved.uri}`, 'success');
+    await this.nativeService.downloadFileToDevice(file);
+  }
+
+  async downloadFile(file: ManagedFile, event?: Event): Promise<void> {
+    if (event) event.stopPropagation();
+    await this.nativeService.downloadFileToDevice(file);
   }
 
   async openQuickConvert(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {

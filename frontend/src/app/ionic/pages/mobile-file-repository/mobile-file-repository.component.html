@@ -216,9 +216,8 @@
               fill="clear"
               color="medium"
               size="small"
-              (click)="$event.stopPropagation()"
-              [href]="f.downloadUrl"
-              [download]="f.name">
+              (click)="downloadFile(f, $event)"
+              title="Descargar archivo">
               <ion-icon name="download-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-item>
@@ -275,7 +274,7 @@
               <ion-button size="small" fill="clear" color="success" (click)="shareFileNatively(f)" title="Compartir">
                 <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              <ion-button size="small" fill="clear" color="medium" [href]="f.downloadUrl" [download]="f.name">
+              <ion-button size="small" fill="clear" color="medium" (click)="downloadFile(f, $event)" title="Descargar">
                 <ion-icon name="download-outline" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-button size="small" fill="clear" color="danger" (click)="deleteFromSliding(f)">

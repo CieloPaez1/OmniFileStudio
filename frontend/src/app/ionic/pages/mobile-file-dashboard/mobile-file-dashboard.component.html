@@ -221,7 +221,7 @@
               <ion-button size="small" fill="solid" color="primary" (click)="openPreview(f)" title="Vista Previa">
                 <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              <ion-button size="small" fill="clear" color="medium" [href]="f.downloadUrl" [download]="f.name" title="Descargar">
+              <ion-button size="small" fill="clear" color="medium" (click)="downloadFile(f)" title="Descargar">
                 <ion-icon name="download-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </div>

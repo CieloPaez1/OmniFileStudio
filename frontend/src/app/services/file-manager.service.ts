@@ -1462,8 +1462,8 @@ export class FileManagerService {
           ? raw.availableTargets
           : this.getAvailableTargets(ext),
       dataUrl,
-      viewUrl: raw.viewUrl || dataUrl,
-      downloadUrl: raw.downloadUrl || dataUrl,
+      viewUrl: raw.viewUrl || (raw.id ? `${this.apiUrl}/${raw.id}/view` : dataUrl),
+      downloadUrl: raw.downloadUrl || (raw.id ? `${this.apiUrl}/${raw.id}/download` : dataUrl),
       createdAt: raw.createdAt || new Date().toISOString()
     };
   }

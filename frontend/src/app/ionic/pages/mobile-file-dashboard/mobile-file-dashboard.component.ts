@@ -163,6 +163,10 @@ export class MobileFileDashboardComponent implements OnInit {
     this.previewOpen.set(false);
   }
 
+  downloadFile(file: ManagedFile): void {
+    this.nativeService.downloadFileToDevice(file);
+  }
+
   ngOnInit(): void {
     this.fileService.getAll().subscribe();
   }

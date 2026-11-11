@@ -552,8 +552,7 @@
                   size="small"
                   fill="outline"
                   color="primary"
-                  [href]="result.file.downloadUrl"
-                  [download]="result.file.name">
+                  (click)="nativeService.downloadFileToDevice(result.file)">
                   <ion-icon name="download-outline" slot="start"></ion-icon>
                   Descargar .{{ result.file.ext | uppercase }}
                 </ion-button>

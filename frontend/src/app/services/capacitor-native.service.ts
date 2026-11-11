@@ -427,8 +427,7 @@ export class CapacitorNativeService {
         text: 'Descargar Archivo al Dispositivo',
         icon: 'download-outline',
         handler: async () => {
-          this.triggerBrowserDownload(file);
-          await this.showToast(`Descargando "${file.name}"...`);
+          await this.downloadFileToDevice(file);
         }
       },
       {
@@ -580,28 +579,145 @@ export class CapacitorNativeService {
     }
   }
 
-  triggerBrowserDownload(file: ManagedFile): void {
-    if (typeof document === 'undefined') return;
-    const url = file.downloadUrl || file.viewUrl || file.dataUrl;
-    if (!url) return;
+  async downloadFileToDevice(file: ManagedFile): Promise<boolean> {
+    await this.triggerHapticImpact('medium');
 
-    if (url.startsWith('data:')) {
+    try {
+      // 1. Si es plataforma nativa (Android / iOS)
+      if (Capacitor.isNativePlatform()) {
+        let base64Data = '';
+        if (file.dataUrl && file.dataUrl.includes('base64,')) {
+          base64Data = file.dataUrl.split('base64,')[1];
+        } else if (file.dataUrl && !file.dataUrl.startsWith('http')) {
+          base64Data = btoa(unescape(encodeURIComponent(file.dataUrl)));
+        } else {
+          const sourceUrl = file.downloadUrl || file.viewUrl || (file.id ? `http://localhost:8080/api/files/${file.id}/download` : '');
+          if (sourceUrl) {
+            try {
+              const resp = await fetch(sourceUrl);
+              const blob = await resp.blob();
+              base64Data = await this.blobToBase64(blob);
+            } catch (err) {
+              console.warn('Error fetching file for native save:', err);
+            }
+          }
+        }
+
+        if (base64Data) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          try {
+            await Filesystem.writeFile({
+              path: `Download/${safeName}`,
+              data: base64Data,
+              directory: Directory.Documents,
+              recursive: true
+            });
+            await this.showToast(`Archivo "${file.name}" guardado en Documentos`, 'success');
+            await this.triggerHapticSuccess();
+            return true;
+          } catch {
+            await Filesystem.writeFile({
+              path: `${this.APP_FOLDER}/${safeName}`,
+              data: base64Data,
+              directory: Directory.Data,
+              recursive: true
+            });
+            await this.showToast(`Archivo "${file.name}" descargado en el dispositivo`, 'success');
+            await this.triggerHapticSuccess();
+            return true;
+          }
+        }
+      }
+
+      // 2. Web / Navegador / Fallback Blob
+      await this.downloadViaBlob(file);
+      await this.showToast(`Descargando "${file.name}"...`, 'success');
+      return true;
+    } catch (error) {
+      console.error('Error al descargar archivo:', error);
+      await this.showToast('No se pudo descargar el archivo', 'primary');
+      return false;
+    }
+  }
+
+  async downloadViaBlob(file: ManagedFile): Promise<void> {
+    if (typeof document === 'undefined') return;
+
+    let blob: Blob | null = null;
+    const url = file.downloadUrl || file.viewUrl || file.dataUrl;
+
+    if (file.dataUrl && file.dataUrl.startsWith('data:')) {
+      try {
+        const resp = await fetch(file.dataUrl);
+        blob = await resp.blob();
+      } catch {
+        blob = this.dataUriToBlob(file.dataUrl, file.mimeType);
+      }
+    } else if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+      try {
+        const resp = await fetch(url);
+        if (resp.ok) {
+          blob = await resp.blob();
+        }
+      } catch (e) {
+        console.warn('Fetch fallback to direct anchor:', e);
+      }
+    } else if (file.dataUrl) {
+      blob = new Blob([file.dataUrl], { type: file.mimeType || 'text/plain' });
+    }
+
+    if (blob) {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = file.name;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      }, 1500);
+    } else if (url) {
       const a = document.createElement('a');
       a.href = url;
       a.download = file.name;
+      a.target = '_blank';
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
-      return;
+      setTimeout(() => {
+        document.body.removeChild(a);
+      }, 1500);
     }
+  }
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const res = reader.result as string;
+        const base64 = res.includes('base64,') ? res.split('base64,')[1] : res;
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  private dataUriToBlob(dataUri: string, mimeType = 'application/octet-stream'): Blob {
+    const parts = dataUri.split(',');
+    const byteString = atob(parts[1] || parts[0]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeType });
+  }
+
+  triggerBrowserDownload(file: ManagedFile): void {
+    this.downloadFileToDevice(file);
   }
 
   async showToast(message: string, color: 'success' | 'dark' | 'primary' = 'success'): Promise<void> {

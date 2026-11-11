@@ -69,7 +69,7 @@
               <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
               Convertir
             </ion-button>
-            <ion-button size="small" fill="solid" color="primary" [href]="f.downloadUrl">
+            <ion-button size="small" fill="solid" color="primary" (click)="downloadFile(f)">
               <ion-icon name="download-outline" slot="start"></ion-icon>
               Descargar
             </ion-button>

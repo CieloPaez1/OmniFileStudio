@@ -100,8 +100,7 @@
             fill="outline"
             color="medium"
             size="small"
-            [href]="selected.downloadUrl"
-            [download]="selected.name">
+            (click)="downloadFile()">
             <ion-icon name="download-outline" slot="start"></ion-icon>
             Descargar
           </ion-button>

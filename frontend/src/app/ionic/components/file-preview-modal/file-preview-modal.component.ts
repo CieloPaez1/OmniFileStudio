@@ -597,6 +597,12 @@ export class FilePreviewModalComponent implements OnDestroy {
     this.nativeService.shareViaWhatsApp(f);
   }
 
+  downloadCurrentFile(): void {
+    const f = this._file();
+    if (!f) return;
+    this.nativeService.downloadFileToDevice(f);
+  }
+
   goToOcr(f: ManagedFile): void {
     this.close();
     this.router.navigate(['/mobile/pdf-suite'], {

@@ -61,6 +61,7 @@ import {
 } from 'ionicons/icons';
 
 import { FileManagerService } from '../../../services/file-manager.service';
+import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ManagedFile, CameraPhotoItem } from '../../../models/managed-file.model';
 
 export type MobileFilesSegment = 'library' | 'convert' | 'camera' | 'pdf-tools';
@@ -103,6 +104,7 @@ export type MobileFilesSegment = 'library' | 'convert' | 'camera' | 'pdf-tools';
 })
 export class MobileFilesComponent implements OnInit {
   readonly fileService = inject(FileManagerService);
+  readonly nativeService = inject(CapacitorNativeService);
   private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly toastCtrl = inject(ToastController);
 
@@ -396,5 +398,9 @@ export class MobileFilesComponent implements OnInit {
           this.showToast('Error al dividir el PDF', 'danger');
         }
       });
+  }
+
+  downloadFile(file: ManagedFile): void {
+    this.nativeService.downloadFileToDevice(file);
   }
 }

@@ -523,6 +523,12 @@ export class ContextualQuickActionsComponent {
     this.presentToast(res.message, 'success');
   }
 
+  async downloadFile(): Promise<void> {
+    const f = this._selectedFile();
+    if (!f) return;
+    await this.nativeService.downloadFileToDevice(f);
+  }
+
   async saveInFilesystem(): Promise<void> {
     const f = this._selectedFile();
     if (!f) return;
