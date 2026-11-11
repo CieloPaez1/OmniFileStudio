@@ -588,7 +588,7 @@ export class FilePreviewModalComponent implements OnDestroy {
   shareCurrentFile(): void {
     const f = this._file();
     if (!f) return;
-    this.nativeService.shareManagedFile(f);
+    this.nativeService.presentShareOptions(f);
   }
 
   shareCurrentWhatsApp(): void {

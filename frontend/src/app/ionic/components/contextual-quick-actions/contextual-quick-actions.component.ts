@@ -513,8 +513,7 @@ export class ContextualQuickActionsComponent {
   async shareNatively(): Promise<void> {
     const f = this._selectedFile();
     if (!f) return;
-    const res = await this.nativeService.shareManagedFile(f);
-    await this.presentToast(res.message, 'success');
+    await this.nativeService.presentShareOptions(f);
   }
 
   shareWhatsApp(): void {

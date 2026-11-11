@@ -433,11 +433,10 @@ export class MobileFileRepositoryComponent implements OnInit {
     return this.confirmDelete(file, slidingItem);
   }
 
-  // [CAPACITOR 8 + WEB SHARE API] Compartir archivo nativamente o por WhatsApp
+  // [CAPACITOR 8 + WEB SHARE API] Compartir archivo nativamente o por canales digitales
   async shareFileNatively(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
-    const res = await this.nativeService.shareManagedFile(file);
-    await this.presentToast(res.message, res.shared ? 'success' : 'dark');
+    await this.nativeService.presentShareOptions(file);
   }
 
   async shareFileViaWhatsApp(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {

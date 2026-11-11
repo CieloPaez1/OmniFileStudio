@@ -61,7 +61,19 @@ import {
   sendOutline,
   statsChartOutline,
   imageOutline,
-  documentOutline
+  imagesOutline,
+  documentOutline,
+  codeSlashOutline,
+  bookOutline,
+  brushOutline,
+  cropOutline,
+  pencilOutline,
+  lockOpenOutline,
+  layersOutline,
+  helpCircleOutline,
+  mailUnreadOutline,
+  reorderFourOutline,
+  listOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -99,12 +111,13 @@ export interface HeroToolCard {
 }
 
 export interface SmallPdfToolItem {
-  id: PdfSuiteTool | 'scanner';
+  id: PdfSuiteTool | 'scanner' | 'preview' | 'share';
   name: string;
   desc: string;
   colorClass: string;
   icon: string;
   badge?: string;
+  targetFormat?: string;
 }
 
 export interface SmallPdfCategoryGroup {
@@ -115,7 +128,7 @@ export interface SmallPdfCategoryGroup {
 // =============================================================================
 // [OMNIFILE STUDIO - SUITE SMALLPDF + TRADUCTOR + OCR + IA + EDICIÓN]
 // - Megamenú interactivo desplegable idéntico a Smallpdf.com con todas las
-//   categorías visuales: Comprimir, Convertir, Organizar, Editar, Proteger, IA y Escáner.
+//   15 categorías visuales: Comprimir, Convertir, Organizar, Editar, Proteger, IA y Escáner.
 // - Marca de agua en PDF, Rotar PDF, Proteger PDF con contraseña.
 // - PDF con IA: Resumen ejecutivo inteligente y Chat interactivo local con el documento.
 // =============================================================================
@@ -174,7 +187,7 @@ export class MobilePdfSuiteComponent implements OnInit {
   previewFile = signal<ManagedFile | null>(null);
   previewOpen = signal<boolean>(false);
 
-  // Categorías completas del Megamenú tipo Smallpdf.com
+  // Categorías completas del Megamenú tipo Smallpdf.com (Exactas de smallpdf.com)
   readonly smallPdfCategories: SmallPdfCategoryGroup[] = [
     {
       name: 'Comprimir',
@@ -209,31 +222,174 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'PDF a Imagen (JPG / PNG)',
-          desc: 'Extrae páginas en imágenes de alta resolución',
+          name: 'PDF a PDF/A',
+          desc: 'Convierte a formato de preservación y archivo legal',
+          colorClass: 'sp-red',
+          icon: 'document-text-outline',
+          targetFormat: 'pdf'
+        }
+      ]
+    },
+    {
+      name: 'PDF a imagen',
+      tools: [
+        {
+          id: 'convert',
+          name: 'PDF a JPG',
+          desc: 'Extrae páginas en imágenes JPG comprimidas',
           colorClass: 'sp-yellow',
-          icon: 'image-outline'
+          icon: 'image-outline',
+          targetFormat: 'jpg'
         },
         {
           id: 'convert',
-          name: 'Imagen a PDF (JPG / PNG)',
-          desc: 'Crea documentos PDF a partir de tus fotos',
+          name: 'PDF a PNG',
+          desc: 'Extrae páginas en imágenes PNG sin pérdida',
           colorClass: 'sp-yellow',
-          icon: 'document-text-outline'
-        },
+          icon: 'image-outline',
+          targetFormat: 'png'
+        }
+      ]
+    },
+    {
+      name: 'Imagen a PDF',
+      tools: [
         {
           id: 'convert',
-          name: 'PDF a Word / Excel',
-          desc: 'Exporta tus documentos a formatos de Office',
+          name: 'JPG a PDF',
+          desc: 'Crea documentos PDF a partir de fotos e imágenes',
+          colorClass: 'sp-yellow',
+          icon: 'images-outline',
+          targetFormat: 'pdf'
+        }
+      ]
+    },
+    {
+      name: 'PDF a Office',
+      tools: [
+        {
+          id: 'convert',
+          name: 'PDF a Word',
+          desc: 'Convierte tu PDF a documento Word .docx editable',
           colorClass: 'sp-blue',
-          icon: 'document-outline'
+          icon: 'document-outline',
+          targetFormat: 'docx'
         },
         {
           id: 'convert',
-          name: 'Office a PDF (Word, Excel, PPT)',
-          desc: 'Transforma hojas de cálculo y presentaciones a PDF',
+          name: 'PDF a Excel',
+          desc: 'Extrae tablas de PDF a hojas de cálculo .xlsx',
           colorClass: 'sp-green',
-          icon: 'stats-chart-outline'
+          icon: 'grid-outline',
+          targetFormat: 'xlsx'
+        },
+        {
+          id: 'convert',
+          name: 'PDF a PPT',
+          desc: 'Convierte diapositivas PDF en presentaciones .pptx',
+          colorClass: 'sp-orange',
+          icon: 'stats-chart-outline',
+          targetFormat: 'pptx'
+        }
+      ]
+    },
+    {
+      name: 'Office a PDF',
+      tools: [
+        {
+          id: 'convert',
+          name: 'Word a PDF',
+          desc: 'Transforma documentos de Word (.docx) a PDF',
+          colorClass: 'sp-blue',
+          icon: 'document-text-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'Excel a PDF',
+          desc: 'Convierte hojas de cálculo (.xlsx) a PDF',
+          colorClass: 'sp-green',
+          icon: 'grid-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'PPT a PDF',
+          desc: 'Convierte presentaciones de PowerPoint a PDF',
+          colorClass: 'sp-orange',
+          icon: 'stats-chart-outline',
+          targetFormat: 'pdf'
+        }
+      ]
+    },
+    {
+      name: 'OpenOffice a PDF',
+      tools: [
+        {
+          id: 'convert',
+          name: 'ODT a PDF',
+          desc: 'Convierte archivos OpenOffice Writer (.odt) a PDF',
+          colorClass: 'sp-blue',
+          icon: 'document-outline',
+          targetFormat: 'pdf'
+        }
+      ]
+    },
+    {
+      name: 'Convertir a PDF',
+      tools: [
+        {
+          id: 'convert',
+          name: 'TXT a PDF',
+          desc: 'Convierte notas y texto plano a documentos PDF',
+          colorClass: 'sp-blue',
+          icon: 'document-text-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'RTF a PDF',
+          desc: 'Convierte texto con formato enriquecido a PDF',
+          colorClass: 'sp-blue',
+          icon: 'reader-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'HTML a PDF',
+          desc: 'Transforma código HTML y páginas web a PDF',
+          colorClass: 'sp-blue',
+          icon: 'code-slash-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'EPUB a PDF',
+          desc: 'Convierte libros electrónicos EPUB a formato PDF',
+          colorClass: 'sp-blue',
+          icon: 'book-outline',
+          targetFormat: 'pdf'
+        },
+        {
+          id: 'convert',
+          name: 'CSV a PDF',
+          desc: 'Convierte tablas de datos CSV tabulares a PDF',
+          colorClass: 'sp-green',
+          icon: 'grid-outline',
+          targetFormat: 'pdf'
+        }
+      ]
+    },
+    {
+      name: 'iWork a PDF',
+      tools: [
+        {
+          id: 'convert',
+          name: 'Páginas a PDF',
+          desc: 'Convierte documentos Apple Pages (.pages) a PDF',
+          colorClass: 'sp-blue',
+          icon: 'create-outline',
+          targetFormat: 'pdf'
         }
       ]
     },
@@ -242,7 +398,7 @@ export class MobilePdfSuiteComponent implements OnInit {
       tools: [
         {
           id: 'merge',
-          name: 'Unir PDF (Fusionar)',
+          name: 'Unir PDF',
           desc: 'Combina varios PDFs en un solo documento ordenado',
           colorClass: 'sp-purple',
           icon: 'git-merge-outline'
@@ -260,12 +416,75 @@ export class MobilePdfSuiteComponent implements OnInit {
           desc: 'Rota las páginas 90°, 180° o 270° según necesites',
           colorClass: 'sp-purple',
           icon: 'refresh-outline'
+        },
+        {
+          id: 'split',
+          name: 'Eliminar páginas PDF',
+          desc: 'Quita páginas innecesarias de cualquier PDF',
+          colorClass: 'sp-purple',
+          icon: 'trash-outline'
+        },
+        {
+          id: 'split',
+          name: 'Extraer páginas PDF',
+          desc: 'Crea un nuevo PDF con páginas seleccionadas',
+          colorClass: 'sp-purple',
+          icon: 'copy-outline'
+        },
+        {
+          id: 'merge',
+          name: 'Organizar PDF',
+          desc: 'Reordena, mueve y agrupa las páginas del PDF',
+          colorClass: 'sp-purple',
+          icon: 'reorder-four-outline'
         }
       ]
     },
     {
-      name: 'Editar y Proteger',
+      name: 'Editar',
       tools: [
+        {
+          id: 'sign',
+          name: 'Editar PDF',
+          desc: 'Agrega texto, trazos y dibujos interactivos',
+          colorClass: 'sp-cyan',
+          icon: 'create-outline'
+        },
+        {
+          id: 'sign',
+          name: 'Anotar PDF',
+          desc: 'Resalta, subraya y dibuja anotaciones sobre el PDF',
+          colorClass: 'sp-cyan',
+          icon: 'brush-outline'
+        },
+        {
+          id: 'preview',
+          name: 'Lector de PDF',
+          desc: 'Visualizador de alta fidelidad con zoom y rotación',
+          colorClass: 'sp-cyan',
+          icon: 'reader-outline'
+        },
+        {
+          id: 'watermark',
+          name: 'Numerar páginas',
+          desc: 'Agrega numeración de páginas correlativa',
+          colorClass: 'sp-cyan',
+          icon: 'list-outline'
+        },
+        {
+          id: 'split',
+          name: 'Recortar PDF',
+          desc: 'Ajusta los márgenes y recorta dimensiones',
+          colorClass: 'sp-cyan',
+          icon: 'crop-outline'
+        },
+        {
+          id: 'watermark',
+          name: 'Redactar PDF',
+          desc: 'Cubre y anonimiza información confidencial',
+          colorClass: 'sp-cyan',
+          icon: 'pencil-outline'
+        },
         {
           id: 'watermark',
           name: 'Marca de agua PDF',
@@ -275,6 +494,25 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'sign',
+          name: 'Rellenador de formularios PDF',
+          desc: 'Completa campos de texto y casillas interactivas',
+          colorClass: 'sp-cyan',
+          icon: 'checkbox-outline'
+        },
+        {
+          id: 'share',
+          name: 'Comparte tus archivos PDF',
+          desc: 'WhatsApp, Correo, Telegram y descarga directa',
+          colorClass: 'sp-cyan',
+          icon: 'share-social-outline'
+        }
+      ]
+    },
+    {
+      name: 'Rellenar y firmar',
+      tools: [
+        {
+          id: 'sign',
           name: 'Firmar PDF',
           desc: 'Firma manuscrita en lienzo HTML5 Canvas y sello',
           colorClass: 'sp-pink',
@@ -282,25 +520,43 @@ export class MobilePdfSuiteComponent implements OnInit {
           badge: 'Legal'
         },
         {
+          id: 'sign',
+          name: 'Solicitar firmas (Sign.com)',
+          desc: 'Prepara el documento con campos para firma legal',
+          colorClass: 'sp-pink',
+          icon: 'mail-unread-outline'
+        }
+      ]
+    },
+    {
+      name: 'Proteger',
+      tools: [
+        {
+          id: 'protect',
+          name: 'Desbloquear PDF',
+          desc: 'Elimina restricciones y contraseñas conocidas',
+          colorClass: 'sp-rose',
+          icon: 'lock-open-outline'
+        },
+        {
           id: 'protect',
           name: 'Proteger PDF',
           desc: 'Cifra con contraseña y restringe apertura no autorizada',
           colorClass: 'sp-rose',
           icon: 'lock-closed-outline'
+        },
+        {
+          id: 'compress',
+          name: 'Aplanar PDF',
+          desc: 'Convierte capas, formularios y firmas en contenido fijo',
+          colorClass: 'sp-rose',
+          icon: 'layers-outline'
         }
       ]
     },
     {
       name: 'PDF con IA',
       tools: [
-        {
-          id: 'ai-tools',
-          name: 'Resumen con IA',
-          desc: 'Genera síntesis ejecutiva y puntos clave al instante',
-          colorClass: 'sp-indigo',
-          icon: 'sparkles-outline',
-          badge: 'IA'
-        },
         {
           id: 'ai-tools',
           name: 'Chatear con un PDF',
@@ -310,11 +566,26 @@ export class MobilePdfSuiteComponent implements OnInit {
           badge: 'Chat'
         },
         {
+          id: 'ai-tools',
+          name: 'Resumen de PDF con IA',
+          desc: 'Genera síntesis ejecutiva y puntos clave al instante',
+          colorClass: 'sp-indigo',
+          icon: 'sparkles-outline',
+          badge: 'IA'
+        },
+        {
           id: 'translate',
           name: 'Traducir PDF',
           desc: 'Traduce a 8 idiomas preservando el formato original',
           colorClass: 'sp-amber',
           icon: 'language-outline'
+        },
+        {
+          id: 'ai-tools',
+          name: 'Generador de preguntas con IA',
+          desc: 'Crea cuestionarios automáticos del contenido del PDF',
+          colorClass: 'sp-indigo',
+          icon: 'help-circle-outline'
         }
       ]
     },
@@ -544,7 +815,19 @@ export class MobilePdfSuiteComponent implements OnInit {
       sendOutline,
       statsChartOutline,
       imageOutline,
-      documentOutline
+      imagesOutline,
+      documentOutline,
+      codeSlashOutline,
+      bookOutline,
+      brushOutline,
+      cropOutline,
+      pencilOutline,
+      lockOpenOutline,
+      layersOutline,
+      helpCircleOutline,
+      mailUnreadOutline,
+      reorderFourOutline,
+      listOutline
     });
   }
 
@@ -1030,14 +1313,38 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.isMegaMenuOpen.update(v => !v);
   }
 
-  selectSmallPdfTool(toolId: PdfSuiteTool | 'scanner'): void {
+  selectSmallPdfTool(toolOrId: SmallPdfToolItem | PdfSuiteTool | 'scanner' | 'share' | 'preview'): void {
     this.isMegaMenuOpen.set(false);
+    this.nativeService.triggerHapticSelection();
+
+    const toolId = typeof toolOrId === 'string' ? toolOrId : toolOrId.id;
+
     if (toolId === 'scanner') {
       this.router.navigate(['/mobile/camera-scanner']);
       return;
     }
-    this.activeTool.set(toolId);
-    this.nativeService.triggerHapticSelection();
+    if (toolId === 'share') {
+      const files = this.fileService.files();
+      if (files.length > 0) {
+        this.nativeService.presentShareOptions(files[0]);
+      } else {
+        this.presentToast('No hay archivos disponibles para compartir', 'dark');
+      }
+      return;
+    }
+    if (toolId === 'preview') {
+      const files = this.fileService.files();
+      if (files.length > 0) {
+        this.openQuickPreview(files[0]);
+      } else {
+        this.presentToast('No hay archivos en la biblioteca para visualizar', 'dark');
+      }
+      return;
+    }
+    if (typeof toolOrId !== 'string' && toolOrId.targetFormat) {
+      this.convertTargetFormat.set(toolOrId.targetFormat);
+    }
+    this.activeTool.set(toolId as PdfSuiteTool);
   }
 
   // ==================== 7. MARCA DE AGUA (WATERMARK) ====================
@@ -1214,7 +1521,7 @@ export class MobilePdfSuiteComponent implements OnInit {
 
   private async presentToast(
     message: string,
-    color: 'success' | 'danger' | 'dark' = 'dark'
+    color: 'success' | 'danger' | 'dark' | 'warning' = 'dark'
   ): Promise<void> {
     const toast = await this.toastCtrl.create({
       message,

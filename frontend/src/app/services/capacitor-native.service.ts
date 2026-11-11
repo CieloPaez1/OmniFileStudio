@@ -1,4 +1,15 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { ActionSheetController, ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  shareSocialOutline,
+  logoWhatsapp,
+  mailOutline,
+  paperPlaneOutline,
+  linkOutline,
+  downloadOutline,
+  closeOutline
+} from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import {
   Camera,
@@ -67,7 +78,19 @@ export class CapacitorNativeService {
   readonly lastSavedUri = signal<string | null>(null);
   readonly savedDeviceFiles = signal<SavedDeviceFileInfo[]>([]);
 
+  private readonly actionSheetCtrl = inject(ActionSheetController);
+  private readonly toastCtrl = inject(ToastController);
+
   constructor() {
+    addIcons({
+      shareSocialOutline,
+      logoWhatsapp,
+      mailOutline,
+      paperPlaneOutline,
+      linkOutline,
+      downloadOutline,
+      closeOutline
+    });
     this.ensureAppDirectory();
     this.loadDeviceFilesIndex();
   }
@@ -340,12 +363,93 @@ export class CapacitorNativeService {
   }
 
   // ===========================================================================
-  // 4. COMPARTIR ARCHIVOS NATIVAMENTE (WEB SHARE API LEVEL 2 + WHATSAPP)
+  // 4. COMPARTIR ARCHIVOS NATIVAMENTE (ACTION SHEET + WEB SHARE + WHATSAPP + EMAIL)
   // ===========================================================================
+
+  /**
+   * Muestra un menú de opciones nativo / Action Sheet interactivo para compartir
+   * mediante múltiples canales: Sistema, WhatsApp, Correo, Telegram, Copiar Enlace y Descarga.
+   */
+  async presentShareOptions(file: ManagedFile): Promise<void> {
+    await this.triggerHapticImpact('medium');
+    const nav = typeof navigator !== 'undefined' ? (navigator as any) : null;
+    const canNativeShare = Boolean(nav && typeof nav.share === 'function');
+
+    const buttons: any[] = [];
+
+    if (canNativeShare) {
+      buttons.push({
+        text: 'Compartir con el Sistema (Android / Menú)',
+        icon: 'share-social-outline',
+        handler: async () => {
+          const res = await this.shareManagedFile(file);
+          if (res.message) {
+            await this.showToast(res.message);
+          }
+        }
+      });
+    }
+
+    buttons.push(
+      {
+        text: 'Compartir por WhatsApp',
+        icon: 'logo-whatsapp',
+        handler: async () => {
+          const res = this.shareViaWhatsApp(file);
+          await this.showToast(res.message);
+        }
+      },
+      {
+        text: 'Enviar por Correo Electrónico',
+        icon: 'mail-outline',
+        handler: async () => {
+          const res = this.shareViaEmail(file);
+          await this.showToast(res.message);
+        }
+      },
+      {
+        text: 'Compartir por Telegram',
+        icon: 'paper-plane-outline',
+        handler: async () => {
+          const res = this.shareViaTelegram(file);
+          await this.showToast(res.message);
+        }
+      },
+      {
+        text: 'Copiar Enlace de Descarga',
+        icon: 'link-outline',
+        handler: async () => {
+          const res = await this.copyShareLink(file);
+          await this.showToast(res.message);
+        }
+      },
+      {
+        text: 'Descargar Archivo al Dispositivo',
+        icon: 'download-outline',
+        handler: async () => {
+          this.triggerBrowserDownload(file);
+          await this.showToast(`Descargando "${file.name}"...`);
+        }
+      },
+      {
+        text: 'Cancelar',
+        icon: 'close-outline',
+        role: 'cancel'
+      }
+    );
+
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: `Compartir: ${file.name}`,
+      subHeader: `Formato .${(file.ext || '').toUpperCase()} · ${file.tag || 'General'}`,
+      buttons
+    });
+
+    await actionSheet.present();
+  }
 
   async shareManagedFile(file: ManagedFile): Promise<ShareResultInfo> {
     await this.triggerHapticImpact('light');
-    if (file.dataUrl) {
+    if (file.dataUrl && file.dataUrl.startsWith('data:')) {
       await this.saveFileToDevice(file.name, file.dataUrl, file.mimeType);
     }
 
@@ -354,7 +458,7 @@ export class CapacitorNativeService {
     if (nav && typeof nav.share === 'function') {
       try {
         const physicalFile = await this.dataUrlToFile(
-          file.dataUrl || file.downloadUrl,
+          file.dataUrl || file.downloadUrl || file.viewUrl,
           file.name,
           file.mimeType || 'application/pdf'
         );
@@ -366,7 +470,7 @@ export class CapacitorNativeService {
         ) {
           await nav.share({
             title: file.name,
-            text: `Documento "${file.name}" (${file.tag || 'General'}) procesado en OmniFile Studio.`,
+            text: `Documento "${file.name}" (${file.tag || 'General'}) desde OmniFile Studio.`,
             files: [physicalFile]
           });
           return {
@@ -376,9 +480,11 @@ export class CapacitorNativeService {
           };
         }
 
+        const downloadUrl = file.downloadUrl || file.viewUrl || '';
         await nav.share({
           title: file.name,
-          text: `Te comparto el documento "${file.name}" [${file.tag || 'General'}] desde OmniFile Studio.`
+          text: `Te comparto el documento "${file.name}" [${file.tag || 'General'}] desde OmniFile Studio.`,
+          url: downloadUrl || undefined
         });
         return {
           shared: true,
@@ -390,7 +496,7 @@ export class CapacitorNativeService {
           return {
             shared: false,
             method: 'web-share-files',
-            message: 'Envío cancelado por el usuario.'
+            message: 'Envío cancelado.'
           };
         }
       }
@@ -401,32 +507,114 @@ export class CapacitorNativeService {
 
   shareViaWhatsApp(file: ManagedFile): ShareResultInfo {
     this.triggerBrowserDownload(file);
+    const downloadLink = file.downloadUrl || file.viewUrl || '';
+    const linkText = downloadLink ? `\n🔗 Enlace de descarga: ${downloadLink}` : '';
     const text = encodeURIComponent(
       `📄 *OmniFile Studio* — Te comparto el archivo *${file.name}* (Categoría: ${
         file.tag || 'General'
-      }).`
+      }).${linkText}`
     );
     if (typeof window !== 'undefined') {
-      window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
     }
     return {
       shared: true,
       method: 'whatsapp-intent',
-      message: `Abriendo WhatsApp y descargando "${file.name}" para adjuntar.`
+      message: `Abriendo WhatsApp para compartir "${file.name}".`
     };
+  }
+
+  shareViaEmail(file: ManagedFile): ShareResultInfo {
+    this.triggerBrowserDownload(file);
+    const downloadLink = file.downloadUrl || file.viewUrl || '';
+    const subject = encodeURIComponent(`[OmniFile Studio] ${file.name}`);
+    const body = encodeURIComponent(
+      `Hola,\n\nTe comparto el archivo "${file.name}" (${file.tag || 'General'}).\n` +
+      (downloadLink ? `Puedes descargarlo o visualizarlo aquí:\n${downloadLink}\n\n` : '') +
+      `Generado con OmniFile Studio.`
+    );
+    if (typeof window !== 'undefined') {
+      window.open(`mailto:?subject=${subject}&body=${body}`, '_self');
+    }
+    return {
+      shared: true,
+      method: 'web-share-url',
+      message: `Abriendo cliente de correo para "${file.name}".`
+    };
+  }
+
+  shareViaTelegram(file: ManagedFile): ShareResultInfo {
+    this.triggerBrowserDownload(file);
+    const downloadLink = file.downloadUrl || file.viewUrl || '';
+    const text = encodeURIComponent(
+      `📄 *OmniFile Studio* — Te comparto el archivo *${file.name}* (${file.tag || 'General'})`
+    );
+    const url = encodeURIComponent(downloadLink || (typeof window !== 'undefined' ? window.location.href : ''));
+    if (typeof window !== 'undefined') {
+      window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank', 'noopener,noreferrer');
+    }
+    return {
+      shared: true,
+      method: 'web-share-url',
+      message: `Abriendo Telegram para compartir "${file.name}".`
+    };
+  }
+
+  async copyShareLink(file: ManagedFile): Promise<ShareResultInfo> {
+    const url = file.downloadUrl || file.viewUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+      return {
+        shared: true,
+        method: 'web-share-url',
+        message: 'Enlace de descarga copiado al portapapeles.'
+      };
+    } catch {
+      return {
+        shared: false,
+        method: 'web-share-url',
+        message: 'No se pudo copiar el enlace al portapapeles.'
+      };
+    }
   }
 
   triggerBrowserDownload(file: ManagedFile): void {
     if (typeof document === 'undefined') return;
-    const url = file.downloadUrl || file.dataUrl;
+    const url = file.downloadUrl || file.viewUrl || file.dataUrl;
     if (!url) return;
+
+    if (url.startsWith('data:')) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
 
     const a = document.createElement('a');
     a.href = url;
     a.download = file.name;
+    a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  }
+
+  async showToast(message: string, color: 'success' | 'dark' | 'primary' = 'success'): Promise<void> {
+    try {
+      const toast = await this.toastCtrl.create({
+        message,
+        duration: 2500,
+        position: 'bottom',
+        color,
+        buttons: [{ text: 'OK', role: 'cancel' }]
+      });
+      await toast.present();
+    } catch {}
   }
 
   private async dataUrlToFile(
@@ -439,10 +627,17 @@ export class CapacitorNativeService {
       if (dataUrl.startsWith('data:')) {
         const res = await fetch(dataUrl);
         const blob = await res.blob();
-        return new File([blob], fileName, { type: mimeType || blob.type });
+        return new File([blob], fileName, { type: mimeType || blob.type || 'application/octet-stream' });
       }
-      const blob = new Blob([dataUrl], { type: mimeType });
-      return new File([blob], fileName, { type: mimeType });
+      if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+        const res = await fetch(dataUrl);
+        if (res.ok) {
+          const blob = await res.blob();
+          return new File([blob], fileName, { type: mimeType || blob.type || 'application/octet-stream' });
+        }
+      }
+      const blob = new Blob([dataUrl], { type: mimeType || 'text/plain' });
+      return new File([blob], fileName, { type: mimeType || 'text/plain' });
     } catch {
       return null;
     }
