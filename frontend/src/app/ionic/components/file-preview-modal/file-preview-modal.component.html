@@ -60,6 +60,10 @@
             </div>
 
             <div class="viewer-right-actions">
+              <ion-button size="small" fill="outline" color="secondary" (click)="goToEdit(current)" title="Modificar archivo (ABM)">
+                <ion-icon name="create-outline" slot="start"></ion-icon>
+                Editar
+              </ion-button>
               <ion-button size="small" color="primary" (click)="triggerContextualActions()">
                 <ion-icon name="sparkles-outline" slot="start"></ion-icon>
                 Herramientas

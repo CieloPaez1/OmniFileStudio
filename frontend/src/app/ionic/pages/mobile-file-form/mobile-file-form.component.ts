@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import {
   IonHeader,
@@ -55,7 +55,8 @@ import {
   ContextualFileAnalysis,
   FILE_TAGS,
   FileCategoryType,
-  FileTagType
+  FileTagType,
+  ManagedFile
 } from '../../../models/managed-file.model';
 
 // =============================================================================
@@ -70,6 +71,8 @@ import {
 //    - Ejecuta conversiones de imagen/PDF en el cliente con HTML5 Canvas y jsPDF.
 //    - Muestra el aviso de seguridad: "Tus archivos nunca abandonan tu dispositivo
 //      ni se envían a servidores externos".
+// 3. ABM Completo (Alta y Modificación):
+//    - Permite registrar nuevos documentos o editar existentes vía `?id=...`.
 // =============================================================================
 @Component({
   selector: 'app-mobile-file-form',
@@ -106,9 +109,10 @@ import {
   templateUrl: './mobile-file-form.component.html',
   styleUrls: ['./mobile-file-form.component.css']
 })
-export class MobileFileFormComponent {
+export class MobileFileFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toastCtrl = inject(ToastController);
   readonly fileService = inject(FileManagerService);
 
@@ -118,6 +122,11 @@ export class MobileFileFormComponent {
   readonly capturedPhotoPreview = signal<string | null>(null);
   readonly isDragging = signal<boolean>(false);
   readonly submitting = signal<boolean>(false);
+
+  // Soporte ABM para Modificación de Archivo Existente
+  readonly isEditMode = signal<boolean>(false);
+  readonly editingFileId = signal<number | string | null>(null);
+  readonly editingFile = signal<ManagedFile | null>(null);
 
   // Estado de la Tarjeta de Previsualización Inteligente (Motor Contextual Local)
   readonly smartSuggestion = signal<ContextualFileAnalysis | null>(null);
@@ -151,6 +160,27 @@ export class MobileFileFormComponent {
       lockClosedOutline,
       flashOutline,
       refreshOutline
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const id = params['id'] || params['fileId'];
+      if (id) {
+        this.isEditMode.set(true);
+        this.editingFileId.set(id);
+        this.fileService.getById(id).subscribe(file => {
+          if (file) {
+            this.editingFile.set(file);
+            this.form.patchValue({
+              name: file.name,
+              tag: file.tag || 'Trabajo',
+              targetFormat: 'original',
+              description: file.description || ''
+            });
+          }
+        });
+      }
     });
   }
 
@@ -322,6 +352,43 @@ export class MobileFileFormComponent {
     const { name, tag, targetFormat, description } = this.form.value;
     const attached = this.selectedFile();
 
+    // =========================================================================
+    // [MODO MODIFICACIÓN - ABM]
+    // =========================================================================
+    if (this.isEditMode()) {
+      const fileId = this.editingFileId()!;
+      const existing = this.editingFile();
+      const baseExt = existing ? existing.ext : (targetFormat !== 'original' ? targetFormat : 'pdf');
+      const finalExt = targetFormat !== 'original' ? targetFormat : baseExt;
+      const cleanName = (name || '').trim();
+      const fullName = this.fileService.ensureExtension(cleanName, finalExt);
+
+      this.fileService
+        .updateFile(fileId, {
+          name: fullName,
+          tag: tag as FileTagType,
+          description: description || ''
+        })
+        .subscribe({
+          next: async updated => {
+            this.submitting.set(false);
+            await this.presentToast(
+              `Archivo "${updated.name}" actualizado con éxito`,
+              'success'
+            );
+            this.router.navigate(['/mobile/repository']);
+          },
+          error: async () => {
+            this.submitting.set(false);
+            await this.presentToast('No se pudo actualizar el archivo', 'danger');
+          }
+        });
+      return;
+    }
+
+    // =========================================================================
+    // [MODO ALTA - ABM]
+    // =========================================================================
     const ext = attached
       ? (attached.name.split('.').pop()?.toLowerCase() || 'pdf')
       : (targetFormat !== 'original' ? targetFormat : 'pdf');

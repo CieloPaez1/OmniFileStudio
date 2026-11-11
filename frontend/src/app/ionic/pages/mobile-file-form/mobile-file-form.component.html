@@ -4,12 +4,26 @@
       <ion-back-button defaultHref="/mobile/repository"></ion-back-button>
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>OmniFile Studio · Subida Inteligente</ion-title>
+    <ion-title>{{ isEditMode() ? 'Modificar Archivo' : 'OmniFile Studio · Subida Inteligente' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding file-form-content">
   <div class="form-wrapper">
+
+    <!-- INDICADOR VISUAL CUANDO ESTÁ EN MODO MODIFICACIÓN (ABM) -->
+    @if (isEditMode()) {
+      <div class="edit-mode-indicator-banner">
+        <div class="edit-banner-icon">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+        <div class="edit-banner-text">
+          <div class="edit-banner-pill">ABM · MODIFICACIÓN</div>
+          <strong>Editando metadatos de {{ editingFile()?.name || 'archivo' }}</strong>
+          <p>Modificá el nombre, la carpeta/etiqueta y la descripción. Los cambios se sincronizan de inmediato.</p>
+        </div>
+      </div>
+    }
 
     <!-- AVISO VISUAL DE PRIVACIDAD Y PROCESAMIENTO 100% LOCAL (PRIVACY-FIRST) -->
     <div class="privacy-shield-banner" role="status" aria-live="polite">
@@ -265,8 +279,8 @@
           type="submit"
           color="primary"
           [disabled]="submitting()">
-          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-          {{ submitting() ? 'Procesando en tu dispositivo...' : 'Guardar Archivo en Repositorio' }}
+          <ion-icon [name]="isEditMode() ? 'save-outline' : 'checkmark-circle-outline'" slot="start"></ion-icon>
+          {{ submitting() ? (isEditMode() ? 'Guardando modificaciones...' : 'Procesando en tu dispositivo...') : (isEditMode() ? 'Guardar Modificaciones' : 'Guardar Archivo en Repositorio') }}
         </ion-button>
       </div>
     </form>

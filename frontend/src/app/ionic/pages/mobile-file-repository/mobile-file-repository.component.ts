@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
   ToastController,
+  AlertController,
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -28,7 +29,13 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonFab,
-  IonFabButton
+  IonFabButton,
+  IonModal,
+  IonInput,
+  IonTextarea,
+  IonSelect,
+  IonSelectOption,
+  IonText
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -53,12 +60,13 @@ import {
   statsChartOutline,
   closeOutline,
   moonOutline,
-  sunnyOutline
+  sunnyOutline,
+  createOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
 import { ThemeService } from '../../../services/theme.service';
-import { ManagedFile } from '../../../models/managed-file.model';
+import { ManagedFile, FileTagType, FILE_TAGS } from '../../../models/managed-file.model';
 import { ContextualQuickActionsComponent } from '../../components/contextual-quick-actions/contextual-quick-actions.component';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
@@ -67,6 +75,7 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
 // - Tarjetas redondeadas (rounded-2xl) sin bordes grises marcados
 // - Badges e iconos estilizados: Rojo PDF, Azul Imagen, Verde CSV/Datos, Índigo Doc
 // - Selector flotante minimalista de formatos (píldoras táctiles)
+// - ABM Completo: Alta (Upload/FAB), Baja (Confirmación + FS), Modificación (Modal + Full Form)
 // =============================================================================
 @Component({
   selector: 'app-mobile-file-repository',
@@ -74,6 +83,7 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     IonHeader,
     IonToolbar,
@@ -100,6 +110,12 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
     IonRefresherContent,
     IonFab,
     IonFabButton,
+    IonModal,
+    IonInput,
+    IonTextarea,
+    IonSelect,
+    IonSelectOption,
+    IonText,
     ContextualQuickActionsComponent,
     FilePreviewModalComponent
   ],
@@ -111,6 +127,8 @@ export class MobileFileRepositoryComponent implements OnInit {
   readonly nativeService = inject(CapacitorNativeService);
   readonly themeService = inject(ThemeService);
   private readonly toastCtrl = inject(ToastController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
   viewMode = signal<'list' | 'grid'>('list');
@@ -128,6 +146,17 @@ export class MobileFileRepositoryComponent implements OnInit {
   // Archivo activo para el Visor / Vista Previa Multiformato
   previewFile = signal<ManagedFile | null>(null);
   previewOpen = signal<boolean>(false);
+
+  // Estado del Modal de Modificación / Edición de Archivo (ABM)
+  editingFile = signal<ManagedFile | null>(null);
+  isEditModalOpen = signal<boolean>(false);
+  readonly editTags: FileTagType[] = FILE_TAGS;
+
+  readonly editForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    tag: ['Trabajo', [Validators.required]],
+    description: ['', [Validators.maxLength(250)]]
+  });
 
   readonly tags = [
     'Todas',
@@ -294,12 +323,114 @@ export class MobileFileRepositoryComponent implements OnInit {
     });
   }
 
-  async deleteFromSliding(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
+  // ===========================================================================
+  // [ABM - MODIFICACIÓN] MODAL DE EDICIÓN RÁPIDA DE METADATOS
+  // ===========================================================================
+  async openEditModal(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
+    this.nativeService.triggerHapticImpact('light');
+    this.editingFile.set(file);
+    this.editForm.patchValue({
+      name: file.name,
+      tag: file.tag || 'Trabajo',
+      description: file.description || ''
+    });
+    this.isEditModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.editingFile.set(null);
+  }
+
+  saveFileChanges(): void {
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+    const current = this.editingFile();
+    if (!current) return;
+
+    const { name, tag, description } = this.editForm.value;
+    const cleanName = (name || '').trim();
+    const finalName = this.fileService.ensureExtension(cleanName, current.ext);
+
+    this.fileService
+      .updateFile(current.id, {
+        name: finalName,
+        tag: tag as FileTagType,
+        description: description || ''
+      })
+      .subscribe({
+        next: async updated => {
+          this.nativeService.triggerHapticImpact('medium');
+          this.closeEditModal();
+          await this.presentToast(
+            `Archivo "${updated.name}" actualizado con éxito`,
+            'success'
+          );
+        },
+        error: async () => {
+          await this.presentToast('No se pudieron guardar las modificaciones', 'danger');
+        }
+      });
+  }
+
+  editInFullForm(file: ManagedFile): void {
+    this.closeEditModal();
+    this.router.navigate(['/mobile/file-form'], {
+      queryParams: { id: file.id }
+    });
+  }
+
+  // ===========================================================================
+  // [ABM - BAJA] ELIMINACIÓN CON DIÁLOGO DE CONFIRMACIÓN
+  // ===========================================================================
+  async confirmDelete(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
+    if (slidingItem) await slidingItem.close();
+    this.nativeService.triggerHapticImpact('medium');
+
+    const alert = await this.alertCtrl.create({
+      header: '¿Eliminar archivo?',
+      subHeader: file.name,
+      message:
+        'Esta acción eliminará el archivo permanentemente del repositorio y del almacenamiento del dispositivo. ¿Deseas continuar?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            this.nativeService.triggerHapticImpact('light');
+          }
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.executeDelete(file);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async executeDelete(file: ManagedFile): Promise<void> {
     await this.nativeService.deleteFileFromDevice(file.name);
     this.fileService.delete(file.id).subscribe({
-      next: () => this.presentToast(`"${file.name}" eliminado`, 'danger')
+      next: () => {
+        this.nativeService.triggerHapticImpact('heavy');
+        this.presentToast(`"${file.name}" eliminado del repositorio`, 'danger');
+      },
+      error: () => {
+        this.presentToast(`Error al intentar eliminar "${file.name}"`, 'danger');
+      }
     });
+  }
+
+  async deleteFromSliding(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
+    return this.confirmDelete(file, slidingItem);
   }
 
   // [CAPACITOR 8 + WEB SHARE API] Compartir archivo nativamente o por WhatsApp

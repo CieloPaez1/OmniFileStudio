@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, finalize, of } from 'rxjs';
+import { Observable, tap, catchError, finalize, of, map } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
@@ -288,19 +288,19 @@ export class FileManagerService {
     const combined = `${nameText} ${contentText}`;
 
     // Formato YYYY[-_.]MM[-_.]DD (ej. scan_2026_11_08_final.pdf -> 2026-11-08)
-    const ymdMatch = combined.match(/\b(20\d{2})[_\-.](0[1-9]|1[0-2])[_\-.](0[1-9]|[12]\d|3[01])\b/);
+    const ymdMatch = combined.match(/(?<!\d)(20\d{2})[_\-.](0[1-9]|1[0-2])[_\-.](0[1-9]|[12]\d|3[01])(?!\d)/);
     if (ymdMatch) {
       return `${ymdMatch[1]}-${ymdMatch[2]}-${ymdMatch[3]}`;
     }
 
     // Formato DD[-_.]MM[-_.]YYYY
-    const dmyMatch = combined.match(/\b(0[1-9]|[12]\d|3[01])[_\-.](0[1-9]|1[0-2])[_\-.](20\d{2})\b/);
+    const dmyMatch = combined.match(/(?<!\d)(0[1-9]|[12]\d|3[01])[_\-.](0[1-9]|1[0-2])[_\-.](20\d{2})(?!\d)/);
     if (dmyMatch) {
       return `${dmyMatch[3]}-${dmyMatch[2]}-${dmyMatch[1]}`;
     }
 
     // Formato compacto YYYYMMDD
-    const compactMatch = combined.match(/\b(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\b/);
+    const compactMatch = combined.match(/(?<!\d)(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?!\d)/);
     if (compactMatch) {
       return `${compactMatch[1]}-${compactMatch[2]}-${compactMatch[3]}`;
     }
@@ -637,13 +637,28 @@ export class FileManagerService {
   }
 
   // ===========================================================================
-  // 5. ACTUALIZAR / ARCHIVAR / RENOMBRAR / ELIMINAR
+  // 5. OBTENER POR ID / ACTUALIZAR / ARCHIVAR / RENOMBRAR / ELIMINAR (ABM)
   // ===========================================================================
-  updateFile(id: number, changes: Partial<ManagedFile>): Observable<ManagedFile> {
+  getById(id: number | string): Observable<ManagedFile | undefined> {
+    const local = this.files().find(f => String(f.id) === String(id));
+    if (local) {
+      return of(local);
+    }
+    return this.http.get<ManagedFile>(`${this.apiUrl}/${id}`).pipe(
+      map(f => this.normalizeRecord(f)),
+      catchError(() => of(undefined))
+    );
+  }
+
+  updateFile(id: number | string, changes: Partial<ManagedFile>): Observable<ManagedFile> {
     return this.http.patch<ManagedFile>(`${this.apiUrl}/${id}`, changes).pipe(
       tap(async updated => {
         this.files.update(list =>
-          list.map(f => (f.id === id ? this.normalizeRecord({ ...f, ...updated, ...changes }) : f))
+          list.map(f =>
+            String(f.id) === String(id)
+              ? this.normalizeRecord({ ...f, ...updated, ...changes })
+              : f
+          )
         );
         await this.saveToLocalFallback(this.files());
       }),
@@ -651,7 +666,7 @@ export class FileManagerService {
         let fallbackUpdated!: ManagedFile;
         this.files.update(list =>
           list.map(f => {
-            if (f.id === id) {
+            if (String(f.id) === String(id)) {
               fallbackUpdated = this.normalizeRecord({ ...f, ...changes });
               return fallbackUpdated;
             }
@@ -668,20 +683,20 @@ export class FileManagerService {
     return this.updateFile(file.id, { archived: !file.archived });
   }
 
-  rename(id: number, name: string): Observable<ManagedFile> {
-    const found = this.files().find(f => f.id === id);
+  rename(id: number | string, name: string): Observable<ManagedFile> {
+    const found = this.files().find(f => String(f.id) === String(id));
     const cleanName = found ? this.ensureExtension(name, found.ext) : name;
     return this.updateFile(id, { name: cleanName });
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: number | string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(async () => {
-        this.files.update(list => list.filter(f => f.id !== id));
+        this.files.update(list => list.filter(f => String(f.id) !== String(id)));
         await this.saveToLocalFallback(this.files());
       }),
       catchError(() => {
-        this.files.update(list => list.filter(f => f.id !== id));
+        this.files.update(list => list.filter(f => String(f.id) !== String(id)));
         this.saveToLocalFallback(this.files());
         return of(undefined);
       })
@@ -1296,7 +1311,7 @@ export class FileManagerService {
     return (name || 'Archivo').replace(/\.[^/.]+$/, '');
   }
 
-  private ensureExtension(name: string, ext: string): string {
+  ensureExtension(name: string, ext: string): string {
     const clean = name.trim();
     return clean.toLowerCase().endsWith(`.${ext}`) ? clean : `${clean}.${ext}`;
   }

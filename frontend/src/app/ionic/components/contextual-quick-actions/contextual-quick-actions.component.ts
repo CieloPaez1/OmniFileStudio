@@ -130,6 +130,22 @@ export class ContextualQuickActionsComponent {
 
     const tools: ContextualToolOption[] = [];
 
+    // 0. HERRAMIENTA TRANSVERSAL DE MODIFICACIÓN / EDICIÓN (ABM)
+    tools.push({
+      id: 'edit-file-meta',
+      title: 'Modificar Archivo',
+      subtitle: 'Editar nombre, etiqueta y descripción del documento',
+      icon: 'create-outline',
+      accentColor: 'primary',
+      badge: 'ABM',
+      handler: () => {
+        this.closeModal();
+        this.router.navigate(['/mobile/file-form'], {
+          queryParams: { id: f.id }
+        });
+      }
+    });
+
     // 1. HERRAMIENTAS EXCLUSIVAS PARA ARCHIVOS PDF
     if (f.ext === 'pdf' || f.category === 'PDF') {
       tools.push(

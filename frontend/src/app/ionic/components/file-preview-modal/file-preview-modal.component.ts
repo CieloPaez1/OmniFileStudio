@@ -415,6 +415,13 @@ export class FilePreviewModalComponent implements OnDestroy {
     this.showBinaryInspector.update(v => !v);
   }
 
+  goToEdit(file: ManagedFile): void {
+    this.close();
+    this.router.navigate(['/mobile/file-form'], {
+      queryParams: { id: file.id }
+    });
+  }
+
   close(): void {
     this.closed.emit();
   }

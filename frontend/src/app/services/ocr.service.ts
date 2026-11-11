@@ -148,6 +148,22 @@ export class OcrService {
     };
 
     updateProgress('Preparando y optimizando imagen con Canvas...', 0.1);
+
+    if (typeof imageInput === 'string') {
+      if (imageInput.startsWith('data:text/') || imageInput.includes('charset=utf-8,')) {
+        try {
+          const raw = imageInput.includes('charset=utf-8,')
+            ? decodeURIComponent(imageInput.split('charset=utf-8,')[1] || '')
+            : atob(imageInput.split(',')[1] || '');
+          if (raw.trim().length > 0) {
+            updateProgress('¡Texto extraído directamente del flujo de datos!', 1.0);
+            this.nativeService.triggerHapticSuccess();
+            return this.buildOcrResult(raw.trim(), 99, lang, Date.now() - startTime);
+          }
+        } catch {}
+      }
+    }
+
     const processedImage = options.enhanceContrast !== false
       ? await this.preprocessImageForOcr(imageInput, { enhanceContrast: true, grayscale: true })
       : (typeof imageInput === 'string' ? imageInput : await this.blobToDataUrl(imageInput));

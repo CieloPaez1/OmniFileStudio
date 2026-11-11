@@ -246,3 +246,77 @@
   flex-wrap: wrap;
   align-items: center;
 }
+
+/* ============================================================================
+   [MODAL DE MODIFICACIÓN / EDICIÓN ABM]
+   ============================================================================ */
+.abm-edit-modal {
+  --border-radius: 24px 24px 0 0;
+  --max-height: 90vh;
+}
+
+.modal-edit-content {
+  --background: var(--ion-background-color, #ffffff);
+}
+
+.edit-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-modal-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  margin-bottom: 0.5rem;
+}
+
+.edit-modal-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow: hidden;
+}
+
+.edit-modal-meta-col strong {
+  font-size: 0.95rem;
+  color: #1e293b;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.file-size-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.edit-form-item {
+  --background: #f8fafc;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  margin-bottom: 0.25rem;
+}
+
+.edit-form-item ion-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 0.35rem;
+}
+
+.edit-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
