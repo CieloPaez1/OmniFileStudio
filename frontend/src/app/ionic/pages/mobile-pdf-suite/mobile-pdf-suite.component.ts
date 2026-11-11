@@ -20,7 +20,10 @@ import {
   IonItem,
   IonInput,
   IonSelect,
-  IonSelectOption
+  IonSelectOption,
+  IonModal,
+  IonTextarea,
+  IonBadge
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -43,7 +46,22 @@ import {
   sparklesOutline,
   scanOutline,
   copyOutline,
-  checkboxOutline
+  checkboxOutline,
+  waterOutline,
+  lockClosedOutline,
+  chatbubblesOutline,
+  readerOutline,
+  shieldCheckmarkOutline,
+  gridOutline,
+  chevronDownOutline,
+  chevronForwardOutline,
+  cameraOutline,
+  refreshOutline,
+  closeOutline,
+  sendOutline,
+  statsChartOutline,
+  imageOutline,
+  documentOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -59,7 +77,18 @@ import {
 } from '../../../models/managed-file.model';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
-export type PdfSuiteTool = 'merge' | 'split' | 'compress' | 'sign' | 'convert' | 'translate' | 'ocr';
+export type PdfSuiteTool =
+  | 'compress'
+  | 'convert'
+  | 'ocr'
+  | 'merge'
+  | 'split'
+  | 'rotate'
+  | 'watermark'
+  | 'sign'
+  | 'protect'
+  | 'ai-tools'
+  | 'translate';
 
 export interface HeroToolCard {
   id: PdfSuiteTool;
@@ -69,14 +98,26 @@ export interface HeroToolCard {
   accentClass: string;
 }
 
+export interface SmallPdfToolItem {
+  id: PdfSuiteTool | 'scanner';
+  name: string;
+  desc: string;
+  colorClass: string;
+  icon: string;
+  badge?: string;
+}
+
+export interface SmallPdfCategoryGroup {
+  name: string;
+  tools: SmallPdfToolItem[];
+}
+
 // =============================================================================
-// [OMNIFILE STUDIO - TAB 4: SUITE PDF + TRADUCTOR UNIVERSAL + MOTOR OCR]
-// - Navegación Superior Tipo "Hero Cards" responsiva (OCR, Traductor, Unir,
-//   Dividir, Comprimir, Firmar y Conversor Universal).
-// - OCR Universal: Extracción de texto neuronal (Tesseract.js WebAssembly) con
-//   pre-procesamiento Canvas de alto contraste, guardado como .txt y traducción 1-click.
-// - Traductor Universal: soporta Word (.docx), Excel (.xlsx/.csv), PowerPoint (.pptx),
-//   PDFs nativos o escaneados (.pdf), Texto plano (.txt) y Marcado (.html/.md).
+// [OMNIFILE STUDIO - SUITE SMALLPDF + TRADUCTOR + OCR + IA + EDICIÓN]
+// - Megamenú interactivo desplegable idéntico a Smallpdf.com con todas las
+//   categorías visuales: Comprimir, Convertir, Organizar, Editar, Proteger, IA y Escáner.
+// - Marca de agua en PDF, Rotar PDF, Proteger PDF con contraseña.
+// - PDF con IA: Resumen ejecutivo inteligente y Chat interactivo local con el documento.
 // =============================================================================
 @Component({
   selector: 'app-mobile-pdf-suite',
@@ -102,6 +143,9 @@ export interface HeroToolCard {
     IonInput,
     IonSelect,
     IonSelectOption,
+    IonModal,
+    IonTextarea,
+    IonBadge,
     FilePreviewModalComponent
   ],
   templateUrl: './mobile-pdf-suite.component.html',
@@ -118,34 +162,204 @@ export class MobilePdfSuiteComponent implements OnInit {
 
   @ViewChild('signatureCanvas') signatureCanvas?: ElementRef<HTMLCanvasElement>;
 
-  activeTool = signal<PdfSuiteTool>('ocr');
+  activeTool = signal<PdfSuiteTool>('compress');
   processing = signal<boolean>(false);
   successFeedback = signal<{ title: string; subtitle: string } | null>(null);
+
+  // Modal del Mega-Menú Smallpdf de Todas las Herramientas
+  isMegaMenuOpen = signal<boolean>(false);
+  megaMenuSearch = signal<string>('');
 
   // Modal de Vista Previa Rápida (Quick Preview)
   previewFile = signal<ManagedFile | null>(null);
   previewOpen = signal<boolean>(false);
 
-  // [MEJORA UX] Hero Cards de navegación superior (7 herramientas clave)
+  // Categorías completas del Megamenú tipo Smallpdf.com
+  readonly smallPdfCategories: SmallPdfCategoryGroup[] = [
+    {
+      name: 'Comprimir',
+      tools: [
+        {
+          id: 'compress',
+          name: 'Comprimir PDF',
+          desc: 'Reduce el peso de tu archivo optimizando la calidad',
+          colorClass: 'sp-red',
+          icon: 'contract-outline',
+          badge: 'Rápido'
+        }
+      ]
+    },
+    {
+      name: 'Convertir',
+      tools: [
+        {
+          id: 'convert',
+          name: 'Conversor de PDF',
+          desc: 'Convierte archivos a y desde PDF en cliente',
+          colorClass: 'sp-red',
+          icon: 'swap-horizontal-outline'
+        },
+        {
+          id: 'ocr',
+          name: 'OCR en PDF',
+          desc: 'Convierte fotos, recibos y escaneos en texto editable',
+          colorClass: 'sp-red',
+          icon: 'scan-outline',
+          badge: 'WASM'
+        },
+        {
+          id: 'convert',
+          name: 'PDF a Imagen (JPG / PNG)',
+          desc: 'Extrae páginas en imágenes de alta resolución',
+          colorClass: 'sp-yellow',
+          icon: 'image-outline'
+        },
+        {
+          id: 'convert',
+          name: 'Imagen a PDF (JPG / PNG)',
+          desc: 'Crea documentos PDF a partir de tus fotos',
+          colorClass: 'sp-yellow',
+          icon: 'document-text-outline'
+        },
+        {
+          id: 'convert',
+          name: 'PDF a Word / Excel',
+          desc: 'Exporta tus documentos a formatos de Office',
+          colorClass: 'sp-blue',
+          icon: 'document-outline'
+        },
+        {
+          id: 'convert',
+          name: 'Office a PDF (Word, Excel, PPT)',
+          desc: 'Transforma hojas de cálculo y presentaciones a PDF',
+          colorClass: 'sp-green',
+          icon: 'stats-chart-outline'
+        }
+      ]
+    },
+    {
+      name: 'Organizar',
+      tools: [
+        {
+          id: 'merge',
+          name: 'Unir PDF (Fusionar)',
+          desc: 'Combina varios PDFs en un solo documento ordenado',
+          colorClass: 'sp-purple',
+          icon: 'git-merge-outline'
+        },
+        {
+          id: 'split',
+          name: 'Dividir PDF',
+          desc: 'Separa páginas o extrae rangos individuales',
+          colorClass: 'sp-purple',
+          icon: 'cut-outline'
+        },
+        {
+          id: 'rotate',
+          name: 'Girar PDF',
+          desc: 'Rota las páginas 90°, 180° o 270° según necesites',
+          colorClass: 'sp-purple',
+          icon: 'refresh-outline'
+        }
+      ]
+    },
+    {
+      name: 'Editar y Proteger',
+      tools: [
+        {
+          id: 'watermark',
+          name: 'Marca de agua PDF',
+          desc: 'Estampa texto confidencial o borrador diagonal',
+          colorClass: 'sp-cyan',
+          icon: 'water-outline'
+        },
+        {
+          id: 'sign',
+          name: 'Firmar PDF',
+          desc: 'Firma manuscrita en lienzo HTML5 Canvas y sello',
+          colorClass: 'sp-pink',
+          icon: 'create-outline',
+          badge: 'Legal'
+        },
+        {
+          id: 'protect',
+          name: 'Proteger PDF',
+          desc: 'Cifra con contraseña y restringe apertura no autorizada',
+          colorClass: 'sp-rose',
+          icon: 'lock-closed-outline'
+        }
+      ]
+    },
+    {
+      name: 'PDF con IA',
+      tools: [
+        {
+          id: 'ai-tools',
+          name: 'Resumen con IA',
+          desc: 'Genera síntesis ejecutiva y puntos clave al instante',
+          colorClass: 'sp-indigo',
+          icon: 'sparkles-outline',
+          badge: 'IA'
+        },
+        {
+          id: 'ai-tools',
+          name: 'Chatear con un PDF',
+          desc: 'Pregúntale datos, fechas o importes al documento',
+          colorClass: 'sp-indigo',
+          icon: 'chatbubbles-outline',
+          badge: 'Chat'
+        },
+        {
+          id: 'translate',
+          name: 'Traducir PDF',
+          desc: 'Traduce a 8 idiomas preservando el formato original',
+          colorClass: 'sp-amber',
+          icon: 'language-outline'
+        }
+      ]
+    },
+    {
+      name: 'Escanear',
+      tools: [
+        {
+          id: 'scanner',
+          name: 'Escáner de PDF',
+          desc: 'Digitaliza con la cámara del dispositivo móvil',
+          colorClass: 'sp-blue',
+          icon: 'camera-outline',
+          badge: 'Cámara'
+        }
+      ]
+    }
+  ];
+
+  // Hero Cards de navegación superior responsiva
   readonly heroTools: HeroToolCard[] = [
     {
+      id: 'compress',
+      title: 'Comprimir',
+      subtitle: 'Reducir peso',
+      icon: 'contract-outline',
+      accentClass: 'hero-emerald'
+    },
+    {
+      id: 'convert',
+      title: 'Conversor',
+      subtitle: 'Multiformato',
+      icon: 'swap-horizontal-outline',
+      accentClass: 'hero-blue'
+    },
+    {
       id: 'ocr',
-      title: 'OCR Texto',
-      subtitle: 'Fotos, Recibos, PDF',
+      title: 'OCR en PDF',
+      subtitle: 'Texto de fotos',
       icon: 'scan-outline',
       accentClass: 'hero-cyan'
     },
     {
-      id: 'translate',
-      title: 'Traductor',
-      subtitle: 'Word, Excel, PDF',
-      icon: 'language-outline',
-      accentClass: 'hero-amber'
-    },
-    {
       id: 'merge',
       title: 'Unir PDF',
-      subtitle: 'Combinar varios',
+      subtitle: 'Fusionar varios',
       icon: 'git-merge-outline',
       accentClass: 'hero-indigo'
     },
@@ -157,25 +371,46 @@ export class MobilePdfSuiteComponent implements OnInit {
       accentClass: 'hero-rose'
     },
     {
-      id: 'compress',
-      title: 'Comprimir',
-      subtitle: 'Reducir peso',
-      icon: 'contract-outline',
-      accentClass: 'hero-emerald'
+      id: 'rotate',
+      title: 'Girar PDF',
+      subtitle: 'Rotar orientación',
+      icon: 'refresh-outline',
+      accentClass: 'hero-purple'
+    },
+    {
+      id: 'watermark',
+      title: 'Marca de agua',
+      subtitle: 'Estampar texto',
+      icon: 'water-outline',
+      accentClass: 'hero-cyan'
+    },
+    {
+      id: 'protect',
+      title: 'Proteger PDF',
+      subtitle: 'Contraseña AES',
+      icon: 'lock-closed-outline',
+      accentClass: 'hero-rose'
     },
     {
       id: 'sign',
       title: 'Firmar PDF',
-      subtitle: 'Trazo digital',
+      subtitle: 'Firma y sellos',
       icon: 'create-outline',
       accentClass: 'hero-violet'
     },
     {
-      id: 'convert',
-      title: 'Conversor',
-      subtitle: 'Multiformato',
-      icon: 'swap-horizontal-outline',
-      accentClass: 'hero-blue'
+      id: 'ai-tools',
+      title: 'PDF con IA',
+      subtitle: 'Resumen y Chat',
+      icon: 'sparkles-outline',
+      accentClass: 'hero-indigo'
+    },
+    {
+      id: 'translate',
+      title: 'Traducir PDF',
+      subtitle: '8 idiomas',
+      icon: 'language-outline',
+      accentClass: 'hero-amber'
     }
   ];
 
@@ -230,6 +465,32 @@ export class MobilePdfSuiteComponent implements OnInit {
   translationStepLabel = signal<string>('');
   lastTranslationResult = signal<TranslateDocumentResult | null>(null);
 
+  // 7. MARCA DE AGUA (WATERMARK)
+  watermarkFileId = signal<number | null>(null);
+  watermarkText = signal<string>('CONFIDENCIAL');
+  watermarkColor = signal<'gray' | 'red' | 'blue'>('gray');
+  watermarkAngle = signal<number>(45);
+
+  // 8. GIRAR PDF (ROTATE)
+  rotateFileId = signal<number | null>(null);
+  rotateAngle = signal<number>(90);
+
+  // 9. PROTEGER PDF (PROTECT)
+  protectFileId = signal<number | null>(null);
+  protectPassword = signal<string>('1234');
+
+  // 10. PDF CON IA (RESUMEN & CHAT INTERACTIVO)
+  aiFileId = signal<number | null>(null);
+  aiAnalyzing = signal<boolean>(false);
+  aiSummary = signal<{
+    title: string;
+    bullets: string[];
+    dates: string[];
+    entities: string[];
+  } | null>(null);
+  aiChatMessages = signal<{ sender: 'user' | 'assistant'; text: string; time: string }[]>([]);
+  aiQuestionInput = signal<string>('');
+
   readonly pdfFiles = this.fileService.pdfFiles;
   readonly allFiles = this.fileService.files;
   readonly translatableFiles = this.fileService.translatableFiles;
@@ -268,7 +529,22 @@ export class MobilePdfSuiteComponent implements OnInit {
       sparklesOutline,
       scanOutline,
       copyOutline,
-      checkboxOutline
+      checkboxOutline,
+      waterOutline,
+      lockClosedOutline,
+      chatbubblesOutline,
+      readerOutline,
+      shieldCheckmarkOutline,
+      gridOutline,
+      chevronDownOutline,
+      chevronForwardOutline,
+      cameraOutline,
+      refreshOutline,
+      closeOutline,
+      sendOutline,
+      statsChartOutline,
+      imageOutline,
+      documentOutline
     });
   }
 
@@ -746,6 +1022,194 @@ export class MobilePdfSuiteComponent implements OnInit {
           this.presentToast(`¡Convertido a ${created.name}!`, 'success');
         }
       });
+  }
+
+  // ==================== [SMALLPDF] MEGAMENÚ Y HERRAMIENTAS DIRECTAS ====================
+  toggleMegaMenu(): void {
+    this.nativeService.triggerHapticImpact('light');
+    this.isMegaMenuOpen.update(v => !v);
+  }
+
+  selectSmallPdfTool(toolId: PdfSuiteTool | 'scanner'): void {
+    this.isMegaMenuOpen.set(false);
+    if (toolId === 'scanner') {
+      this.router.navigate(['/mobile/camera-scanner']);
+      return;
+    }
+    this.activeTool.set(toolId);
+    this.nativeService.triggerHapticSelection();
+  }
+
+  // ==================== 7. MARCA DE AGUA (WATERMARK) ====================
+  applyWatermark(): void {
+    const fileId = this.watermarkFileId();
+    if (!fileId) {
+      this.presentToast('Seleccioná un archivo PDF para estampar la marca de agua', 'danger');
+      return;
+    }
+    this.processing.set(true);
+    this.nativeService.triggerHapticImpact('medium');
+
+    this.fileService
+      .watermarkPdf({
+        fileId,
+        text: this.watermarkText(),
+        color: this.watermarkColor(),
+        angle: Number(this.watermarkAngle())
+      })
+      .subscribe({
+        next: async created => {
+          this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡Marca de agua aplicada: ${created.name}!`,
+            `Texto "${this.watermarkText()}" estampado en el PDF`
+          );
+          await this.nativeService.saveFileToDevice(
+            created.name,
+            created.dataUrl || '',
+            created.mimeType
+          );
+          this.presentToast(`¡Marca de agua aplicada a ${created.name}!`, 'success');
+        },
+        error: () => {
+          this.processing.set(false);
+          this.presentToast('No se pudo aplicar la marca de agua', 'danger');
+        }
+      });
+  }
+
+  // ==================== 8. GIRAR / ROTAR PDF (ROTATE) ====================
+  applyRotate(): void {
+    const fileId = this.rotateFileId();
+    if (!fileId) {
+      this.presentToast('Seleccioná un archivo PDF para rotar', 'danger');
+      return;
+    }
+    this.processing.set(true);
+    this.nativeService.triggerHapticImpact('medium');
+
+    this.fileService
+      .rotatePdf({
+        fileId,
+        angle: Number(this.rotateAngle())
+      })
+      .subscribe({
+        next: async created => {
+          this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡PDF rotado ${this.rotateAngle()}°: ${created.name}!`,
+            'Orientación ajustada en almacenamiento local'
+          );
+          await this.nativeService.saveFileToDevice(
+            created.name,
+            created.dataUrl || '',
+            created.mimeType
+          );
+          this.presentToast(`¡PDF rotado ${this.rotateAngle()}° con éxito!`, 'success');
+        },
+        error: () => {
+          this.processing.set(false);
+          this.presentToast('No se pudo rotar el documento', 'danger');
+        }
+      });
+  }
+
+  // ==================== 9. PROTEGER PDF CON CONTRASEÑA ====================
+  applyProtect(): void {
+    const fileId = this.protectFileId();
+    if (!fileId) {
+      this.presentToast('Seleccioná un archivo PDF para proteger', 'danger');
+      return;
+    }
+    if (!this.protectPassword().trim()) {
+      this.presentToast('Ingresá una clave para proteger el archivo', 'danger');
+      return;
+    }
+    this.processing.set(true);
+    this.nativeService.triggerHapticImpact('medium');
+
+    this.fileService
+      .protectPdf({
+        fileId,
+        password: this.protectPassword()
+      })
+      .subscribe({
+        next: async created => {
+          this.processing.set(false);
+          this.triggerSuccessAnimation(
+            `¡PDF protegido con clave: ${created.name}!`,
+            'Cifrado local de apertura activado'
+          );
+          await this.nativeService.saveFileToDevice(
+            created.name,
+            created.dataUrl || '',
+            created.mimeType
+          );
+          this.presentToast(`¡PDF protegido con contraseña guardado!`, 'success');
+        },
+        error: () => {
+          this.processing.set(false);
+          this.presentToast('No se pudo proteger el documento', 'danger');
+        }
+      });
+  }
+
+  // ==================== 10. PDF CON IA (RESUMEN & CHAT) ====================
+  generateAiSummary(): void {
+    const fileId = this.aiFileId();
+    if (!fileId) {
+      this.presentToast('Seleccioná un documento PDF para analizar con IA', 'danger');
+      return;
+    }
+    this.aiAnalyzing.set(true);
+    this.nativeService.triggerHapticImpact('light');
+
+    setTimeout(() => {
+      const summary = this.fileService.summarizePdf({ fileId });
+      this.aiSummary.set(summary);
+      this.aiAnalyzing.set(false);
+      this.nativeService.triggerHapticSuccess();
+      if (this.aiChatMessages().length === 0) {
+        this.aiChatMessages.set([
+          {
+            sender: 'assistant',
+            text: `¡Hola! Analicé "${summary.title}". Podés hacerme preguntas o consultar el resumen ejecutivo.`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ]);
+      }
+    }, 700);
+  }
+
+  sendAiQuestion(): void {
+    const q = this.aiQuestionInput().trim();
+    const fileId = this.aiFileId();
+    if (!q || !fileId) return;
+
+    const userMsg = {
+      sender: 'user' as const,
+      text: q,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    this.aiChatMessages.update(msgs => [...msgs, userMsg]);
+    this.aiQuestionInput.set('');
+    this.nativeService.triggerHapticSelection();
+
+    setTimeout(() => {
+      const answer = this.fileService.chatWithPdf({ fileId, question: q });
+      const botMsg = {
+        sender: 'assistant' as const,
+        text: answer,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      this.aiChatMessages.update(msgs => [...msgs, botMsg]);
+      this.nativeService.triggerHapticImpact('light');
+    }, 450);
+  }
+
+  askPresetAi(presetQuestion: string): void {
+    this.aiQuestionInput.set(presetQuestion);
+    this.sendAiQuestion();
   }
 
   private async presentToast(

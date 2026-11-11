@@ -3,7 +3,25 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Suite PDF, Traductor & Conversor</ion-title>
+
+    <!-- [ESTILO SMALLPDF] Logo de 4 Colores + Botón Herramientas Megamenú -->
+    <div class="smallpdf-nav-brand">
+      <div class="smallpdf-logo-mark">
+        <span class="sp-dot dot-red"></span>
+        <span class="sp-dot dot-yellow"></span>
+        <span class="sp-dot dot-blue"></span>
+        <span class="sp-dot dot-green"></span>
+      </div>
+      <span class="smallpdf-brand-text">Smallpdf <strong>Studio</strong></span>
+    </div>
+
+    <!-- Botón Megamenú Herramientas estilo Smallpdf.com -->
+    <button type="button" class="smallpdf-tools-dropdown-btn" (click)="toggleMegaMenu()">
+      <ion-icon name="grid-outline"></ion-icon>
+      <span>Herramientas</span>
+      <ion-icon name="chevron-down-outline" class="smallpdf-caret"></ion-icon>
+    </button>
+
     <ion-buttons slot="end">
       <ion-button
         class="theme-toggle-btn"
@@ -16,6 +34,97 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <!-- Barra de Acceso Rápido estilo Smallpdf -->
+  <div class="smallpdf-subbar">
+    <div class="sp-subbar-scroll">
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'compress'"
+        (click)="selectHeroTool('compress')">
+        Comprimir
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'convert'"
+        (click)="selectHeroTool('convert')">
+        Convertir
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'ocr'"
+        (click)="selectHeroTool('ocr')">
+        OCR
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'merge'"
+        (click)="selectHeroTool('merge')">
+        Fusionar
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'split'"
+        (click)="selectHeroTool('split')">
+        Dividir
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'rotate'"
+        (click)="selectHeroTool('rotate')">
+        Girar
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'watermark'"
+        (click)="selectHeroTool('watermark')">
+        Marca de agua
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'protect'"
+        (click)="selectHeroTool('protect')">
+        Proteger
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'sign'"
+        (click)="selectHeroTool('sign')">
+        Firmar
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link sp-ai-pill"
+        [class.active]="activeTool() === 'ai-tools'"
+        (click)="selectHeroTool('ai-tools')">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        PDF con IA
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link"
+        [class.active]="activeTool() === 'translate'"
+        (click)="selectHeroTool('translate')">
+        Traducir
+      </button>
+      <button
+        type="button"
+        class="sp-subbar-link sp-cam-pill"
+        (click)="selectSmallPdfTool('scanner')">
+        <ion-icon name="camera-outline"></ion-icon>
+        Escáner
+      </button>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content class="ion-padding">
@@ -823,7 +932,429 @@
         </ion-card-content>
       </ion-card>
     }
+
+    <!-- =========================================================================
+         [HERRAMIENTA SMALLPDF 7] MARCA DE AGUA EN PDF (WATERMARK)
+         ========================================================================= -->
+    @if (activeTool() === 'watermark') {
+      <ion-card class="suite-surface-card watermark-card">
+        <ion-card-header>
+          <ion-card-subtitle>HERRAMIENTAS SMALLPDF · EDICIÓN Y SEGURIDAD</ion-card-subtitle>
+          <ion-card-title>Estampar Marca de Agua en PDF</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="modern-field-group">
+            <label class="modern-field-label">1. Seleccionar documento PDF</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-select
+                interface="popover"
+                [ngModel]="watermarkFileId()"
+                (ngModelChange)="watermarkFileId.set($event)"
+                placeholder="Elegir PDF para estampar...">
+                @for (doc of pdfFiles(); track doc.id) {
+                  <ion-select-option [value]="doc.id">
+                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
+                  </ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <div class="modern-field-group">
+            <label class="modern-field-label">2. Texto de la Marca de Agua</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-input
+                [ngModel]="watermarkText()"
+                (ngModelChange)="watermarkText.set($event)"
+                placeholder="Ej. CONFIDENCIAL, COPIA, BORRADOR">
+              </ion-input>
+            </ion-item>
+
+            <!-- Atajos rápidos de texto común de Smallpdf -->
+            <div class="watermark-presets-row">
+              <span class="watermark-preset-label">Atajos sugeridos:</span>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('CONFIDENCIAL')">CONFIDENCIAL</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('BORRADOR')">BORRADOR</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('COPIA PRIVADA')">COPIA PRIVADA</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('ORIGINAL')">ORIGINAL</button>
+            </div>
+          </div>
+
+          <!-- Color y Orientación -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <div class="modern-field-group">
+              <label class="modern-field-label">Color del sello</label>
+              <div class="sp-choice-group">
+                <button
+                  type="button"
+                  class="sp-choice-btn"
+                  [class.active]="watermarkColor() === 'gray'"
+                  (click)="watermarkColor.set('gray')">
+                  <span class="color-dot bg-slate-400"></span> Gris Neutro
+                </button>
+                <button
+                  type="button"
+                  class="sp-choice-btn"
+                  [class.active]="watermarkColor() === 'red'"
+                  (click)="watermarkColor.set('red')">
+                  <span class="color-dot bg-red-500"></span> Rojo Alerta
+                </button>
+                <button
+                  type="button"
+                  class="sp-choice-btn"
+                  [class.active]="watermarkColor() === 'blue'"
+                  (click)="watermarkColor.set('blue')">
+                  <span class="color-dot bg-blue-600"></span> Azul Corporativo
+                </button>
+              </div>
+            </div>
+
+            <div class="modern-field-group">
+              <label class="modern-field-label">Ángulo de estampa</label>
+              <div class="sp-choice-group">
+                <button
+                  type="button"
+                  class="sp-choice-btn"
+                  [class.active]="watermarkAngle() === 45"
+                  (click)="watermarkAngle.set(45)">
+                  Diagonal 45°
+                </button>
+                <button
+                  type="button"
+                  class="sp-choice-btn"
+                  [class.active]="watermarkAngle() === 0"
+                  (click)="watermarkAngle.set(0)">
+                  Horizontal 0°
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            color="primary"
+            class="cta-action-btn"
+            [disabled]="processing() || !watermarkFileId()"
+            (click)="applyWatermark()">
+            <ion-icon name="water-outline" slot="start"></ion-icon>
+            {{ processing() ? 'Estampando marca de agua...' : 'Estampar Marca de Agua en PDF' }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- =========================================================================
+         [HERRAMIENTA SMALLPDF 8] GIRAR / ROTAR PDF (ROTATE)
+         ========================================================================= -->
+    @if (activeTool() === 'rotate') {
+      <ion-card class="suite-surface-card rotate-card">
+        <ion-card-header>
+          <ion-card-subtitle>HERRAMIENTAS SMALLPDF · ORGANIZAR DOCUMENTOS</ion-card-subtitle>
+          <ion-card-title>Girar / Rotar Páginas del PDF</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="modern-field-group">
+            <label class="modern-field-label">1. Seleccionar archivo PDF para rotar</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-select
+                interface="popover"
+                [ngModel]="rotateFileId()"
+                (ngModelChange)="rotateFileId.set($event)"
+                placeholder="Elegir PDF a rotar...">
+                @for (doc of pdfFiles(); track doc.id) {
+                  <ion-select-option [value]="doc.id">
+                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
+                  </ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <div class="modern-field-group">
+            <label class="modern-field-label">2. Grado de rotación</label>
+            <div class="rotate-options-grid">
+              <button
+                type="button"
+                class="rotate-option-card"
+                [class.selected]="rotateAngle() === 90"
+                (click)="rotateAngle.set(90)">
+                <div class="rotate-icon-wrap rotate-90">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                </div>
+                <strong>90° Horario</strong>
+                <small>Girar a la derecha</small>
+              </button>
+
+              <button
+                type="button"
+                class="rotate-option-card"
+                [class.selected]="rotateAngle() === 180"
+                (click)="rotateAngle.set(180)">
+                <div class="rotate-icon-wrap rotate-180">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                </div>
+                <strong>180° Invertido</strong>
+                <small>De cabeza</small>
+              </button>
+
+              <button
+                type="button"
+                class="rotate-option-card"
+                [class.selected]="rotateAngle() === 270"
+                (click)="rotateAngle.set(270)">
+                <div class="rotate-icon-wrap rotate-270">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                </div>
+                <strong>270° Antihorario</strong>
+                <small>Girar a la izquierda</small>
+              </button>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            color="primary"
+            class="cta-action-btn"
+            [disabled]="processing() || !rotateFileId()"
+            (click)="applyRotate()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            {{ processing() ? 'Rotando páginas...' : 'Girar Documento ' + rotateAngle() + '°' }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- =========================================================================
+         [HERRAMIENTA SMALLPDF 9] PROTEGER PDF CON CONTRASEÑA (PROTECT)
+         ========================================================================= -->
+    @if (activeTool() === 'protect') {
+      <ion-card class="suite-surface-card protect-card">
+        <ion-card-header>
+          <ion-card-subtitle>HERRAMIENTAS SMALLPDF · CIFRADO Y SEGURIDAD</ion-card-subtitle>
+          <ion-card-title>Proteger PDF con Contraseña</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="modern-field-group">
+            <label class="modern-field-label">1. Seleccionar archivo PDF a proteger</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-select
+                interface="popover"
+                [ngModel]="protectFileId()"
+                (ngModelChange)="protectFileId.set($event)"
+                placeholder="Elegir PDF a proteger...">
+                @for (doc of pdfFiles(); track doc.id) {
+                  <ion-select-option [value]="doc.id">
+                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
+                  </ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <div class="modern-field-group">
+            <label class="modern-field-label">2. Definir contraseña de apertura</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+              <ion-input
+                type="password"
+                [ngModel]="protectPassword()"
+                (ngModelChange)="protectPassword.set($event)"
+                placeholder="Ingresá una clave segura...">
+              </ion-input>
+            </ion-item>
+            <small class="field-hint">
+              🔒 Cifrado local Privacy-First: El archivo solo podrá abrirse ingresando esta contraseña.
+            </small>
+          </div>
+
+          <ion-button
+            expand="block"
+            color="primary"
+            class="cta-action-btn"
+            [disabled]="processing() || !protectFileId() || !protectPassword()"
+            (click)="applyProtect()">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            {{ processing() ? 'Cifrando documento...' : 'Cifrar y Proteger PDF' }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- =========================================================================
+         [HERRAMIENTA SMALLPDF 10] PDF CON IA (RESUMEN EJECUTIVO & CHAT INTERACTIVO)
+         ========================================================================= -->
+    @if (activeTool() === 'ai-tools') {
+      <ion-card class="suite-surface-card ai-suite-card">
+        <ion-card-header>
+          <ion-card-subtitle>HERRAMIENTAS SMALLPDF · INTELIGENCIA ARTIFICIAL LOCAL</ion-card-subtitle>
+          <ion-card-title>Resumen Ejecutivo y Chat Inteligente con tu PDF</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Selector de Documento -->
+          <div class="modern-field-group">
+            <label class="modern-field-label">1. Seleccionar archivo PDF a consultar con IA</label>
+            <ion-item lines="none" class="modern-input-item">
+              <ion-select
+                interface="popover"
+                [ngModel]="aiFileId()"
+                (ngModelChange)="aiFileId.set($event)"
+                placeholder="Elegir PDF para analizar...">
+                @for (doc of pdfFiles(); track doc.id) {
+                  <ion-select-option [value]="doc.id">
+                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
+                  </ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <ion-button
+            expand="block"
+            color="primary"
+            class="cta-action-btn mb-4"
+            [disabled]="aiAnalyzing() || !aiFileId()"
+            (click)="generateAiSummary()">
+            <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+            {{ aiAnalyzing() ? 'Analizando estructura con IA local...' : 'Generar Resumen Ejecutivo con IA' }}
+          </ion-button>
+
+          <!-- Resumen Inteligente Desplegado -->
+          @if (aiSummary(); as summary) {
+            <div class="ai-summary-box">
+              <div class="ai-summary-header">
+                <span class="ai-pill-tag">✨ SÍNTESIS EJECUTIVA</span>
+                <h4>{{ summary.title }}</h4>
+              </div>
+              <ul class="ai-summary-bullets">
+                @for (bullet of summary.bullets; track bullet) {
+                  <li>{{ bullet }}</li>
+                }
+              </ul>
+              <div class="ai-meta-pills-row">
+                <span class="ai-meta-chip">📅 Fechas: {{ summary.dates.join(', ') }}</span>
+                <span class="ai-meta-chip">🏷️ Contexto: {{ summary.entities.join(' · ') }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Interfaz de Chat con el Documento -->
+          <div class="ai-chat-container">
+            <div class="ai-chat-header">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              <strong>Chatear con este PDF</strong>
+            </div>
+
+            <!-- Preguntas Sugeridas / Presets de Smallpdf -->
+            <div class="ai-presets-scroll">
+              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿De qué trata este documento?')">
+                ¿De qué trata?
+              </button>
+              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿Cuáles son las fechas clave?')">
+                Fechas clave
+              </button>
+              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿El documento está firmado?')">
+                ¿Está firmado?
+              </button>
+              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿Hay importes o costos?')">
+                Importes / Precios
+              </button>
+            </div>
+
+            <!-- Mensajes del Chat -->
+            <div class="ai-chat-feed">
+              @if (aiChatMessages().length === 0) {
+                <div class="ai-chat-empty">
+                  <ion-icon name="sparkles-outline"></ion-icon>
+                  <p>Hacé una pregunta sobre tu PDF para recibir respuestas inmediatas en lenguaje natural.</p>
+                </div>
+              } @else {
+                @for (msg of aiChatMessages(); track $index) {
+                  <div class="ai-bubble" [class.user]="msg.sender === 'user'" [class.assistant]="msg.sender === 'assistant'">
+                    <p>{{ msg.text }}</p>
+                    <span class="bubble-time">{{ msg.time }}</span>
+                  </div>
+                }
+              }
+            </div>
+
+            <!-- Input del Chat -->
+            <div class="ai-input-bar">
+              <ion-input
+                placeholder="Escribí tu pregunta sobre el PDF..."
+                [ngModel]="aiQuestionInput()"
+                (ngModelChange)="aiQuestionInput.set($event)"
+                (keyup.enter)="sendAiQuestion()">
+              </ion-input>
+              <ion-button color="primary" fill="solid" (click)="sendAiQuestion()" [disabled]="!aiQuestionInput().trim()">
+                <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
   </div>
+
+  <!-- =========================================================================
+       [MEGAMENÚ SMALLPDF COMPLETO] TODAS LAS HERRAMIENTAS Y CATEGORÍAS
+       ========================================================================= -->
+  <ion-modal [isOpen]="isMegaMenuOpen()" (didDismiss)="isMegaMenuOpen.set(false)" class="smallpdf-megamenu-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <div class="smallpdf-modal-brand" slot="start">
+            <div class="smallpdf-logo-mark">
+              <span class="sp-dot dot-red"></span>
+              <span class="sp-dot dot-yellow"></span>
+              <span class="sp-dot dot-blue"></span>
+              <span class="sp-dot dot-green"></span>
+            </div>
+            <ion-title>Todas las Herramientas Smallpdf</ion-title>
+          </div>
+          <ion-buttons slot="end">
+            <ion-button (click)="isMegaMenuOpen.set(false)">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding smallpdf-megamenu-content">
+        <div class="smallpdf-grid-columns">
+          @for (cat of smallPdfCategories; track cat.name) {
+            <div class="sp-category-col">
+              <h3 class="sp-cat-heading">{{ cat.name }}</h3>
+              <div class="sp-tools-list">
+                @for (tool of cat.tools; track tool.name) {
+                  <button
+                    type="button"
+                    class="sp-tool-action-card"
+                    (click)="selectSmallPdfTool(tool.id)">
+                    <div class="sp-tool-icon-squircle" [ngClass]="tool.colorClass">
+                      <ion-icon [name]="tool.icon"></ion-icon>
+                    </div>
+                    <div class="sp-tool-text">
+                      <div class="sp-tool-title-row">
+                        <strong>{{ tool.name }}</strong>
+                        @if (tool.badge) {
+                          <span class="sp-tool-badge">{{ tool.badge }}</span>
+                        }
+                      </div>
+                      <small>{{ tool.desc }}</small>
+                    </div>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
   <!-- Modal de Vista Previa Rápida (Quick Preview con HTML5 Canvas) -->
   <app-file-preview-modal
