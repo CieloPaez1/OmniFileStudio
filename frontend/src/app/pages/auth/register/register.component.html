@@ -2,10 +2,10 @@
   <div class="auth-header">
     <div class="brand-badge">
       <svg lucideSparkles class="sparkle-icon"></svg>
-      <span>GestorProyectos v3</span>
+      <span>Smallpdf Studio</span>
     </div>
-    <h1>Crear Cuenta</h1>
-    <p class="subtitle">Registrate para comenzar a organizar tus proyectos</p>
+    <h1>Crear cuenta</h1>
+    <p class="subtitle">Registrate para comenzar a organizar tus documentos</p>
   </div>
 
   @if (error()) {
@@ -37,14 +37,14 @@
     </div>
 
     <div class="form-group">
-      <label for="email">Correo Electrónico</label>
+      <label for="email">Correo electrónico</label>
       <div class="input-wrapper" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
         <svg lucideMail class="input-icon"></svg>
         <input
           id="email"
           type="email"
           formControlName="email"
-          placeholder="nombre@ejemplo.com"
+          placeholder="Correo electrónico"
           autocomplete="email"
         />
       </div>
@@ -64,7 +64,7 @@
           id="password"
           [type]="showPassword() ? 'text' : 'password'"
           formControlName="password"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="Contraseña (mínimo 6 caracteres)"
           autocomplete="new-password"
         />
         <button
@@ -98,7 +98,7 @@
         <span class="spinner"></span>
         <span>Creando cuenta...</span>
       } @else {
-        <span>Registrarme</span>
+        <span>Crear cuenta</span>
         <svg lucideArrowRight class="btn-icon"></svg>
       }
     </button>
@@ -106,6 +106,11 @@
 
   <div class="auth-footer">
     <span>¿Ya tenés una cuenta?</span>
-    <a routerLink="/login" class="auth-link">Iniciá sesión acá</a>
+    <a routerLink="/login" class="auth-link">Iniciar sesión</a>
+  </div>
+
+  <!-- Disclaimer legal estilo Smallpdf (SIN login social de Google/Facebook/Apple) -->
+  <div class="auth-legal-note">
+    <small>Al continuar, aceptas nuestra <span class="legal-highlight">Política de protección de datos</span> & <span class="legal-highlight">Condiciones de uso</span></small>
   </div>
 </div>

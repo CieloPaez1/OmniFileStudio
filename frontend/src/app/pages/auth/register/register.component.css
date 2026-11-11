@@ -257,3 +257,20 @@
     border-radius: 24px;
   }
 }
+
+
+.auth-legal-note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
+.auth-legal-note .legal-highlight {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}

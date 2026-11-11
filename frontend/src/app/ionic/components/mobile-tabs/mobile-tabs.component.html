@@ -47,31 +47,25 @@
   <!-- CONTENEDOR PRINCIPAL DE LAS 4 PESTAÑAS (TABS) -->
   <div class="ion-page" id="mobile-main-content">
     <ion-tabs>
-      <ion-tab-bar slot="bottom">
+      <ion-tab-bar slot="bottom" class="smallpdf-bottom-tabbar">
 
-        <!-- Tab 1: Home / Dashboard -->
-        <ion-tab-button tab="dashboard" href="/mobile/dashboard">
-          <ion-icon name="home-outline"></ion-icon>
-          <ion-label>Dashboard</ion-label>
+        <!-- Tab 1: Tools (Suite PDF / Smallpdf) -->
+        <ion-tab-button tab="tools" href="/mobile/pdf-suite">
+          <ion-icon name="grid-outline"></ion-icon>
+          <ion-label>Tools</ion-label>
         </ion-tab-button>
 
-        <!-- Tab 2: Repositorio / Gestor de Archivos -->
-        <ion-tab-button tab="repository" href="/mobile/repository">
-          <ion-icon name="folder-open-outline"></ion-icon>
-          <ion-label>Repositorio</ion-label>
+        <!-- Tab 2: Files (Repositorio de Archivos) -->
+        <ion-tab-button tab="files" href="/mobile/repository">
+          <ion-icon name="folder-outline"></ion-icon>
+          <ion-label>Files</ion-label>
           <ion-badge color="primary">{{ fileService.totalFiles() }}</ion-badge>
         </ion-tab-button>
 
-        <!-- Tab 3: Escáner de Cámara -->
-        <ion-tab-button tab="scanner" href="/mobile/scanner">
-          <ion-icon name="camera-outline"></ion-icon>
-          <ion-label>Escáner</ion-label>
-        </ion-tab-button>
-
-        <!-- Tab 4: Suite PDF -->
-        <ion-tab-button tab="pdf-suite" href="/mobile/pdf-suite">
-          <ion-icon name="construct-outline"></ion-icon>
-          <ion-label>Suite PDF</ion-label>
+        <!-- Tab 3: Settings (Ajustes y Perfil) -->
+        <ion-tab-button tab="settings" href="/mobile/profile">
+          <ion-icon name="settings-outline"></ion-icon>
+          <ion-label>Settings</ion-label>
         </ion-tab-button>
 
       </ion-tab-bar>

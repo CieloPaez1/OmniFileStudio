@@ -32,6 +32,7 @@ import {
   cloudUploadOutline,
   moonOutline,
   desktopOutline,
+  settingsOutline,
   logOutOutline
 } from 'ionicons/icons';
 
@@ -84,6 +85,7 @@ export class MobileTabsComponent {
       cloudUploadOutline,
       moonOutline,
       desktopOutline,
+      settingsOutline,
       logOutOutline
     });
   }

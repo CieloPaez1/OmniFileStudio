@@ -2,10 +2,10 @@
   <div class="auth-header">
     <div class="brand-badge">
       <svg lucideSparkles class="sparkle-icon"></svg>
-      <span>GestorProyectos · Ionic 9</span>
+      <span>Smallpdf Studio</span>
     </div>
-    <h1>Bienvenido de nuevo</h1>
-    <p class="subtitle">Ingresá tus credenciales para acceder a la app</p>
+    <h1>Iniciar sesión</h1>
+    <p class="subtitle">Ingresá tus credenciales para acceder a tus documentos</p>
   </div>
 
   @if (error()) {
@@ -15,16 +15,16 @@
     </div>
   }
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit('/mobile/dashboard')" class="auth-form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit('/mobile/pdf-suite')" class="auth-form">
     <div class="form-group">
-      <label for="email">Correo Electrónico</label>
+      <label for="email">Correo electrónico</label>
       <div class="input-wrapper" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
         <svg lucideMail class="input-icon"></svg>
         <input
           id="email"
           type="email"
           formControlName="email"
-          placeholder="nombre@ejemplo.com"
+          placeholder="Correo electrónico"
           autocomplete="email"
         />
       </div>
@@ -44,7 +44,7 @@
           id="password"
           [type]="showPassword() ? 'text' : 'password'"
           formControlName="password"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="Contraseña"
           autocomplete="current-password"
         />
         <button
@@ -78,7 +78,7 @@
         <span class="spinner"></span>
         <span>Iniciando sesión...</span>
       } @else {
-        <span>Ingresar a la App</span>
+        <span>Iniciar sesión</span>
         <svg lucideArrowRight class="btn-icon"></svg>
       }
     </button>
@@ -86,7 +86,7 @@
 
   <div class="demo-box">
     <div class="demo-info">
-      <strong>Credenciales Iniciales:</strong>
+      <strong>Credenciales de Acceso:</strong>
       <code>admin&#64;proyectos.com</code> / <code>admin123</code>
     </div>
     <button type="button" class="btn-autofill" (click)="fillDemoCredentials()">
@@ -96,6 +96,11 @@
 
   <div class="auth-footer">
     <span>¿No tenés una cuenta?</span>
-    <a routerLink="/register" class="auth-link">Registrate acá</a>
+    <a routerLink="/register" class="auth-link">Crear cuenta</a>
+  </div>
+
+  <!-- Disclaimer legal estilo Smallpdf (SIN login social de Google/Facebook/Apple) -->
+  <div class="auth-legal-note">
+    <small>Al continuar, aceptas nuestra <span class="legal-highlight">Política de protección de datos</span> & <span class="legal-highlight">Condiciones de uso</span></small>
   </div>
 </div>

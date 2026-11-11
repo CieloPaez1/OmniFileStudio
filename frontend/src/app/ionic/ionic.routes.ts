@@ -51,6 +51,25 @@ export const ionicRoutes: Routes = [
           )
       },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/mobile-profile/mobile-profile.component').then(
+            m => m.MobileProfileComponent
+          )
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./pages/mobile-profile/mobile-profile.component').then(
+            m => m.MobileProfileComponent
+          )
+      },
+      {
+        path: 'tools',
+        redirectTo: 'pdf-suite',
+        pathMatch: 'full'
+      },
+      {
         path: 'files',
         redirectTo: 'repository',
         pathMatch: 'full'
