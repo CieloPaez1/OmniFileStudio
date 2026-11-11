@@ -5,7 +5,7 @@ import filemanager.model.ManagedFile;
 public class ManagedFileMapper {
 
     public static ManagedFileEntity toEntity(ManagedFile domain) {
-        return new ManagedFileEntity(
+        ManagedFileEntity entity = new ManagedFileEntity(
                 domain.getId(),
                 domain.getOriginalName(),
                 domain.getStoredFilename(),
@@ -20,6 +20,13 @@ public class ManagedFileMapper {
                 domain.getParentId(),
                 domain.getCreatedAt()
         );
+        entity.setTag(domain.getTag());
+        entity.setDescription(domain.getDescription());
+        entity.setArchived(domain.isArchived());
+        entity.setSigned(domain.isSigned());
+        entity.setCompressed(domain.isCompressed());
+        entity.setDataUrl(domain.getDataUrl());
+        return entity;
     }
 
     public static ManagedFile toDomain(ManagedFileEntity entity) {
@@ -36,7 +43,13 @@ public class ManagedFileMapper {
                 entity.getWidth(),
                 entity.getHeight(),
                 entity.getParentId(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getTag(),
+                entity.getDescription(),
+                entity.getArchived(),
+                entity.getSigned(),
+                entity.getCompressed(),
+                entity.getDataUrl()
         );
     }
 }

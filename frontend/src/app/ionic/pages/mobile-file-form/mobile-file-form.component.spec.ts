@@ -93,7 +93,7 @@ describe('MobileFileFormComponent (Tests Unitarios - Formulario Reactivo + IA Co
 
     const submitPromise = component.submit();
 
-    const req = httpMock.expectOne('http://localhost:3000/files');
+    const req = httpMock.expectOne(component.fileService.apiUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.body.name).toBe('Resumen Quimica.pdf');
     expect(req.request.body.tag).toBe('Estudio');

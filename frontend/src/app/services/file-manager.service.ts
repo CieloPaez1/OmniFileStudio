@@ -41,7 +41,7 @@ import { ActivityLogService } from './activity-log.service';
 export class FileManagerService {
   private readonly http = inject(HttpClient);
   private readonly activityLog = inject(ActivityLogService);
-  readonly apiUrl = `http://${typeof window !== 'undefined' && window.location?.hostname ? window.location.hostname : 'localhost'}:3000/files`;
+  readonly apiUrl = `http://${typeof window !== 'undefined' && window.location?.hostname ? window.location.hostname : 'localhost'}:8080/api/files`;
   private readonly CACHE_KEY = 'filestudio_files_preferences_v1';
 
   // Indicador de Privacidad Client-Side (Privacy-First)

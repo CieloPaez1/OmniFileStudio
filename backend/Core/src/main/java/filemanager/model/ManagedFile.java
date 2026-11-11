@@ -22,6 +22,12 @@ public class ManagedFile {
     private final Integer height;
     private final Long parentId;
     private final LocalDateTime createdAt;
+    private String tag = "Trabajo";
+    private String description = "";
+    private boolean archived = false;
+    private boolean signed = false;
+    private boolean compressed = false;
+    private String dataUrl = "";
 
     private ManagedFile(
             Long id,
@@ -116,7 +122,35 @@ public class ManagedFile {
             Long parentId,
             LocalDateTime createdAt
     ) {
-        return new ManagedFile(
+        return restore(
+                id, originalName, storedFilename, extension, mimeType, category, origin,
+                sizeBytes, pageCount, width, height, parentId, createdAt,
+                "Trabajo", "", false, false, false, ""
+        );
+    }
+
+    public static ManagedFile restore(
+            Long id,
+            String originalName,
+            String storedFilename,
+            String extension,
+            String mimeType,
+            FileCategory category,
+            FileOrigin origin,
+            long sizeBytes,
+            Integer pageCount,
+            Integer width,
+            Integer height,
+            Long parentId,
+            LocalDateTime createdAt,
+            String tag,
+            String description,
+            Boolean archived,
+            Boolean signed,
+            Boolean compressed,
+            String dataUrl
+    ) {
+        ManagedFile f = new ManagedFile(
                 id,
                 originalName,
                 storedFilename,
@@ -131,6 +165,13 @@ public class ManagedFile {
                 parentId,
                 createdAt != null ? createdAt : LocalDateTime.now()
         );
+        f.tag = tag != null ? tag : "Trabajo";
+        f.description = description != null ? description : "";
+        f.archived = archived != null && archived;
+        f.signed = signed != null && signed;
+        f.compressed = compressed != null && compressed;
+        f.dataUrl = dataUrl != null ? dataUrl : "";
+        return f;
     }
 
     public void rename(String newName) {
@@ -162,4 +203,22 @@ public class ManagedFile {
     public Integer getHeight() { return height; }
     public Long getParentId() { return parentId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public String getTag() { return tag != null ? tag : "Trabajo"; }
+    public void setTag(String tag) { this.tag = tag; }
+
+    public String getDescription() { return description != null ? description : ""; }
+    public void setDescription(String description) { this.description = description; }
+
+    public boolean isArchived() { return archived; }
+    public void setArchived(boolean archived) { this.archived = archived; }
+
+    public boolean isSigned() { return signed; }
+    public void setSigned(boolean signed) { this.signed = signed; }
+
+    public boolean isCompressed() { return compressed; }
+    public void setCompressed(boolean compressed) { this.compressed = compressed; }
+
+    public String getDataUrl() { return dataUrl != null ? dataUrl : ""; }
+    public void setDataUrl(String dataUrl) { this.dataUrl = dataUrl; }
 }

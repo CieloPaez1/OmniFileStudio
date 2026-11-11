@@ -42,6 +42,27 @@ public class ManagedFileEntity {
     private Integer height;
     private Long parentId;
 
+    @Column(length = 64)
+    private String tag = "Trabajo";
+
+    @Column(columnDefinition = "TEXT")
+    private String description = "";
+
+    @Column(nullable = false)
+    private Boolean archived = false;
+
+    @Column(nullable = false)
+    private Boolean signed = false;
+
+    @Column(nullable = false)
+    private Boolean compressed = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String dataUrl;
+
+    @Column(name = "file_data")
+    private byte[] fileData;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -104,4 +125,25 @@ public class ManagedFileEntity {
     public void setParentId(Long parentId) { this.parentId = parentId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getTag() { return tag != null ? tag : "Trabajo"; }
+    public void setTag(String tag) { this.tag = tag; }
+
+    public String getDescription() { return description != null ? description : ""; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Boolean getArchived() { return archived != null && archived; }
+    public void setArchived(Boolean archived) { this.archived = archived != null && archived; }
+
+    public Boolean getSigned() { return signed != null && signed; }
+    public void setSigned(Boolean signed) { this.signed = signed != null && signed; }
+
+    public Boolean getCompressed() { return compressed != null && compressed; }
+    public void setCompressed(Boolean compressed) { this.compressed = compressed != null && compressed; }
+
+    public String getDataUrl() { return dataUrl; }
+    public void setDataUrl(String dataUrl) { this.dataUrl = dataUrl; }
+
+    public byte[] getFileData() { return fileData; }
+    public void setFileData(byte[] fileData) { this.fileData = fileData; }
 }

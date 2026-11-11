@@ -3,7 +3,7 @@
   align-items: center;
   gap: 10px;
   padding-left: 10px;
-  max-width: 72%;
+  max-width: 68%;
 }
 
 .preview-ext-badge {
@@ -23,6 +23,9 @@
   font-size: 0.95rem;
   font-weight: 700;
   padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .preview-subtitle {
@@ -39,7 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 8px;
+  padding: 4px 8px;
   flex-wrap: wrap;
   gap: 6px;
 }
@@ -65,18 +68,18 @@
 }
 
 .preview-stage {
-  --background: var(--ion-background-color, #f1f5f9);
+  --background: var(--ion-background-color, #0f172a);
 }
 
 /* Inspector de flujo binario */
 .binary-stream-box {
-  background: #0f172a;
+  background: #090d16;
   color: #38bdf8;
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 12px 16px;
   margin-bottom: 14px;
   border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .binary-stream-head {
@@ -96,13 +99,64 @@
   line-height: 1.45;
 }
 
-/* Renderizador HTML5 Canvas de PDF */
+/* 1. VISOR DE PDF */
 .pdf-preview-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   padding: 8px 0 28px;
+}
+
+.embedded-pdf-frame-wrap {
+  width: 100%;
+  max-width: 720px;
+  background: var(--ion-card-background, #ffffff);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  transform-origin: top center;
+}
+
+.frame-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #475569);
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.frame-caption-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.frame-filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.frame-caption-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.embedded-pdf-iframe {
+  width: 100%;
+  height: 58vh;
+  min-height: 420px;
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  border-radius: 12px;
+  background: #ffffff;
 }
 
 .canvas-sheet-wrap {
@@ -110,7 +164,7 @@
   max-width: 560px;
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(203, 213, 225, 0.75);
   transition: transform 0.2s ease, filter 0.2s ease;
   transform-origin: top center;
@@ -123,33 +177,276 @@
   display: block;
 }
 
-.embedded-pdf-frame-wrap {
-  width: 100%;
-  max-width: 560px;
-  background: var(--ion-card-background, #ffffff);
-  border-radius: 18px;
-  padding: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+/* 2. VISOR DE DOCUMENTO WORD (.docx) */
+.word-document-stage {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 32px;
+  transition: transform 0.2s ease;
+  transform-origin: top center;
 }
 
-.frame-caption {
+.word-page-sheet {
+  width: 100%;
+  max-width: 620px;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #e2e8f0;
+}
+
+.word-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.76rem;
+  margin-bottom: 20px;
+}
+
+.word-doc-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #2563eb;
+  letter-spacing: 0.5px;
+}
+
+.word-page-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--ion-text-color, #475569);
-  margin-bottom: 8px;
 }
 
-.embedded-pdf-iframe {
+.word-doc-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.3;
+  margin: 0 0 8px;
+}
+
+.word-doc-meta {
+  font-size: 0.76rem;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.word-db-pill {
+  color: #059669;
+  font-weight: 700;
+}
+
+.word-divider {
+  border: none;
+  border-top: 1.5px solid #e2e8f0;
+  margin: 0 0 20px;
+}
+
+.word-doc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 220px;
+}
+
+.word-paragraph {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #334155;
+  margin: 0;
+  text-align: justify;
+}
+
+.word-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* 3. VISOR DE PLANILLA EXCEL (.xlsx) */
+.excel-spreadsheet-stage {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 32px;
+  transition: transform 0.2s ease;
+  transform-origin: top center;
+}
+
+.excel-sheet-card {
   width: 100%;
-  height: 350px;
-  border: 1px solid rgba(203, 213, 225, 0.7);
-  border-radius: 12px;
+  max-width: 680px;
+  background: var(--ion-card-background, #ffffff);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
-/* Visor de Imágenes */
+.excel-toolbar-ribbon {
+  background: #107c41;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.excel-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.excel-meta-pill {
+  font-size: 0.74rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.excel-table-scroll {
+  overflow-x: auto;
+  max-height: 52vh;
+}
+
+.excel-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.excel-grid-table th,
+.excel-grid-table td {
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.excel-grid-table th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+}
+
+.row-index-col,
+.row-index-cell {
+  width: 38px;
+  text-align: center !important;
+  background: #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.excel-sheet-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* 4. VISOR DE DIAPOSITIVAS POWERPOINT (.pptx) */
+.ppt-presentation-stage {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 32px;
+  transition: transform 0.2s ease;
+  transform-origin: top center;
+}
+
+.ppt-slide-card {
+  width: 100%;
+  max-width: 620px;
+  background: #1e293b;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ppt-slide-canvas {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
+  color: #ffffff;
+  padding: 28px 24px;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ppt-slide-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #a5b4fc;
+  margin-bottom: 12px;
+}
+
+.ppt-slide-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  color: #ffffff;
+}
+
+.ppt-slide-bullets {
+  margin: 0 0 20px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.ppt-slide-bullets li {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #e0e7ff;
+}
+
+.ppt-slide-note {
+  background: rgba(15, 23, 42, 0.4);
+  border-left: 3px solid #818cf8;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #c7d2fe;
+}
+
+.ppt-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #0f172a;
+}
+
+.ppt-counter {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+/* 5. VISOR DE IMÁGENES */
 .image-preview-stage {
   display: flex;
   flex-direction: column;
@@ -158,47 +455,68 @@
 }
 
 .image-canvas-box {
-  background: #0f172a;
-  padding: 16px;
+  background: #090d16;
+  padding: 14px;
   border-radius: 18px;
   overflow: hidden;
   max-width: 100%;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .image-canvas-box img {
   max-width: 100%;
-  max-height: 62vh;
+  max-height: 60vh;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: transform 0.2s ease, filter 0.2s ease;
+  display: block;
 }
 
 .image-caption {
   margin-top: 12px;
-  font-size: 0.82rem;
-  color: var(--ion-text-color, #334155);
+  font-size: 0.8rem;
+  color: #cbd5e1;
 }
 
-/* Visor de Datos CSV y Texto */
+/* 6 & 7. VISOR DE CSV Y TEXTO */
 .data-preview-card,
 .text-preview-card {
   background: var(--ion-card-background, #ffffff);
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  transform-origin: top center;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .data-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-bottom: 10px;
   margin-bottom: 12px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.data-preview-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   color: var(--ion-text-color, #0f172a);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+}
+
+.data-preview-title span {
+  font-size: 0.72rem;
+  color: #64748b;
 }
 
 .csv-table-scroll {
   overflow-x: auto;
+  max-height: 52vh;
 }
 
 .csv-preview-table {
@@ -218,16 +536,19 @@
   background: rgba(99, 102, 241, 0.08);
   font-weight: 700;
   color: var(--ion-text-color, #1e293b);
+  position: sticky;
+  top: 0;
 }
 
 .code-preview-box {
   margin: 0;
-  background: #0f172a;
+  background: #090d16;
   color: #e2e8f0;
   padding: 16px;
   border-radius: 12px;
   overflow-x: auto;
   font-family: 'Consolas', 'Courier New', monospace;
-  line-height: 1.5;
+  line-height: 1.55;
   white-space: pre-wrap;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

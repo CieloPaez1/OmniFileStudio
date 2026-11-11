@@ -17,9 +17,9 @@ import { ManagedFile } from '../models/managed-file.model';
 describe('FileManagerService (Tests Unitarios - API REST, Fallback Offline e IA Contextual Local)', () => {
   let service: FileManagerService;
   let httpMock: HttpTestingController;
-  const jsonServerUrl = 'http://localhost:3000/files';
 
   beforeEach(() => {
+    TestBed.resetTestingModule();
     localStorage.clear();
 
     TestBed.configureTestingModule({
@@ -69,7 +69,7 @@ describe('FileManagerService (Tests Unitarios - API REST, Fallback Offline e IA 
 
     expect(service.loading()).toBe(true);
 
-    const req = httpMock.expectOne(jsonServerUrl);
+    const req = httpMock.expectOne(service.apiUrl);
     expect(req.request.method).toBe('GET');
     req.flush(mockFiles);
 
@@ -105,7 +105,7 @@ describe('FileManagerService (Tests Unitarios - API REST, Fallback Offline e IA 
       resultFiles = files;
     });
 
-    const req = httpMock.expectOne(jsonServerUrl);
+    const req = httpMock.expectOne(service.apiUrl);
     req.error(new ProgressEvent('Network error'), { status: 0, statusText: 'Unknown Error' });
 
     // 3. Assert
@@ -144,7 +144,7 @@ describe('FileManagerService (Tests Unitarios - API REST, Fallback Offline e IA 
     });
 
     // 3. Assert HTTP
-    const req = httpMock.expectOne(jsonServerUrl);
+    const req = httpMock.expectOne(service.apiUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.body.name).toBe('Factura_Internet.pdf');
     expect(req.request.body.tag).toBe('Facturas');

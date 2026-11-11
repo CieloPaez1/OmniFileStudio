@@ -27,6 +27,7 @@ describe('TaskService (Clase 12 - Tests Unitarios)', () => {
   const baseUrl = environment.apiUrl;
 
   beforeEach(() => {
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         TaskService,

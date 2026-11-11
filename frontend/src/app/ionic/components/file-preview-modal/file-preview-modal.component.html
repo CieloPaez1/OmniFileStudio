@@ -16,6 +16,7 @@
               <span class="preview-subtitle">
                 {{ current.tag || 'Trabajo' }} · {{ fileService.formatBytes(current.size) }}
                 @if (current.pageCount) { · {{ current.pageCount }} pág. }
+                · PostgreSQL
               </span>
             </div>
           </div>
@@ -23,6 +24,9 @@
           <ion-buttons slot="end">
             <ion-button fill="clear" color="light" title="Inspector Binario" (click)="toggleBinaryInspector()">
               <ion-icon name="code-working-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="light" title="Abrir en pestaña nueva" (click)="openInNewTab()">
+              <ion-icon name="open-outline" slot="icon-only"></ion-icon>
             </ion-button>
             <ion-button fill="clear" color="light" title="Compartir" (click)="shareCurrentFile()">
               <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
@@ -47,11 +51,11 @@
               <ion-button size="small" fill="clear" (click)="rotateRight()" title="Rotar 90°">
                 <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              <ion-button size="small" fill="outline" color="primary" (click)="cycleFilter()">
-                <ion-icon name="contrast-outline" slot="start"></ion-icon>
-                Filtro: {{ imageFilter() | uppercase }}
-              </ion-button>
               @if (current.category === 'IMAGE' || current.ext === 'pdf') {
+                <ion-button size="small" fill="outline" color="primary" (click)="cycleFilter()">
+                  <ion-icon name="contrast-outline" slot="start"></ion-icon>
+                  Filtro: {{ imageFilter() | uppercase }}
+                </ion-button>
                 <ion-button size="small" fill="outline" color="tertiary" (click)="goToOcr(current)" title="Extraer texto OCR de este archivo">
                   <ion-icon name="scan-outline" slot="start"></ion-icon>
                   OCR
@@ -72,8 +76,9 @@
                 size="small"
                 fill="outline"
                 color="primary"
-                [href]="current.downloadUrl"
-                [download]="current.name">
+                [href]="current.downloadUrl || current.dataUrl"
+                [download]="current.name"
+                title="Descargar archivo">
                 <ion-icon name="download-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </div>
@@ -86,47 +91,174 @@
         @if (showBinaryInspector()) {
           <div class="binary-stream-box">
             <div class="binary-stream-head">
-              <strong>🔍 Inspector de Flujo Binario en Cliente (Sin Descarga)</strong>
+              <strong>🔍 Inspector de Flujo Binario y Persistencia BD</strong>
               <span>{{ current.mimeType }}</span>
             </div>
             <pre>{{ binaryStreamSummary() }}</pre>
           </div>
         }
 
-        <!-- ==================== 1. VISTA PREVIA DE ARCHIVOS PDF (HTML5 CANVAS + BLOB STREAM) ==================== -->
+        <!-- ==================== 1. VISTA PREVIA DE ARCHIVOS PDF ==================== -->
         @if (current.ext === 'pdf' || current.category === 'PDF') {
           <div class="pdf-preview-container">
-            <!-- Renderizador HTML5 Canvas directo en el cliente -->
-            <div
-              class="canvas-sheet-wrap"
-              [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
-              [style.filter]="cssImageFilter()">
-              <canvas
-                #pdfCanvasRenderer
-                width="560"
-                height="340"
-                class="pdf-html5-canvas">
-              </canvas>
-            </div>
-
-            <!-- Visor nativo embebido si hay flujo binario Blob PDF generado con jsPDF -->
             @if (safePdfUrl(); as pdfResourceUrl) {
-              <div class="embedded-pdf-frame-wrap">
+              <div
+                class="embedded-pdf-frame-wrap"
+                [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
+                [style.filter]="cssImageFilter()">
                 <div class="frame-caption">
-                  <span>Flujo Binario PDF (Blob Stream en memoria local):</span>
-                  <ion-badge color="success">100% Client-Side</ion-badge>
+                  <div class="frame-caption-left">
+                    <ion-badge color="danger">PDF</ion-badge>
+                    <span class="frame-filename">{{ current.name }}</span>
+                  </div>
+                  <div class="frame-caption-actions">
+                    <ion-badge color="success">PostgreSQL Persistido</ion-badge>
+                    <ion-button size="small" fill="clear" color="primary" (click)="openInNewTab()" title="Abrir en pestaña nueva">
+                      <ion-icon name="open-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
                 </div>
                 <iframe
                   class="embedded-pdf-iframe"
                   [src]="pdfResourceUrl"
-                  title="Vista previa PDF">
+                  title="Visor PDF OmniFile Studio">
                 </iframe>
+              </div>
+            } @else {
+              <!-- Renderizador HTML5 Canvas de alta definición si el iframe no está disponible -->
+              <div
+                class="canvas-sheet-wrap"
+                [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
+                [style.filter]="cssImageFilter()">
+                <canvas
+                  #pdfCanvasRenderer
+                  width="560"
+                  height="380"
+                  class="pdf-html5-canvas">
+                </canvas>
               </div>
             }
           </div>
         }
 
-        <!-- ==================== 2. VISTA PREVIA DE IMÁGENES ==================== -->
+        <!-- ==================== 2. VISTA PREVIA DE DOCUMENTOS WORD (.docx, .doc, .odt, .rtf) ==================== -->
+        @else if (isWordDocument()) {
+          <div class="word-document-stage" [style.transform]="'scale(' + (zoomLevel() / 100) + ')'">
+            <div class="word-page-sheet">
+              <div class="word-page-header">
+                <div class="word-doc-badge">
+                  <ion-icon name="newspaper-outline"></ion-icon>
+                  <span>DOCUMENTO DE TEXTO · .{{ current.ext | uppercase }}</span>
+                </div>
+                <span class="word-page-tag">{{ current.tag || 'Trabajo' }}</span>
+              </div>
+
+              <h1 class="word-doc-title">{{ current.name }}</h1>
+              <div class="word-doc-meta">
+                <span>Fecha: {{ current.createdAt | slice:0:10 }}</span> ·
+                <span>Tamaño: {{ fileService.formatBytes(current.size) }}</span> ·
+                <span>Páginas: {{ current.pageCount || 3 }}</span> ·
+                <span class="word-db-pill">PostgreSQL</span>
+              </div>
+
+              <hr class="word-divider" />
+
+              <div class="word-doc-body">
+                @for (p of wordParagraphs(); track $index) {
+                  <p class="word-paragraph">{{ p }}</p>
+                }
+              </div>
+
+              <div class="word-page-footer">
+                <span>OmniFile Studio · Document Previewer</span>
+                <span>Página 1 de {{ current.pageCount || 3 }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ==================== 3. VISTA PREVIA DE PLANILLAS EXCEL (.xlsx, .xls, .ods) ==================== -->
+        @else if (isExcelDocument()) {
+          <div class="excel-spreadsheet-stage" [style.transform]="'scale(' + (zoomLevel() / 100) + ')'">
+            <div class="excel-sheet-card">
+              <div class="excel-toolbar-ribbon">
+                <div class="excel-tab active">
+                  <ion-icon name="grid-outline"></ion-icon>
+                  <span>Hoja 1 (Datos Principales)</span>
+                </div>
+                <span class="excel-meta-pill">{{ current.name }} · {{ current.tag || 'General' }}</span>
+              </div>
+
+              <div class="excel-table-scroll">
+                <table class="excel-grid-table">
+                  <thead>
+                    <tr>
+                      <th class="row-index-col">#</th>
+                      @for (col of excelTableData().headers; track $index) {
+                        <th>{{ col }}</th>
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of excelTableData().rows; track $index) {
+                      <tr>
+                        <td class="row-index-cell">{{ $index + 1 }}</td>
+                        @for (cell of row; track $index) {
+                          <td>{{ cell }}</td>
+                        }
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="excel-sheet-footer">
+                <span>{{ excelTableData().rows.length }} filas registradas</span>
+                <span>Persistido en Base de Datos Backend</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ==================== 4. VISTA PREVIA DE PRESENTACIONES POWERPOINT (.pptx, .ppt) ==================== -->
+        @else if (isPptDocument()) {
+          <div class="ppt-presentation-stage" [style.transform]="'scale(' + (zoomLevel() / 100) + ')'">
+            <div class="ppt-slide-card">
+              <div class="ppt-slide-canvas">
+                <div class="ppt-slide-badge">
+                  <ion-icon name="easel-outline"></ion-icon>
+                  <span>Diapositiva {{ activePptSlideIndex() + 1 }} de {{ pptSlides().length }}</span>
+                </div>
+
+                <h2 class="ppt-slide-title">{{ pptSlides()[activePptSlideIndex()].title }}</h2>
+
+                <ul class="ppt-slide-bullets">
+                  @for (bullet of pptSlides()[activePptSlideIndex()].bullets; track $index) {
+                    <li>{{ bullet }}</li>
+                  }
+                </ul>
+
+                <div class="ppt-slide-note">
+                  <strong>Nota del presentador:</strong> {{ pptSlides()[activePptSlideIndex()].note }}
+                </div>
+              </div>
+
+              <div class="ppt-controls-row">
+                <ion-button size="small" fill="outline" [disabled]="activePptSlideIndex() === 0" (click)="prevPptSlide()">
+                  <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+                  Anterior
+                </ion-button>
+                <span class="ppt-counter">{{ activePptSlideIndex() + 1 }} / {{ pptSlides().length }}</span>
+                <ion-button size="small" fill="outline" [disabled]="activePptSlideIndex() >= pptSlides().length - 1" (click)="nextPptSlide()">
+                  Siguiente
+                  <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ==================== 5. VISTA PREVIA DE IMÁGENES ==================== -->
         @else if (current.category === 'IMAGE') {
           <div class="image-preview-stage">
             <div class="image-canvas-box">
@@ -137,16 +269,23 @@
                 [style.filter]="cssImageFilter()" />
             </div>
             <p class="image-caption">
-              {{ current.name }} · {{ fileService.formatBytes(current.size) }} · Filtro activo: <strong>{{ imageFilter() | uppercase }}</strong>
+              {{ current.name }} · {{ fileService.formatBytes(current.size) }} · Filtro: <strong>{{ imageFilter() | uppercase }}</strong> · BD: PostgreSQL
             </p>
           </div>
         }
 
-        <!-- ==================== 3. VISTA PREVIA DE TABLAS CSV ==================== -->
+        <!-- ==================== 6. VISTA PREVIA DE TABLAS CSV ==================== -->
         @else if (current.ext === 'csv' && csvTableRows().length > 0) {
-          <div class="data-preview-card">
+          <div class="data-preview-card" [style.transform]="'scale(' + (zoomLevel() / 100) + ')'">
             <div class="data-preview-header">
-              <strong>📊 Vista Previa de Planilla CSV ({{ csvTableRows().length }} filas)</strong>
+              <div class="data-preview-title">
+                <strong>📊 Planilla CSV ({{ csvTableRows().length }} filas)</strong>
+                <span>{{ current.name }}</span>
+              </div>
+              <ion-button size="small" fill="clear" color="primary" (click)="copyTextContent()">
+                <ion-icon [name]="copiedText() ? 'checkmark-outline' : 'copy-outline'" slot="start"></ion-icon>
+                {{ copiedText() ? '¡Copiado!' : 'Copiar' }}
+              </ion-button>
             </div>
             <div class="csv-table-scroll">
               <table class="csv-preview-table">
@@ -171,11 +310,18 @@
           </div>
         }
 
-        <!-- ==================== 4. VISTA PREVIA DE TEXTO / JSON / MD / HTML ==================== -->
+        <!-- ==================== 7. VISTA PREVIA DE TEXTO / JSON / MD / HTML ==================== -->
         @else {
           <div class="text-preview-card">
             <div class="data-preview-header">
-              <strong>📝 Vista Previa de Contenido (.{{ current.ext | uppercase }})</strong>
+              <div class="data-preview-title">
+                <strong>📝 Vista Previa de Contenido (.{{ current.ext | uppercase }})</strong>
+                <span>{{ fileService.formatBytes(current.size) }}</span>
+              </div>
+              <ion-button size="small" fill="clear" color="primary" (click)="copyTextContent()">
+                <ion-icon [name]="copiedText() ? 'checkmark-outline' : 'copy-outline'" slot="start"></ion-icon>
+                {{ copiedText() ? '¡Copiado!' : 'Copiar' }}
+              </ion-button>
             </div>
             <pre
               class="code-preview-box"
