@@ -36,7 +36,7 @@
   <header class="top-greeting-header" (click)="$event.stopPropagation()">
     <div class="greeting-info">
       <div class="greeting-name-row">
-        <h1>Hola, {{ authService.currentUser()?.name || 'Cielo' }}</h1>
+        <h1 style="overflow-wrap: break-word; min-width: 0;">Hola, {{ authService.currentUser()?.name || 'Cielo' }}</h1>
       </div>
 
       <div class="greeting-meta-row">
@@ -88,9 +88,10 @@
         class="header-avatar-btn"
         (click)="irAPerfil()"
         title="Ir a mi Perfil">
-        @if (avatarUrl() || authService.currentUser()?.avatarUrl) {
+        @if (avatarUrl() || authService.currentUser()?.avatarUrl; as userAvatar) {
           <img
-            [src]="avatarUrl() || authService.currentUser()?.avatarUrl"
+            [src]="userAvatar"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
             alt="Avatar de usuario"
             class="header-avatar-img" />
         } @else {
@@ -340,9 +341,8 @@
               <div class="today-task-content">
                 <div class="today-task-top-row">
                   <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                    <span class="jira-ticket-tag">#PLX-{{ t.id }}</span>
                     <h4 class="today-task-title" [class.strike-text]="t.status === 'DONE'">
-                      {{ t.title }}
+                      <span class="jira-ticket-tag">#PLX-{{ t.id }}</span> {{ t.title }}
                     </h4>
                   </div>
 

@@ -27,9 +27,10 @@
         <div class="avatar-ring-glow"></div>
 
         <div class="avatar-inner-frame" (click)="cambiarFotoPerfil()" title="Tocá para cambiar tu foto con Cámara">
-          @if (avatarUrl() || authService.currentUser()?.avatarUrl) {
+          @if (avatarUrl() || authService.currentUser()?.avatarUrl; as pic) {
             <img
-              [src]="avatarUrl() || authService.currentUser()?.avatarUrl"
+              [src]="pic"
+              src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
               alt="Foto de perfil"
               class="avatar-img" />
           } @else {
@@ -43,7 +44,7 @@
             class="camera-mini-btn"
             (click)="cambiarFotoPerfil(); $event.stopPropagation()"
             title="Tomar foto con cámara">
-            <ion-icon name="camera-outline"></ion-icon>
+            <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
           </button>
         </div>
 
@@ -54,14 +55,14 @@
           [class]="authService.currentStatusMeta().colorClass"
           (click)="toggleUserStatus($event)"
           title="Tocá para cambiar tu estado">
-          <ion-icon [name]="authService.currentStatusMeta().icon"></ion-icon>
+          <ion-icon [name]="authService.currentStatusMeta().icon" aria-hidden="true"></ion-icon>
           <span>{{ authService.currentStatusMeta().text }}</span>
         </button>
       </div>
 
-      <h1 class="profile-name">
+      <h1 class="profile-name" style="overflow-wrap: break-word; min-width: 0;">
         <span>{{ authService.currentUser()?.name || 'Administrador' }}</span>
-        <ion-icon name="checkmark-circle" class="verified-icon"></ion-icon>
+        <ion-icon name="checkmark-circle" class="verified-icon" aria-hidden="true"></ion-icon>
       </h1>
 
       <p class="profile-role">{{ authService.currentUser()?.role || 'Gestor de Proyectos' }}</p>

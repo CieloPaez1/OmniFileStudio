@@ -6,12 +6,12 @@
 
     <!-- [ESTILO SMALLPDF] Logo de 4 Colores + Botón Herramientas Megamenú -->
     <div class="smallpdf-nav-brand">
-      <div class="smallpdf-logo-mark">
-        <span class="sp-dot dot-red"></span>
-        <span class="sp-dot dot-yellow"></span>
-        <span class="sp-dot dot-blue"></span>
-        <span class="sp-dot dot-green"></span>
-      </div>
+      <svg class="smallpdf-logo-svg" viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+        <rect x="2" y="2" width="9" height="9" rx="2" fill="#ef4444" />
+        <rect x="13" y="2" width="9" height="9" rx="2" fill="#f59e0b" />
+        <rect x="2" y="13" width="9" height="9" rx="2" fill="#3b82f6" />
+        <rect x="13" y="13" width="9" height="9" rx="2" fill="#10b981" />
+      </svg>
       <span class="smallpdf-brand-text">Smallpdf <strong>Studio</strong></span>
     </div>
 
@@ -133,7 +133,7 @@
     @if (successFeedback(); as fb) {
       <div class="omni-success-feedback">
         <div class="omni-success-tick-circle">
-          <svg viewBox="0 0 24 24">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
@@ -148,7 +148,7 @@
          NAVEGACIÓN SUPERIOR TIPO "HERO CARDS" RESPONSIVA (1 / 2 / 3 / 6 COLUMNAS)
          ========================================================================= -->
     <div class="hero-cards-header">
-      <span class="hero-section-kicker">HERRAMIENTAS DEL ESTUDIO Y TRADUCTOR UNIVERSAL</span>
+      <span class="hero-section-kicker">Herramientas del estudio y traductor universal</span>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         @for (tool of heroTools; track tool.id) {
           <button
@@ -225,7 +225,7 @@
           @if (ocrPreviewUrl(); as prevUrl) {
             <div class="ocr-preview-box">
               <div class="ocr-preview-thumb-wrap">
-                <img [src]="prevUrl" alt="Previsualización OCR" class="ocr-preview-thumb" />
+                <img [src]="prevUrl" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>" alt="Previsualización OCR" class="ocr-preview-thumb" />
               </div>
               <div class="ocr-preview-info">
                 <strong>Documento listo para análisis OCR</strong>
@@ -305,9 +305,9 @@
             </div>
           }
 
-          <!-- Tarjeta de Resultados del OCR -->
+          <!-- Resultados del OCR -->
           @if (ocrResult(); as res) {
-            <div class="ocr-results-card">
+            <div class="ocr-results-panel">
               <div class="ocr-results-header">
                 <div class="ocr-metrics-row">
                   <span class="ocr-stat-chip">
@@ -360,15 +360,18 @@
     @if (activeTool() === 'translate') {
       <ion-card class="suite-surface-card">
         <ion-card-header>
-          <ion-card-subtitle>TRADUCTOR UNIVERSAL MULTIFORMATO · 100% EN CLIENTE</ion-card-subtitle>
+          <ion-card-subtitle>Traductor universal multiformato (100% en cliente)</ion-card-subtitle>
           <ion-card-title>Traducir Documentos de Oficina, PDF y Texto</ion-card-title>
         </ion-card-header>
 
         <ion-card-content>
           <!-- Formatos soportados organizados en grilla responsiva -->
           <div class="grid grid-cols-1 md:grid-cols-2 supported-formats-grid">
-            <div class="format-family-card">
-              <strong>🏢 Documentos de Oficina</strong>
+            <div class="format-family-panel">
+              <div class="format-family-heading">
+                <ion-icon name="briefcase-outline" aria-hidden="true"></ion-icon>
+                <strong>Documentos de oficina</strong>
+              </div>
               <p>Conserva tablas, diapositivas y estructura empresarial:</p>
               <div class="family-badges-row">
                 <span class="file-format-badge fmt-doc">.DOCX (Word)</span>
@@ -377,8 +380,11 @@
               </div>
             </div>
 
-            <div class="format-family-card">
-              <strong>📄 Estándar, PDF y Marcado</strong>
+            <div class="format-family-panel">
+              <div class="format-family-heading">
+                <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                <strong>Estándar, PDF y marcado</strong>
+              </div>
               <p>Soporte para PDFs nativos/escaneados y código documental:</p>
               <div class="family-badges-row">
                 <span class="file-format-badge fmt-pdf">.PDF (Nativo/Scan)</span>
@@ -821,6 +827,7 @@
               width="320"
               height="120"
               class="signature-canvas"
+              aria-label="Lienzo táctil de firma manuscrita"
               (mousedown)="startDrawing($event)"
               (mousemove)="draw($event)"
               (mouseup)="stopDrawing()"
@@ -973,10 +980,10 @@
             <!-- Atajos rápidos de texto común de Smallpdf -->
             <div class="watermark-presets-row">
               <span class="watermark-preset-label">Atajos sugeridos:</span>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('CONFIDENCIAL')">CONFIDENCIAL</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('BORRADOR')">BORRADOR</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('COPIA PRIVADA')">COPIA PRIVADA</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('ORIGINAL')">ORIGINAL</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Confidencial')">Confidencial</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Borrador')">Borrador</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Copia privada')">Copia privada</button>
+              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Original')">Original</button>
             </div>
           </div>
 
@@ -1076,7 +1083,7 @@
             <div class="rotate-options-grid">
               <button
                 type="button"
-                class="rotate-option-card"
+                class="rotate-option-btn"
                 [class.selected]="rotateAngle() === 90"
                 (click)="rotateAngle.set(90)">
                 <div class="rotate-icon-wrap rotate-90">
@@ -1088,7 +1095,7 @@
 
               <button
                 type="button"
-                class="rotate-option-card"
+                class="rotate-option-btn"
                 [class.selected]="rotateAngle() === 180"
                 (click)="rotateAngle.set(180)">
                 <div class="rotate-icon-wrap rotate-180">
@@ -1100,7 +1107,7 @@
 
               <button
                 type="button"
-                class="rotate-option-card"
+                class="rotate-option-btn"
                 [class.selected]="rotateAngle() === 270"
                 (click)="rotateAngle.set(270)">
                 <div class="rotate-icon-wrap rotate-270">
@@ -1165,7 +1172,7 @@
               </ion-input>
             </ion-item>
             <small class="field-hint">
-              🔒 Cifrado local Privacy-First: El archivo solo podrá abrirse ingresando esta contraseña.
+              Cifrado local: El archivo solo podrá abrirse ingresando esta contraseña de seguridad.
             </small>
           </div>
 
@@ -1188,7 +1195,7 @@
     @if (activeTool() === 'ai-tools') {
       <ion-card class="suite-surface-card ai-suite-card">
         <ion-card-header>
-          <ion-card-subtitle>HERRAMIENTAS SMALLPDF · INTELIGENCIA ARTIFICIAL LOCAL</ion-card-subtitle>
+          <ion-card-subtitle>Herramientas Smallpdf: inteligencia artificial local</ion-card-subtitle>
           <ion-card-title>Resumen Ejecutivo y Chat Inteligente con tu PDF</ion-card-title>
         </ion-card-header>
 
@@ -1225,8 +1232,8 @@
           @if (aiSummary(); as summary) {
             <div class="ai-summary-box">
               <div class="ai-summary-header">
-                <span class="ai-pill-tag">✨ SÍNTESIS EJECUTIVA</span>
                 <h4>{{ summary.title }}</h4>
+                <span class="ai-pill-tag">Síntesis ejecutiva</span>
               </div>
               <ul class="ai-summary-bullets">
                 @for (bullet of summary.bullets; track bullet) {
@@ -1234,8 +1241,8 @@
                 }
               </ul>
               <div class="ai-meta-pills-row">
-                <span class="ai-meta-chip">📅 Fechas: {{ summary.dates.join(', ') }}</span>
-                <span class="ai-meta-chip">🏷️ Contexto: {{ summary.entities.join(' · ') }}</span>
+                <span class="ai-meta-chip">Fechas: {{ summary.dates.join(', ') }}</span>
+                <span class="ai-meta-chip">Contexto: {{ summary.entities.join(', ') }}</span>
               </div>
             </div>
           }
@@ -1306,12 +1313,12 @@
       <ion-header class="ion-no-border">
         <ion-toolbar color="primary">
           <div class="smallpdf-modal-brand" slot="start">
-            <div class="smallpdf-logo-mark">
-              <span class="sp-dot dot-red"></span>
-              <span class="sp-dot dot-yellow"></span>
-              <span class="sp-dot dot-blue"></span>
-              <span class="sp-dot dot-green"></span>
-            </div>
+            <svg class="smallpdf-logo-svg" viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+              <rect x="2" y="2" width="9" height="9" rx="2" fill="#ef4444" />
+              <rect x="13" y="2" width="9" height="9" rx="2" fill="#f59e0b" />
+              <rect x="2" y="13" width="9" height="9" rx="2" fill="#3b82f6" />
+              <rect x="13" y="13" width="9" height="9" rx="2" fill="#10b981" />
+            </svg>
             <ion-title>Todas las Herramientas Smallpdf</ion-title>
           </div>
           <ion-buttons slot="end">

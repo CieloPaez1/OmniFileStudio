@@ -84,7 +84,7 @@
   font-weight: 700;
 }
 
-.kpi-icon-dot {
+.kpi-icon-badge {
   width: 32px;
   height: 32px;
   border-radius: 10px;
@@ -369,3 +369,4 @@
   gap: 0.35rem;
   flex-shrink: 0;
 }
+

@@ -1,12 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
-
-/* ==========================================================================
-   [AVANZADA 3] INTEGRACIÓN SEPARADA DE ESTILOS DE IONIC FRAMEWORK
-   ========================================================================== */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
+ * paper: oklch(99.2% 0.003 245) · accent: oklch(55% 0.22 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: Smallpdf tabs (Tools, Files, Settings) · signature: Smallpdf Studio Suite · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, unified card containment layer and tokenized OKLCH palette */
+@import './tokens.css';
+@import './base.css';
 @import './styles-ionic.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 /* ==========================================================================
-   PLANIX DESIGN SYSTEM (SaaS Pro - Linear / Jira / Asana / Notion / Monday)
+   OMNIFILE STUDIO DESIGN SYSTEM (Hallmark Modern-Minimal)
    ========================================================================== */
 :root {
   /* LIGHT THEME (Predeterminado - Planix Claro) */
@@ -322,7 +324,7 @@ p {
   border-radius: var(--radius-btn);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -359,7 +361,7 @@ p {
   border-radius: var(--radius-btn);
   border: 1px solid var(--border-color);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
   text-decoration: none;
 }
 
@@ -388,7 +390,7 @@ p {
   background: var(--card-bg);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
   padding: 0;
 }
 
@@ -452,7 +454,7 @@ p {
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 10px;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .status-select:focus {

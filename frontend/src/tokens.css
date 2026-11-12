@@ -1,0 +1,168 @@
+/* Hallmark · tokens · theme: modern-minimal · brand: OmniFile Studio
+ * paper: oklch(99.2% 0.003 245) · accent: oklch(56% 0.22 260) · ink: oklch(18% 0.015 250)
+ * display: Plus Jakarta Sans · body: Inter · v2.0.0 */
+:root {
+  /* Spacing Scale */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 144px;
+
+  /* Typography Scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.65rem;
+  --text-3xl: 2.1rem;
+
+  --text-display-s: 1.35rem;
+  --text-display: 1.75rem;
+  --text-section: 1.25rem;
+  --text-title: 1.05rem;
+  --text-lead: 1.05rem;
+
+  /* Fonts */
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-outlier: var(--font-body);
+
+  --display-weight: 700;
+  --tracking-display: -0.025em;
+
+  /* Motion Timing & Curves (No transition: all) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 200ms;
+  --dur-long: 380ms;
+
+  /* Layout Container */
+  --container: 1360px;
+  --gutter: 24px;
+  --gap-columns: 24px;
+  --section-gap-s: 64px;
+  --section-gap: 96px;
+  --section-gap-l: 128px;
+
+  /* Z-Index Hierarchy */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-sticky-nav: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* Hallmark Paper & Ink Surfaces (OKLCH Color Space) */
+  --color-paper: oklch(99.2% 0.003 245);
+  --color-paper-2: oklch(100% 0 0);
+  --color-paper-3: oklch(96.8% 0.006 245);
+  --color-well: oklch(95% 0.008 245);
+
+  --color-ink: oklch(18% 0.018 255);
+  --color-ink-2: oklch(40% 0.022 255);
+  --color-muted: oklch(58% 0.016 250);
+  --color-subtle: oklch(76% 0.01 245);
+
+  --color-rule: oklch(90.5% 0.007 245);
+  --color-rule-strong: oklch(84% 0.012 245);
+
+  /* Brand Accents */
+  --color-accent: oklch(55% 0.22 260);
+  --color-accent-hover: oklch(49% 0.23 260);
+  --color-accent-soft: oklch(96% 0.03 260);
+  --color-accent-ink: oklch(99% 0 0);
+  --color-focus: oklch(55% 0.22 260);
+
+  /* Status Tokens */
+  --color-error: oklch(56% 0.21 28);
+  --color-error-soft: oklch(96% 0.03 28);
+  --color-success: oklch(56% 0.16 148);
+  --color-success-soft: oklch(96% 0.03 148);
+  --color-warning: oklch(68% 0.18 65);
+  --color-warning-soft: oklch(96% 0.04 65);
+  --color-info: oklch(58% 0.18 235);
+  --color-info-soft: oklch(96% 0.03 235);
+
+  /* Specialized Smallpdf Tool Signals (Harmonized) */
+  --color-tool-compress: oklch(60% 0.22 26);
+  --color-tool-convert: oklch(56% 0.21 255);
+  --color-tool-word: oklch(54% 0.20 250);
+  --color-tool-excel: oklch(54% 0.18 145);
+  --color-tool-ppt: oklch(62% 0.21 48);
+  --color-tool-organize: oklch(56% 0.22 292);
+  --color-tool-edit: oklch(60% 0.17 195);
+  --color-tool-sign: oklch(58% 0.22 338);
+  --color-tool-protect: oklch(56% 0.21 12);
+  --color-tool-ai: oklch(52% 0.22 270);
+  --color-tool-scan: oklch(54% 0.22 245);
+
+  /* Radii & Shadows */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+  --rule-hair: 1px;
+
+  --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 6px 16px rgba(15, 23, 42, 0.08), 0 12px 32px rgba(15, 23, 42, 0.05);
+  --shadow-modal: 0 16px 48px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.08);
+
+  /* Backward Compatibility Mappings for Existing Components */
+  --bg-primary: var(--color-paper);
+  --bg-secondary: var(--color-paper-3);
+  --card-bg: var(--color-paper-2);
+  --card-border: var(--color-rule);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-2);
+  --text-tertiary: var(--color-muted);
+  --border-color: var(--color-rule);
+  --border-strong: var(--color-rule-strong);
+  --primary-color: var(--color-accent);
+  --primary-hover: var(--color-accent-hover);
+  --primary-soft: var(--color-accent-soft);
+  --danger-color: var(--color-error);
+  --danger-soft: var(--color-error-soft);
+  --success-color: var(--color-success);
+  --success-soft: var(--color-success-soft);
+  --warning-color: var(--color-warning);
+  --warning-soft: var(--color-warning-soft);
+}
+
+/* Dark Mode Tokens (Systematic & High-Contrast) */
+[data-theme="dark"] {
+  --color-paper: oklch(14% 0.015 255);
+  --color-paper-2: oklch(18% 0.018 255);
+  --color-paper-3: oklch(22% 0.02 255);
+  --color-well: oklch(12% 0.015 255);
+
+  --color-ink: oklch(96% 0.005 245);
+  --color-ink-2: oklch(78% 0.012 245);
+  --color-muted: oklch(60% 0.015 245);
+  --color-subtle: oklch(40% 0.018 255);
+
+  --color-rule: oklch(26% 0.018 255);
+  --color-rule-strong: oklch(34% 0.02 255);
+
+  --color-accent: oklch(68% 0.20 260);
+  --color-accent-hover: oklch(74% 0.18 260);
+  --color-accent-soft: oklch(24% 0.04 260);
+  --color-accent-ink: oklch(14% 0.02 260);
+
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.7);
+}

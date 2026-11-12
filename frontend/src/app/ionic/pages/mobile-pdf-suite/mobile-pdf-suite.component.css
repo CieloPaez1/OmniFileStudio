@@ -51,7 +51,7 @@
   font-weight: 700;
   cursor: pointer;
   margin-left: 0.75rem;
-  transition: all 0.18s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .smallpdf-tools-dropdown-btn:hover {
@@ -90,7 +90,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .sp-subbar-link:hover {
@@ -263,21 +263,21 @@
   margin-bottom: 1.15rem;
 }
 
-.format-family-card {
+.format-family-panel {
   padding: 0.95rem 1.05rem;
   border-radius: 18px;
   background: var(--omni-surface-muted, #f8fafc);
   border: 1px solid var(--omni-border-subtle);
 }
 
-.format-family-card strong {
+.format-family-panel strong {
   display: block;
   font-size: 0.86rem;
   color: var(--omni-text-main);
   margin-bottom: 0.2rem;
 }
 
-.format-family-card p {
+.format-family-panel p {
   margin: 0 0 0.65rem;
   font-size: 0.75rem;
   color: var(--omni-text-muted);
@@ -487,7 +487,7 @@
   border: 1.5px solid var(--omni-border-subtle);
   text-align: left;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .selectable-file-pill.selected {
@@ -570,7 +570,7 @@
   color: var(--omni-text-main);
   text-align: left;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .selector-card-option strong {
@@ -603,7 +603,7 @@
   font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .target-fmt-pill.selected {
@@ -717,7 +717,7 @@
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .ocr-filter-btn ion-icon {
@@ -785,7 +785,7 @@
   color: #6366f1;
 }
 
-.ocr-results-card {
+.ocr-results-panel {
   margin-top: 1.3rem;
   background: var(--omni-surface-muted, #f8fafc);
   border: 1px solid var(--omni-border, #e2e8f0);
@@ -863,7 +863,7 @@
   border: 1px solid var(--omni-border, #e2e8f0);
   background: var(--omni-surface, #ffffff);
   color: var(--omni-text, #0f172a);
-  transition: all 0.2s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .ocr-tool-btn.primary {
@@ -968,7 +968,7 @@
   text-align: left;
   cursor: pointer;
   box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .sp-tool-action-card:hover {
@@ -1089,7 +1089,7 @@
   font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
 .sp-choice-btn.active {
@@ -1111,7 +1111,7 @@
   gap: 0.65rem;
 }
 
-.rotate-option-card {
+.rotate-option-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1122,10 +1122,10 @@
   border: 1.5px solid #e2e8f0;
   background: #ffffff;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
-.rotate-option-card.selected {
+.rotate-option-btn.selected {
   border-color: #8b5cf6;
   background: #f5f3ff;
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.18);
@@ -1140,12 +1140,12 @@
 .rotate-180 { transform: rotate(180deg); }
 .rotate-270 { transform: rotate(270deg); }
 
-.rotate-option-card strong {
+.rotate-option-btn strong {
   font-size: 0.82rem;
   color: #1e1b4b;
 }
 
-.rotate-option-card small {
+.rotate-option-btn small {
   font-size: 0.68rem;
   color: #6b7280;
 }
@@ -1312,5 +1312,7 @@
   --padding-start: 12px;
   font-size: 0.85rem;
 }
+
+
 
 

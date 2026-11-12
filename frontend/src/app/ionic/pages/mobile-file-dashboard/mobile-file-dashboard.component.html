@@ -63,7 +63,7 @@
     <div class="kpi-card" (click)="goTo('/mobile/repository')">
       <div class="kpi-top">
         <span class="kpi-label">Total Archivos</span>
-        <span class="kpi-icon-dot dot-indigo">
+        <span class="kpi-icon-badge dot-indigo">
           <ion-icon name="folder-open-outline"></ion-icon>
         </span>
       </div>
@@ -74,7 +74,7 @@
     <div class="kpi-card" (click)="goTo('/mobile/pdf-suite')">
       <div class="kpi-top">
         <span class="kpi-label">Documentos PDF</span>
-        <span class="kpi-icon-dot dot-red">
+        <span class="kpi-icon-badge dot-red">
           <ion-icon name="document-text-outline"></ion-icon>
         </span>
       </div>
@@ -85,7 +85,7 @@
     <div class="kpi-card" (click)="goTo('/mobile/scanner')">
       <div class="kpi-top">
         <span class="kpi-label">Imágenes</span>
-        <span class="kpi-icon-dot dot-blue">
+        <span class="kpi-icon-badge dot-blue">
           <ion-icon name="image-outline"></ion-icon>
         </span>
       </div>
@@ -96,7 +96,7 @@
     <div class="kpi-card" (click)="goToTranslator()">
       <div class="kpi-top">
         <span class="kpi-label">Traductor Docs</span>
-        <span class="kpi-icon-dot dot-emerald">
+        <span class="kpi-icon-badge dot-emerald">
           <ion-icon name="language-outline"></ion-icon>
         </span>
       </div>
@@ -210,9 +210,18 @@
                 <strong class="recent-title">{{ f.name }}</strong>
                 <div class="recent-meta">
                   <span class="meta-tag">{{ f.tag || 'General' }}</span>
-                  <span>· {{ fileService.formatBytes(f.size) }}</span>
-                  @if (f.signed) { <span class="meta-pill signed">✍️ Firmado</span> }
-                  @if (f.compressed) { <span class="meta-pill compressed">🗜️ Comprimido</span> }
+                  <span class="meta-sep">/</span>
+                  <span>{{ fileService.formatBytes(f.size) }}</span>
+                  @if (f.signed) {
+                    <span class="meta-pill signed">
+                      <ion-icon name="create-outline" aria-hidden="true"></ion-icon> Firmado
+                    </span>
+                  }
+                  @if (f.compressed) {
+                    <span class="meta-pill compressed">
+                      <ion-icon name="archive-outline" aria-hidden="true"></ion-icon> Comprimido
+                    </span>
+                  }
                 </div>
               </div>
             </div>
@@ -239,3 +248,4 @@
   </app-file-preview-modal>
   </div>
 </ion-content>
+

@@ -14,9 +14,15 @@
             <div class="preview-title-col">
               <ion-title class="preview-title">{{ current.name }}</ion-title>
               <span class="preview-subtitle">
-                {{ current.tag || 'Trabajo' }} · {{ fileService.formatBytes(current.size) }}
-                @if (current.pageCount) { · {{ current.pageCount }} pág. }
-                · PostgreSQL
+                <span>{{ current.tag || 'Trabajo' }}</span>
+                <span class="meta-sep">/</span>
+                <span>{{ fileService.formatBytes(current.size) }}</span>
+                @if (current.pageCount) {
+                  <span class="meta-sep">/</span>
+                  <span>{{ current.pageCount }} pág.</span>
+                }
+                <span class="meta-sep">/</span>
+                <span class="backend-tag">Base de datos</span>
               </span>
             </div>
           </div>
@@ -154,9 +160,12 @@
 
               <h1 class="word-doc-title">{{ current.name }}</h1>
               <div class="word-doc-meta">
-                <span>Fecha: {{ current.createdAt | slice:0:10 }}</span> ·
-                <span>Tamaño: {{ fileService.formatBytes(current.size) }}</span> ·
-                <span>Páginas: {{ current.pageCount || 3 }}</span> ·
+                <span>Fecha: {{ current.createdAt | slice:0:10 }}</span>
+                <span class="meta-sep">/</span>
+                <span>Tamaño: {{ fileService.formatBytes(current.size) }}</span>
+                <span class="meta-sep">/</span>
+                <span>Páginas: {{ current.pageCount || 3 }}</span>
+                <span class="meta-sep">/</span>
                 <span class="word-db-pill">PostgreSQL</span>
               </div>
 
@@ -263,12 +272,17 @@
             <div class="image-canvas-box">
               <img
                 [src]="previewImageSource()"
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>"
                 [alt]="current.name"
                 [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
                 [style.filter]="cssImageFilter()" />
             </div>
             <p class="image-caption">
-              {{ current.name }} · {{ fileService.formatBytes(current.size) }} · Filtro: <strong>{{ imageFilter() | uppercase }}</strong> · BD: PostgreSQL
+              <span>{{ current.name }}</span>
+              <span class="meta-sep">/</span>
+              <span>{{ fileService.formatBytes(current.size) }}</span>
+              <span class="meta-sep">/</span>
+              <span>Filtro: <strong>{{ imageFilter() }}</strong></span>
             </p>
           </div>
         }

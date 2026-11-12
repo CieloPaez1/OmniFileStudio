@@ -18,7 +18,7 @@
           <ion-icon name="create-outline"></ion-icon>
         </div>
         <div class="edit-banner-text">
-          <div class="edit-banner-pill">ABM · MODIFICACIÓN</div>
+          <div class="edit-banner-pill">Modificación de metadatos</div>
           <strong>Editando metadatos de {{ editingFile()?.name || 'archivo' }}</strong>
           <p>Modificá el nombre, la carpeta/etiqueta y la descripción. Los cambios se sincronizan de inmediato.</p>
         </div>
@@ -33,8 +33,8 @@
       <div class="privacy-text-wrap">
         <div class="privacy-badge-row">
           <span class="privacy-pill">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-            PRIVACY-FIRST · 100% CLIENT-SIDE
+            <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            Procesamiento seguro en cliente (Privacy-First)
           </span>
         </div>
         <strong>{{ fileService.privacyStatement }}.</strong>

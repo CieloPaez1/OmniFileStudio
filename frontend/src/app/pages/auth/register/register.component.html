@@ -1,16 +1,15 @@
 <div class="auth-card">
   <div class="auth-header">
-    <div class="brand-badge">
-      <svg lucideSparkles class="sparkle-icon"></svg>
-      <span>Smallpdf Studio</span>
+    <div class="auth-logo-symbol">
+      <svg lucideSparkles class="sparkle-icon" aria-hidden="true"></svg>
     </div>
     <h1>Crear cuenta</h1>
-    <p class="subtitle">Registrate para comenzar a organizar tus documentos</p>
+    <p class="subtitle">Registrate para comenzar a organizar tus documentos en OmniFile</p>
   </div>
 
   @if (error()) {
-    <div class="auth-alert danger">
-      <svg lucideAlertCircle class="alert-icon"></svg>
+    <div class="auth-alert danger" role="alert">
+      <svg lucideAlertCircle class="alert-icon" aria-hidden="true"></svg>
       <span>{{ error() }}</span>
     </div>
   }
@@ -19,7 +18,7 @@
     <div class="form-group">
       <label for="name">Nombre Completo</label>
       <div class="input-wrapper" [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched">
-        <svg lucideUser class="input-icon"></svg>
+        <svg lucideUser class="input-icon" aria-hidden="true"></svg>
         <input
           id="name"
           type="text"
@@ -39,7 +38,7 @@
     <div class="form-group">
       <label for="email">Correo electrónico</label>
       <div class="input-wrapper" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
-        <svg lucideMail class="input-icon"></svg>
+        <svg lucideMail class="input-icon" aria-hidden="true"></svg>
         <input
           id="email"
           type="email"
@@ -59,7 +58,7 @@
     <div class="form-group">
       <label for="password">Contraseña</label>
       <div class="input-wrapper" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
-        <svg lucideLock class="input-icon"></svg>
+        <svg lucideLock class="input-icon" aria-hidden="true"></svg>
         <input
           id="password"
           [type]="showPassword() ? 'text' : 'password'"
@@ -75,9 +74,9 @@
           aria-label="Alternar visibilidad de contraseña"
         >
           @if (showPassword()) {
-            <svg lucideEyeOff class="eye-icon"></svg>
+            <svg lucideEyeOff class="eye-icon" aria-hidden="true"></svg>
           } @else {
-            <svg lucideEye class="eye-icon"></svg>
+            <svg lucideEye class="eye-icon" aria-hidden="true"></svg>
           }
         </button>
       </div>
@@ -95,11 +94,11 @@
       [disabled]="form.invalid || loading()"
     >
       @if (loading()) {
-        <span class="spinner"></span>
+        <span class="spinner" aria-hidden="true"></span>
         <span>Creando cuenta...</span>
       } @else {
         <span>Crear cuenta</span>
-        <svg lucideArrowRight class="btn-icon"></svg>
+        <svg lucideArrowRight class="btn-icon" aria-hidden="true"></svg>
       }
     </button>
   </form>

@@ -108,7 +108,8 @@
   }
 
   <p class="sliding-hint">
-    💡 <strong>Tip:</strong> Tocá un archivo para abrir su <strong>Vista Previa</strong> o deslizalo (<code>ion-item-sliding</code>) para <strong>Archivar</strong>, <strong>Compartir</strong> o <strong>Convertir</strong>.
+    <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+    <span><strong>Tip:</strong> Tocá un archivo para abrir su <strong>Vista Previa</strong> o deslizalo para <strong>Archivar</strong>, <strong>Compartir</strong> o <strong>Descargar</strong>.</span>
   </p>
 
   <!-- ==================== VISTA LISTA CON ION-ITEM-SLIDING ==================== -->
@@ -146,10 +147,22 @@
               <h2 class="file-row-title">{{ f.name }}</h2>
               <p class="file-row-meta">
                 <span class="row-tag-chip">{{ f.tag || 'Trabajo' }}</span>
-                <span>· {{ fileService.formatBytes(f.size) }}</span>
-                @if (f.pageCount) { <span>· {{ f.pageCount }} págs.</span> }
-                @if (f.signed) { <span class="status-mini signed">✍️ Firmado</span> }
-                @if (f.compressed) { <span class="status-mini compressed">🗜️ Comprimido</span> }
+                <span class="meta-sep">/</span>
+                <span>{{ fileService.formatBytes(f.size) }}</span>
+                @if (f.pageCount) {
+                  <span class="meta-sep">/</span>
+                  <span>{{ f.pageCount }} págs.</span>
+                }
+                @if (f.signed) {
+                  <span class="status-mini signed">
+                    <ion-icon name="create-outline" aria-hidden="true"></ion-icon> Firmado
+                  </span>
+                }
+                @if (f.compressed) {
+                  <span class="status-mini compressed">
+                    <ion-icon name="archive-outline" aria-hidden="true"></ion-icon> Comprimido
+                  </span>
+                }
               </p>
               @if (f.description) {
                 <p class="item-desc">{{ f.description }}</p>

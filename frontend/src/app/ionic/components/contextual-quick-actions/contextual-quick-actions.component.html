@@ -16,8 +16,13 @@
             <div class="sheet-title-wrap">
               <ion-title class="sheet-file-name">{{ selected.name }}</ion-title>
               <span class="sheet-file-meta">
-                {{ selected.tag || 'General' }} · {{ fileService.formatBytes(selected.size) }}
-                @if (selected.pageCount) { · {{ selected.pageCount }} pág. }
+                <span>{{ selected.tag || 'General' }}</span>
+                <span class="meta-sep">/</span>
+                <span>{{ fileService.formatBytes(selected.size) }}</span>
+                @if (selected.pageCount) {
+                  <span class="meta-sep">/</span>
+                  <span>{{ selected.pageCount }} pág.</span>
+                }
               </span>
             </div>
           </div>
