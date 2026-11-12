@@ -96,7 +96,7 @@
         @if (showBinaryInspector()) {
           <div class="binary-stream-box">
             <div class="binary-stream-head">
-              <strong>🔍 Inspector de Flujo Binario y Persistencia BD</strong>
+              <strong>Inspector de Flujo Binario y Persistencia BD</strong>
               <span>{{ current.mimeType }}</span>
             </div>
             <pre>{{ binaryStreamSummary() }}</pre>
@@ -139,6 +139,7 @@
                   #pdfCanvasRenderer
                   width="560"
                   height="380"
+                  aria-label="Renderizador de vista previa PDF"
                   class="pdf-html5-canvas">
                 </canvas>
               </div>
@@ -238,7 +239,7 @@
                   <span>Diapositiva {{ activePptSlideIndex() + 1 }} de {{ pptSlides().length }}</span>
                 </div>
 
-                <h2 class="ppt-slide-title">{{ pptSlides()[activePptSlideIndex()].title }}</h2>
+                <h2 class="ppt-slide-title" style="overflow-wrap: break-word; min-width: 0;">{{ pptSlides()[activePptSlideIndex()].title }}</h2>
 
                 <ul class="ppt-slide-bullets">
                   @for (bullet of pptSlides()[activePptSlideIndex()].bullets; track $index) {
@@ -292,7 +293,7 @@
           <div class="data-preview-card" [style.transform]="'scale(' + (zoomLevel() / 100) + ')'">
             <div class="data-preview-header">
               <div class="data-preview-title">
-                <strong>📊 Planilla CSV ({{ csvTableRows().length }} filas)</strong>
+                <strong>Planilla CSV ({{ csvTableRows().length }} filas)</strong>
                 <span>{{ current.name }}</span>
               </div>
               <ion-button size="small" fill="clear" color="primary" (click)="copyTextContent()">
@@ -328,7 +329,7 @@
           <div class="text-preview-card">
             <div class="data-preview-header">
               <div class="data-preview-title">
-                <strong>📝 Vista Previa de Contenido (.{{ current.ext | uppercase }})</strong>
+                <strong>Vista Previa de Contenido (.{{ current.ext | uppercase }})</strong>
                 <span>{{ fileService.formatBytes(current.size) }}</span>
               </div>
               <ion-button size="small" fill="clear" color="primary" (click)="copyTextContent()">

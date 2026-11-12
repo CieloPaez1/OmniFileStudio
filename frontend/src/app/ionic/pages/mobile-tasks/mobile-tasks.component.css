@@ -1,22 +1,48 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
+ * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.220 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V4 · weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .mobile-viewport {
   --background: transparent;
 }
 
 ion-segment {
-  --background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+  --background: var(--bg-secondary, var(--color-rule));
   border-radius: 12px;
-  margin: 6px 14px;
+  margin: var(--space-xs) var(--space-md);
 }
 
 .offline-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   margin: 12px 16px 4px 16px;
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.25);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--space-md);
+  background: var(--color-rule);
+  border: 1px solid var(--color-rule);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -32,11 +58,11 @@ ion-segment {
 }
 
 .tasks-container {
-  padding-bottom: 90px;
+  padding-bottom: var(--space-3xl);
 }
 
 .tasks-card-list {
-  background: var(--card-bg, rgba(255, 255, 255, 0.7));
+  background: var(--card-bg, var(--color-rule));
   border-radius: 20px;
   margin: 12px 16px;
   overflow: hidden;
@@ -69,5 +95,13 @@ ion-segment {
 }
 
 .tasks-fab {
-  margin-bottom: 58px;
+  margin-bottom: var(--space-2xl);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

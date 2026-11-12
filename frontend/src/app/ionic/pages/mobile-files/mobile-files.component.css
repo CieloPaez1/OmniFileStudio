@@ -1,3 +1,29 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
+ * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.220 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V4 · weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .mobile-upload-box {
   display: flex;
   flex-direction: column;
@@ -5,7 +31,7 @@
   justify-content: center;
   gap: 0.45rem;
   padding: 1.5rem;
-  border: 2px dashed var(--ion-color-primary, #4f46e5);
+  border: 2px dashed var(--ion-color-primary, var(--color-accent-hover));
   border-radius: 12px;
   cursor: pointer;
   text-align: center;
@@ -27,16 +53,16 @@
 
 .mobile-photo-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
   margin-top: 1rem;
 }
 
 .mobile-photo-item {
-  border: 1px solid var(--border-color, #cbd5e1);
-  border-radius: 10px;
+  border: 1px solid var(--border-color, var(--color-rule-strong));
+  border-radius: var(--space-sm);
   overflow: hidden;
-  background: #0f172a;
+  background: var(--color-ink);
 }
 
 .mobile-photo-item img {
@@ -50,14 +76,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 4px 8px;
-  background: #1e293b;
-  color: #fff;
+  background: var(--color-ink);
+  color: var(--color-accent);
   font-size: 0.75rem;
 }
 
 .mobile-photo-bar button {
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--color-accent);
   font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

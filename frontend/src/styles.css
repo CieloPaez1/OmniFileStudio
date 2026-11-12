@@ -1,7 +1,7 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
- * paper: oklch(99.2% 0.003 245) · accent: oklch(55% 0.22 260) · display: Plus Jakarta Sans · body: Inter
- * nav: Mobile tabs (Tools, Files, Settings) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, unified card containment layer and tokenized OKLCH palette */
+ * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.220 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V4 · weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
 @import './tokens.css';
 @import './base.css';
 @import './styles-ionic.css';
@@ -559,36 +559,34 @@ label, .form-label {
 }
 
 .eyebrow {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--primary-color);
-  margin-bottom: 4px;
+  color: var(--color-accent);
+  margin-bottom: var(--space-2xs);
 }
 
 /* ============================================================================
-   [ESTILO OMNIFILE STUDIO / SMALLPDF] CABECERA GLOBAL DEEP NAVY #081026
+   [ESTILO OMNIFILE STUDIO] CABECERA GLOBAL DEEP NAVY
    ============================================================================ */
 .sp-tools-navy-toolbar {
-  --background: #081026 !important;
-  background: #081026 !important;
-  --color: #ffffff !important;
-  color: #ffffff !important;
+  --background: var(--color-navy) !important;
+  background: var(--color-navy) !important;
+  --color: var(--color-navy-ink) !important;
+  color: var(--color-navy-ink) !important;
   min-height: 56px;
-  padding-inline: 0.5rem;
+  padding-inline: var(--space-xs);
 }
 
 .sp-tools-navy-toolbar ion-title {
-  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-navy-ink);
+  letter-spacing: var(--tracking-display);
 }
 
 .sp-toolbar-menu-btn {
-  --color: #ffffff !important;
-  color: #ffffff !important;
+  --color: var(--color-navy-ink) !important;
+  color: var(--color-navy-ink) !important;
 }
 

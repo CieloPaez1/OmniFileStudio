@@ -22,7 +22,7 @@
   @if (lastCreatedPdf(); as createdBanner) {
     <div class="omni-success-feedback">
       <div class="omni-success-tick-circle">
-        <svg viewBox="0 0 24 24">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       </div>
@@ -60,15 +60,25 @@
           @for (p of photos(); track p.id; let idx = $index) {
             <div class="scanner-page-card">
               <div class="scanner-img-wrap">
-                <img [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
                 <span class="scanner-page-num">Pág. {{ idx + 1 }}</span>
               </div>
               <div class="scanner-controls">
-                <button type="button" (click)="movePhoto(idx, -1)" title="Subir">⬅️</button>
-                <button type="button" (click)="rotatePhoto(idx)" title="Rotar 90°">↻</button>
-                <button type="button" (click)="movePhoto(idx, 1)" title="Bajar">➡️</button>
-                <button type="button" class="btn-ocr-photo" (click)="runOcrOnPhoto(p)" title="Extraer texto OCR de esta foto">🔍 OCR</button>
-                <button type="button" (click)="removePhoto(idx)" title="Eliminar">🗑️</button>
+                <button type="button" (click)="movePhoto(idx, -1)" title="Subir" aria-label="Subir página">
+                  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" (click)="rotatePhoto(idx)" title="Rotar 90°" aria-label="Rotar 90 grados">
+                  <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" (click)="movePhoto(idx, 1)" title="Bajar" aria-label="Bajar página">
+                  <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" class="btn-ocr-photo" (click)="runOcrOnPhoto(p)" title="Extraer texto OCR de esta foto">
+                  <ion-icon name="scan-outline" aria-hidden="true"></ion-icon> OCR
+                </button>
+                <button type="button" (click)="removePhoto(idx)" title="Eliminar" aria-label="Eliminar página">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                </button>
               </div>
             </div>
           }
@@ -82,15 +92,17 @@
     <ion-card class="scanner-ocr-card">
       <ion-card-content style="display: flex; align-items: center; gap: 10px; padding: 14px;">
         <ion-spinner name="crescent" color="primary"></ion-spinner>
-        <span style="font-size: 0.85rem; font-weight: 600;">Extrayendo caracteres y palabras con motor OCR...</span>
+        <span style="font-size: 0.85rem; font-weight: 600;">Extrayendo caracteres y palabras con motor OCR…</span>
       </ion-card-content>
     </ion-card>
   } @else if (activeOcrResult(); as ocrRes) {
-    <ion-card class="scanner-ocr-card" style="border: 1px solid #818cf8; background: var(--omni-surface, #ffffff);">
-      <ion-card-header style="padding-bottom: 6px;">
+    <ion-card class="scanner-ocr-card" style="border: var(--rule-hair) solid var(--color-accent); background: var(--color-paper-2);">
+      <ion-card-header style="padding-bottom: var(--space-xs);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <ion-card-subtitle style="color: #6366f1; font-weight: 800;">TEXTO EXTRAÍDO CON OCR ({{ ocrRes.wordsCount }} palabras)</ion-card-subtitle>
-          <button type="button" (click)="closeOcrModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--omni-text-muted, #64748b);">✕</button>
+          <ion-card-subtitle style="color: var(--color-accent); font-weight: 700;">Texto extraído con OCR ({{ ocrRes.wordsCount }} palabras)</ion-card-subtitle>
+          <button type="button" (click)="closeOcrModal()" aria-label="Cerrar" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--color-ink-2);">
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
         </div>
         <ion-card-title style="font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
           <ion-icon name="checkmark-circle" color="success"></ion-icon>
@@ -99,7 +111,7 @@
       </ion-card-header>
       <ion-card-content>
         <textarea
-          style="width: 100%; border-radius: 10px; border: 1px solid var(--omni-border, #e2e8f0); padding: 10px; font-size: 0.84rem; line-height: 1.45; background: var(--omni-surface-muted, #f8fafc); color: var(--omni-text, #0f172a);"
+          style="width: 100%; border-radius: var(--radius-sm); border: var(--rule-hair) solid var(--color-rule); padding: var(--space-sm); font-size: var(--text-sm); line-height: 1.45; background: var(--color-paper-3); color: var(--color-ink);"
           rows="5"
           [(ngModel)]="ocrRes.text"></textarea>
         <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
@@ -118,13 +130,13 @@
 
   <!-- Tarjeta del último PDF generado con botones de Compartir Nativamente y WhatsApp -->
   @if (lastCreatedPdf(); as created) {
-    <ion-card style="border: 1px solid #86efac; background: #f0fdf4;">
+    <ion-card style="border: var(--rule-hair) solid var(--color-success-border); background: var(--color-success-soft);">
       <ion-card-header>
-        <ion-card-subtitle style="color: #047857;">GUARDADO EN &#64;CAPACITOR/FILESYSTEM (Directory.Data)</ion-card-subtitle>
+        <ion-card-subtitle style="color: var(--color-success-ink);">Guardado en &#64;capacitor/filesystem (Directory.Data)</ion-card-subtitle>
         <ion-card-title style="font-size: 1rem;">{{ created.name }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p style="margin: 0 0 10px; font-size: 0.82rem; color: #065f46;">
+        <p style="margin: 0 0 var(--space-sm); font-size: var(--text-xs); color: var(--color-success-ink);">
           URI Dispositivo: <code>{{ nativeService.lastSavedUri() }}</code>
         </p>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">

@@ -2,8 +2,8 @@
 
   <!-- MENÚ LATERAL DE NAVEGACIÓN -->
   <ion-menu contentId="mobile-main-content">
-    <ion-header>
-      <ion-toolbar color="primary">
+    <ion-header class="ion-no-border">
+      <ion-toolbar class="sp-tools-navy-toolbar">
         <ion-title>OmniFile Studio</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -12,44 +12,44 @@
       <ion-list>
         <ion-item button (click)="navegarDesdeMenu('/mobile/dashboard')">
           <ion-icon name="home-outline" slot="start" color="primary"></ion-icon>
-          <ion-label>1. Inicio / Panel Principal</ion-label>
+          <ion-label>Inicio y Resumen</ion-label>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/mobile/pdf-suite')">
           <ion-icon name="construct-outline" slot="start" color="secondary"></ion-icon>
-          <ion-label>2. Catálogo de Herramientas</ion-label>
+          <ion-label>Catálogo de Herramientas</ion-label>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/mobile/repository')">
           <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
-          <ion-label>3. Repositorio de Archivos</ion-label>
+          <ion-label>Repositorio de Archivos</ion-label>
           <ion-badge color="primary" slot="end">{{ fileService.totalFiles() }}</ion-badge>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/mobile/scanner')">
           <ion-icon name="camera-outline" slot="start" color="tertiary"></ion-icon>
-          <ion-label>4. Escáner Cámara a PDF</ion-label>
+          <ion-label>Escáner Cámara a PDF</ion-label>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/mobile/file-form')">
           <ion-icon name="add-circle-outline" slot="start" color="success"></ion-icon>
-          <ion-label>5. Subir Archivo (Formulario)</ion-label>
+          <ion-label>Subir Archivo</ion-label>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/mobile/profile')">
           <ion-icon name="settings-outline" slot="start" color="medium"></ion-icon>
-          <ion-label>6. Ajustes y Perfil</ion-label>
+          <ion-label>Ajustes y Perfil</ion-label>
         </ion-item>
 
         <ion-item button (click)="navegarDesdeMenu('/files')">
           <ion-icon name="desktop-outline" slot="start" color="medium"></ion-icon>
-          <ion-label>7. Vista Escritorio Web</ion-label>
+          <ion-label>Vista Escritorio Web</ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
   </ion-menu>
 
-  <!-- CONTENEDOR PRINCIPAL DE LAS 4 PESTAÑAS (TABS) -->
+  <!-- CONTENEDOR PRINCIPAL DE LAS 4 PESTAÑAS -->
   <div class="ion-page" id="mobile-main-content">
     <ion-tabs>
       <ion-tab-bar slot="bottom" class="smallpdf-bottom-tabbar">
@@ -60,25 +60,25 @@
           <ion-label>Inicio</ion-label>
         </ion-tab-button>
 
-        <!-- Pestaña 2: Herramientas (Ícono de cuadrícula multicolor Smallpdf) -->
+        <!-- Pestaña 2: Herramientas (Ícono SVG de 4 cuadrantes) -->
         <ion-tab-button tab="tools" href="/mobile/pdf-suite">
-          <div class="sp-tab-grid-icon" aria-hidden="true">
-            <span class="sp-tg-dot dot-red"></span>
-            <span class="sp-tg-dot dot-yellow"></span>
-            <span class="sp-tg-dot dot-blue"></span>
-            <span class="sp-tg-dot dot-green"></span>
-          </div>
+          <svg class="sp-tab-grid-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="2" width="9" height="9" rx="2.5" class="tile-red" />
+            <rect x="13" y="2" width="9" height="9" rx="2.5" class="tile-yellow" />
+            <rect x="2" y="13" width="9" height="9" rx="2.5" class="tile-blue" />
+            <rect x="13" y="13" width="9" height="9" rx="2.5" class="tile-green" />
+          </svg>
           <ion-label>Herramientas</ion-label>
         </ion-tab-button>
 
-        <!-- Pestaña 3: Archivos (Repositorio de Documentos) -->
+        <!-- Pestaña 3: Archivos -->
         <ion-tab-button tab="files" href="/mobile/repository">
           <ion-icon name="folder-outline"></ion-icon>
           <ion-label>Archivos</ion-label>
           <ion-badge color="primary">{{ fileService.totalFiles() }}</ion-badge>
         </ion-tab-button>
 
-        <!-- Pestaña 4: Ajustes (Configuración y Perfil) -->
+        <!-- Pestaña 4: Ajustes -->
         <ion-tab-button tab="settings" href="/mobile/profile">
           <ion-icon name="settings-outline"></ion-icon>
           <ion-label>Ajustes</ion-label>

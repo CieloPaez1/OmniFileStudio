@@ -145,11 +145,15 @@
           <div class="mobile-photo-grid">
             @for (p of capturedPhotos(); track p.id; let idx = $index) {
               <div class="mobile-photo-item">
-                <img [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" [src]="p.dataUrl" [style.transform]="'rotate(' + p.rotation + 'deg)'" [alt]="p.name" />
                 <div class="mobile-photo-bar">
                   <span>Pág. {{ idx + 1 }}</span>
-                  <button type="button" (click)="rotateCapturedPhoto(idx)">↻</button>
-                  <button type="button" (click)="removeCapturedPhoto(idx)">✖</button>
+                  <button type="button" (click)="rotateCapturedPhoto(idx)" aria-label="Rotar">
+                    <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+                  </button>
+                  <button type="button" (click)="removeCapturedPhoto(idx)" aria-label="Eliminar">
+                    <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+                  </button>
                 </div>
               </div>
             }

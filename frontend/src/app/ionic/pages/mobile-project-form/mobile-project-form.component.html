@@ -22,7 +22,7 @@
     <!-- [CLASE 8] Foto de Perfil / Portada del Proyecto con @capacitor/camera -->
     <div class="project-photo-box" (click)="elegirFotoProyecto()">
       @if (photoUrl()) {
-        <img [src]="photoUrl()" alt="Foto del proyecto" class="project-photo-preview" />
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" [src]="photoUrl()" alt="Foto del proyecto" class="project-photo-preview" />
       } @else {
         <div class="project-photo-placeholder">
           <ion-icon name="camera-outline"></ion-icon>

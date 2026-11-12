@@ -1,15 +1,41 @@
+/* Hallmark ? shape: app screen ? genre: modern-minimal ? theme: brand ? redesign: full
+ * paper: oklch(96.8% 0.008 250) ? accent: oklch(53.5% 0.220 260) ? display: Plus Jakarta Sans ? body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) ? signature: OmniFile Studio ? contrast: pass ? v2.0.0 */
+/* Hallmark ? pre-emit critique: P5 H4 E5 S4 R5 V4 ? weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .preview-header-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-left: 10px;
+  gap: var(--space-sm);
+  padding-left: var(--space-sm);
   max-width: 68%;
 }
 
 .preview-ext-badge {
   font-weight: 800;
-  color: #312e81;
-  padding: 5px 8px;
+  color: var(--color-accent);
+  padding: var(--space-2xs) var(--space-xs);
   border-radius: 8px;
 }
 
@@ -34,8 +60,8 @@
 }
 
 .viewer-controls-bar {
-  --background: var(--ion-card-background, #ffffff);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  --background: var(--ion-card-background, var(--color-paper-2));
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .viewer-controls-row {
@@ -44,7 +70,7 @@
   justify-content: space-between;
   padding: 4px 8px;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .zoom-controls {
@@ -56,7 +82,7 @@
 .zoom-label {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--ion-text-color, #334155);
+  color: var(--ion-text-color, var(--color-ink-2));
   min-width: 44px;
   text-align: center;
 }
@@ -64,22 +90,22 @@
 .viewer-right-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .preview-stage {
-  --background: var(--ion-background-color, #0f172a);
+  --background: var(--ion-background-color, var(--color-ink));
 }
 
 /* Inspector de flujo binario */
 .binary-stream-box {
-  background: #090d16;
-  color: #38bdf8;
-  border-radius: 14px;
+  background: var(--color-accent);
+  color: var(--color-accent);
+  border-radius: var(--space-md);
   padding: 12px 16px;
-  margin-bottom: 14px;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  margin-bottom: var(--space-md);
+  border: 1px solid var(--color-rule);
+  box-shadow: 0 8px 20px var(--color-rule);
 }
 
 .binary-stream-head {
@@ -87,14 +113,14 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.76rem;
-  color: #e2e8f0;
-  margin-bottom: 6px;
+  color: var(--color-rule);
+  margin-bottom: var(--space-xs);
 }
 
 .binary-stream-box pre {
   margin: 0;
   font-size: 0.73rem;
-  font-family: 'Consolas', monospace;
+  font-family: var(--font-mono);
   white-space: pre-wrap;
   line-height: 1.45;
 }
@@ -111,10 +137,10 @@
 .embedded-pdf-frame-wrap {
   width: 100%;
   max-width: 720px;
-  background: var(--ion-card-background, #ffffff);
+  background: var(--ion-card-background, var(--color-paper-2));
   border-radius: 18px;
-  padding: 10px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  padding: var(--space-sm);
+  box-shadow: 0 12px 36px var(--color-rule);
   transition: transform 0.2s ease, filter 0.2s ease;
   transform-origin: top center;
 }
@@ -125,7 +151,7 @@
   align-items: center;
   font-size: 0.76rem;
   font-weight: 700;
-  color: var(--ion-text-color, #475569);
+  color: var(--ion-text-color, var(--color-ink-2));
   margin-bottom: 8px;
   padding: 0 4px;
 }
@@ -147,16 +173,16 @@
 .frame-caption-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .embedded-pdf-iframe {
   width: 100%;
   height: 58vh;
   min-height: 420px;
-  border: 1px solid rgba(203, 213, 225, 0.7);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--color-paper-2);
 }
 
 .canvas-sheet-wrap {
@@ -164,11 +190,11 @@
   max-width: 560px;
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(203, 213, 225, 0.75);
+  box-shadow: 0 14px 34px var(--color-rule);
+  border: 1px solid var(--color-rule);
   transition: transform 0.2s ease, filter 0.2s ease;
   transform-origin: top center;
-  background: #ffffff;
+  background: var(--color-paper-2);
 }
 
 .pdf-html5-canvas {
@@ -189,12 +215,12 @@
 .word-page-sheet {
   width: 100%;
   max-width: 620px;
-  background: #ffffff;
-  color: #1e293b;
-  border-radius: 14px;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  border-radius: var(--space-md);
   padding: 32px 28px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 16px 40px var(--color-rule);
+  border: 1px solid var(--color-rule);
 }
 
 .word-page-header {
@@ -207,17 +233,17 @@
 .word-doc-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 0.75rem;
   font-weight: 800;
-  color: #2563eb;
-  letter-spacing: 0.5px;
+  color: var(--color-accent);
+  
 }
 
 .word-page-tag {
-  background: #eff6ff;
-  color: #1d4ed8;
-  padding: 4px 10px;
+  background: var(--color-info-soft);
+  color: var(--color-accent);
+  padding: var(--space-2xs) var(--space-sm);
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -226,39 +252,39 @@
 .word-doc-title {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-ink);
   line-height: 1.3;
   margin: 0 0 8px;
 }
 
 .word-doc-meta {
   font-size: 0.76rem;
-  color: #64748b;
+  color: var(--color-ink-2);
   margin-bottom: 16px;
 }
 
 .word-db-pill {
-  color: #059669;
+  color: var(--color-success-ink);
   font-weight: 700;
 }
 
 .word-divider {
   border: none;
-  border-top: 1.5px solid #e2e8f0;
+  border-top: 1.5px solid var(--color-rule);
   margin: 0 0 20px;
 }
 
 .word-doc-body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-md);
   min-height: 220px;
 }
 
 .word-paragraph {
   font-size: 0.88rem;
   line-height: 1.65;
-  color: #334155;
+  color: var(--color-ink-2);
   margin: 0;
   text-align: justify;
 }
@@ -268,10 +294,10 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 28px;
-  padding-top: 14px;
-  border-top: 1px solid #f1f5f9;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-paper-3);
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--color-muted);
 }
 
 /* 3. VISOR DE PLANILLA EXCEL (.xlsx) */
@@ -286,35 +312,35 @@
 .excel-sheet-card {
   width: 100%;
   max-width: 680px;
-  background: var(--ion-card-background, #ffffff);
-  border-radius: 14px;
+  background: var(--ion-card-background, var(--color-paper-2));
+  border-radius: var(--space-md);
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 16px 40px var(--color-rule);
+  border: 1px solid var(--color-rule);
 }
 
 .excel-toolbar-ribbon {
-  background: #107c41;
-  color: #ffffff;
+  background: var(--color-accent);
+  color: var(--color-paper-2);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: var(--space-sm) var(--space-md);
 }
 
 .excel-tab {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 0.82rem;
   font-weight: 700;
 }
 
 .excel-meta-pill {
   font-size: 0.74rem;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 3px 8px;
-  border-radius: 6px;
+  background: var(--color-navy-field);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--space-xs);
 }
 
 .excel-table-scroll {
@@ -330,14 +356,14 @@
 
 .excel-grid-table th,
 .excel-grid-table td {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-rule);
   padding: 8px 12px;
   text-align: left;
 }
 
 .excel-grid-table th {
-  background: #f8fafc;
-  color: #334155;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
   font-weight: 700;
   position: sticky;
   top: 0;
@@ -347,8 +373,8 @@
 .row-index-cell {
   width: 38px;
   text-align: center !important;
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
   font-weight: 600;
   font-size: 0.75rem;
 }
@@ -356,11 +382,11 @@
 .excel-sheet-footer {
   display: flex;
   justify-content: space-between;
-  padding: 10px 16px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-rule);
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-ink-2);
 }
 
 /* 4. VISOR DE DIAPOSITIVAS POWERPOINT (.pptx) */
@@ -373,18 +399,19 @@
 }
 
 .ppt-slide-card {
+  color: var(--color-navy-ink);
   width: 100%;
   max-width: 620px;
-  background: #1e293b;
+  background: var(--color-ink);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 40px var(--color-rule);
+  border: 1px solid var(--color-navy-field);
 }
 
 .ppt-slide-canvas {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-accent) 60%, var(--color-accent-hover) 100%);
+  color: var(--color-paper-2);
   padding: 28px 24px;
   min-height: 280px;
   display: flex;
@@ -394,18 +421,20 @@
 .ppt-slide-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 0.74rem;
   font-weight: 700;
-  color: #a5b4fc;
+  color: var(--color-accent);
   margin-bottom: 12px;
 }
 
 .ppt-slide-title {
+  overflow-wrap: break-word;
+  min-width: 0;
   font-size: 1.3rem;
   font-weight: 800;
   margin: 0 0 16px;
-  color: #ffffff;
+  color: var(--color-paper-2);
 }
 
 .ppt-slide-bullets {
@@ -420,30 +449,30 @@
 .ppt-slide-bullets li {
   font-size: 0.88rem;
   line-height: 1.5;
-  color: #e0e7ff;
+  color: var(--color-accent-soft);
 }
 
 .ppt-slide-note {
-  background: rgba(15, 23, 42, 0.4);
-  border-left: 3px solid #818cf8;
+  background: var(--color-rule);
+  border: var(--rule-hair) solid var(--color-accent);
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--space-xs);
   font-size: 0.75rem;
-  color: #c7d2fe;
+  color: var(--color-accent);
 }
 
 .ppt-controls-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  background: #0f172a;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-ink);
 }
 
 .ppt-counter {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--color-muted);
 }
 
 /* 5. VISOR DE IMÁGENES */
@@ -455,20 +484,20 @@
 }
 
 .image-canvas-box {
-  background: #090d16;
-  padding: 14px;
+  background: var(--color-accent);
+  padding: var(--space-md);
   border-radius: 18px;
   overflow: hidden;
   max-width: 100%;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px var(--color-rule);
+  border: 1px solid var(--color-navy-field);
 }
 
 .image-canvas-box img {
   max-width: 100%;
   max-height: 60vh;
   object-fit: contain;
-  border-radius: 10px;
+  border-radius: var(--space-sm);
   transition: transform 0.2s ease, filter 0.2s ease;
   display: block;
 }
@@ -476,16 +505,16 @@
 .image-caption {
   margin-top: 12px;
   font-size: 0.8rem;
-  color: #cbd5e1;
+  color: var(--color-rule-strong);
 }
 
 /* 6 & 7. VISOR DE CSV Y TEXTO */
 .data-preview-card,
 .text-preview-card {
-  background: var(--ion-card-background, #ffffff);
+  background: var(--ion-card-background, var(--color-paper-2));
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px var(--color-rule);
   transition: transform 0.2s ease;
   transform-origin: top center;
   max-width: 720px;
@@ -496,22 +525,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
+  padding-bottom: var(--space-sm);
   margin-bottom: 12px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .data-preview-title {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: var(--ion-text-color, #0f172a);
+  color: var(--ion-text-color, var(--color-ink));
   font-size: 0.88rem;
 }
 
 .data-preview-title span {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--color-ink-2);
 }
 
 .csv-table-scroll {
@@ -527,28 +556,36 @@
 
 .csv-preview-table th,
 .csv-preview-table td {
-  border: 1px solid rgba(203, 213, 225, 0.6);
-  padding: 8px 10px;
+  border: 1px solid var(--color-rule);
+  padding: var(--space-xs) var(--space-sm);
   text-align: left;
 }
 
 .csv-preview-table th {
-  background: rgba(99, 102, 241, 0.08);
+  background: var(--color-accent-soft);
   font-weight: 700;
-  color: var(--ion-text-color, #1e293b);
+  color: var(--ion-text-color, var(--color-ink));
   position: sticky;
-  top: 0;
+  top: 36px;
 }
 
 .code-preview-box {
   margin: 0;
-  background: #090d16;
-  color: #e2e8f0;
+  background: var(--color-accent);
+  color: var(--color-rule);
   padding: 16px;
   border-radius: 12px;
   overflow-x: auto;
-  font-family: 'Consolas', 'Courier New', monospace;
+  font-family: var(--font-mono);
   line-height: 1.55;
   white-space: pre-wrap;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-navy-field);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,3 +1,29 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
+ * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.220 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V4 · weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .mobile-viewport {
   --background: transparent;
 }
@@ -10,7 +36,7 @@
 }
 
 .form-item {
-  --background: var(--card-bg, rgba(255, 255, 255, 0.8));
+  --background: var(--card-bg, var(--color-rule));
   --border-radius: 16px;
   border-radius: 16px;
   margin-bottom: 4px;
@@ -18,7 +44,7 @@
 
 .validation-note {
   display: block;
-  padding: 2px 14px 8px 14px;
+  padding: var(--space-3xs) var(--space-md) var(--space-xs) var(--space-md);
   font-size: 0.84rem;
   font-weight: 600;
 }
@@ -30,12 +56,12 @@
 .native-plugins-box {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
   margin-top: 8px;
   padding: 12px;
   border-radius: 16px;
-  background: var(--card-bg, rgba(255, 255, 255, 0.75));
-  border: 1px dashed rgba(99, 102, 241, 0.35);
+  background: var(--card-bg, var(--color-rule));
+  border: 1px dashed var(--color-rule);
 }
 
 .native-buttons-row {
@@ -54,22 +80,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   padding: 8px;
   border-radius: 12px;
-  background: rgba(15, 23, 42, 0.04);
+  background: var(--color-rule);
 }
 
 .task-photo-img {
   width: 100%;
   max-height: 200px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--space-sm);
 }
 
 .photo-meta {
   font-size: 0.75rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted, var(--color-ink-2));
   font-family: monospace;
 }
 
@@ -82,4 +108,12 @@
   --border-radius: 16px;
   font-weight: 800;
   height: 50px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

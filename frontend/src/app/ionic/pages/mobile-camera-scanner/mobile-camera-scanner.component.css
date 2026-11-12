@@ -1,3 +1,29 @@
+/* Hallmark ? shape: app screen ? genre: modern-minimal ? theme: brand ? redesign: full
+ * paper: oklch(96.8% 0.008 250) ? accent: oklch(53.5% 0.220 260) ? display: Plus Jakarta Sans ? body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) ? signature: OmniFile Studio ? contrast: pass ? v2.0.0 */
+/* Hallmark ? pre-emit critique: P5 H4 E5 S4 R5 V4 ? weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .scanner-btns {
   display: flex;
   flex-direction: column;
@@ -8,29 +34,30 @@
   text-align: center;
   padding: 1.5rem 1rem;
   margin-top: 0.85rem;
-  border: 2px dashed var(--border-color, #cbd5e1);
+  border: 2px dashed var(--border-color, var(--color-rule-strong));
   border-radius: 12px;
-  color: #64748b;
+  color: var(--color-ink-2);
 }
 
 .empty-scanner-box ion-icon {
   font-size: 2.3rem;
-  color: var(--ion-color-primary, #4f46e5);
+  color: var(--ion-color-primary, var(--color-accent-hover));
   margin-bottom: 0.35rem;
 }
 
 .scanner-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
   margin-top: 1rem;
 }
 
 .scanner-page-card {
-  border: 1px solid var(--border-color, #cbd5e1);
-  border-radius: 10px;
+  color: var(--color-navy-ink);
+  border: 1px solid var(--border-color, var(--color-rule-strong));
+  border-radius: var(--space-sm);
   overflow: hidden;
-  background: #0f172a;
+  background: var(--color-ink);
 }
 
 .scanner-img-wrap {
@@ -50,40 +77,40 @@
 
 .scanner-page-num {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  background: #4f46e5;
-  color: #fff;
+  top: var(--space-2xs);
+  left: var(--space-2xs);
+  background: var(--color-accent-hover);
+  color: var(--color-accent);
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: var(--space-3xs) var(--space-xs);
   border-radius: 4px;
 }
 
 .scanner-controls {
   display: flex;
   justify-content: space-around;
-  padding: 5px;
-  background: #1e293b;
+  padding: var(--space-2xs);
+  background: var(--color-ink);
 }
 
 .scanner-controls button {
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--color-accent);
   cursor: pointer;
 }
 
 .scanner-controls button.btn-ocr-photo {
-  background: #6366f1;
-  color: #ffffff;
-  padding: 3px 8px;
-  border-radius: 6px;
+  background: var(--color-accent);
+  color: var(--color-paper-2);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--space-xs);
   font-size: 0.72rem;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: var(--space-2xs);
 }
 
 .scanner-ocr-card {
@@ -92,3 +119,11 @@
   box-shadow: var(--omni-shadow-md);
 }
 
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

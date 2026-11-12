@@ -30,7 +30,7 @@
         <input
           type="text"
           class="sp-catalog-search-input"
-          placeholder="Buscar herramientas (ej: Word, OCR, Comprimir)..."
+          placeholder="Buscar herramientas (ej: Word, OCR, Comprimir)?"
           [ngModel]="catalogSearch()"
           (ngModelChange)="catalogSearch.set($event)"
         />
@@ -278,7 +278,7 @@
                   interface="popover"
                   [ngModel]="ocrFileId()"
                   (ngModelChange)="onOcrRepoFileChanged($event)"
-                  placeholder="Seleccionar imagen o PDF...">
+                  placeholder="Seleccionar imagen o PDF?">
                   @for (doc of allFiles(); track doc.id) {
                     <ion-select-option [value]="doc.id">
                       {{ doc.name }} (.{{ doc.ext | uppercase }})
@@ -295,7 +295,7 @@
                 @if (uploadedOcrFile(); as uf) {
                   <span><strong>{{ uf.name }}</strong> ({{ fileService.formatBytes(uf.size) }})</span>
                 } @else {
-                  <span>Seleccionar imagen (.png, .jpg, .jpeg, .webp, .pdf)...</span>
+                  <span>Seleccionar imagen (.png, .jpg, .jpeg, .webp, .pdf)?</span>
                 }
                 <input
                   type="file"
@@ -343,7 +343,7 @@
                 <ion-input
                   [ngModel]="ocrOutputTitle()"
                   (ionInput)="ocrOutputTitle.set($any($event.target).value)"
-                  placeholder="Nombre del archivo...">
+                  placeholder="Nombre del archivo?">
                 </ion-input>
               </ion-item>
             </div>
@@ -369,7 +369,7 @@
               (click)="runOcrExtraction()">
               @if (ocrRunning()) {
                 <span class="ocr-spinner"></span>
-                <span>Procesando caracteres con Tesseract...</span>
+                <span>Procesando caracteres con Tesseract?</span>
               } @else {
                 <ion-icon name="scan-outline"></ion-icon>
                 <span>Extraer Texto con OCR</span>
@@ -429,7 +429,7 @@
                   class="ocr-textarea"
                   rows="7"
                   [(ngModel)]="res.text"
-                  placeholder="Texto reconocido por el OCR..."></textarea>
+                  placeholder="Texto reconocido por el OCR?"></textarea>
               </div>
             </div>
           }
@@ -488,7 +488,7 @@
                   interface="popover"
                   [ngModel]="translateFileId()"
                   (ngModelChange)="translateFileId.set($event); uploadedTranslateFile.set(null)"
-                  placeholder="Seleccionar documento...">
+                  placeholder="Seleccionar documento?">
                   @for (doc of translatableFiles(); track doc.id) {
                     <ion-select-option [value]="doc.id">
                       {{ doc.name }} (.{{ doc.ext | uppercase }})
@@ -505,7 +505,7 @@
                 @if (uploadedTranslateFile(); as uf) {
                   <span><strong>{{ uf.name }}</strong> ({{ fileService.formatBytes(uf.size) }})</span>
                 } @else {
-                  <span>Examinar documento desde tu dispositivo...</span>
+                  <span>Examinar documento desde tu dispositivo?</span>
                 }
                 <input
                   type="file"
@@ -617,7 +617,7 @@
               <div class="result-top-bar">
                 <div>
                   <span class="result-kicker">TRADUCCIÓN COMPLETADA · {{ result.detectedSourceLang }} → {{ result.targetLangName }}</span>
-                  <h4>{{ result.file.name }}</h4>
+                  <h3>{{ result.file.name }}</h3>
                 </div>
                 <span class="file-format-badge fmt-data">.{{ result.file.ext | uppercase }}</span>
               </div>
@@ -734,7 +734,7 @@
                 interface="popover"
                 [ngModel]="splitSourceId()"
                 (ngModelChange)="splitSourceId.set($event)"
-                placeholder="Seleccionar documento PDF...">
+                placeholder="Seleccionar documento PDF?">
                 @for (pdf of pdfFiles(); track pdf.id) {
                   <ion-select-option [value]="pdf.id">{{ pdf.name }} ({{ pdf.pageCount || 1 }} págs.)</ion-select-option>
                 }
@@ -806,7 +806,7 @@
                 interface="popover"
                 [ngModel]="compressFileId()"
                 (ngModelChange)="compressFileId.set($event)"
-                placeholder="Seleccionar documento PDF...">
+                placeholder="Seleccionar documento PDF?">
                 @for (pdf of pdfFiles(); track pdf.id) {
                   <ion-select-option [value]="pdf.id">
                     {{ pdf.name }} ({{ fileService.formatBytes(pdf.size) }})
@@ -881,7 +881,7 @@
                 interface="popover"
                 [ngModel]="signFileId()"
                 (ngModelChange)="signFileId.set($event)"
-                placeholder="Seleccionar documento PDF...">
+                placeholder="Seleccionar documento PDF?">
                 @for (pdf of pdfFiles(); track pdf.id) {
                   <ion-select-option [value]="pdf.id">{{ pdf.name }}</ion-select-option>
                 }
@@ -988,7 +988,7 @@
                 interface="popover"
                 [ngModel]="convertFileId()"
                 (ngModelChange)="convertFileId.set($event)"
-                placeholder="Elegir archivo...">
+                placeholder="Elegir archivo?">
                 @for (f of allFiles(); track f.id) {
                   <ion-select-option [value]="f.id">{{ f.name }} (.{{ f.ext | uppercase }})</ion-select-option>
                 }
@@ -1042,7 +1042,7 @@
                 interface="popover"
                 [ngModel]="watermarkFileId()"
                 (ngModelChange)="watermarkFileId.set($event)"
-                placeholder="Elegir PDF para estampar...">
+                placeholder="Elegir PDF para estampar?">
                 @for (doc of pdfFiles(); track doc.id) {
                   <ion-select-option [value]="doc.id">
                     {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
@@ -1129,7 +1129,7 @@
             [disabled]="processing() || !watermarkFileId()"
             (click)="applyWatermark()">
             <ion-icon name="water-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Estampando marca de agua...' : 'Estampar Marca de Agua en PDF' }}
+            {{ processing() ? 'Estampando marca de agua?' : 'Estampar Marca de Agua en PDF' }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -1153,7 +1153,7 @@
                 interface="popover"
                 [ngModel]="rotateFileId()"
                 (ngModelChange)="rotateFileId.set($event)"
-                placeholder="Elegir PDF a rotar...">
+                placeholder="Elegir PDF a rotar?">
                 @for (doc of pdfFiles(); track doc.id) {
                   <ion-select-option [value]="doc.id">
                     {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
@@ -1211,7 +1211,7 @@
             [disabled]="processing() || !rotateFileId()"
             (click)="applyRotate()">
             <ion-icon name="refresh-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Rotando páginas...' : 'Girar Documento ' + rotateAngle() + '°' }}
+            {{ processing() ? 'Rotando páginas?' : 'Girar Documento ' + rotateAngle() + '°' }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -1235,7 +1235,7 @@
                 interface="popover"
                 [ngModel]="protectFileId()"
                 (ngModelChange)="protectFileId.set($event)"
-                placeholder="Elegir PDF a proteger...">
+                placeholder="Elegir PDF a proteger?">
                 @for (doc of pdfFiles(); track doc.id) {
                   <ion-select-option [value]="doc.id">
                     {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
@@ -1253,7 +1253,7 @@
                 type="password"
                 [ngModel]="protectPassword()"
                 (ngModelChange)="protectPassword.set($event)"
-                placeholder="Ingresá una clave segura...">
+                placeholder="Ingresá una clave segura?">
               </ion-input>
             </ion-item>
             <small class="field-hint">
@@ -1268,7 +1268,7 @@
             [disabled]="processing() || !protectFileId() || !protectPassword()"
             (click)="applyProtect()">
             <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Cifrando documento...' : 'Cifrar y Proteger PDF' }}
+            {{ processing() ? 'Cifrando documento?' : 'Cifrar y Proteger PDF' }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -1293,7 +1293,7 @@
                 interface="popover"
                 [ngModel]="aiFileId()"
                 (ngModelChange)="aiFileId.set($event)"
-                placeholder="Elegir PDF para analizar...">
+                placeholder="Elegir PDF para analizar?">
                 @for (doc of pdfFiles(); track doc.id) {
                   <ion-select-option [value]="doc.id">
                     {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
@@ -1310,7 +1310,7 @@
             [disabled]="aiAnalyzing() || !aiFileId()"
             (click)="generateAiSummary()">
             <ion-icon name="sparkles-outline" slot="start"></ion-icon>
-            {{ aiAnalyzing() ? 'Analizando estructura con IA local...' : 'Generar Resumen Ejecutivo con IA' }}
+            {{ aiAnalyzing() ? 'Analizando estructura con IA local?' : 'Generar Resumen Ejecutivo con IA' }}
           </ion-button>
 
           <!-- Resumen Inteligente Desplegado -->
@@ -1375,7 +1375,7 @@
             <!-- Input del Chat -->
             <div class="ai-input-bar">
               <ion-input
-                placeholder="Escribí tu pregunta sobre el PDF..."
+                placeholder="Escribí tu pregunta sobre el PDF?"
                 [ngModel]="aiQuestionInput()"
                 (ngModelChange)="aiQuestionInput.set($event)"
                 (keyup.enter)="sendAiQuestion()">

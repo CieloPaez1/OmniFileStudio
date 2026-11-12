@@ -1,54 +1,80 @@
-/* Cabecera Navy #081026 */
+/* Hallmark ? shape: app screen ? genre: modern-minimal ? theme: brand ? redesign: full
+ * paper: oklch(96.8% 0.008 250) ? accent: oklch(53.5% 0.220 260) ? display: Plus Jakarta Sans ? body: Inter
+ * nav: 4 tabs (Inicio, Herramientas, Archivos, Ajustes) ? signature: OmniFile Studio ? contrast: pass ? v2.0.0 */
+/* Hallmark ? pre-emit critique: P5 H4 E5 S4 R5 V4 ? weakest: H, dense tool catalog needed stronger category rhythm and unified Deep Navy chrome */
+
+html, body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Cabecera Navy var(--color-navy) */
 .sp-repo-header-shell {
   box-shadow: none;
 }
 
 .sp-tools-navy-toolbar {
-  --background: #081026 !important;
-  background: #081026 !important;
-  --color: #ffffff;
+  --background: var(--color-navy) !important;
+  background: var(--color-navy) !important;
+  --color: var(--color-paper-2);
   min-height: 56px;
   padding-inline: 0.5rem;
 }
 
 .sp-toolbar-menu-btn {
-  --color: #ffffff;
-  color: #ffffff;
+  --color: var(--color-paper-2);
+  color: var(--color-paper-2);
 }
 
 .sp-repo-nav-title {
   font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 1.15rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--color-paper-2);
   letter-spacing: -0.01em;
 }
 
 .sp-repo-search-toolbar {
-  --background: #081026 !important;
-  background: #081026 !important;
+  --background: var(--color-navy) !important;
+  background: var(--color-navy) !important;
   --border-width: 0;
   padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
 .sp-repo-search-toolbar ion-searchbar {
-  --background: rgba(255, 255, 255, 0.12);
-  --color: #ffffff;
-  --placeholder-color: rgba(255, 255, 255, 0.5);
-  --icon-color: #94a3b8;
-  --clear-button-color: #94a3b8;
+  --background: var(--color-navy-field);
+  --color: var(--color-paper-2);
+  --placeholder-color: var(--color-navy-field);
+  --icon-color: var(--color-muted);
+  --clear-button-color: var(--color-muted);
   border-radius: 12px;
   padding: 0;
 }
 
 /* ============================================================================
-   [DISEÑO UX/UI] REPOSITORIO MODERNO SLATE & INDIGO (#6366f1)
+   [DISEÑO UX/UI] REPOSITORIO MODERNO SLATE & INDIGO (var(--color-accent))
    - Tarjetas redondeadas (rounded-2xl), sombras sutiles y badges por formato
    - Selector flotante de formato estilizado (píldoras interactivas)
    ============================================================================ */
 
 .search-toolbar {
-  --background: var(--ion-background-color, #f8fafc);
+  --background: var(--ion-background-color, var(--color-paper));
   --border-width: 0;
   padding: 0.2rem 0.5rem;
 }
@@ -67,10 +93,10 @@
   align-items: center;
   gap: 0.45rem;
   padding: 0.52rem 0.95rem;
-  border-radius: 14px;
-  background: #eef2ff;
-  border: 1px dashed rgba(99, 102, 241, 0.45);
-  color: #4f46e5;
+  border-radius: var(--space-md);
+  background: var(--color-accent-soft);
+  border: 1px dashed var(--color-accent-soft);
+  color: var(--color-accent-hover);
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
@@ -78,7 +104,7 @@
 }
 
 .upload-pill-btn:hover {
-  background: #e0e7ff;
+  background: var(--color-accent-soft);
   transform: translateY(-1px);
 }
 
@@ -94,41 +120,41 @@
 .tag-filter-pill {
   padding: 0.42rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  background: #ffffff;
-  color: #64748b;
+  border: 1px solid var(--color-rule);
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-size: 0.78rem;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px -2px var(--color-rule);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.18s ease;
 }
 
 .tag-filter-pill:hover {
-  color: #4f46e5;
-  border-color: rgba(99, 102, 241, 0.35);
+  color: var(--color-accent-hover);
+  border-color: var(--color-accent-soft);
 }
 
 .tag-filter-pill.active {
-  background: #6366f1;
-  color: #ffffff;
-  border-color: #6366f1;
-  box-shadow: 0 6px 14px -3px rgba(99, 102, 241, 0.35);
+  background: var(--color-accent);
+  color: var(--color-paper-2);
+  border-color: var(--color-accent);
+  box-shadow: 0 6px 14px -3px var(--color-accent-soft);
 }
 
 .tag-filter-pill.urgent {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: #ffffff;
+  background: var(--color-tool-red);
+  border-color: var(--color-tool-red);
+  color: var(--color-paper-2);
 }
 
 /* Selector Flotante Estilizado para Conversión Rápida */
 .convert-floating-card {
   margin: 0 0.25rem 1rem;
   border-radius: 20px;
-  border: 1px solid rgba(99, 102, 241, 0.28);
-  box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.18);
+  border: 1px solid var(--color-accent-soft);
+  box-shadow: 0 12px 28px -6px var(--color-accent-soft);
 }
 
 .convert-head-row {
@@ -146,10 +172,10 @@
   display: block;
   font-size: 0.76rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--color-ink-2);
   margin-bottom: 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  
+  
 }
 
 .floating-format-pills {
@@ -160,18 +186,18 @@
 }
 
 .format-option-pill {
-  background: #f8fafc;
-  border: 1.5px solid rgba(226, 232, 240, 0.9);
-  border-radius: 14px;
+  background: var(--color-paper);
+  border: 1.5px solid var(--color-rule);
+  border-radius: var(--space-md);
   padding: 0.4rem 0.65rem;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.16s ease;
 }
 
 .format-option-pill.selected {
-  background: #eef2ff;
-  border-color: #6366f1;
-  box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.25);
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px -2px var(--color-accent-soft);
   transform: translateY(-1px);
 }
 
@@ -183,7 +209,7 @@
 
 .sliding-hint {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--color-ink-2);
   margin: 0.15rem 0.35rem 0.75rem;
 }
 
@@ -197,12 +223,12 @@
   margin-bottom: 0.65rem;
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 4px 14px -3px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 4px 14px -3px var(--color-rule);
 }
 
 .file-row-title {
   font-weight: 700 !important;
-  color: #0f172a;
+  color: var(--color-ink);
   font-size: 0.92rem !important;
   margin-bottom: 0.2rem;
 }
@@ -213,12 +239,12 @@
   flex-wrap: wrap;
   gap: 0.35rem;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-ink-2);
 }
 
 .row-tag-chip {
   font-weight: 700;
-  color: #475569;
+  color: var(--color-ink-2);
 }
 
 .status-mini {
@@ -229,18 +255,18 @@
 }
 
 .status-mini.signed {
-  background: #eef2ff;
-  color: #4f46e5;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
 }
 
 .status-mini.compressed {
-  background: #ecfdf5;
-  color: #059669;
+  background: var(--color-success-soft);
+  color: var(--color-success-ink);
 }
 
 .item-desc {
   font-size: 0.74rem;
-  color: #94a3b8;
+  color: var(--color-muted);
   margin-top: 0.18rem;
 }
 
@@ -269,8 +295,8 @@
 .grid-tag-pill {
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
   font-size: 0.68rem;
   font-weight: 700;
 }
@@ -299,7 +325,7 @@
 }
 
 .modal-edit-content {
-  --background: var(--ion-background-color, #ffffff);
+  --background: var(--ion-background-color, var(--color-paper-2));
 }
 
 .edit-modal-form {
@@ -314,8 +340,8 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: 16px;
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.18);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-soft);
   margin-bottom: 0.5rem;
 }
 
@@ -328,7 +354,7 @@
 
 .edit-modal-meta-col strong {
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--color-ink);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -336,23 +362,23 @@
 
 .file-size-hint {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-ink-2);
 }
 
 .edit-form-item {
-  --background: #f8fafc;
+  --background: var(--color-paper);
   --border-radius: 12px;
   --padding-start: 12px;
   --padding-end: 12px;
   --inner-padding-end: 0;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid var(--color-rule);
   margin-bottom: 0.25rem;
 }
 
 .edit-form-item ion-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--color-ink-2);
   margin-bottom: 0.35rem;
 }
 
@@ -364,3 +390,11 @@
 }
 
 
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

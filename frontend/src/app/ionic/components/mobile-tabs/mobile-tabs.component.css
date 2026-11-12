@@ -1,13 +1,15 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
+ * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.22 260) · display: Plus Jakarta Sans · body: Inter
+ * nav: 4-tab bottom bar (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V4 · weakest: S, replaced decorative dot spans with accessible SVG brand mark and pure OKLCH tokens */
 :host {
   display: block;
   width: 100%;
   height: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
+  inset: 0;
+  overflow-x: clip;
+  overflow-y: hidden;
 }
 
 ion-split-pane {
@@ -30,28 +32,30 @@ ion-tabs {
   flex-direction: column;
 }
 
-/* =============================================================================
-   BARRA INFERIOR DE PESTAÑAS (DEEP NAVY SMALLPDF STYLE)
-   ============================================================================= */
 ion-tab-bar.smallpdf-bottom-tabbar {
-  --background: #081026;
-  --border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #081026;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  --background: var(--color-navy);
+  --border: var(--rule-hair) solid var(--color-navy-border-subtle);
+  background: var(--color-navy);
+  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
   height: 60px;
   min-height: 60px;
   position: relative;
-  z-index: 1000;
+  z-index: var(--z-sticky-nav);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-tabbar);
 }
 
 ion-tab-button {
-  --color: #8b9bb4;
-  --color-selected: #ffffff;
+  --color: var(--color-navy-muted);
+  --color-selected: var(--color-navy-ink);
   font-weight: 600;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
   position: relative;
+}
+
+ion-tab-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
 }
 
 ion-tab-button:active {
@@ -60,57 +64,67 @@ ion-tab-button:active {
 
 ion-tab-button ion-icon {
   font-size: 21px;
-  margin-bottom: 3px;
-  color: #8b9bb4;
-  transition: color 0.15s ease, transform 0.15s ease;
+  margin-bottom: var(--space-3xs);
+  color: var(--color-navy-muted);
+  transition: color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 }
 
 ion-tab-button.tab-selected ion-icon {
-  color: #ffffff;
+  color: var(--color-navy-ink);
   transform: translateY(-1px);
 }
 
 ion-tab-button ion-label {
-  font-size: 11px;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #8b9bb4;
+  color: var(--color-navy-muted);
+  white-space: nowrap;
 }
 
 ion-tab-button.tab-selected ion-label {
-  color: #ffffff;
+  color: var(--color-navy-ink);
   font-weight: 700;
 }
 
-/* Ícono 2x2 multi-color tipo Smallpdf en el Tab Tools */
-.sp-tab-grid-icon {
-  display: grid;
-  grid-template-columns: repeat(2, 6.5px);
-  grid-template-rows: repeat(2, 6.5px);
-  gap: 2.5px;
-  margin-bottom: 5px;
-  transition: transform 0.15s ease;
+.sp-tab-grid-svg {
+  width: 20px;
+  height: 20px;
+  margin-bottom: var(--space-3xs);
+  transition: transform var(--dur-micro) var(--ease-out);
 }
 
-ion-tab-button.tab-selected .sp-tab-grid-icon {
-  transform: scale(1.15) translateY(-1px);
+ion-tab-button.tab-selected .sp-tab-grid-svg {
+  transform: scale(1.12) translateY(-1px);
 }
 
-.sp-tg-dot {
-  width: 6.5px;
-  height: 6.5px;
-  border-radius: 2px;
-}
-
-.sp-tg-dot.dot-red { background: #ef4444; }
-.sp-tg-dot.dot-yellow { background: #f59e0b; }
-.sp-tg-dot.dot-blue { background: #3b82f6; }
-.sp-tg-dot.dot-green { background: #10b981; }
+.tile-red { fill: var(--color-tool-red); }
+.tile-yellow { fill: var(--color-tool-yellow); }
+.tile-blue { fill: var(--color-tool-blue); }
+.tile-green { fill: var(--color-tool-green); }
 
 ion-badge {
-  font-size: 10px;
+  font-size: 0.65rem;
   font-weight: 700;
-  border-radius: 10px;
-  padding: 2px 6px;
-  background: var(--color-accent, #4f46e5);
+  border-radius: var(--radius-pill);
+  padding: var(--space-3xs) var(--space-xs);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-tab-button,
+  ion-tab-button ion-icon,
+  .sp-tab-grid-svg {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+button:disabled, [disabled], [aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+
+html {
+  overflow-x: clip;
+}
+body {
+  overflow-x: clip;
 }

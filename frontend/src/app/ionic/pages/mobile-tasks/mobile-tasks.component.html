@@ -128,12 +128,12 @@
                 <ion-label [class.task-done]="t.status === 'DONE'">
                   <h2>{{ t.title }}</h2>
                   <p>
-                    {{ t.estimateHours }} hs · {{ t.assignee || 'Sin asignar' }}
+                    {{ t.estimateHours }} hs / {{ t.assignee || 'Sin asignar' }}
                     @if (t.photo || t.photoPreview) {
-                      · Con foto
+                      / Con foto
                     }
                     @if (t.lat !== undefined && t.lng !== undefined) {
-                      · Con GPS
+                      / Con GPS
                     }
                   </p>
                 </ion-label>

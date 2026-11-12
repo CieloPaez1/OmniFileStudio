@@ -19,125 +19,116 @@
 @import '@ionic/angular/css/flex-utils.css';
 
 :root {
-  /* Paleta Índigo Vibrante (#6366f1) + Tonos Slate Modernos (Modo Claro) */
-  --ion-color-primary: #6366f1;
-  --ion-color-primary-rgb: 99, 102, 241;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #4f46e5;
-  --ion-color-primary-tint: #818cf8;
+  /* Paleta Hallmark OKLCH conectada a tokens.css (Modo Claro) */
+  --ion-color-primary: var(--color-accent);
+  --ion-color-primary-contrast: var(--color-accent-ink);
+  --ion-color-primary-shade: var(--color-accent-hover);
+  --ion-color-primary-tint: var(--color-tool-indigo);
 
-  --ion-color-secondary: #0ea5e9;
-  --ion-color-secondary-rgb: 14, 165, 233;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-shade: #0284c7;
-  --ion-color-secondary-tint: #38bdf8;
+  --ion-color-secondary: var(--color-tool-blue);
+  --ion-color-secondary-contrast: var(--color-accent-ink);
+  --ion-color-secondary-shade: var(--color-accent-hover);
+  --ion-color-secondary-tint: var(--color-tool-teal);
 
-  --ion-color-tertiary: #7c3aed;
-  --ion-color-tertiary-rgb: 124, 58, 237;
-  --ion-color-tertiary-contrast: #ffffff;
-  --ion-color-tertiary-shade: #6d28d9;
-  --ion-color-tertiary-tint: #8b5cf6;
+  --ion-color-tertiary: var(--color-tool-purple);
+  --ion-color-tertiary-contrast: var(--color-accent-ink);
+  --ion-color-tertiary-shade: var(--color-tool-purple);
+  --ion-color-tertiary-tint: var(--color-tool-indigo);
 
-  --ion-color-success: #10b981;
-  --ion-color-warning: #f59e0b;
-  --ion-color-danger: #ef4444;
-  --ion-color-medium: #64748b;
-  --ion-color-light: #f1f5f9;
+  --ion-color-success: var(--color-success);
+  --ion-color-warning: var(--color-warning);
+  --ion-color-danger: var(--color-error);
+  --ion-color-medium: var(--color-muted);
+  --ion-color-light: var(--color-paper-3);
 
-  /* Superficies Slate Limpias (Whitespace & Minimalism) */
-  --ion-background-color: #f8fafc;
-  --ion-background-color-rgb: 248, 250, 252;
-  --ion-text-color: #0f172a;
-  --ion-text-color-rgb: 15, 23, 42;
-  --ion-card-background: #ffffff;
-  --ion-item-background: #ffffff;
-  --ion-toolbar-background: #ffffff;
-  --ion-tab-bar-background: #ffffff;
+  /* Superficies Paper & Ink Limpias */
+  --ion-background-color: var(--color-paper);
+  --ion-text-color: var(--color-ink);
+  --ion-card-background: var(--color-paper-2);
+  --ion-item-background: var(--color-paper-2);
+  --ion-toolbar-background: var(--color-navy);
+  --ion-tab-bar-background: var(--color-navy);
 
   /* Tokens globales de OmniFile Studio */
-  --omni-surface: #ffffff;
-  --omni-surface-muted: #f1f5f9;
-  --omni-text-main: #0f172a;
-  --omni-text-muted: #64748b;
-  --omni-border-subtle: rgba(226, 232, 240, 0.7);
-  --omni-radius-2xl: 20px;
-  --omni-radius-xl: 16px;
-  --omni-shadow-sm: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -2px rgba(15, 23, 42, 0.03);
-  --omni-shadow-md: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+  --omni-surface: var(--color-paper-2);
+  --omni-surface-muted: var(--color-paper-3);
+  --omni-text-main: var(--color-ink);
+  --omni-text-muted: var(--color-ink-2);
+  --omni-border-subtle: var(--color-rule);
+  --omni-radius-2xl: var(--radius-lg);
+  --omni-radius-xl: var(--radius-card);
+  --omni-shadow-sm: var(--shadow-subtle);
+  --omni-shadow-md: var(--shadow-card);
 }
 
 /* ============================================================================
-   [REQUISITO 3] MODO OSCURO NATIVO (DARK MODE) CON TONOS SLATE / ZINC PROFUNDOS
+   [REQUISITO 3] MODO OSCURO NATIVO (DARK MODE) CON TOKENS HALLMARK
    ============================================================================ */
 body.dark,
 html.dark,
 html[data-mode="dark"],
 body[data-mode="dark"] {
-  --ion-color-primary: #6366f1;
-  --ion-color-primary-rgb: 99, 102, 241;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-shade: #4f46e5;
-  --ion-color-primary-tint: #818cf8;
+  --ion-color-primary: var(--color-accent);
+  --ion-color-primary-contrast: var(--color-accent-ink);
+  --ion-color-primary-shade: var(--color-accent-hover);
+  --ion-color-primary-tint: var(--color-tool-indigo);
 
-  --ion-background-color: #090d16;
-  --ion-background-color-rgb: 9, 13, 22;
-  --ion-text-color: #f8fafc;
-  --ion-text-color-rgb: 248, 250, 252;
+  --ion-background-color: var(--color-paper);
+  --ion-text-color: var(--color-ink);
 
-  --ion-card-background: #131c2e;
-  --ion-item-background: #131c2e;
-  --ion-toolbar-background: #0f172a;
-  --ion-tab-bar-background: #0f172a;
-  --ion-border-color: rgba(51, 65, 85, 0.55);
+  --ion-card-background: var(--color-paper-2);
+  --ion-item-background: var(--color-paper-2);
+  --ion-toolbar-background: var(--color-navy);
+  --ion-tab-bar-background: var(--color-navy);
+  --ion-border-color: var(--color-rule);
 
-  --omni-surface: #131c2e;
-  --omni-surface-muted: #1e293b;
-  --omni-text-main: #f8fafc;
-  --omni-text-muted: #94a3b8;
-  --omni-border-subtle: rgba(51, 65, 85, 0.65);
-  --omni-shadow-sm: 0 6px 20px -2px rgba(0, 0, 0, 0.38);
-  --omni-shadow-md: 0 16px 34px -6px rgba(0, 0, 0, 0.52);
+  --omni-surface: var(--color-paper-2);
+  --omni-surface-muted: var(--color-paper-3);
+  --omni-text-main: var(--color-ink);
+  --omni-text-muted: var(--color-ink-2);
+  --omni-border-subtle: var(--color-rule);
+  --omni-shadow-sm: var(--shadow-subtle);
+  --omni-shadow-md: var(--shadow-card);
 }
 
 /* Ajustes automáticos de componentes en Modo Oscuro */
 body.dark ion-content,
 html[data-mode="dark"] ion-content {
-  --background: #090d16;
-  --color: #f8fafc;
+  --background: var(--color-paper);
+  --color: var(--color-ink);
 }
 
 body.dark ion-card,
 html[data-mode="dark"] ion-card {
-  background: #131c2e !important;
-  border-color: rgba(51, 65, 85, 0.65) !important;
-  color: #f8fafc;
+  background: var(--color-paper-2) !important;
+  border-color: var(--color-rule) !important;
+  color: var(--color-ink);
 }
 
 body.dark ion-card-title,
 html[data-mode="dark"] ion-card-title {
-  color: #f8fafc !important;
+  color: var(--color-ink) !important;
 }
 
 body.dark ion-item,
 html[data-mode="dark"] ion-item {
-  --background: #131c2e;
-  --color: #f8fafc;
-  border-color: rgba(51, 65, 85, 0.55) !important;
+  --background: var(--color-paper-2);
+  --color: var(--color-ink);
+  border-color: var(--color-rule) !important;
 }
 
 body.dark ion-tab-bar,
 html[data-mode="dark"] ion-tab-bar {
-  --background: rgba(15, 23, 42, 0.94);
-  border-top: 1px solid rgba(51, 65, 85, 0.6);
+  --background: var(--color-navy);
+  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
 }
 
 body.dark ion-searchbar,
 html[data-mode="dark"] ion-searchbar {
-  --background: #131c2e;
-  --color: #f8fafc;
-  --placeholder-color: #94a3b8;
-  --icon-color: #818cf8;
+  --background: var(--color-paper-2);
+  --color: var(--color-ink);
+  --placeholder-color: var(--color-muted);
+  --icon-color: var(--color-accent);
 }
 
 /* Botón alternador de Modo Claro/Oscuro en el Header */
@@ -160,10 +151,10 @@ ion-content {
 ion-card {
   border-radius: var(--omni-radius-2xl) !important;
   box-shadow: var(--omni-shadow-sm) !important;
-  border: 1px solid var(--omni-border-subtle) !important;
-  background: var(--ion-card-background, #ffffff);
-  margin: 0.75rem 0.25rem;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.25s ease;
+  border: var(--rule-hair) solid var(--omni-border-subtle) !important;
+  background: var(--ion-card-background, var(--color-paper-2));
+  margin: var(--space-sm) var(--space-2xs);
+  transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out), background var(--dur-short) var(--ease-out);
 }
 
 ion-card:hover {
@@ -171,35 +162,33 @@ ion-card:hover {
 }
 
 ion-card-header {
-  padding: 1.15rem 1.25rem 0.5rem;
+  padding: var(--space-md) var(--space-md) var(--space-xs);
 }
 
 ion-card-content {
-  padding: 0.75rem 1.25rem 1.25rem;
+  padding: var(--space-sm) var(--space-md) var(--space-md);
 }
 
 ion-card-subtitle {
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #818cf8;
-  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-accent);
 }
 
 ion-card-title {
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: var(--text-lg);
+  font-weight: 700;
   color: var(--omni-text-main);
 }
 
 ion-item {
   --border-radius: var(--omni-radius-xl);
-  --background: var(--ion-item-background, #ffffff);
+  --background: var(--ion-item-background, var(--color-paper-2));
   --border-color: transparent;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-xs);
   border-radius: var(--omni-radius-xl);
   box-shadow: var(--omni-shadow-sm);
-  border: 1px solid var(--omni-border-subtle);
+  border: var(--rule-hair) solid var(--omni-border-subtle);
 }
 
 /* ============================================================================
@@ -209,13 +198,11 @@ ion-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.32rem;
-  padding: 0.34rem 0.68rem;
-  border-radius: 12px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -224,56 +211,56 @@ ion-item {
   font-size: 0.95rem;
 }
 
-/* Rojo suave para PDFs */
+/* Rojo para PDFs */
 .file-format-badge.fmt-pdf {
-  background: #fef2f2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  border: var(--rule-hair) solid var(--color-rule);
 }
 
-/* Azul suave para Imágenes (PNG, JPG, WEBP, SVG) */
+/* Azul para Imágenes (PNG, JPG, WEBP, SVG) */
 .file-format-badge.fmt-image {
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border: var(--rule-hair) solid var(--color-rule);
 }
 
-/* Verde suave para Hojas de Cálculo y Datos (CSV, JSON, XLSX) */
+/* Verde para Hojas de Cálculo y Datos (CSV, JSON, XLSX) */
 .file-format-badge.fmt-data {
-  background: #ecfdf5;
-  color: #10b981;
-  border: 1px solid #a7f3d0;
+  background: var(--color-success-soft);
+  color: var(--color-success-ink);
+  border: var(--rule-hair) solid var(--color-success-border);
 }
 
-/* Índigo suave para Documentos de texto (TXT, MD, HTML, DOC) */
+/* Índigo para Documentos de texto (TXT, MD, HTML, DOC) */
 .file-format-badge.fmt-doc {
-  background: #eef2ff;
-  color: #6366f1;
-  border: 1px solid #c7d2fe;
+  background: var(--color-info-soft);
+  color: var(--color-info);
+  border: var(--rule-hair) solid var(--color-rule);
 }
 
 body.dark .file-format-badge.fmt-pdf {
-  background: rgba(239, 68, 68, 0.16);
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.32);
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  border-color: var(--color-rule-strong);
 }
 
 body.dark .file-format-badge.fmt-image {
-  background: rgba(59, 130, 246, 0.16);
-  color: #60a5fa;
-  border-color: rgba(59, 130, 246, 0.32);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-color: var(--color-rule-strong);
 }
 
 body.dark .file-format-badge.fmt-data {
-  background: rgba(16, 185, 129, 0.16);
-  color: #34d399;
-  border-color: rgba(16, 185, 129, 0.32);
+  background: var(--color-success-soft);
+  color: var(--color-success-ink);
+  border-color: var(--color-success-border);
 }
 
 body.dark .file-format-badge.fmt-doc {
-  background: rgba(99, 102, 241, 0.18);
-  color: #818cf8;
-  border-color: rgba(99, 102, 241, 0.35);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-color: var(--color-rule-strong);
 }
 
 /* ============================================================================
@@ -306,56 +293,56 @@ body.dark .file-format-badge.fmt-doc {
 .omni-success-feedback {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.95rem 1.15rem;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(99, 102, 241, 0.12) 100%);
-  border: 1.5px solid rgba(16, 185, 129, 0.45);
-  margin: 0.25rem 0.2rem 1rem;
-  animation: checkmarkPop 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.22);
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-card);
+  background: var(--color-success-soft);
+  border: var(--rule-hair) solid var(--color-success-border);
+  margin: var(--space-2xs) var(--space-2xs) var(--space-md);
+  animation: checkmarkPop var(--dur-long) var(--ease-out) forwards;
+  box-shadow: var(--shadow-card);
 }
 
 .omni-success-tick-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: #10b981;
-  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-ink);
+  color: var(--color-accent-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.45);
+  box-shadow: var(--shadow-subtle);
 }
 
 .omni-success-tick-circle svg {
   width: 24px;
   height: 24px;
-  stroke: #ffffff;
+  stroke: var(--color-accent-ink);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
   stroke-dasharray: 48;
   stroke-dashoffset: 48;
-  animation: strokeDraw 0.45s 0.12s ease-out forwards;
+  animation: strokeDraw var(--dur-long) var(--dur-micro) ease-out forwards;
 }
 
 .omni-success-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
+  gap: var(--space-3xs);
 }
 
 .omni-success-copy strong {
-  font-size: 0.9rem;
-  font-weight: 800;
+  font-size: var(--text-sm);
+  font-weight: 700;
   color: var(--omni-text-main);
 }
 
 .omni-success-copy small {
-  font-size: 0.76rem;
+  font-size: var(--text-xs);
   color: var(--omni-text-muted);
 }
 
@@ -363,55 +350,53 @@ body.dark .file-format-badge.fmt-doc {
    5. MODALES, POPOVERS Y SELECTORES FLOTANTES ESTILIZADOS
    ============================================================================ */
 ion-modal {
-  --border-radius: 24px 24px 0 0;
-  --box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+  --border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  --box-shadow: var(--shadow-modal);
 }
 
 ion-popover {
   --background: var(--omni-surface);
-  --box-shadow: 0 20px 38px -8px rgba(15, 23, 42, 0.22);
+  --box-shadow: var(--shadow-modal);
 }
 
 ion-popover::part(content) {
-  border-radius: 18px;
-  border: 1px solid var(--omni-border-subtle);
+  border-radius: var(--radius-card);
+  border: var(--rule-hair) solid var(--omni-border-subtle);
 }
 
 ion-action-sheet {
   --background: var(--omni-surface);
   --button-color: var(--omni-text-main);
-  --button-background-selected: rgba(99, 102, 241, 0.12);
+  --button-background-selected: var(--color-accent-soft);
 }
 
 ion-searchbar {
   --background: var(--omni-surface);
-  --border-radius: 16px;
+  --border-radius: var(--radius-card);
   --box-shadow: var(--omni-shadow-sm);
-  --placeholder-color: #94a3b8;
-  --icon-color: #6366f1;
-  padding-top: 0.35rem;
-  padding-bottom: 0.35rem;
+  --placeholder-color: var(--color-muted);
+  --icon-color: var(--color-accent);
+  padding-top: var(--space-2xs);
+  padding-bottom: var(--space-2xs);
 }
 
 ion-button {
-  --border-radius: 14px;
+  --border-radius: var(--radius-md);
   font-weight: 700;
-  letter-spacing: 0.01em;
   text-transform: none;
 }
 
 ion-tab-bar {
-  --background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(226, 232, 240, 0.7);
+  --background: var(--color-navy);
+  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
   height: 62px;
 }
 
 ion-tab-button {
-  --color: #64748b;
-  --color-selected: #6366f1;
+  --color: var(--color-navy-muted);
+  --color-selected: var(--color-navy-ink);
   font-weight: 700;
-  font-size: 0.74rem;
+  font-size: var(--text-xs);
 }
 
 /* ============================================================================
