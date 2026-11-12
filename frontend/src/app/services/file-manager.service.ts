@@ -1100,7 +1100,7 @@ export class FileManagerService {
       doc.setFontSize(16);
       doc.text(src?.name || 'Documento Original', 45, 65);
       doc.setFontSize(10);
-      doc.text(`OmniFile Studio · Suite Smallpdf · Fecha: ${new Date().toLocaleDateString()}`, 45, 85);
+      doc.text(`OmniFile Studio · Fecha: ${new Date().toLocaleDateString()}`, 45, 85);
       doc.line(45, 95, 550, 95);
 
       if (color === 'red') {
@@ -1124,7 +1124,7 @@ export class FileManagerService {
       category: 'PDF',
       origin: 'CONVERTED',
       tag: src?.tag || 'Trabajo',
-      description: `Marca de agua "${watermarkText}" estampada en cliente (Smallpdf Suite).`,
+      description: `Marca de agua "${watermarkText}" estampada en cliente (OmniFile Studio).`,
       size: Math.max(48000, src?.size || 120000),
       pageCount: src?.pageCount || 1,
       dataUrl: pdfDataUrl,
@@ -1171,7 +1171,7 @@ export class FileManagerService {
       category: 'PDF',
       origin: 'CONVERTED',
       tag: src?.tag || 'Trabajo',
-      description: `Documento rotado ${params.angle}° en cliente (Smallpdf Suite).`,
+      description: `Documento rotado ${params.angle}° en cliente (OmniFile Studio).`,
       size: src?.size || 96000,
       pageCount: src?.pageCount || 1,
       dataUrl: pdfDataUrl,
@@ -1205,7 +1205,7 @@ export class FileManagerService {
       doc.text(`Cifrado local: AES-128 / Protección de lectura y apertura`, 45, 120);
       doc.text(`Contraseña configurada: ${'*'.repeat(pass.length)}`, 45, 145);
       doc.setFontSize(9);
-      doc.text(`Generado en OmniFile Studio · Suite Smallpdf · ${new Date().toLocaleString()}`, 45, 175);
+      doc.text(`Generado en OmniFile Studio · ${new Date().toLocaleString()}`, 45, 175);
       pdfDataUrl = doc.output('datauristring');
     } catch {
       pdfDataUrl = this.buildSamplePdfDataUrl(cleanTitle, 'Protegido con contraseña');
@@ -1218,7 +1218,7 @@ export class FileManagerService {
       category: 'PDF',
       origin: 'CONVERTED',
       tag: src?.tag || 'Legal',
-      description: `Documento protegido con contraseña de apertura en cliente (Smallpdf Suite).`,
+      description: `Documento protegido con contraseña de apertura en cliente (OmniFile Studio).`,
       size: src?.size || 110000,
       pageCount: src?.pageCount || 1,
       dataUrl: pdfDataUrl,
@@ -1260,7 +1260,7 @@ export class FileManagerService {
     const entities = [
       src?.tag || 'Gestión Documental',
       'OmniFile Studio IA',
-      'Smallpdf Engine Client-Side'
+      'OmniFile Document Engine'
     ];
 
     return {

@@ -323,7 +323,7 @@ export class FilePreviewModalComponent implements OnDestroy {
           'Backend: Spring Boot 3 con Arquitectura Hexagonal y JPA',
           'Frontend: Ionic 9 Standalone con Angular Signals',
           'Persistencia: PostgreSQL en puerto 8080',
-          'Suite Smallpdf: 12 herramientas activas con procesamiento local'
+          'OmniFile Studio: 12 herramientas activas con procesamiento local'
         ],
         note: 'Destacar la compatibilidad total entre la API REST y el almacenamiento relacional.'
       },

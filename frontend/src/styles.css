@@ -1,6 +1,6 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
  * paper: oklch(99.2% 0.003 245) · accent: oklch(55% 0.22 260) · display: Plus Jakarta Sans · body: Inter
- * nav: Smallpdf tabs (Tools, Files, Settings) · signature: Smallpdf Studio Suite · contrast: pass · v2.0.0 */
+ * nav: Mobile tabs (Tools, Files, Settings) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, unified card containment layer and tokenized OKLCH palette */
 @import './tokens.css';
 @import './base.css';
