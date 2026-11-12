@@ -1,11 +1,22 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border sp-dash-header-shell">
+  <!-- Cabecera Navy #081026 idéntica a Herramientas -->
+  <ion-toolbar class="sp-tools-navy-toolbar">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
     </ion-buttons>
-    <ion-title>OmniFile Studio · Inicio</ion-title>
+
+    <div class="sp-dash-brand">
+      <svg class="sp-dash-logo-svg" viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+        <rect x="2" y="2" width="9" height="9" rx="2" fill="#ef4444" />
+        <rect x="13" y="2" width="9" height="9" rx="2" fill="#f59e0b" />
+        <rect x="2" y="13" width="9" height="9" rx="2" fill="#3b82f6" />
+        <rect x="13" y="13" width="9" height="9" rx="2" fill="#10b981" />
+      </svg>
+      <span class="sp-dash-brand-text">OmniFile <strong>Studio</strong></span>
+    </div>
+
     <ion-buttons slot="end">
-      <!-- [REQUISITO 3] Botón Alternador de Modo Claro / Modo Oscuro Nativo -->
+      <!-- Alternador Modo Claro / Oscuro -->
       <ion-button
         class="theme-toggle-btn"
         (click)="themeService.toggleDarkLight()"
@@ -16,236 +27,277 @@
         </ion-icon>
       </ion-button>
 
-      <ion-button routerLink="/files" title="Versión Web Escritorio">
+      <ion-button routerLink="/files" title="Versión Escritorio Web">
         <ion-icon name="desktop-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="omni-responsive-shell">
-  <!-- [REQUISITO 6] Pull-to-refresh con ion-refresher -->
+<ion-content class="sp-dash-content">
+  <!-- Pull-to-refresh nativo en español -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content pullingText="Deslizá para actualizar desde json-server..."></ion-refresher-content>
+    <ion-refresher-content pullingText="Deslizá para actualizar..."></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Píldoras de estado minimalistas (Slate + Esmeralda) -->
-  <div class="status-pills-row">
-    <div class="status-banner privacy-pill">
-      <ion-icon name="checkmark-circle-outline"></ion-icon>
-      <span><strong>Privacy-First 100% Local:</strong> {{ fileService.privacyStatement }}</span>
+  <div class="sp-dash-container">
+
+    <!-- HERO DE BIENVENIDA -->
+    <div class="sp-dash-hero">
+      <h1 class="sp-dash-hero-title">¡Hola! Tu espacio de documentos</h1>
+      <p class="sp-dash-hero-desc">Organizá, convertí, comprimí y firmá tus archivos de forma segura.</p>
+
+      <!-- Píldora de Privacidad Local -->
+      <div class="sp-dash-privacy-badge">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span><strong>100% Local y Privado:</strong> Tus archivos nunca salen de tu dispositivo.</span>
+      </div>
+
+      <!-- Estado Offline / Online -->
+      @if (fileService.usingOfflineFallback()) {
+        <div class="sp-dash-status-pill offline">
+          <ion-icon name="cloud-offline-outline"></ion-icon>
+          <span>Modo Offline activo (almacenamiento local)</span>
+        </div>
+      }
     </div>
 
-    @if (fileService.usingOfflineFallback()) {
-      <div class="status-banner offline">
-        <ion-icon name="cloud-offline-outline"></ion-icon>
-        <span>{{ fileService.error() || 'Modo Offline activo (@capacitor/preferences)' }}</span>
-      </div>
-    } @else {
-      <div class="status-banner online">
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-        <span>API REST (json-server) + Preferences sincronizados</span>
+    <!-- SPINNER DE CARGA -->
+    @if (fileService.loading()) {
+      <div class="sp-dash-loading">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <span>Sincronizando espacio de trabajo...</span>
       </div>
     }
-  </div>
 
-  <!-- Indicador de carga -->
-  @if (fileService.loading()) {
-    <div class="loading-box">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <span>Sincronizando espacio de trabajo...</span>
-    </div>
-  }
-
-  <!-- Tarjetas KPI Redondeadas Responsivas (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4) -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style="margin: 0 0.25rem 1.15rem;">
-    <div class="kpi-card" (click)="goTo('/mobile/repository')">
-      <div class="kpi-top">
-        <span class="kpi-label">Total Archivos</span>
-        <span class="kpi-icon-badge dot-indigo">
-          <ion-icon name="folder-open-outline"></ion-icon>
-        </span>
-      </div>
-      <strong class="kpi-value">{{ fileService.totalFiles() }}</strong>
-      <small>{{ fileService.formatBytes(fileService.totalBytes()) }} en uso</small>
-    </div>
-
-    <div class="kpi-card" (click)="goTo('/mobile/pdf-suite')">
-      <div class="kpi-top">
-        <span class="kpi-label">Documentos PDF</span>
-        <span class="kpi-icon-badge dot-red">
-          <ion-icon name="document-text-outline"></ion-icon>
-        </span>
-      </div>
-      <strong class="kpi-value text-red">{{ fileService.pdfFiles().length }}</strong>
-      <small>{{ fileService.signedFilesCount() }} firmados digitalmente</small>
-    </div>
-
-    <div class="kpi-card" (click)="goTo('/mobile/scanner')">
-      <div class="kpi-top">
-        <span class="kpi-label">Imágenes</span>
-        <span class="kpi-icon-badge dot-blue">
-          <ion-icon name="image-outline"></ion-icon>
-        </span>
-      </div>
-      <strong class="kpi-value text-blue">{{ fileService.imageFiles().length }}</strong>
-      <small>Listas para escáner PDF</small>
-    </div>
-
-    <div class="kpi-card" (click)="goToTranslator()">
-      <div class="kpi-top">
-        <span class="kpi-label">Traductor Docs</span>
-        <span class="kpi-icon-badge dot-emerald">
-          <ion-icon name="language-outline"></ion-icon>
-        </span>
-      </div>
-      <strong class="kpi-value text-emerald">8 Idiomas</strong>
-      <small>.docx, .xlsx, .pptx, .pdf</small>
-    </div>
-  </div>
-
-  <!-- Accesos Rápidos Responsivos -->
-  <ion-card class="surface-card">
-    <ion-card-header>
-      <ion-card-subtitle>ACCESOS RÁPIDOS CON FEEDBACK HÁPTICO</ion-card-subtitle>
-      <ion-card-title>¿Qué querés hacer hoy?</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <button type="button" class="quick-btn cta-indigo" (click)="goToTranslator()">
-          <div class="quick-icon-wrap">
-            <ion-icon name="language-outline"></ion-icon>
+    <!-- SECCIÓN DE MÉTRICAS RÁPIDAS (KPI CARDS) -->
+    <section class="sp-dash-section">
+      <h2 class="sp-dash-section-title">Resumen de tu biblioteca</h2>
+      <div class="sp-kpi-grid">
+        <div class="sp-kpi-card" (click)="goTo('/mobile/repository')">
+          <div class="sp-kpi-top">
+            <span class="sp-kpi-label">Total Archivos</span>
+            <div class="sp-kpi-badge sp-blue">
+              <ion-icon name="folder-open-outline"></ion-icon>
+            </div>
           </div>
-          <strong>Traductor Universal</strong>
-          <small>Word, Excel, PPTX, PDF</small>
-        </button>
+          <strong class="sp-kpi-number">{{ fileService.totalFiles() }}</strong>
+          <small class="sp-kpi-sub">{{ fileService.formatBytes(fileService.totalBytes()) }} en uso</small>
+        </div>
 
-        <button type="button" class="quick-btn" (click)="goTo('/mobile/scanner')">
-          <div class="quick-icon-wrap soft-blue">
+        <div class="sp-kpi-card" (click)="goTo('/mobile/pdf-suite')">
+          <div class="sp-kpi-top">
+            <span class="sp-kpi-label">Documentos PDF</span>
+            <div class="sp-kpi-badge sp-red">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+          </div>
+          <strong class="sp-kpi-number text-red">{{ fileService.pdfFiles().length }}</strong>
+          <small class="sp-kpi-sub">{{ fileService.signedFilesCount() }} firmados digitalmente</small>
+        </div>
+
+        <div class="sp-kpi-card" (click)="goTo('/mobile/scanner')">
+          <div class="sp-kpi-top">
+            <span class="sp-kpi-label">Imágenes y Fotos</span>
+            <div class="sp-kpi-badge sp-yellow">
+              <ion-icon name="image-outline"></ion-icon>
+            </div>
+          </div>
+          <strong class="sp-kpi-number text-yellow">{{ fileService.imageFiles().length }}</strong>
+          <small class="sp-kpi-sub">Listas para escaneo a PDF</small>
+        </div>
+
+        <div class="sp-kpi-card" (click)="goToTranslator()">
+          <div class="sp-kpi-top">
+            <span class="sp-kpi-label">Traductor Universal</span>
+            <div class="sp-kpi-badge sp-green">
+              <ion-icon name="language-outline"></ion-icon>
+            </div>
+          </div>
+          <strong class="sp-kpi-number text-green">8 Idiomas</strong>
+          <small class="sp-kpi-sub">Word, Excel, PPT, PDF</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE HERRAMIENTAS RÁPIDAS (ACCESOS DIRECTOS ESTILO CATÁLOGO) -->
+    <section class="sp-dash-section">
+      <div class="sp-dash-section-header">
+        <h2 class="sp-dash-section-title">Herramientas Rápidas</h2>
+        <button type="button" class="sp-dash-see-all-link" (click)="goTo('/mobile/pdf-suite')">
+          <span>Ver catálogo</span>
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="sp-dash-quick-grid">
+        <!-- 1. Escanear con Cámara -->
+        <button type="button" class="sp-dash-quick-card" (click)="goTo('/mobile/scanner')">
+          <div class="sp-dash-quick-icon sp-blue">
             <ion-icon name="camera-outline"></ion-icon>
           </div>
-          <strong>Escáner a PDF</strong>
-          <small>&#64;capacitor/camera</small>
-        </button>
-
-        <button type="button" class="quick-btn" (click)="goTo('/mobile/pdf-suite')">
-          <div class="quick-icon-wrap soft-red">
-            <ion-icon name="construct-outline"></ion-icon>
+          <div class="sp-dash-quick-info">
+            <strong>Escanear</strong>
+            <small>Cámara a PDF</small>
           </div>
-          <strong>Suite PDF</strong>
-          <small>Unir, Dividir, Firmar</small>
         </button>
 
-        <button type="button" class="quick-btn" (click)="goTo('/mobile/file-form')">
-          <div class="quick-icon-wrap soft-emerald">
+        <!-- 2. Comprimir PDF -->
+        <button type="button" class="sp-dash-quick-card" (click)="goTo('/mobile/pdf-suite')">
+          <div class="sp-dash-quick-icon sp-red">
+            <ion-icon name="contract-outline"></ion-icon>
+          </div>
+          <div class="sp-dash-quick-info">
+            <strong>Comprimir</strong>
+            <small>Reducir tamaño</small>
+          </div>
+        </button>
+
+        <!-- 3. Firmar Documento -->
+        <button type="button" class="sp-dash-quick-card" (click)="goTo('/mobile/pdf-suite')">
+          <div class="sp-dash-quick-icon sp-fuchsia">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <div class="sp-dash-quick-info">
+            <strong>Firmar</strong>
+            <small>Rúbrica digital</small>
+          </div>
+        </button>
+
+        <!-- 4. Resumen con IA -->
+        <button type="button" class="sp-dash-quick-card" (click)="goTo('/mobile/pdf-suite')">
+          <div class="sp-dash-quick-icon sp-indigo">
+            <ion-icon name="sparkles-outline"></ion-icon>
+          </div>
+          <div class="sp-dash-quick-info">
+            <strong>PDF con IA</strong>
+            <small>Resumen y chat</small>
+          </div>
+        </button>
+
+        <!-- 5. Traducir Documento -->
+        <button type="button" class="sp-dash-quick-card" (click)="goToTranslator()">
+          <div class="sp-dash-quick-icon sp-amber">
+            <ion-icon name="language-outline"></ion-icon>
+          </div>
+          <div class="sp-dash-quick-info">
+            <strong>Traducir</strong>
+            <small>8 idiomas</small>
+          </div>
+        </button>
+
+        <!-- 6. Subir Archivo Nuevo -->
+        <button type="button" class="sp-dash-quick-card" (click)="goTo('/mobile/file-form')">
+          <div class="sp-dash-quick-icon sp-green">
             <ion-icon name="add-circle-outline"></ion-icon>
           </div>
-          <strong>Subida Inteligente</strong>
-          <small>Formulario Reactivo</small>
+          <div class="sp-dash-quick-info">
+            <strong>Subir Archivo</strong>
+            <small>Formulario</small>
+          </div>
         </button>
       </div>
-    </ion-card-content>
-  </ion-card>
+    </section>
 
-  <!-- [REQUISITO 2] HISTORIAL DE ACCIONES / AUDITORÍA LOCAL ("LOG DE ACTIVIDAD") -->
-  <ion-card class="surface-card">
-    <ion-card-header>
-      <div class="section-row">
-        <div>
-          <ion-card-subtitle>AUDITORÍA LOCAL · &#64;CAPACITOR/PREFERENCES</ion-card-subtitle>
-          <ion-card-title>Log de Actividad ({{ activityLog.totalActions() }})</ion-card-title>
-        </div>
-        @if (activityLog.entries().length > 0) {
-          <ion-button fill="clear" size="small" color="medium" (click)="activityLog.clearHistory()">
-            <ion-icon name="trash-outline" slot="start"></ion-icon>
-            Limpiar
-          </ion-button>
+    <!-- SECCIÓN DE ARCHIVOS RECIENTES -->
+    <section class="sp-dash-section">
+      <div class="sp-dash-section-header">
+        <h2 class="sp-dash-section-title">Últimos Archivos</h2>
+        <button type="button" class="sp-dash-see-all-link" (click)="goTo('/mobile/repository')">
+          <span>Ver todos</span>
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="sp-dash-recent-list">
+        @for (f of recentFiles(); track f.id) {
+          <div class="sp-dash-recent-card" (click)="openPreview(f)">
+            <div class="sp-dash-recent-icon" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
+              <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
+              <span class="sp-dash-ext">.{{ f.ext | uppercase }}</span>
+            </div>
+
+            <div class="sp-dash-recent-copy">
+              <strong class="sp-dash-recent-name">{{ f.name }}</strong>
+              <div class="sp-dash-recent-meta">
+                <span>{{ f.tag || 'General' }}</span>
+                <span class="sp-meta-dot">·</span>
+                <span>{{ fileService.formatBytes(f.size) }}</span>
+                @if (f.signed) {
+                  <span class="sp-status-chip chip-signed">Firmado</span>
+                }
+                @if (f.compressed) {
+                  <span class="sp-status-chip chip-compressed">Comprimido</span>
+                }
+              </div>
+            </div>
+
+            <div class="sp-dash-recent-actions" (click)="$event.stopPropagation()">
+              <button type="button" class="sp-icon-btn" (click)="openPreview(f)" title="Vista Previa">
+                <ion-icon name="eye-outline"></ion-icon>
+              </button>
+              <button type="button" class="sp-icon-btn" (click)="downloadFile(f)" title="Descargar">
+                <ion-icon name="download-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (recentFiles().length === 0) {
+          <div class="sp-dash-empty-state">
+            <ion-icon name="folder-open-outline"></ion-icon>
+            <p>Aún no tenés archivos cargados</p>
+            <button type="button" class="sp-dash-cta-btn" (click)="goTo('/mobile/file-form')">
+              Subir tu primer archivo
+            </button>
+          </div>
         }
       </div>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="audit-timeline">
+    </section>
+
+    <!-- SECCIÓN DE HISTORIAL DE ACTIVIDAD (LOG LOCAL) -->
+    <section class="sp-dash-section">
+      <div class="sp-dash-section-header">
+        <h2 class="sp-dash-section-title">Registro de Actividad ({{ activityLog.totalActions() }})</h2>
+        @if (activityLog.entries().length > 0) {
+          <button type="button" class="sp-dash-clear-btn" (click)="activityLog.clearHistory()">
+            <ion-icon name="trash-outline"></ion-icon>
+            <span>Limpiar</span>
+          </button>
+        }
+      </div>
+
+      <div class="sp-dash-audit-list">
         @for (item of activityLog.recentEntries(); track item.id) {
-          <div class="audit-log-row">
-            <span class="file-format-badge" [ngClass]="item.badgeClass">
+          <div class="sp-dash-audit-row">
+            <div class="sp-dash-audit-badge" [ngClass]="item.badgeClass">
               <ion-icon [name]="item.icon"></ion-icon>
-            </span>
-            <div class="audit-log-copy">
-              <strong>{{ item.title }}</strong>
-              <p>{{ item.detail }}</p>
             </div>
-            <span class="audit-log-time">
+            <div class="sp-dash-audit-info">
+              <strong>{{ item.title }}</strong>
+              <small>{{ item.detail }}</small>
+            </div>
+            <span class="sp-dash-audit-time">
               <ion-icon name="time-outline"></ion-icon>
               {{ item.timestamp | date:'HH:mm' }}
             </span>
           </div>
         }
-      </div>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- Archivos Recientes con Badges e Iconos de Formato Estilizados + Quick Preview Modal -->
-  <ion-card class="surface-card">
-    <ion-card-header>
-      <div class="section-row">
-        <div>
-          <ion-card-subtitle>ACTIVIDAD RECIENTE · QUICK PREVIEW</ion-card-subtitle>
-          <ion-card-title>Últimos Archivos</ion-card-title>
-        </div>
-        <ion-button fill="clear" size="small" routerLink="/mobile/repository">Ver todos</ion-button>
-      </div>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="recent-files-list">
-        @for (f of recentFiles(); track f.id) {
-          <div class="recent-file-row" (click)="openPreview(f)">
-            <div class="recent-file-info">
-              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
-                <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
-                .{{ f.ext | uppercase }}
-              </span>
-
-              <div class="recent-text-wrap">
-                <strong class="recent-title">{{ f.name }}</strong>
-                <div class="recent-meta">
-                  <span class="meta-tag">{{ f.tag || 'General' }}</span>
-                  <span class="meta-sep">/</span>
-                  <span>{{ fileService.formatBytes(f.size) }}</span>
-                  @if (f.signed) {
-                    <span class="meta-pill signed">
-                      <ion-icon name="create-outline" aria-hidden="true"></ion-icon> Firmado
-                    </span>
-                  }
-                  @if (f.compressed) {
-                    <span class="meta-pill compressed">
-                      <ion-icon name="archive-outline" aria-hidden="true"></ion-icon> Comprimido
-                    </span>
-                  }
-                </div>
-              </div>
-            </div>
-
-            <div class="recent-actions" (click)="$event.stopPropagation()">
-              <ion-button size="small" fill="solid" color="primary" (click)="openPreview(f)" title="Vista Previa">
-                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-              <ion-button size="small" fill="clear" color="medium" (click)="downloadFile(f)" title="Descargar">
-                <ion-icon name="download-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
+        @if (activityLog.entries().length === 0) {
+          <div class="sp-dash-empty-audit">
+            <small>No hay actividades registradas recientemente.</small>
           </div>
         }
       </div>
-    </ion-card-content>
-  </ion-card>
+    </section>
 
-  <!-- [REQUISITO 1] Modal de Vista Previa Real (Quick Preview con HTML5 Canvas + Blob Stream) -->
+  </div>
+
+  <!-- Modal de Vista Previa Real (Quick Preview con HTML5 Canvas) -->
   <app-file-preview-modal
     [file]="previewFile()"
     [isOpen]="previewOpen()"
     (closed)="closePreview()">
   </app-file-preview-modal>
-  </div>
 </ion-content>
-

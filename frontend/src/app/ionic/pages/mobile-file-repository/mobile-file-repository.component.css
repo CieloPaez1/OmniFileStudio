@@ -1,3 +1,46 @@
+/* Cabecera Navy #081026 */
+.sp-repo-header-shell {
+  box-shadow: none;
+}
+
+.sp-tools-navy-toolbar {
+  --background: #081026 !important;
+  background: #081026 !important;
+  --color: #ffffff;
+  min-height: 56px;
+  padding-inline: 0.5rem;
+}
+
+.sp-toolbar-menu-btn {
+  --color: #ffffff;
+  color: #ffffff;
+}
+
+.sp-repo-nav-title {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.sp-repo-search-toolbar {
+  --background: #081026 !important;
+  background: #081026 !important;
+  --border-width: 0;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+}
+
+.sp-repo-search-toolbar ion-searchbar {
+  --background: rgba(255, 255, 255, 0.12);
+  --color: #ffffff;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --icon-color: #94a3b8;
+  --clear-button-color: #94a3b8;
+  border-radius: 12px;
+  padding: 0;
+}
+
 /* ============================================================================
    [DISEÑO UX/UI] REPOSITORIO MODERNO SLATE & INDIGO (#6366f1)
    - Tarjetas redondeadas (rounded-2xl), sombras sutiles y badges por formato
@@ -319,4 +362,5 @@
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
 

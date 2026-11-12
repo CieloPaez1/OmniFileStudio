@@ -45,7 +45,11 @@ import {
   trashOutline,
   shareSocialOutline,
   archiveOutline,
-  languageOutline
+  languageOutline,
+  sparklesOutline,
+  lockClosedOutline,
+  shieldCheckmarkOutline,
+  arrowForwardOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { ThemeService } from '../../../services/theme.service';
@@ -124,7 +128,11 @@ export class MobileFileDashboardComponent implements OnInit {
       trashOutline,
       shareSocialOutline,
       archiveOutline,
-      languageOutline
+      languageOutline,
+      sparklesOutline,
+      lockClosedOutline,
+      shieldCheckmarkOutline,
+      arrowForwardOutline
     });
   }
 

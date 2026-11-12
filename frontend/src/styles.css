@@ -566,3 +566,29 @@ label, .form-label {
   color: var(--primary-color);
   margin-bottom: 4px;
 }
+
+/* ============================================================================
+   [ESTILO OMNIFILE STUDIO / SMALLPDF] CABECERA GLOBAL DEEP NAVY #081026
+   ============================================================================ */
+.sp-tools-navy-toolbar {
+  --background: #081026 !important;
+  background: #081026 !important;
+  --color: #ffffff !important;
+  color: #ffffff !important;
+  min-height: 56px;
+  padding-inline: 0.5rem;
+}
+
+.sp-tools-navy-toolbar ion-title {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.sp-toolbar-menu-btn {
+  --color: #ffffff !important;
+  color: #ffffff !important;
+}
+

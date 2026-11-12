@@ -207,20 +207,20 @@ export class MobilePdfSuiteComponent implements OnInit {
   previewOpen = signal<boolean>(false);
 
   // Categorías completas del Megamenú tipo Smallpdf.com (Exactas de smallpdf.com)
-    readonly smallPdfCategories: SmallPdfCategoryGroup[] = [
+      readonly smallPdfCategories: SmallPdfCategoryGroup[] = [
     {
-      name: 'Scan & Create',
+      name: 'Escanear y Crear',
       tools: [
         {
           id: 'scanner',
-          name: 'Scan Document',
+          name: 'Escanear documento',
           desc: 'Escanea documentos físicos con la cámara',
           colorClass: 'sp-blue',
           icon: 'camera-outline'
         },
         {
           id: 'convert',
-          name: 'Create PDF from Gallery',
+          name: 'Crear PDF desde galería',
           desc: 'Crea PDF desde fotos de la galería',
           colorClass: 'sp-blue',
           icon: 'images-outline',
@@ -229,18 +229,18 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Edit & Sign',
+      name: 'Editar y Firmar',
       tools: [
         {
           id: 'watermark',
-          name: 'Annotate',
+          name: 'Anotar y Marcar',
           desc: 'Añade anotaciones y marcas en el documento',
           colorClass: 'sp-teal',
           icon: 'pencil-outline'
         },
         {
           id: 'sign',
-          name: 'Sign',
+          name: 'Firmar documento',
           desc: 'Firma electrónica y rúbrica digital',
           colorClass: 'sp-fuchsia',
           icon: 'create-outline'
@@ -248,18 +248,18 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Compress',
+      name: 'Comprimir',
       tools: [
         {
           id: 'compress',
-          name: 'Compress',
+          name: 'Comprimir PDF',
           desc: 'Reduce el peso optimizando calidad',
           colorClass: 'sp-red',
           icon: 'contract-outline'
         },
         {
           id: 'compress',
-          name: 'Strong Compress',
+          name: 'Compresión fuerte',
           desc: 'Compresión avanzada de alto rendimiento',
           colorClass: 'sp-red',
           icon: 'contract-outline',
@@ -268,32 +268,32 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Organize',
+      name: 'Organizar',
       tools: [
         {
           id: 'merge',
-          name: 'Merge',
+          name: 'Unir / Fusionar PDFs',
           desc: 'Combina múltiples PDFs en un solo archivo',
           colorClass: 'sp-purple',
           icon: 'copy-outline'
         },
         {
           id: 'split',
-          name: 'Organize',
+          name: 'Organizar páginas',
           desc: 'Reordena y organiza páginas del PDF',
           colorClass: 'sp-purple',
           icon: 'grid-outline'
         },
         {
           id: 'split',
-          name: 'Delete Pages',
+          name: 'Eliminar páginas',
           desc: 'Elimina páginas innecesarias del documento',
           colorClass: 'sp-purple',
           icon: 'trash-outline'
         },
         {
           id: 'rotate',
-          name: 'Rotate',
+          name: 'Girar páginas',
           desc: 'Gira páginas en 90°, 180° o 270°',
           colorClass: 'sp-purple',
           icon: 'refresh-outline'
@@ -301,11 +301,11 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Convert from PDF',
+      name: 'Convertir de PDF',
       tools: [
         {
           id: 'convert',
-          name: 'PDF to Word',
+          name: 'PDF a Word',
           desc: 'Convierte PDF a documento Word .docx editable',
           colorClass: 'sp-blue',
           letterBadge: 'W',
@@ -313,7 +313,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'PDF to Image',
+          name: 'PDF a Imagen',
           desc: 'Extrae páginas en imágenes JPG',
           colorClass: 'sp-yellow',
           icon: 'image-outline',
@@ -321,7 +321,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'PDF to Excel',
+          name: 'PDF a Excel',
           desc: 'Extrae tablas a hojas de cálculo .xlsx',
           colorClass: 'sp-green',
           letterBadge: 'X',
@@ -329,7 +329,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'PDF to PowerPoint',
+          name: 'PDF a PowerPoint',
           desc: 'Convierte diapositivas PDF en presentaciones .pptx',
           colorClass: 'sp-orange',
           letterBadge: 'P',
@@ -337,7 +337,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'ocr',
-          name: 'Convert with OCR',
+          name: 'Convertir con OCR',
           desc: 'Reconocimiento óptico de texto WASM',
           colorClass: 'sp-red',
           letterBadge: 'OCR',
@@ -346,11 +346,11 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Convert to PDF',
+      name: 'Convertir a PDF',
       tools: [
         {
           id: 'convert',
-          name: 'Word to PDF',
+          name: 'Word a PDF',
           desc: 'Transforma documentos de Word (.docx) a PDF',
           colorClass: 'sp-blue',
           letterBadge: 'W',
@@ -358,7 +358,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'Image to PDF',
+          name: 'Imagen a PDF',
           desc: 'Convierte fotos e imágenes a documentos PDF',
           colorClass: 'sp-yellow',
           icon: 'image-outline',
@@ -366,7 +366,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'Excel to PDF',
+          name: 'Excel a PDF',
           desc: 'Convierte hojas de cálculo (.xlsx) a PDF',
           colorClass: 'sp-green',
           letterBadge: 'X',
@@ -374,7 +374,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'convert',
-          name: 'PowerPoint to PDF',
+          name: 'PowerPoint a PDF',
           desc: 'Convierte presentaciones de PowerPoint a PDF',
           colorClass: 'sp-orange',
           letterBadge: 'P',
@@ -383,7 +383,7 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'PDF con IA',
+      name: 'PDF con Inteligencia Artificial',
       tools: [
         {
           id: 'ai-tools',
@@ -395,7 +395,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         },
         {
           id: 'ai-tools',
-          name: 'Chat con PDF',
+          name: 'Chat con documento',
           desc: 'Pregunta y chatea con tu documento',
           colorClass: 'sp-indigo',
           icon: 'chatbubbles-outline'
@@ -403,25 +403,25 @@ export class MobilePdfSuiteComponent implements OnInit {
       ]
     },
     {
-      name: 'Seguridad & Protección',
+      name: 'Seguridad y Protección',
       tools: [
         {
           id: 'protect',
-          name: 'Proteger PDF',
+          name: 'Proteger con contraseña',
           desc: 'Cifra y añade contraseña de apertura',
           colorClass: 'sp-slate',
           icon: 'lock-closed-outline'
         },
         {
           id: 'watermark',
-          name: 'Marca de Agua',
+          name: 'Marca de agua',
           desc: 'Añade sellos de confidencialidad o autor',
           colorClass: 'sp-teal',
           icon: 'water-outline'
         },
         {
           id: 'translate',
-          name: 'Traducir PDF',
+          name: 'Traducir documento',
           desc: 'Traduce a 8 idiomas preservando formato',
           colorClass: 'sp-amber',
           icon: 'language-outline'

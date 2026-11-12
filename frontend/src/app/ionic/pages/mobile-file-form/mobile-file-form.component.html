@@ -1,10 +1,10 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar class="sp-tools-navy-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/mobile/repository"></ion-back-button>
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="/mobile/repository" class="sp-toolbar-menu-btn"></ion-back-button>
+      <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ isEditMode() ? 'Modificar Archivo' : 'OmniFile Studio · Subida Inteligente' }}</ion-title>
+    <ion-title>{{ isEditMode() ? "Modificar Archivo" : "Subida Inteligente de Archivo" }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

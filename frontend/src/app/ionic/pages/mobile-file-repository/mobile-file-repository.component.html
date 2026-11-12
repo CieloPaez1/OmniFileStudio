@@ -1,9 +1,9 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border sp-repo-header-shell">
+  <ion-toolbar class="sp-tools-navy-toolbar">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Repositorio ({{ filteredFiles().length }})</ion-title>
+    <ion-title class="sp-repo-nav-title">Archivos ({{ filteredFiles().length }})</ion-title>
     <ion-buttons slot="end">
       <ion-button
         class="theme-toggle-btn"
@@ -20,8 +20,8 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Buscador instantáneo estilizado -->
-  <ion-toolbar class="search-toolbar">
+  <!-- Buscador instantáneo estilizado en la cabecera Navy -->
+  <ion-toolbar class="sp-repo-search-toolbar">
     <ion-searchbar
       placeholder="Buscar por nombre, extensión o nota..."
       [value]="searchQuery()"
