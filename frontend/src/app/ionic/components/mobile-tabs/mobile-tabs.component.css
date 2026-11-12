@@ -31,36 +31,86 @@ ion-tabs {
 }
 
 /* =============================================================================
-   [IONIC] BARRA INFERIOR DE PESTAÑAS (TAB BAR SAAS PRO)
-   Fija, sólida, visible, con z-index elevado y soporte para safe-area móvil.
+   BARRA INFERIOR DE PESTAÑAS (DEEP NAVY SMALLPDF STYLE)
    ============================================================================= */
-ion-tab-bar {
-  --background: var(--card-bg, #ffffff);
-  --border: 1px solid var(--border-color, #e2e8f0);
-  background: var(--card-bg, #ffffff);
-  border-top: 1px solid var(--border-color, #e2e8f0);
-  height: 58px;
-  min-height: 58px;
+ion-tab-bar.smallpdf-bottom-tabbar {
+  --background: #081026;
+  --border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #081026;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  height: 60px;
+  min-height: 60px;
   position: relative;
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 ion-tab-button {
-  --color: var(--text-secondary, #64748b);
-  --color-selected: var(--primary-color, #4f46e5);
+  --color: #8b9bb4;
+  --color-selected: #ffffff;
   font-weight: 600;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, transform 0.15s ease;
+  position: relative;
+}
+
+ion-tab-button:active {
+  transform: scale(0.96);
 }
 
 ion-tab-button ion-icon {
-  font-size: 22px;
-  margin-bottom: 2px;
+  font-size: 21px;
+  margin-bottom: 3px;
+  color: #8b9bb4;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+ion-tab-button.tab-selected ion-icon {
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
 ion-tab-button ion-label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.01em;
+  color: #8b9bb4;
+}
+
+ion-tab-button.tab-selected ion-label {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Ícono 2x2 multi-color tipo Smallpdf en el Tab Tools */
+.sp-tab-grid-icon {
+  display: grid;
+  grid-template-columns: repeat(2, 6.5px);
+  grid-template-rows: repeat(2, 6.5px);
+  gap: 2.5px;
+  margin-bottom: 5px;
+  transition: transform 0.15s ease;
+}
+
+ion-tab-button.tab-selected .sp-tab-grid-icon {
+  transform: scale(1.15) translateY(-1px);
+}
+
+.sp-tg-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 2px;
+}
+
+.sp-tg-dot.dot-red { background: #ef4444; }
+.sp-tg-dot.dot-yellow { background: #f59e0b; }
+.sp-tg-dot.dot-blue { background: #3b82f6; }
+.sp-tg-dot.dot-green { background: #10b981; }
+
+ion-badge {
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 2px 6px;
+  background: var(--color-accent, #4f46e5);
 }

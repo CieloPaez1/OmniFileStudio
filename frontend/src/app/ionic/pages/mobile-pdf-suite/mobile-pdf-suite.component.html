@@ -1,134 +1,219 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+<ion-header class="ion-no-border sp-catalog-header-shell">
+  @if (viewMode() === 'catalog') {
+    <!-- CABECERA PRINCIPAL MODO CATÁLOGO ESTILO SMALLPDF TOOLS -->
+    <ion-toolbar class="sp-tools-navy-toolbar">
+      <ion-buttons slot="start">
+        <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
+      </ion-buttons>
 
-    <!-- [ESTILO SMALLPDF] Logo de 4 Colores + Botón Herramientas Megamenú -->
-    <div class="smallpdf-nav-brand">
-      <svg class="smallpdf-logo-svg" viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
-        <rect x="2" y="2" width="9" height="9" rx="2" fill="#ef4444" />
-        <rect x="13" y="2" width="9" height="9" rx="2" fill="#f59e0b" />
-        <rect x="2" y="13" width="9" height="9" rx="2" fill="#3b82f6" />
-        <rect x="13" y="13" width="9" height="9" rx="2" fill="#10b981" />
-      </svg>
-      <span class="smallpdf-brand-text">OmniFile <strong>Studio</strong></span>
+      <div class="sp-tools-brand-title">
+        <span class="sp-tools-main-heading">Tools</span>
+      </div>
+
+      <ion-buttons slot="end">
+        <ion-button
+          class="theme-toggle-btn"
+          (click)="themeService.toggleDarkLight()"
+          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
+          <ion-icon
+            [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
+            slot="icon-only">
+          </ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <!-- Barra de Búsqueda Rápida del Catálogo -->
+    <div class="sp-catalog-search-bar-wrap">
+      <div class="sp-catalog-search-field">
+        <ion-icon name="search-outline" class="sp-catalog-search-icon"></ion-icon>
+        <input
+          type="text"
+          class="sp-catalog-search-input"
+          placeholder="Buscar herramientas (ej: Word, OCR, Comprimir)..."
+          [ngModel]="catalogSearch()"
+          (ngModelChange)="catalogSearch.set($event)"
+        />
+        @if (catalogSearch()) {
+          <button type="button" class="sp-catalog-search-clear" (click)="catalogSearch.set('')">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        }
+      </div>
     </div>
+  } @else {
+    <!-- CABECERA EN MODO HERRAMIENTA ACTIVA CON BOTÓN ATRÁS ← TOOLS -->
+    <ion-toolbar class="sp-tools-navy-toolbar">
+      <ion-buttons slot="start">
+        <button type="button" class="sp-back-to-catalog-pill" (click)="backToCatalog()">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+          <span>Tools</span>
+        </button>
+      </ion-buttons>
 
-    <!-- Botón Megamenú Herramientas estilo Smallpdf.com -->
-    <button type="button" class="smallpdf-tools-dropdown-btn" (click)="toggleMegaMenu()">
-      <ion-icon name="grid-outline"></ion-icon>
-      <span>Herramientas</span>
-      <ion-icon name="chevron-down-outline" class="smallpdf-caret"></ion-icon>
-    </button>
+      <ion-title class="sp-tool-active-title">{{ getActiveToolTitle() }}</ion-title>
 
-    <ion-buttons slot="end">
-      <ion-button
-        class="theme-toggle-btn"
-        (click)="themeService.toggleDarkLight()"
-        [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
-        <ion-icon
-          [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
-          slot="icon-only">
-        </ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+      <ion-buttons slot="end">
+        <ion-button
+          class="theme-toggle-btn"
+          (click)="themeService.toggleDarkLight()"
+          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
+          <ion-icon
+            [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
+            slot="icon-only">
+          </ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
 
-  <!-- Barra de Acceso Rápido estilo Smallpdf -->
-  <div class="smallpdf-subbar">
-    <div class="sp-subbar-scroll">
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'compress'"
-        (click)="selectHeroTool('compress')">
-        Comprimir
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'convert'"
-        (click)="selectHeroTool('convert')">
-        Convertir
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'ocr'"
-        (click)="selectHeroTool('ocr')">
-        OCR
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'merge'"
-        (click)="selectHeroTool('merge')">
-        Fusionar
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'split'"
-        (click)="selectHeroTool('split')">
-        Dividir
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'rotate'"
-        (click)="selectHeroTool('rotate')">
-        Girar
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'watermark'"
-        (click)="selectHeroTool('watermark')">
-        Marca de agua
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'protect'"
-        (click)="selectHeroTool('protect')">
-        Proteger
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'sign'"
-        (click)="selectHeroTool('sign')">
-        Firmar
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link sp-ai-pill"
-        [class.active]="activeTool() === 'ai-tools'"
-        (click)="selectHeroTool('ai-tools')">
-        <ion-icon name="sparkles-outline"></ion-icon>
-        PDF con IA
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link"
-        [class.active]="activeTool() === 'translate'"
-        (click)="selectHeroTool('translate')">
-        Traducir
-      </button>
-      <button
-        type="button"
-        class="sp-subbar-link sp-cam-pill"
-        (click)="selectSmallPdfTool('scanner')">
-        <ion-icon name="camera-outline"></ion-icon>
-        Escáner
-      </button>
+    <!-- Barra de Píldoras de Acceso Rápido para cambiar de herramienta -->
+    <div class="smallpdf-subbar">
+      <div class="sp-subbar-scroll">
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'compress'"
+          (click)="selectHeroTool('compress')">
+          Comprimir
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'convert'"
+          (click)="selectHeroTool('convert')">
+          Convertir
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'ocr'"
+          (click)="selectHeroTool('ocr')">
+          OCR
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'merge'"
+          (click)="selectHeroTool('merge')">
+          Fusionar
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'split'"
+          (click)="selectHeroTool('split')">
+          Dividir
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'rotate'"
+          (click)="selectHeroTool('rotate')">
+          Girar
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'watermark'"
+          (click)="selectHeroTool('watermark')">
+          Marca de agua
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'protect'"
+          (click)="selectHeroTool('protect')">
+          Proteger
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'sign'"
+          (click)="selectHeroTool('sign')">
+          Firmar
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link sp-ai-pill"
+          [class.active]="activeTool() === 'ai-tools'"
+          (click)="selectHeroTool('ai-tools')">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          PDF con IA
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link"
+          [class.active]="activeTool() === 'translate'"
+          (click)="selectHeroTool('translate')">
+          Traducir
+        </button>
+        <button
+          type="button"
+          class="sp-subbar-link sp-cam-pill"
+          (click)="selectSmallPdfTool('scanner')">
+          <ion-icon name="camera-outline"></ion-icon>
+          Escáner
+        </button>
+      </div>
     </div>
-  </div>
+  }
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="omni-responsive-shell">
+<ion-content [class.sp-catalog-body]="viewMode() === 'catalog'" [class.ion-padding]="viewMode() === 'tool'">
+
+  @if (viewMode() === 'catalog') {
+    <!-- =========================================================================
+         [CATÁLOGO COMPLETO SMALLPDF TOOLS] VISTA IDÉNTICA A CAPTURA MÓVIL
+         ========================================================================= -->
+    <div class="sp-catalog-view-container">
+      @for (category of filteredCategories(); track category.name) {
+        <section class="sp-catalog-category-group">
+          <h2 class="sp-catalog-category-header">{{ category.name }}</h2>
+          <div class="sp-catalog-cards-stack">
+            @for (tool of category.tools; track tool.name) {
+              <button
+                type="button"
+                class="sp-catalog-tool-card"
+                (click)="selectSmallPdfTool(tool)">
+                <!-- Ícono Cuadrado Redondeado de Color Vibrante -->
+                <div class="sp-catalog-icon-squircle" [ngClass]="tool.colorClass">
+                  @if (tool.letterBadge) {
+                    <span class="sp-catalog-letter-badge">{{ tool.letterBadge }}</span>
+                  } @else {
+                    <ion-icon [name]="tool.icon || 'document-outline'"></ion-icon>
+                  }
+                </div>
+
+                <!-- Título de la Herramienta -->
+                <div class="sp-catalog-text-col">
+                  <span class="sp-catalog-tool-name">{{ tool.name }}</span>
+                </div>
+
+                <!-- Elementos al final: Badge PRO + Flecha Chevron -->
+                <div class="sp-catalog-end-col">
+                  @if (tool.badge) {
+                    <span class="sp-catalog-pro-tag">{{ tool.badge }}</span>
+                  }
+                  <ion-icon name="chevron-forward-outline" class="sp-catalog-chevron"></ion-icon>
+                </div>
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      @if (filteredCategories().length === 0) {
+        <div class="sp-catalog-empty-state">
+          <ion-icon name="search-outline"></ion-icon>
+          <p>No se encontraron herramientas con "{{ catalogSearch() }}"</p>
+          <button type="button" class="sp-catalog-reset-btn" (click)="catalogSearch.set('')">
+            Ver todas las herramientas
+          </button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="omni-responsive-shell">
     <!-- [REQUISITO 4] Animación de confirmación con Tick SVG y Feedback Háptico -->
     @if (successFeedback(); as fb) {
       <div class="omni-success-feedback">
@@ -1304,6 +1389,7 @@
       </ion-card>
     }
   </div>
+  } <!-- fin @else viewMode === 'tool' -->
 
   <!-- =========================================================================
        [MEGAMENÚ SMALLPDF COMPLETO] TODAS LAS HERRAMIENTAS Y CATEGORÍAS

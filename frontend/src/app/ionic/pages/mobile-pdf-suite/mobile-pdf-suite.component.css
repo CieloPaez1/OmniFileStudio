@@ -1316,3 +1316,294 @@
 
 
 
+
+/* ============================================================================
+   [ESTILO SMALLPDF] CATÁLOGO DE HERRAMIENTAS DUAL-VIEW (100% IDÉNTICO A APP MÓVIL)
+   ============================================================================ */
+.sp-catalog-header-shell {
+  box-shadow: none;
+}
+
+.sp-tools-navy-toolbar {
+  --background: #081026 !important;
+  background: #081026 !important;
+  --color: #ffffff;
+  min-height: 56px;
+  padding-inline: 0.5rem;
+}
+
+.sp-tools-brand-title {
+  display: flex;
+  align-items: center;
+}
+
+.sp-tools-main-heading {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  padding-left: 0.35rem;
+}
+
+.sp-toolbar-menu-btn {
+  --color: #ffffff;
+  color: #ffffff;
+}
+
+.sp-catalog-search-bar-wrap {
+  background: #081026;
+  padding: 0 1rem 0.85rem 1rem;
+}
+
+.sp-catalog-search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 0.5rem 0.85rem;
+  transition: border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+}
+
+.sp-catalog-search-field:focus-within {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.sp-catalog-search-icon {
+  color: #94a3b8;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.sp-catalog-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.sp-catalog-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sp-catalog-search-clear {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.sp-back-to-catalog-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+
+.sp-back-to-catalog-pill:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.sp-tool-active-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.sp-catalog-body {
+  --background: #f0f4fa;
+  background-color: #f0f4fa;
+}
+
+:host-context(.dark) .sp-catalog-body,
+[data-theme="dark"] .sp-catalog-body {
+  --background: #081026;
+  background-color: #081026;
+}
+
+.sp-catalog-view-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem 3.5rem 1rem;
+}
+
+.sp-catalog-category-group {
+  margin-bottom: 1.35rem;
+}
+
+.sp-catalog-category-header {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #081026;
+  margin: 0.75rem 0 0.55rem 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+:host-context(.dark) .sp-catalog-category-header,
+[data-theme="dark"] .sp-catalog-category-header {
+  color: #f8fafc;
+}
+
+.sp-catalog-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sp-catalog-tool-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.65rem 0.95rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  outline: none;
+}
+
+.sp-catalog-tool-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sp-catalog-tool-card:active {
+  transform: scale(0.985);
+}
+
+:host-context(.dark) .sp-catalog-tool-card,
+[data-theme="dark"] .sp-catalog-tool-card {
+  background: #111d38;
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+:host-context(.dark) .sp-catalog-tool-card:hover,
+[data-theme="dark"] .sp-catalog-tool-card:hover {
+  background: #172648;
+}
+
+.sp-catalog-icon-squircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-size: 1.35rem;
+  margin-right: 0.85rem;
+}
+
+/* Colores de íconos idénticos al pantallazo de Smallpdf */
+.sp-catalog-icon-squircle.sp-blue { background-color: #0b63e5; }
+.sp-catalog-icon-squircle.sp-teal { background-color: #00a3bf; }
+.sp-catalog-icon-squircle.sp-fuchsia { background-color: #ec4899; }
+.sp-catalog-icon-squircle.sp-red { background-color: #ef4444; }
+.sp-catalog-icon-squircle.sp-purple { background-color: #8b5cf6; }
+.sp-catalog-icon-squircle.sp-yellow { background-color: #f59e0b; }
+.sp-catalog-icon-squircle.sp-green { background-color: #10b981; }
+.sp-catalog-icon-squircle.sp-orange { background-color: #f97316; }
+.sp-catalog-icon-squircle.sp-indigo { background-color: #6366f1; }
+.sp-catalog-icon-squircle.sp-slate { background-color: #475569; }
+.sp-catalog-icon-squircle.sp-amber { background-color: #d97706; }
+
+.sp-catalog-letter-badge {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.sp-catalog-text-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-catalog-tool-name {
+  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #081026;
+  display: block;
+}
+
+:host-context(.dark) .sp-catalog-tool-name,
+[data-theme="dark"] .sp-catalog-tool-name {
+  color: #f8fafc;
+}
+
+.sp-catalog-end-col {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.sp-catalog-pro-tag {
+  background: #f59e0b;
+  color: #1e293b;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sp-catalog-chevron {
+  font-size: 1.15rem;
+  color: #94a3b8;
+}
+
+.sp-catalog-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+}
+
+.sp-catalog-empty-state ion-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.6;
+}
+
+.sp-catalog-reset-btn {
+  background: #0b63e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.75rem;
+}
+
+.sp-catalog-icon-squircle.sp-red .sp-catalog-letter-badge { font-size: 0.78rem; letter-spacing: 0.04em; }
+
