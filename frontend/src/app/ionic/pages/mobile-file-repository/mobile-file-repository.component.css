@@ -32,38 +32,39 @@ button:disabled,
 .sp-tools-navy-toolbar {
   --background: var(--color-navy) !important;
   background: var(--color-navy) !important;
-  --color: var(--color-paper-2);
+  --color: var(--color-navy-ink);
+  color: var(--color-navy-ink);
   min-height: 56px;
-  padding-inline: 0.5rem;
+  padding-inline: var(--space-xs);
 }
 
 .sp-toolbar-menu-btn {
-  --color: var(--color-paper-2);
-  color: var(--color-paper-2);
+  --color: var(--color-navy-ink);
+  color: var(--color-navy-ink);
 }
 
 .sp-repo-nav-title {
-  font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--color-paper-2);
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-navy-ink);
+  letter-spacing: var(--tracking-display);
 }
 
 .sp-repo-search-toolbar {
   --background: var(--color-navy) !important;
   background: var(--color-navy) !important;
   --border-width: 0;
-  padding: 0 0.5rem 0.5rem 0.5rem;
+  padding: 0 var(--space-sm) var(--space-sm) var(--space-sm);
 }
 
 .sp-repo-search-toolbar ion-searchbar {
   --background: var(--color-navy-field);
-  --color: var(--color-paper-2);
-  --placeholder-color: var(--color-navy-field);
-  --icon-color: var(--color-muted);
-  --clear-button-color: var(--color-muted);
-  border-radius: 12px;
+  --color: var(--color-navy-ink);
+  --placeholder-color: var(--color-navy-placeholder);
+  --icon-color: var(--color-navy-ink);
+  --clear-button-color: var(--color-navy-muted);
+  border-radius: var(--radius-md);
   padding: 0;
 }
 
@@ -91,16 +92,16 @@ button:disabled,
 .upload-pill-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.52rem 0.95rem;
-  border-radius: var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
   background: var(--color-accent-soft);
-  border: 1px dashed var(--color-accent-soft);
-  color: var(--color-accent-hover);
-  font-size: 0.8rem;
+  border: var(--rule-hair) dashed var(--color-accent);
+  color: var(--color-accent);
+  font-size: var(--text-xs);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.16s ease, background 0.16s ease;
+  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
 }
 
 .upload-pill-btn:hover {
@@ -138,15 +139,15 @@ button:disabled,
 
 .tag-filter-pill.active {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-accent-ink);
   border-color: var(--color-accent);
-  box-shadow: 0 6px 14px -3px var(--color-accent-soft);
+  box-shadow: var(--shadow-subtle);
 }
 
 .tag-filter-pill.urgent {
   background: var(--color-tool-red);
   border-color: var(--color-tool-red);
-  color: var(--color-paper-2);
+  color: var(--color-accent-ink);
 }
 
 /* Selector Flotante Estilizado para Conversión Rápida */
@@ -208,22 +209,54 @@ button:disabled,
 }
 
 .sliding-hint {
-  font-size: 0.78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--text-xs);
+  line-height: 1.45;
   color: var(--color-ink-2);
-  margin: 0.15rem 0.35rem 0.75rem;
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs) var(--space-sm);
+  margin: var(--space-2xs) var(--space-2xs) var(--space-sm);
+}
+
+.sliding-hint ion-icon {
+  font-size: 1.05rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin-top: var(--space-3xs);
 }
 
 /* Lista Moderna con Tarjetas Deslizables Redondeadas */
 .repo-modern-list {
   background: transparent;
-  padding: 0 0.15rem;
+  padding: 0 var(--space-3xs);
 }
 
 .repo-sliding-card {
-  margin-bottom: 0.65rem;
-  border-radius: 18px;
+  margin-bottom: var(--space-sm);
+  border-radius: var(--radius-card);
+  border: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper-2);
   overflow: hidden;
-  box-shadow: 0 4px 14px -3px var(--color-rule);
+  box-shadow: var(--shadow-subtle);
+}
+
+.repo-sliding-card ion-item {
+  margin-bottom: 0;
+  box-shadow: none;
+  border: none;
+  --border-radius: 0;
+  --padding-start: var(--space-sm);
+  --inner-padding-end: var(--space-xs);
+}
+
+.row-end-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
 }
 
 .file-row-title {
@@ -273,9 +306,15 @@ button:disabled,
 /* Vista Cuadrícula (Grid) con tarjetas rounded-2xl y sombras suaves */
 .repo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-  gap: 0.85rem;
-  padding: 0 0.15rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+  padding: 0 var(--space-3xs);
+}
+
+@media (max-width: 340px) {
+  .repo-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .grid-file-card {

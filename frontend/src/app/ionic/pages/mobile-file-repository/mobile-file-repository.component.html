@@ -169,70 +169,27 @@
               }
             </ion-label>
 
-            <!-- Botón de Vista Previa del Archivo -->
-            <ion-button
-              slot="end"
-              fill="solid"
-              color="primary"
-              size="small"
-              (click)="$event.stopPropagation(); openPreview(f)"
-              title="Vista Previa del Archivo">
-              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-            </ion-button>
+            <div slot="end" class="row-end-actions">
+              <ion-button
+                fill="outline"
+                color="primary"
+                size="small"
+                (click)="$event.stopPropagation(); openPreview(f)"
+                title="Vista Previa del Archivo"
+                aria-label="Vista Previa">
+                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+              </ion-button>
 
-            <!-- Botón de Acciones Rápidas Contextuales (UX/UI) -->
-            <ion-button
-              slot="end"
-              fill="outline"
-              color="primary"
-              size="small"
-              (click)="$event.stopPropagation(); openContextualActions(f)"
-              title="Acciones Rápidas Contextuales">
-              <ion-icon name="flash-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-
-            <!-- Botón Editar / Modificar Archivo (ABM) -->
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="primary"
-              size="small"
-              (click)="$event.stopPropagation(); openEditModal(f)"
-              title="Modificar archivo (Nombre, etiqueta, descripción)">
-              <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-
-            <!-- Botón Compartir Nativamente (Web Share API / Sistema) -->
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="primary"
-              size="small"
-              (click)="$event.stopPropagation(); shareFileNatively(f)"
-              title="Compartir archivo nativamente">
-              <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-
-            <!-- Botón Enviar por WhatsApp -->
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="success"
-              size="small"
-              (click)="$event.stopPropagation(); shareFileViaWhatsApp(f)"
-              title="Compartir por WhatsApp">
-              <ion-icon name="logo-whatsapp" slot="icon-only"></ion-icon>
-            </ion-button>
-
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="medium"
-              size="small"
-              (click)="downloadFile(f, $event)"
-              title="Descargar archivo">
-              <ion-icon name="download-outline" slot="icon-only"></ion-icon>
-            </ion-button>
+              <ion-button
+                fill="clear"
+                color="medium"
+                size="small"
+                (click)="$event.stopPropagation(); openContextualActions(f)"
+                title="Más acciones"
+                aria-label="Más acciones">
+                <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
           </ion-item>
 
           <!-- Opciones al deslizar a la izquierda (End) -->
@@ -240,6 +197,10 @@
             <ion-item-option color="primary" (click)="shareFileNatively(f, slidingItem)">
               <ion-icon name="share-social-outline" slot="start"></ion-icon>
               Compartir
+            </ion-item-option>
+            <ion-item-option color="success" (click)="shareFileViaWhatsApp(f)">
+              <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+              WhatsApp
             </ion-item-option>
             <ion-item-option color="tertiary" (click)="openQuickConvert(f, slidingItem)">
               <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
