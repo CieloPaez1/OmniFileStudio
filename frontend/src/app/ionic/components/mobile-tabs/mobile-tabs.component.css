@@ -1,130 +1,102 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: brand · redesign: full
- * paper: oklch(96.8% 0.008 250) · accent: oklch(53.5% 0.22 260) · display: Plus Jakarta Sans · body: Inter
- * nav: 4-tab bottom bar (Inicio, Herramientas, Archivos, Ajustes) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V4 · weakest: S, replaced decorative dot spans with accessible SVG brand mark and pure OKLCH tokens */
-:host {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  overflow-x: clip;
-  overflow-y: hidden;
-}
-
-ion-split-pane {
-  width: 100%;
-  height: 100%;
-}
-
-#mobile-main-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-ion-tabs {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-ion-tab-bar.smallpdf-bottom-tabbar {
-  --background: var(--color-navy);
-  --border: var(--rule-hair) solid var(--color-navy-border-subtle);
-  background: var(--color-navy);
-  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
-  height: 60px;
-  min-height: 60px;
-  position: relative;
-  z-index: var(--z-sticky-nav);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-shadow: var(--shadow-tabbar);
-}
-
-ion-tab-button {
-  --color: var(--color-navy-muted);
-  --color-selected: var(--color-navy-ink);
-  font-weight: 600;
-  transition: color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-  position: relative;
-}
-
-ion-tab-button:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: -2px;
-}
-
-ion-tab-button:active {
-  transform: scale(0.96);
-}
-
-ion-tab-button ion-icon {
-  font-size: 21px;
-  margin-bottom: var(--space-3xs);
-  color: var(--color-navy-muted);
-  transition: color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-}
-
-ion-tab-button.tab-selected ion-icon {
-  color: var(--color-navy-ink);
-  transform: translateY(-1px);
-}
-
-ion-tab-button ion-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-navy-muted);
-  white-space: nowrap;
-}
-
-ion-tab-button.tab-selected ion-label {
-  color: var(--color-navy-ink);
-  font-weight: 700;
-}
-
-.sp-tab-grid-svg {
-  width: 20px;
-  height: 20px;
-  margin-bottom: var(--space-3xs);
-  transition: transform var(--dur-micro) var(--ease-out);
-}
-
-ion-tab-button.tab-selected .sp-tab-grid-svg {
-  transform: scale(1.12) translateY(-1px);
-}
-
-.tile-red { fill: var(--color-tool-red); }
-.tile-yellow { fill: var(--color-tool-yellow); }
-.tile-blue { fill: var(--color-tool-blue); }
-.tile-green { fill: var(--color-tool-green); }
-
-ion-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  border-radius: var(--radius-pill);
-  padding: var(--space-3xs) var(--space-xs);
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  font-variant-numeric: tabular-nums;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ion-tab-button,
-  ion-tab-button ion-icon,
-  .sp-tab-grid-svg {
-    transition-duration: 0.01ms !important;
-  }
-}
-
-button:disabled, [disabled], [aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
+ * paper: oklch(11.5% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, center floating scan FAB requires generous bottom clearance on scrolled pages */
+/* Hallmark · dropped camera-outline, settings-outline · replaced by center scan-outline FAB and person-outline Perfil tab */
 
 html {
   overflow-x: clip;
 }
+
 body {
   overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.obsidian-bottom-tabbar {
+  --background: var(--color-navy);
+  --border: var(--rule-hair) solid var(--color-navy-border-subtle);
+  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
+  height: 68px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow: visible;
+  contain: none;
+  box-shadow: var(--shadow-tabbar);
+}
+
+.obsidian-bottom-tabbar ion-tab-button {
+  --color: var(--color-navy-muted);
+  --color-selected: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  position: relative;
+}
+
+.obsidian-bottom-tabbar ion-tab-button.tab-selected::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 24px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+.obsidian-bottom-tabbar ion-tab-button.center-scan-tab {
+  overflow: visible;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.obsidian-bottom-tabbar ion-tab-button.center-scan-tab.tab-selected::after {
+  display: none;
+}
+
+.center-scan-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  transform: translateY(-16px);
+  box-shadow: 0 8px 24px var(--color-accent-glow);
+  border: 3px solid var(--color-paper);
+  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+}
+
+.center-scan-fab ion-icon {
+  font-size: 1.55rem;
+  color: var(--color-accent-ink);
+}
+
+.center-scan-tab:active .center-scan-fab {
+  transform: translateY(-14px) scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

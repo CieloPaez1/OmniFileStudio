@@ -33,7 +33,9 @@ import {
   moonOutline,
   desktopOutline,
   settingsOutline,
-  logOutOutline
+  logOutOutline,
+  scanOutline,
+  personOutline
 } from 'ionicons/icons';
 
 import { AuthService } from '../../../services/auth.service';
@@ -86,7 +88,9 @@ export class MobileTabsComponent {
       moonOutline,
       desktopOutline,
       settingsOutline,
-      logOutOutline
+      logOutOutline,
+      scanOutline,
+      personOutline
     });
   }
 
