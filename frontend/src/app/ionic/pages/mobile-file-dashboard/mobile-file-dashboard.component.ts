@@ -117,7 +117,7 @@ export class MobileFileDashboardComponent implements OnInit {
   readonly notificationsOpen = signal<boolean>(false);
 
   readonly batchProgress = signal<number>(68);
-  readonly batchActiveCount = computed(() => Math.max(1, Math.min(3, this.fileService.pdfFiles())));
+  readonly batchActiveCount = computed(() => Math.max(1, Math.min(3, this.fileService.pdfFiles().length)));
 
   readonly userName = computed(() => {
     const raw = this.authService.currentUser()?.name || 'Cielo';
@@ -135,8 +135,8 @@ export class MobileFileDashboardComponent implements OnInit {
 
   readonly otherFilesCount = computed(() => {
     const total = this.fileService.totalFiles();
-    const pdfs = this.fileService.pdfFiles();
-    const imgs = this.fileService.imageFiles();
+    const pdfs = this.fileService.pdfFiles().length;
+    const imgs = this.fileService.imageFiles().length;
     return Math.max(0, total - pdfs - imgs);
   });
 

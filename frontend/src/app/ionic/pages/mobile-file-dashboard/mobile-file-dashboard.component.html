@@ -91,7 +91,7 @@
         <span class="kpi-tile-icon tone-red" aria-hidden="true">
           <ion-icon name="document-text-outline"></ion-icon>
         </span>
-        <strong class="kpi-tile-num">{{ fileService.pdfFiles() }}</strong>
+        <strong class="kpi-tile-num">{{ fileService.pdfFiles().length }}</strong>
         <span class="kpi-tile-label">PDFs</span>
       </button>
 
@@ -99,7 +99,7 @@
         <span class="kpi-tile-icon tone-green" aria-hidden="true">
           <ion-icon name="image-outline"></ion-icon>
         </span>
-        <strong class="kpi-tile-num">{{ fileService.imageFiles() }}</strong>
+        <strong class="kpi-tile-num">{{ fileService.imageFiles().length }}</strong>
         <span class="kpi-tile-label">Imágenes</span>
       </button>
 
@@ -329,7 +329,7 @@
             <ion-item>
               <ion-icon name="checkmark-circle-outline" slot="start" color="primary"></ion-icon>
               <ion-label>
-                <h2 style="overflow-wrap: break-word; min-width: 0;">{{ entry.actionLabel }}</h2>
+                <p style="overflow-wrap: break-word; min-width: 0; font-weight: 600; color: var(--color-ink);">{{ entry.actionLabel }}</p>
                 <p>{{ entry.fileName }}</p>
               </ion-label>
             </ion-item>
@@ -348,14 +348,13 @@
     [file]="previewFile()"
     [isOpen]="previewOpen()"
     (closed)="closePreview()"
-    (downloadRequested)="downloadFile($event)">
+    (openActionsRequested)="openQuickActions($event)">
   </app-file-preview-modal>
 
   <!-- Sheet de Acciones Rápidas Contextuales -->
   <app-contextual-quick-actions
     [file]="quickActionsFile()"
     [isOpen]="quickActionsOpen()"
-    (closed)="closeQuickActions()"
-    (previewRequested)="openPreview($event)">
+    (closed)="closeQuickActions()">
   </app-contextual-quick-actions>
 </ion-content>
