@@ -1,8 +1,9 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
+import { FileManagerService } from '../../../services/file-manager.service';
 
 // =============================================================================
 // [IONIC 9 - CLASES 2, 3, 6 Y 8: PERFIL INTERACTIVO CON SISTEMA DE NIVELES Y XP,
@@ -57,6 +58,8 @@ import {
   gitNetworkOutline,
   settingsOutline,
   chevronForwardOutline,
+  chevronDownOutline,
+  arrowForwardOutline,
   logoSlack,
   calendarOutline,
   logoGithub,
@@ -114,6 +117,7 @@ export interface LevelRankTier {
   imports: [
     UpperCasePipe,
     FormsModule,
+    RouterModule,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -132,6 +136,7 @@ export interface LevelRankTier {
 export class MobileProfileComponent implements OnInit {
   readonly authService = inject(AuthService);
   readonly themeService = inject(ThemeService);
+  readonly fileService = inject(FileManagerService);
   private readonly projectService = inject(ProjectService);
   private readonly taskService = inject(TaskService);
   private readonly storageService = inject(IonicStorageService);
@@ -269,6 +274,8 @@ export class MobileProfileComponent implements OnInit {
       gitNetworkOutline,
       settingsOutline,
       chevronForwardOutline,
+      chevronDownOutline,
+      arrowForwardOutline,
       logoSlack,
       calendarOutline,
       logoGithub,
@@ -278,7 +285,31 @@ export class MobileProfileComponent implements OnInit {
     });
   }
 
+  userInitials = computed(() => {
+    const name = (this.authService.currentUser()?.name || 'Cielo Gestión').trim();
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase() || 'CG';
+  });
+
+  storageQuotaPercent = computed(() => {
+    const bytes = this.fileService.totalBytes();
+    if (bytes <= 0) return 0;
+    const maxBytes = 100 * 1024 * 1024; // 100 MB referencia visual
+    return Math.min(100, Math.max(4, Math.round((bytes / maxBytes) * 100)));
+  });
+
+  otherFilesCount = computed(() => {
+    const total = this.fileService.totalFiles();
+    const pdfs = this.fileService.pdfFiles().length;
+    const imgs = this.fileService.imageFiles().length;
+    return Math.max(0, total - pdfs - imgs);
+  });
+
   async ngOnInit(): Promise<void> {
+    this.fileService.loadFiles().subscribe();
     const user = this.authService.currentUser();
     if (user?.avatarUrl) {
       this.avatarUrl.set(user.avatarUrl);
