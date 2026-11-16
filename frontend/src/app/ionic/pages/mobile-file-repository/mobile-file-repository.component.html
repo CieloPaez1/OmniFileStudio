@@ -566,30 +566,6 @@
         }
       </div>
     }
-
-    <!-- Barra Inferior de Estado de Selección -->
-    <footer class="selection-status-bar">
-      <span class="selection-count-label">
-        {{ selectedCount() }} {{ selectedCount() === 1 ? 'elemento seleccionado' : 'elementos seleccionados' }}
-      </span>
-
-      <div class="selection-bar-actions">
-        <button type="button" class="sel-action-btn" (click)="downloadSelected()">
-          <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
-          <span>Descargar</span>
-        </button>
-
-        <button type="button" class="sel-action-btn danger-text" (click)="deleteSelected()">
-          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
-          <span>Eliminar</span>
-        </button>
-
-        <button type="button" class="sel-action-btn" (click)="toggleViewMode()">
-          <ion-icon name="ellipsis-horizontal-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
-          <span>Más opciones</span>
-        </button>
-      </div>
-    </footer>
   </div>
 
   <!-- Modal de Acciones Rápidas Contextuales -->
