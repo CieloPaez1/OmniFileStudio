@@ -1,169 +1,142 @@
-<ion-header class="ion-no-border sp-repo-header-shell">
-  <ion-toolbar class="sp-tools-navy-toolbar">
-    <ion-buttons slot="start">
-      <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
-    </ion-buttons>
-    <ion-title class="sp-repo-nav-title">Archivos ({{ filteredFiles().length }})</ion-title>
-    <ion-buttons slot="end">
-      <ion-button
-        class="theme-toggle-btn"
-        (click)="themeService.toggleDarkLight()"
-        [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
-        <ion-icon
-          [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
-          slot="icon-only">
-        </ion-icon>
-      </ion-button>
-      <ion-button (click)="toggleViewMode()" title="Cambiar Vista Lista/Cuadrícula">
-        <ion-icon [name]="viewMode() === 'list' ? 'grid-outline' : 'list-outline'" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<ion-header class="ion-no-border explorer-header-shell">
+  <ion-toolbar class="explorer-top-toolbar">
+    <div class="explorer-header-row">
+      <!-- Izquierda: Carpeta 3D Naranja + Título Archivos + Subtítulo -->
+      <div class="explorer-brand-title">
+        <svg class="explorer-folder-hero-svg" viewBox="0 0 44 38" aria-hidden="true">
+          <defs>
+            <linearGradient id="archFolderBack" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffb84d" />
+              <stop offset="100%" stop-color="#ff6b00" />
+            </linearGradient>
+            <linearGradient id="archFolderFront" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff8c24" />
+              <stop offset="100%" stop-color="#e04800" />
+            </linearGradient>
+          </defs>
+          <path d="M4 6C4 3.79 5.79 2 8 2H17.5L21.5 6.8H36C38.21 6.8 40 8.59 40 10.8V30C40 32.21 38.21 34 36 34H8C5.79 34 4 32.21 4 30V6Z" fill="url(#archFolderBack)" />
+          <path d="M2 13C2 10.79 3.79 9 6 9H38C40.21 9 42 10.79 42 13V31C42 33.21 40.21 35 38 35H6C3.79 35 2 33.21 2 31V13Z" fill="url(#archFolderFront)" />
+          <rect x="7" y="6" width="10" height="2" rx="1" fill="#fff7ed" opacity="0.85" />
+        </svg>
+        <div class="explorer-title-copy">
+          <h1>Archivos</h1>
+          <p>Gestiona todos tus archivos y carpetas</p>
+        </div>
+      </div>
 
-  <!-- Buscador instantáneo estilizado en la cabecera Navy -->
-  <ion-toolbar class="sp-repo-search-toolbar">
-    <ion-searchbar
-      placeholder="Buscar por nombre, extensión o nota..."
-      [value]="searchQuery()"
-      (ionInput)="onSearchInput($event)">
-    </ion-searchbar>
+      <!-- Derecha: Buscador Píldora + Botón de Filtros -->
+      <div class="explorer-search-group">
+        <div class="explorer-search-pill">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+          <input
+            type="text"
+            placeholder="Buscar archivos…"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            aria-label="Buscar archivos"
+          />
+          @if (searchQuery()) {
+            <button type="button" class="clear-search-btn" (click)="searchQuery.set('')" aria-label="Limpiar búsqueda">
+              <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="explorer-filter-btn"
+          (click)="showTagsFilterBar.set(!showTagsFilterBar())"
+          title="Filtrar por etiqueta o categoría"
+          aria-label="Abrir filtros">
+          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- [REQUISITO 6] Pull-to-refresh -->
+<ion-content class="explorer-content">
+  <!-- Ondas de seda 3D de fondo -->
+  <div class="explorer-silk-waves" aria-hidden="true">
+    <svg viewBox="0 0 800 600" preserveAspectRatio="none" class="explorer-waves-svg">
+      <defs>
+        <linearGradient id="expWave1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.32" />
+          <stop offset="55%" stop-color="#c2410c" stop-opacity="0.12" />
+          <stop offset="100%" stop-color="#090808" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M520,-20 C620,40 660,130 820,160 L820,-20 Z" fill="url(#expWave1)" />
+      <path d="M560,440 C680,470 730,540 820,590 L820,620 L420,620 C480,540 500,470 560,440 Z" fill="url(#expWave1)" />
+    </svg>
+  </div>
+
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content pullingText="Actualizando repositorio..."></ion-refresher-content>
+    <ion-refresher-content pullingText="Actualizando archivos…"></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Barra de subida rápida + acceso al Formulario Reactivo -->
-  <div class="repo-top-actions">
-    <ion-button size="small" color="primary" (click)="goToReactiveForm()">
-      <ion-icon name="add-outline" slot="start"></ion-icon>
-      Subida Inteligente
-    </ion-button>
-
-    <label class="upload-pill-btn">
-      <ion-icon name="cloud-upload-outline"></ion-icon>
-      <span>Auto-Subida Directa</span>
-      <input type="file" multiple hidden (change)="onDirectUpload($event)" />
-    </label>
-  </div>
-
-  <!-- Explorador de Carpetas Inteligentes (Todos, PDFs, Imágenes, Documentos, Favoritos, Papelera) -->
-  <section class="explorer-folders-section">
-    <div class="explorer-section-head">
-      <span class="explorer-section-label">Carpetas y colecciones</span>
-      @if (selectedCategory() !== 'ALL') {
-        <button type="button" class="reset-folder-btn" (click)="selectCategoryFolder('ALL')">
-          Ver todas
-        </button>
-      }
-    </div>
-
-    <div class="folders-grid">
-      <button
-        type="button"
-        class="folder-card"
-        [class.active]="selectedCategory() === 'PDF'"
-        (click)="selectCategoryFolder('PDF')">
-        <span class="folder-icon-wrap tone-red" aria-hidden="true">
-          <ion-icon name="document-text-outline"></ion-icon>
-        </span>
-        <div class="folder-meta">
-          <strong>PDFs</strong>
-          <span>{{ fileService.pdfFiles().length }} archivos</span>
-        </div>
+  <div class="explorer-shell">
+    <!-- Barra de 5 Píldoras de Acción Superior -->
+    <section class="action-pills-bar" aria-label="Acciones de archivos">
+      <button type="button" class="action-pill primary-new-pill" (click)="goToReactiveForm()">
+        <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+        <span>Nuevo</span>
+        <ion-icon name="chevron-down-outline" class="caret-sm" aria-hidden="true"></ion-icon>
       </button>
 
-      <button
-        type="button"
-        class="folder-card"
-        [class.active]="selectedCategory() === 'IMAGE'"
-        (click)="selectCategoryFolder('IMAGE')">
-        <span class="folder-icon-wrap tone-green" aria-hidden="true">
-          <ion-icon name="image-outline"></ion-icon>
-        </span>
-        <div class="folder-meta">
-          <strong>Imágenes</strong>
-          <span>{{ fileService.imageFiles().length }} archivos</span>
-        </div>
+      <label class="action-pill dark-action-pill">
+        <ion-icon name="cloud-upload-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
+        <span>Subir archivos</span>
+        <input type="file" multiple hidden (change)="onDirectUpload($event)" />
+      </label>
+
+      <button type="button" class="action-pill dark-action-pill" (click)="promptNewFolder()">
+        <ion-icon name="folder-open-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
+        <span>Nueva carpeta</span>
       </button>
 
-      <button
-        type="button"
-        class="folder-card"
-        [class.active]="selectedCategory() === 'DOC'"
-        (click)="selectCategoryFolder('DOC')">
-        <span class="folder-icon-wrap tone-orange" aria-hidden="true">
-          <ion-icon name="layers-outline"></ion-icon>
-        </span>
-        <div class="folder-meta">
-          <strong>Documentos</strong>
-          <span>{{ docAndDataCount() }} archivos</span>
-        </div>
+      <button type="button" class="action-pill dark-action-pill" (click)="toggleSelectAll()">
+        <ion-icon name="checkmark-circle-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
+        <span>Seleccionar todo</span>
       </button>
 
-      <button
-        type="button"
-        class="folder-card"
-        [class.active]="selectedCategory() === 'FAV'"
-        (click)="selectCategoryFolder('FAV')">
-        <span class="folder-icon-wrap tone-amber" aria-hidden="true">
-          <ion-icon name="star"></ion-icon>
-        </span>
-        <div class="folder-meta">
-          <strong>Favoritos</strong>
-          <span>Destacados</span>
-        </div>
+      <button type="button" class="action-pill dark-action-pill" (click)="toggleViewMode()">
+        <ion-icon name="ellipsis-horizontal-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
+        <span>Más opciones</span>
       </button>
+    </section>
 
-      <button
-        type="button"
-        class="folder-card"
-        [class.active]="selectedCategory() === 'TRASH'"
-        (click)="selectCategoryFolder('TRASH')">
-        <span class="folder-icon-wrap tone-purple" aria-hidden="true">
-          <ion-icon name="archive-outline"></ion-icon>
-        </span>
-        <div class="folder-meta">
-          <strong>Papelera</strong>
-          <span>{{ archivedCount() }} archivados</span>
-        </div>
-      </button>
-    </div>
-  </section>
-
-  <!-- Filtros por etiquetas -->
-  <div class="tags-bar">
-    @for (t of tags; track t) {
-      <button
-        type="button"
-        class="tag-filter-pill"
-        [class.active]="selectedTag() === t"
-        [class.urgent]="t === 'Urgente' && selectedTag() === t"
-        (click)="selectedTag.set(t)">
-        {{ t }}
-      </button>
+    <!-- Barra de Etiquetas Desplegable / Filtro Activo -->
+    @if (showTagsFilterBar() || selectedCategory() !== 'ALL' || selectedTag() !== 'Todas') {
+      <section class="tags-bar">
+        @if (selectedCategory() !== 'ALL') {
+          <button type="button" class="tag-filter-pill active" (click)="selectCategoryFolder('ALL')">
+            Carpeta: {{ selectedCategory() }} ✕
+          </button>
+        }
+        @for (t of tags; track t) {
+          <button
+            type="button"
+            class="tag-filter-pill"
+            [class.active]="selectedTag() === t"
+            (click)="selectedTag.set(t)">
+            {{ t }}
+          </button>
+        }
+      </section>
     }
-  </div>
 
-  <!-- [MEJORA UX #5] Selector Flotante Estilizado de Conversión Rápida (Sin menú nativo antiguo) -->
-  @if (convertingFile(); as cf) {
-    <ion-card class="convert-floating-card">
-      <ion-card-header>
+    <!-- Tarjeta Flotante de Conversión Rápida (cuando se activa) -->
+    @if (convertingFile(); as cf) {
+      <section class="convert-floating-panel">
         <div class="convert-head-row">
           <div>
-            <ion-card-subtitle>CONVERSOR RÁPIDO EN CLIENTE</ion-card-subtitle>
-            <ion-card-title class="convert-card-title">{{ cf.name }}</ion-card-title>
+            <h2 class="convert-card-title">{{ cf.name }}</h2>
           </div>
-          <ion-button fill="clear" size="small" color="medium" (click)="convertingFile.set(null)">
-            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-          </ion-button>
+          <button type="button" class="row-circle-btn" (click)="convertingFile.set(null)" aria-label="Cerrar conversor">
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
         </div>
-      </ion-card-header>
-      <ion-card-content>
-        <span class="pill-selector-label">Elegí el formato de destino:</span>
         <div class="floating-format-pills">
           @for (fmt of cf.availableTargets; track fmt) {
             <button
@@ -171,279 +144,438 @@
               class="format-option-pill"
               [class.selected]="targetFormat() === fmt"
               (click)="targetFormat.set(fmt)">
-              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(fmt)">
-                <ion-icon [name]="getFormatIcon(fmt)"></ion-icon>
-                .{{ fmt | uppercase }}
-              </span>
+              .{{ fmt | uppercase }}
             </button>
           }
         </div>
         <div class="convert-banner-btns">
-          <ion-button size="small" color="primary" (click)="confirmQuickConvert()">
-            <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
-            Convertir ahora a .{{ targetFormat() | uppercase }}
-          </ion-button>
-          <ion-button size="small" fill="clear" color="medium" (click)="convertingFile.set(null)">
-            Cancelar
-          </ion-button>
+          <button type="button" class="modal-orange-save-btn" (click)="confirmQuickConvert()">
+            Convertir a .{{ targetFormat() | uppercase }}
+          </button>
         </div>
-      </ion-card-content>
-    </ion-card>
-  }
+      </section>
+    }
 
-  <p class="sliding-hint">
-    <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
-    <span><strong>Tip:</strong> Tocá un archivo para abrir su <strong>Vista Previa</strong> o deslizalo para <strong>Archivar</strong>, <strong>Compartir</strong> o <strong>Descargar</strong>.</span>
-  </p>
+    <!-- ==================== TABLA / LISTA ESTRUCTURADA DE ARCHIVOS Y CARPETAS ==================== -->
+    @if (viewMode() === 'list') {
+      <section class="explorer-table-card">
+        <!-- Cabecera de Columnas -->
+        <div class="table-head-row">
+          <button
+            type="button"
+            class="custom-check-btn"
+            [class.checked]="selectedCount() > 0 && selectedCount() >= folderItems().length + filteredFiles().length"
+            (click)="toggleSelectAll()"
+            aria-label="Seleccionar todos">
+            @if (selectedCount() > 0 && selectedCount() >= folderItems().length + filteredFiles().length) {
+              <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+            }
+          </button>
 
-  <!-- ==================== VISTA LISTA CON ION-ITEM-SLIDING ==================== -->
-  @if (viewMode() === 'list') {
-    <ion-list class="repo-modern-list">
-      @for (f of filteredFiles(); track f.id) {
-        <ion-item-sliding #slidingItem class="repo-sliding-card">
-          <!-- Opciones al deslizar a la derecha (Start) -->
-          <ion-item-options side="start">
-            <ion-item-option color="primary" (click)="openEditModal(f, slidingItem)">
-              <ion-icon name="create-outline" slot="start"></ion-icon>
-              Editar
-            </ion-item-option>
-            <ion-item-option color="secondary" (click)="archiveFromSliding(f, slidingItem)">
-              <ion-icon name="archive-outline" slot="start"></ion-icon>
-              {{ f.archived ? 'Restaurar' : 'Archivar' }}
-            </ion-item-option>
-            <ion-item-option color="success" (click)="saveToDeviceStorage(f, slidingItem)">
-              <ion-icon name="save-outline" slot="start"></ion-icon>
-              Filesystem
-            </ion-item-option>
-          </ion-item-options>
+          <button type="button" class="col-sort-btn col-name" (click)="toggleSort('name')">
+            <span>Nombre</span>
+            <ion-icon [name]="sortAsc() ? 'arrow-up-outline' : 'arrow-down-outline'" class="sort-arrow" aria-hidden="true"></ion-icon>
+          </button>
 
-          <ion-item button detail="false" (click)="openPreview(f)">
-            <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado por Formato -->
-            <span
-              slot="start"
-              class="file-format-badge"
-              [ngClass]="getFormatBadgeClass(f.ext, f.category)">
-              <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
-              .{{ f.ext | uppercase }}
-            </span>
+          <span class="col-type">Tipo</span>
+          <span class="col-size">Tamaño</span>
 
-            <ion-label>
-              <h2 class="file-row-title">{{ f.name }}</h2>
-              <p class="file-row-meta">
-                <span class="row-tag-chip">{{ f.tag || 'Trabajo' }}</span>
-                <span class="meta-sep">/</span>
-                <span>{{ fileService.formatBytes(f.size) }}</span>
-                @if (f.pageCount) {
-                  <span class="meta-sep">/</span>
-                  <span>{{ f.pageCount }} págs.</span>
+          <button type="button" class="col-sort-btn col-modified" (click)="toggleSort('date')">
+            <span>Modificado</span>
+            <ion-icon name="chevron-down-outline" class="sort-arrow" aria-hidden="true"></ion-icon>
+          </button>
+
+          <div class="col-actions-head">
+            <button type="button" class="head-more-btn" (click)="toggleViewMode()" title="Cambiar vista" aria-label="Cambiar vista">
+              <ion-icon name="ellipsis-vertical-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filas de Carpetas -->
+        @if (selectedCategory() === 'ALL') {
+          @for (fld of folderItems(); track fld.id) {
+            <div
+              class="table-item-row"
+              [class.row-selected]="isSelected('folder-' + fld.id)"
+              (click)="selectCategoryFolder(fld.category)">
+              <button
+                type="button"
+                class="custom-check-btn"
+                [class.checked]="isSelected('folder-' + fld.id)"
+                (click)="toggleSelection('folder-' + fld.id, $event)"
+                [attr.aria-label]="'Seleccionar ' + fld.name">
+                @if (isSelected('folder-' + fld.id)) {
+                  <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
                 }
-                @if (f.signed) {
-                  <span class="status-mini signed">
-                    <ion-icon name="create-outline" aria-hidden="true"></ion-icon> Firmado
-                  </span>
-                }
-                @if (f.compressed) {
-                  <span class="status-mini compressed">
-                    <ion-icon name="archive-outline" aria-hidden="true"></ion-icon> Comprimido
-                  </span>
-                }
-              </p>
-              @if (f.description) {
-                <p class="item-desc">{{ f.description }}</p>
-              }
-            </ion-label>
+              </button>
 
-            <div slot="end" class="row-end-actions">
-              <ion-button
-                fill="outline"
-                color="primary"
-                size="small"
-                (click)="$event.stopPropagation(); openPreview(f)"
-                title="Vista Previa del Archivo"
-                aria-label="Vista Previa">
-                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+              <div class="col-name item-identity">
+                <svg class="row-svg-icon" viewBox="0 0 38 32" aria-hidden="true">
+                  <path d="M3 5C3 3.34 4.34 2 6 2H14.5L18 6H31C32.66 6 34 7.34 34 9V25C34 26.66 32.66 28 31 28H6C4.34 28 3 26.66 3 25V5Z" fill="#ffb03a" />
+                  <path d="M2 10C2 8.34 3.34 7 5 7H32C33.66 7 35 8.34 35 10V26C35 27.66 33.66 29 32 29H5C3.34 29 2 27.66 2 26V10Z" fill="#ff7315" />
+                  <rect x="6" y="4.5" width="8" height="1.8" rx="0.9" fill="#fff7ed" opacity="0.8" />
+                </svg>
+                <strong class="item-title">{{ fld.name }}</strong>
+              </div>
 
-              <ion-button
-                fill="clear"
-                color="medium"
-                size="small"
-                (click)="$event.stopPropagation(); openContextualActions(f)"
-                title="Más acciones"
-                aria-label="Más acciones">
-                <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+              <div class="col-type">
+                <span class="type-pill folder-pill">Carpeta</span>
+              </div>
+
+              <div class="col-size">3 elementos</div>
+
+              <div class="col-modified">{{ fld.modified }}</div>
+
+              <div class="col-actions" (click)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  class="row-circle-btn"
+                  (click)="selectCategoryFolder(fld.category)"
+                  title="Abrir carpeta"
+                  aria-label="Abrir carpeta">
+                  <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button
+                  type="button"
+                  class="row-circle-btn"
+                  (click)="openManageFolderModal(fld, $event)"
+                  title="Gestionar carpeta"
+                  aria-label="Gestionar carpeta">
+                  <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button
+                  type="button"
+                  class="row-circle-btn danger-hover"
+                  (click)="deleteFolder(fld, $event)"
+                  title="Eliminar carpeta"
+                  aria-label="Eliminar carpeta">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
             </div>
-          </ion-item>
+          }
+        }
 
-          <!-- Opciones al deslizar a la izquierda (End) -->
-          <ion-item-options side="end">
-            <ion-item-option color="primary" (click)="shareFileNatively(f, slidingItem)">
-              <ion-icon name="share-social-outline" slot="start"></ion-icon>
-              Compartir
-            </ion-item-option>
-            <ion-item-option color="success" (click)="shareFileViaWhatsApp(f)">
-              <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
-              WhatsApp
-            </ion-item-option>
-            <ion-item-option color="tertiary" (click)="openQuickConvert(f, slidingItem)">
-              <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
-              Convertir
-            </ion-item-option>
-            <ion-item-option color="danger" expandable (click)="deleteFromSliding(f, slidingItem)">
-              <ion-icon name="trash-outline" slot="start"></ion-icon>
-              Borrar
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-      }
-    </ion-list>
-  } @else {
-    <!-- ==================== VISTA CUADRÍCULA (GRID) ==================== -->
-    <div class="repo-grid">
-      @for (f of filteredFiles(); track f.id) {
-        <ion-card class="grid-file-card" (click)="openPreview(f)">
-          <ion-card-header>
+        <!-- Filas de Archivos -->
+        @for (f of filteredFiles(); track f.id; let idx = $index) {
+          <div
+            class="table-item-row"
+            [class.row-selected]="isSelected(f.id)"
+            (click)="openPreview(f)">
+            <button
+              type="button"
+              class="custom-check-btn"
+              [class.checked]="isSelected(f.id)"
+              (click)="toggleSelection(f.id, $event)"
+              [attr.aria-label]="'Seleccionar ' + f.name">
+              @if (isSelected(f.id)) {
+                <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+              }
+            </button>
+
+            <div class="col-name item-identity">
+              @if (getFormatBadgeClass(f.ext, f.category) === 'fmt-pdf') {
+                <svg class="row-svg-icon" viewBox="0 0 36 38" aria-hidden="true">
+                  <rect x="3" y="2" width="30" height="34" rx="7" fill="#ef3b2d" />
+                  <path d="M23 2L33 12H25C23.9 12 23 11.1 23 10V2Z" fill="#fca5a5" />
+                  <path d="M18 13C16.5 17 14 22 11.5 24.5C14.5 23.5 20.5 21.5 24.5 22.5C22 20.5 19 16.5 18 13Z" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
+                </svg>
+              } @else if (getFormatBadgeClass(f.ext, f.category) === 'fmt-image') {
+                <svg class="row-svg-icon" viewBox="0 0 36 36" aria-hidden="true">
+                  <rect x="3" y="3" width="30" height="30" rx="7" fill="#10b981" />
+                  <circle cx="12.5" cy="12.5" r="2.5" fill="#ffffff" />
+                  <path d="M7 26L14 18L19 23L23 19L29 26H7Z" fill="#ffffff" />
+                </svg>
+              } @else if (getFormatBadgeClass(f.ext, f.category) === 'fmt-data') {
+                <svg class="row-svg-icon" viewBox="0 0 36 36" aria-hidden="true">
+                  <rect x="3" y="3" width="30" height="30" rx="7" fill="#9333ea" />
+                  <ellipse cx="18" cy="12" rx="9" ry="3.5" fill="#e9d5ff" />
+                  <path d="M9 12V18C9 20 13 21.5 18 21.5C23 21.5 27 20 27 18V12" stroke="#ffffff" stroke-width="1.8" fill="none" />
+                  <path d="M9 18V24C9 26 13 27.5 18 27.5C23 27.5 27 26 27 24V18" stroke="#ffffff" stroke-width="1.8" fill="none" />
+                </svg>
+              } @else {
+                <svg class="row-svg-icon" viewBox="0 0 36 38" aria-hidden="true">
+                  <rect x="3" y="2" width="30" height="34" rx="7" fill="#2563eb" />
+                  <path d="M23 2L33 12H25C23.9 12 23 11.1 23 10V2Z" fill="#93c5fd" />
+                  <rect x="9" y="16" width="18" height="2.4" rx="1.2" fill="#ffffff" />
+                  <rect x="9" y="21" width="18" height="2.4" rx="1.2" fill="#ffffff" />
+                  <rect x="9" y="26" width="12" height="2.4" rx="1.2" fill="#ffffff" />
+                </svg>
+              }
+              <div class="item-title-stack">
+                <strong class="item-title">{{ f.name }}</strong>
+                <span class="mobile-sub-meta">{{ fileService.formatBytes(f.size) }} / {{ formatModifiedDate(idx) }}</span>
+              </div>
+            </div>
+
+            <div class="col-type">
+              <span class="type-pill">{{ f.tag || (f.ext | uppercase) }}</span>
+            </div>
+
+            <div class="col-size">{{ fileService.formatBytes(f.size) }}</div>
+
+            <div class="col-modified">{{ formatModifiedDate(idx) }}</div>
+
+            <div class="col-actions" (click)="$event.stopPropagation()">
+              <button
+                type="button"
+                class="row-circle-btn"
+                (click)="openPreview(f)"
+                title="Vista previa"
+                aria-label="Vista previa">
+                <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
+              </button>
+              <button
+                type="button"
+                class="row-circle-btn"
+                (click)="openEditModal(f, undefined, $event)"
+                title="Gestionar archivo"
+                aria-label="Gestionar archivo">
+                <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+              </button>
+              <button
+                type="button"
+                class="row-circle-btn danger-hover"
+                (click)="confirmDelete(f, undefined, $event)"
+                title="Eliminar archivo"
+                aria-label="Eliminar archivo">
+                <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- ==================== TARJETA FLOTANTE SUPERPUESTA: "GESTIONAR ARCHIVO" ==================== -->
+        @if (isEditModalOpen()) {
+          <div class="manage-floating-overlay">
+            <div class="manage-dialog-panel" (click)="$event.stopPropagation()">
+              <!-- Cabecera del Panel -->
+              <div class="manage-dialog-header">
+                <div class="manage-dialog-title-group">
+                  <svg class="manage-mini-folder" viewBox="0 0 28 24" aria-hidden="true">
+                    <path d="M2 4C2 2.9 2.9 2 4 2H11L13.5 5H24C25.1 5 26 5.9 26 7V20C26 21.1 25.1 22 24 22H4C2.9 22 2 21.1 2 20V4Z" fill="#ff7b1a" />
+                  </svg>
+                  <h2>Gestionar Archivo</h2>
+                </div>
+                <button type="button" class="dialog-close-x" (click)="closeEditModal()" aria-label="Cerrar">
+                  <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
+
+              <!-- 3 Pestañas: Información | Editar | Compartir -->
+              <div class="manage-tabs-row">
+                <button
+                  type="button"
+                  class="manage-tab-pill"
+                  [class.active]="manageTab() === 'info'"
+                  (click)="manageTab.set('info')">
+                  Información
+                </button>
+                <button
+                  type="button"
+                  class="manage-tab-pill"
+                  [class.active]="manageTab() === 'edit'"
+                  (click)="manageTab.set('edit')">
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="manage-tab-pill"
+                  [class.active]="manageTab() === 'share'"
+                  (click)="manageTab.set('share')">
+                  Compartir
+                </button>
+              </div>
+
+              <!-- Cuerpo Principal con Icono 3D Grande a la Izquierda + Campos a la Derecha -->
+              <form [formGroup]="editForm" (ngSubmit)="saveFileChanges()" class="manage-dialog-body">
+                @if (manageTab() !== 'share') {
+                  <div class="manage-main-grid">
+                    <div class="manage-big-icon-box">
+                      <svg class="manage-big-folder-svg" viewBox="0 0 64 56" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="dlgFolderFront" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ff942e" />
+                            <stop offset="100%" stop-color="#e04800" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M6 10C6 6.69 8.69 4 12 4H25L31 11H52C55.31 11 58 13.69 58 17V44C58 47.31 55.31 50 52 50H12C8.69 50 6 47.31 6 44V10Z" fill="#ffb84d" />
+                        <path d="M4 18C4 14.69 6.69 12 10 12H54C57.31 12 60 14.69 60 18V46C60 49.31 57.31 52 54 52H10C6.69 52 4 49.31 4 46V18Z" fill="url(#dlgFolderFront)" />
+                        <rect x="11" y="9" width="14" height="3" rx="1.5" fill="#fff7ed" opacity="0.9" />
+                      </svg>
+                    </div>
+
+                    <div class="manage-fields-col">
+                      <label class="dlg-field-label">Nombre:</label>
+                      <input
+                        #nameInputRef
+                        type="text"
+                        class="dlg-dark-input"
+                        formControlName="name"
+                        placeholder="Nombre del archivo o carpeta"
+                      />
+
+                      <label class="dlg-field-label">Tipo:</label>
+                      <div class="dlg-select-wrap">
+                        <svg class="dlg-select-folder-ico" viewBox="0 0 24 20" aria-hidden="true">
+                          <path d="M2 4C2 2.9 2.9 2 4 2H9.5L12 4.5H20C21.1 4.5 22 5.4 22 6.5V16C22 17.1 21.1 18 20 18H4C2.9 18 2 17.1 2 16V4Z" fill="#ff7b1a" />
+                        </svg>
+                        <ion-select formControlName="tag" interface="popover" class="dlg-ion-select">
+                          <ion-select-option value="Trabajo">Carpeta</ion-select-option>
+                          @for (t of editTags; track t) {
+                            <ion-select-option [value]="t">{{ t }}</ion-select-option>
+                          }
+                        </ion-select>
+                      </div>
+
+                      <label class="dlg-field-label">Ubicación:</label>
+                      <input
+                        type="text"
+                        class="dlg-dark-input"
+                        formControlName="description"
+                        placeholder="/Archivos/Documentos"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="manage-meta-row">
+                    <div>
+                      <span class="meta-caption">Fecha de modificación:</span>
+                      <strong>{{ editingFolder() ? editingFolder()!.modified : 'Hoy, 14:32' }}</strong>
+                    </div>
+                    <div>
+                      <span class="meta-caption">Tamaño: ☆</span>
+                      <strong>{{ editingFile() ? fileService.formatBytes(editingFile()!.size) : 'Carpeta' }}</strong>
+                    </div>
+                  </div>
+                } @else {
+                  @if (editingFile(); as ef) {
+                    <div class="share-tab-box">
+                      <button type="button" class="dlg-action-pill" (click)="shareFileNatively(ef)">
+                        <ion-icon name="share-social-outline" aria-hidden="true"></ion-icon>
+                        <span>Compartir nativo</span>
+                      </button>
+                      <button type="button" class="dlg-action-pill" (click)="shareFileViaWhatsApp(ef)">
+                        <ion-icon name="logo-whatsapp" aria-hidden="true"></ion-icon>
+                        <span>Enviar por WhatsApp</span>
+                      </button>
+                      <button type="button" class="dlg-action-pill" (click)="saveToDeviceStorage(ef)">
+                        <ion-icon name="save-outline" aria-hidden="true"></ion-icon>
+                        <span>Guardar en Filesystem</span>
+                      </button>
+                      <button type="button" class="dlg-action-pill" (click)="closeEditModal(); openQuickConvert(ef)">
+                        <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
+                        <span>Convertir formato</span>
+                      </button>
+                    </div>
+                  } @else {
+                    <p class="meta-caption">Seleccioná un archivo para compartirlo o convertir su formato.</p>
+                  }
+                }
+
+                <!-- 4 Botones Inferiores: Descargar | Renombrar | Eliminar | Guardar -->
+                <div class="manage-dialog-footer">
+                  <button
+                    type="button"
+                    class="dlg-action-pill"
+                    (click)="editingFile() ? downloadFile(editingFile()!) : closeEditModal()">
+                    <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+                    <span>Descargar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="dlg-action-pill"
+                    (click)="manageTab.set('edit')">
+                    <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+                    <span>Renombrar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="dlg-action-pill dlg-danger-pill"
+                    (click)="editingFile() ? confirmDelete(editingFile()!) : (editingFolder() ? deleteFolder(editingFolder()!) : closeEditModal())">
+                    <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                    <span>Eliminar</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="modal-orange-save-btn"
+                    [disabled]="editForm.invalid">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        }
+      </section>
+    } @else {
+      <!-- ==================== VISTA CUADRÍCULA (GRID) ==================== -->
+      <div class="repo-grid">
+        @for (f of filteredFiles(); track f.id; let idx = $index) {
+          <div class="grid-file-card" (click)="openPreview(f)">
             <div class="grid-head">
-              <!-- [MEJORA UX #3] Badge e Icono de Archivo Estilizado -->
-              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(f.ext, f.category)">
-                <ion-icon [name]="getFormatIcon(f.ext, f.category)"></ion-icon>
-                .{{ f.ext | uppercase }}
-              </span>
+              <span class="type-pill folder-pill">.{{ f.ext | uppercase }}</span>
               <span class="grid-tag-pill">{{ f.tag || 'Trabajo' }}</span>
             </div>
-            <ion-card-title class="grid-title">{{ f.name }}</ion-card-title>
-            <ion-card-subtitle>{{ fileService.formatBytes(f.size) }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
+            <strong class="grid-title">{{ f.name }}</strong>
+            <span class="grid-meta">{{ fileService.formatBytes(f.size) }} / {{ formatModifiedDate(idx) }}</span>
             <div class="grid-actions" (click)="$event.stopPropagation()">
-              <ion-button size="small" fill="solid" color="primary" (click)="openPreview(f)">
-                <ion-icon name="eye-outline" slot="start"></ion-icon>
-                Ver
-              </ion-button>
-              <ion-button size="small" fill="outline" color="secondary" (click)="openEditModal(f)">
-                <ion-icon name="create-outline" slot="start"></ion-icon>
-                Editar
-              </ion-button>
-              <ion-button size="small" fill="outline" color="primary" (click)="openContextualActions(f)">
-                <ion-icon name="flash-outline" slot="start"></ion-icon>
-                Acciones
-              </ion-button>
-              <ion-button size="small" fill="clear" color="success" (click)="shareFileNatively(f)" title="Compartir">
-                <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-              <ion-button size="small" fill="clear" color="medium" (click)="downloadFile(f, $event)" title="Descargar">
-                <ion-icon name="download-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-              <ion-button size="small" fill="clear" color="danger" (click)="deleteFromSliding(f)">
-                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+              <button type="button" class="row-circle-btn" (click)="openPreview(f)" aria-label="Vista previa">
+                <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
+              </button>
+              <button type="button" class="row-circle-btn" (click)="openEditModal(f, undefined, $event)" aria-label="Gestionar">
+                <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+              </button>
+              <button type="button" class="row-circle-btn danger-hover" (click)="confirmDelete(f, undefined, $event)" aria-label="Eliminar">
+                <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              </button>
             </div>
-          </ion-card-content>
-        </ion-card>
-      }
-    </div>
-  }
+          </div>
+        }
+      </div>
+    }
 
-  <!-- Modal de Vista Previa Multiformato (PDF, Imagen, CSV, JSON, Texto) -->
-  <app-file-preview-modal
-    [file]="previewFile()"
-    [isOpen]="previewOpen()"
-    (closed)="closePreview()"
-    (openActionsRequested)="openActionsFromPreview($event)">
-  </app-file-preview-modal>
+    <!-- Barra Inferior de Estado de Selección -->
+    <footer class="selection-status-bar">
+      <span class="selection-count-label">
+        {{ selectedCount() }} {{ selectedCount() === 1 ? 'elemento seleccionado' : 'elementos seleccionados' }}
+      </span>
 
-  <!-- Componente UX/UI de Acciones Rápidas Contextuales (Bottom Sheet + Action Sheet) -->
+      <div class="selection-bar-actions">
+        <button type="button" class="sel-action-btn" (click)="downloadSelected()">
+          <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+          <span>Descargar</span>
+        </button>
+
+        <button type="button" class="sel-action-btn danger-text" (click)="deleteSelected()">
+          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+          <span>Eliminar</span>
+        </button>
+
+        <button type="button" class="sel-action-btn" (click)="toggleViewMode()">
+          <ion-icon name="ellipsis-horizontal-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
+          <span>Más opciones</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal de Acciones Rápidas Contextuales -->
   <app-contextual-quick-actions
     [file]="quickActionFile()"
     [isOpen]="quickActionsOpen()"
     (closed)="closeContextualActions()">
   </app-contextual-quick-actions>
 
-  <!-- ==================== MODAL DE MODIFICACIÓN / EDICIÓN (ABM) ==================== -->
-  <ion-modal [isOpen]="isEditModalOpen()" (didDismiss)="closeEditModal()" class="abm-edit-modal">
-    <ng-template>
-      <ion-header class="ion-no-border">
-        <ion-toolbar color="primary">
-          <ion-title>Modificar Archivo</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeEditModal()">
-              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-
-      <ion-content class="ion-padding modal-edit-content">
-        @if (editingFile(); as ef) {
-          <form [formGroup]="editForm" (ngSubmit)="saveFileChanges()" class="edit-modal-form">
-            <div class="edit-modal-badge-row">
-              <span class="file-format-badge" [ngClass]="getFormatBadgeClass(ef.ext, ef.category)">
-                <ion-icon [name]="getFormatIcon(ef.ext, ef.category)"></ion-icon>
-                .{{ ef.ext | uppercase }}
-              </span>
-              <div class="edit-modal-meta-col">
-                <strong>{{ ef.name }}</strong>
-                <span class="file-size-hint">{{ fileService.formatBytes(ef.size) }} · Creado: {{ ef.createdAt | date:'short' }}</span>
-              </div>
-            </div>
-
-            <!-- Campo Nombre del archivo -->
-            <ion-item lines="inset" class="edit-form-item">
-              <ion-label position="stacked">Nombre del archivo <ion-text color="danger">*</ion-text></ion-label>
-              <ion-input
-                formControlName="name"
-                placeholder="Ej. Factura_Noviembre_2026.pdf"
-                required>
-              </ion-input>
-            </ion-item>
-
-            <!-- Campo Etiqueta / Carpeta -->
-            <ion-item lines="inset" class="edit-form-item">
-              <ion-label position="stacked">Etiqueta / Carpeta <ion-text color="danger">*</ion-text></ion-label>
-              <ion-select formControlName="tag" interface="popover" placeholder="Seleccionar etiqueta">
-                @for (t of editTags; track t) {
-                  <ion-select-option [value]="t">{{ t }}</ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-
-            <!-- Campo Descripción -->
-            <ion-item lines="inset" class="edit-form-item">
-              <ion-label position="stacked">Descripción o notas adicionales</ion-label>
-              <ion-textarea
-                formControlName="description"
-                [rows]="3"
-                [maxlength]="250"
-                placeholder="Añade notas, contexto o detalles relevantes sobre este archivo...">
-              </ion-textarea>
-            </ion-item>
-
-            <div class="edit-modal-actions">
-              <ion-button expand="block" type="submit" color="primary" [disabled]="editForm.invalid">
-                <ion-icon name="save-outline" slot="start"></ion-icon>
-                Guardar Modificaciones
-              </ion-button>
-
-              <ion-button expand="block" fill="outline" color="secondary" (click)="editInFullForm(ef)">
-                <ion-icon name="create-outline" slot="start"></ion-icon>
-                Abrir en Formulario Completo
-              </ion-button>
-
-              <ion-button expand="block" fill="clear" color="medium" (click)="closeEditModal()">
-                Cancelar
-              </ion-button>
-            </div>
-          </form>
-        }
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <!-- Botón flotante para abrir el Formulario Reactivo -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="primary" (click)="goToReactiveForm()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <!-- Modal de Vista Previa Multiformato -->
+  <app-file-preview-modal
+    [file]="previewFile()"
+    [isOpen]="previewOpen()"
+    (closed)="closePreview()"
+    (openActionsRequested)="openActionsFromPreview($event)">
+  </app-file-preview-modal>
 </ion-content>

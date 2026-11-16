@@ -7,39 +7,20 @@ import {
   AlertController,
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonContent,
-  IonButtons,
-  IonMenuButton,
   IonButton,
   IonIcon,
-  IonSearchbar,
-  IonList,
   IonItemSliding,
-  IonItem,
-  IonItemOptions,
-  IonItemOption,
-  IonLabel,
-  IonChip,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
   IonRefresher,
   IonRefresherContent,
-  IonFab,
-  IonFabButton,
   IonModal,
-  IonInput,
-  IonTextarea,
   IonSelect,
-  IonSelectOption,
-  IonText
+  IonSelectOption
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   searchOutline,
+  optionsOutline,
   listOutline,
   gridOutline,
   archiveOutline,
@@ -68,7 +49,13 @@ import {
   star,
   starOutline,
   layersOutline,
-  ellipsisVerticalOutline
+  ellipsisVerticalOutline,
+   ellipsisHorizontalOutline,
+  checkmarkCircleOutline,
+  checkmarkOutline,
+  chevronDownOutline,
+  arrowUpOutline,
+  arrowDownOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -77,13 +64,16 @@ import { ManagedFile, FileTagType, FILE_TAGS } from '../../../models/managed-fil
 import { ContextualQuickActionsComponent } from '../../components/contextual-quick-actions/contextual-quick-actions.component';
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
-// =============================================================================
-// [OMNIFILE STUDIO - TAB 2: REPOSITORIO + BADGES SEMÁNTICOS + SELECTOR FLOTANTE]
-// - Tarjetas redondeadas (rounded-2xl) sin bordes grises marcados
-// - Badges e iconos estilizados: Rojo PDF, Azul Imagen, Verde CSV/Datos, Índigo Doc
-// - Selector flotante minimalista de formatos (píldoras táctiles)
-// - ABM Completo: Alta (Upload/FAB), Baja (Confirmación + FS), Modificación (Modal + Full Form)
-// =============================================================================
+export interface ExplorerFolderItem {
+  id: string;
+  name: string;
+  category: 'PDF' | 'IMAGE' | 'DOC' | 'ALL';
+  modified: string;
+  custom?: boolean;
+}
+
+const CUSTOM_FOLDERS_KEY = 'omnifile_custom_folders_v1';
+
 @Component({
   selector: 'app-mobile-file-repository',
   standalone: true,
@@ -94,35 +84,14 @@ import { FilePreviewModalComponent } from '../../components/file-preview-modal/f
     RouterModule,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonContent,
-    IonButtons,
-    IonMenuButton,
     IonButton,
     IonIcon,
-    IonSearchbar,
-    IonList,
-    IonItemSliding,
-    IonItem,
-    IonItemOptions,
-    IonItemOption,
-    IonLabel,
-    IonChip,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
     IonRefresher,
     IonRefresherContent,
-    IonFab,
-    IonFabButton,
     IonModal,
-    IonInput,
-    IonTextarea,
     IonSelect,
     IonSelectOption,
-    IonText,
     ContextualQuickActionsComponent,
     FilePreviewModalComponent
   ],
@@ -142,28 +111,27 @@ export class MobileFileRepositoryComponent implements OnInit {
   searchQuery = signal<string>('');
   selectedTag = signal<string>('Todas');
   selectedCategory = signal<'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'>('ALL');
+  showTagsFilterBar = signal<boolean>(false);
 
-  readonly archivedCount = computed(() => this.fileService.files().filter(f => f.archived).length);
-  readonly docAndDataCount = computed(() =>
-    this.fileService
-      .activeFiles()
-      .filter(f => f.ext !== 'pdf' && f.category !== 'PDF' && f.category !== 'IMAGE').length
-  );
+  sortField = signal<'name' | 'date'>('date');
+  sortAsc = signal<boolean>(true);
 
-  selectCategoryFolder(cat: 'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'): void {
-    this.nativeService.triggerHapticImpact('light');
-    if (this.selectedCategory() === cat && cat !== 'ALL') {
-      this.selectedCategory.set('ALL');
-      this.selectedTag.set('Todas');
-      return;
-    }
-    this.selectedCategory.set(cat);
-    if (cat === 'TRASH') {
-      this.selectedTag.set('Archivados');
-    } else if (this.selectedTag() === 'Archivados') {
-      this.selectedTag.set('Todas');
-    }
-  }
+  selectedIds = signal<string[]>(['folder-docs']);
+  manageTab = signal<'info' | 'edit' | 'share'>('info');
+
+  customFolders = signal<ExplorerFolderItem[]>(this.loadCustomFolders());
+
+  readonly folderItems = computed<ExplorerFolderItem[]>(() => {
+    const base: ExplorerFolderItem[] = [
+      { id: 'docs', name: 'Documentos', category: 'DOC', modified: 'Hoy, 14:32' },
+      { id: 'images', name: 'Imágenes', category: 'IMAGE', modified: 'Hoy, 13:20' },
+      { id: 'projects', name: 'Proyectos', category: 'PDF', modified: 'Ayer, 18:45' }
+    ];
+    const q = this.searchQuery().toLowerCase().trim();
+    const all = [...base, ...this.customFolders()];
+    if (!q) return all;
+    return all.filter(f => f.name.toLowerCase().includes(q));
+  });
 
   // Panel flotante para cambiar de formato un archivo seleccionado
   convertingFile = signal<ManagedFile | null>(null);
@@ -177,15 +145,21 @@ export class MobileFileRepositoryComponent implements OnInit {
   previewFile = signal<ManagedFile | null>(null);
   previewOpen = signal<boolean>(false);
 
-  // Estado del Modal de Modificación / Edición de Archivo (ABM)
+  // Estado del Modal "Gestionar Archivo" (ABM)
   editingFile = signal<ManagedFile | null>(null);
-  isEditModalOpen = signal<boolean>(false);
+  editingFolder = signal<ExplorerFolderItem | null>({
+    id: 'docs',
+    name: 'Documentos',
+    category: 'DOC',
+    modified: 'Hoy, 14:32'
+  });
+  isEditModalOpen = signal<boolean>(true);
   readonly editTags: FileTagType[] = FILE_TAGS;
 
   readonly editForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    name: ['Documentos', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     tag: ['Trabajo', [Validators.required]],
-    description: ['', [Validators.maxLength(250)]]
+    description: ['/Archivos/Documentos', [Validators.maxLength(250)]]
   });
 
   readonly tags = [
@@ -199,6 +173,13 @@ export class MobileFileRepositoryComponent implements OnInit {
     'Archivados'
   ];
 
+  readonly archivedCount = computed(() => this.fileService.files().filter(f => f.archived).length);
+  readonly docAndDataCount = computed(() =>
+    this.fileService
+      .activeFiles()
+      .filter(f => f.ext !== 'pdf' && f.category !== 'PDF' && f.category !== 'IMAGE').length
+  );
+
   readonly filteredFiles = computed(() => {
     const tag = this.selectedTag();
     const cat = this.selectedCategory();
@@ -209,7 +190,7 @@ export class MobileFileRepositoryComponent implements OnInit {
       if (raw) favIds = JSON.parse(raw).map(String);
     } catch {}
 
-    return this.fileService.files().filter(f => {
+    const list = this.fileService.files().filter(f => {
       if (tag === 'Archivados' || cat === 'TRASH') {
         if (!f.archived) return false;
       } else {
@@ -248,11 +229,23 @@ export class MobileFileRepositoryComponent implements OnInit {
       }
       return true;
     });
+
+    const field = this.sortField();
+    const asc = this.sortAsc();
+    return [...list].sort((a, b) => {
+      if (field === 'name') {
+        return asc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      }
+      return asc ? 0 : -1;
+    });
   });
+
+  readonly selectedCount = computed(() => this.selectedIds().length);
 
   constructor() {
     addIcons({
       searchOutline,
+      optionsOutline,
       listOutline,
       gridOutline,
       archiveOutline,
@@ -281,24 +274,176 @@ export class MobileFileRepositoryComponent implements OnInit {
       star,
       starOutline,
       layersOutline,
-      ellipsisVerticalOutline
+      ellipsisVerticalOutline,
+      ellipsisHorizontalOutline,
+      checkmarkCircleOutline,
+      checkmarkOutline,
+      chevronDownOutline,
+      arrowUpOutline,
+      arrowDownOutline
     });
   }
 
-  /**
-   * [MEJORA UX #3] Distintivo visual de color semántico según formato:
-   * - Rojo suave para PDF (.fmt-pdf)
-   * - Azul suave para Imágenes PNG/JPG/WEBP (.fmt-image)
-   * - Verde suave para Hojas de cálculo / Datos CSV/JSON (.fmt-data)
-   * - Índigo suave para Documentos de texto (.fmt-doc)
-   */
+  ngOnInit(): void {
+    if (this.fileService.files().length === 0) {
+      this.fileService.getAll().subscribe();
+    }
+  }
+
+  selectCategoryFolder(cat: 'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'): void {
+    this.nativeService.triggerHapticImpact('light');
+    if (this.selectedCategory() === cat && cat !== 'ALL') {
+      this.selectedCategory.set('ALL');
+      this.selectedTag.set('Todas');
+      return;
+    }
+    this.selectedCategory.set(cat);
+    if (cat === 'TRASH') {
+      this.selectedTag.set('Archivados');
+    } else if (this.selectedTag() === 'Archivados') {
+      this.selectedTag.set('Todas');
+    }
+  }
+
+  isSelected(id: string | number): boolean {
+    return this.selectedIds().includes(String(id));
+  }
+
+  toggleSelection(id: string | number, event?: Event): void {
+    event?.stopPropagation();
+    const key = String(id);
+    this.nativeService.triggerHapticImpact('light');
+    this.selectedIds.update(curr =>
+      curr.includes(key) ? curr.filter(x => x !== key) : [...curr, key]
+    );
+  }
+
+  toggleSelectAll(): void {
+    this.nativeService.triggerHapticImpact('light');
+    const allFolderIds = this.folderItems().map(f => 'folder-' + f.id);
+    const allFileIds = this.filteredFiles().map(f => String(f.id));
+    const totalIds = [...allFolderIds, ...allFileIds];
+    if (this.selectedIds().length === totalIds.length && totalIds.length > 0) {
+      this.selectedIds.set([]);
+    } else {
+      this.selectedIds.set(totalIds);
+    }
+  }
+
+  toggleSort(field: 'name' | 'date'): void {
+    if (this.sortField() === field) {
+      this.sortAsc.update(v => !v);
+    } else {
+      this.sortField.set(field);
+      this.sortAsc.set(true);
+    }
+  }
+
+  async promptNewFolder(): Promise<void> {
+    this.nativeService.triggerHapticImpact('light');
+    const alert = await this.alertCtrl.create({
+      header: 'Nueva carpeta',
+      inputs: [
+        {
+          name: 'folderName',
+          type: 'text',
+          placeholder: 'Ej: Contratos 2026'
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Crear',
+          handler: data => {
+            const clean = (data?.folderName || '').trim();
+            if (clean) {
+              const created: ExplorerFolderItem = {
+                id: 'custom-' + Date.now(),
+                name: clean,
+                category: 'ALL',
+                modified: 'Ahora',
+                custom: true
+              };
+              this.customFolders.update(list => {
+                const next = [...list, created];
+                try {
+                  localStorage.setItem(CUSTOM_FOLDERS_KEY, JSON.stringify(next));
+                } catch {}
+                return next;
+              });
+              this.presentToast(`Carpeta "${clean}" creada`, 'success');
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  openManageFolderModal(folderItem: ExplorerFolderItem, event?: Event): void {
+    event?.stopPropagation();
+    this.nativeService.triggerHapticImpact('light');
+    this.editingFile.set(null);
+    this.editingFolder.set(folderItem);
+    this.manageTab.set('info');
+    this.editForm.patchValue({
+      name: folderItem.name,
+      tag: 'Trabajo',
+      description: '/Archivos/' + folderItem.name
+    });
+    this.isEditModalOpen.set(true);
+  }
+
+  deleteFolder(folderItem: ExplorerFolderItem, event?: Event): void {
+    event?.stopPropagation();
+    if (folderItem.custom) {
+      this.customFolders.update(list => {
+        const next = list.filter(x => x.id !== folderItem.id);
+        try {
+          localStorage.setItem(CUSTOM_FOLDERS_KEY, JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      this.presentToast(`Carpeta "${folderItem.name}" eliminada`, 'danger');
+    } else {
+      this.selectCategoryFolder('ALL');
+      this.presentToast(`Filtro de carpeta "${folderItem.name}" restablecido`, 'dark');
+    }
+  }
+
+  formatModifiedDate(index: number): string {
+    const dates = ['Ayer, 16:12', 'Ayer, 15:30', 'Vie, 20:17', 'Vie, 19:50', 'Jue, 11:05'];
+    return dates[index % dates.length];
+  }
+
+  async downloadSelected(): Promise<void> {
+    const ids = this.selectedIds();
+    const firstFile = this.filteredFiles().find(f => ids.includes(String(f.id))) || this.filteredFiles()[0];
+    if (firstFile) {
+      await this.downloadFile(firstFile);
+    } else {
+      await this.presentToast('Seleccioná al menos un archivo para descargar', 'dark');
+    }
+  }
+
+  async deleteSelected(): Promise<void> {
+    const ids = this.selectedIds();
+    const firstFile = this.filteredFiles().find(f => ids.includes(String(f.id)));
+    if (firstFile) {
+      await this.confirmDelete(firstFile);
+    } else {
+      await this.presentToast('Seleccioná un archivo para eliminar', 'dark');
+    }
+  }
+
   getFormatBadgeClass(ext: string, category?: string): string {
     const clean = (ext || '').toLowerCase();
-    if (clean === 'pdf' || category === 'pdf') return 'fmt-pdf';
-    if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(clean) || category === 'image') {
+    const cat = (category || '').toLowerCase();
+    if (clean === 'pdf' || cat === 'pdf') return 'fmt-pdf';
+    if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(clean) || cat === 'image') {
       return 'fmt-image';
     }
-    if (['csv', 'xls', 'xlsx', 'json'].includes(clean) || category === 'data') {
+    if (['csv', 'xls', 'xlsx', 'json', 'zip', 'rar'].includes(clean) || cat === 'data') {
       return 'fmt-data';
     }
     return 'fmt-doc';
@@ -339,12 +484,6 @@ export class MobileFileRepositoryComponent implements OnInit {
     this.quickActionsOpen.set(false);
   }
 
-  ngOnInit(): void {
-    if (this.fileService.files().length === 0) {
-      this.fileService.getAll().subscribe();
-    }
-  }
-
   handleRefresh(event: any): void {
     this.fileService.getAll().subscribe({
       next: () => event.target.complete(),
@@ -353,7 +492,8 @@ export class MobileFileRepositoryComponent implements OnInit {
   }
 
   onSearchInput(event: any): void {
-    this.searchQuery.set(event?.detail?.value || '');
+    const val = event?.detail?.value !== undefined ? event.detail.value : (event?.target?.value || '');
+    this.searchQuery.set(val);
   }
 
   toggleViewMode(): void {
@@ -377,7 +517,6 @@ export class MobileFileRepositoryComponent implements OnInit {
     input.value = '';
   }
 
-  // [REQUISITO 6] Acciones al deslizar un ion-item-sliding
   async archiveFromSliding(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
     this.fileService.toggleArchive(file).subscribe({
@@ -390,17 +529,17 @@ export class MobileFileRepositoryComponent implements OnInit {
     });
   }
 
-  // ===========================================================================
-  // [ABM - MODIFICACIÓN] MODAL DE EDICIÓN RÁPIDA DE METADATOS
-  // ===========================================================================
-  async openEditModal(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
+  async openEditModal(file: ManagedFile, slidingItem?: IonItemSliding, event?: Event): Promise<void> {
+    event?.stopPropagation();
     if (slidingItem) await slidingItem.close();
     this.nativeService.triggerHapticImpact('light');
+    this.editingFolder.set(null);
     this.editingFile.set(file);
+    this.manageTab.set('info');
     this.editForm.patchValue({
       name: file.name,
       tag: file.tag || 'Trabajo',
-      description: file.description || ''
+      description: file.description || '/Archivos/Documentos'
     });
     this.isEditModalOpen.set(true);
   }
@@ -408,6 +547,7 @@ export class MobileFileRepositoryComponent implements OnInit {
   closeEditModal(): void {
     this.isEditModalOpen.set(false);
     this.editingFile.set(null);
+    this.editingFolder.set(null);
   }
 
   saveFileChanges(): void {
@@ -415,6 +555,23 @@ export class MobileFileRepositoryComponent implements OnInit {
       this.editForm.markAllAsTouched();
       return;
     }
+    const folderTarget = this.editingFolder();
+    if (folderTarget) {
+      const cleanFolder = (this.editForm.value.name || '').trim();
+      if (folderTarget.custom && cleanFolder) {
+        this.customFolders.update(list => {
+          const next = list.map(f => (f.id === folderTarget.id ? { ...f, name: cleanFolder } : f));
+          try {
+            localStorage.setItem(CUSTOM_FOLDERS_KEY, JSON.stringify(next));
+          } catch {}
+          return next;
+        });
+      }
+      this.closeEditModal();
+      this.presentToast(`Carpeta "${cleanFolder}" actualizada`, 'success');
+      return;
+    }
+
     const current = this.editingFile();
     if (!current) return;
 
@@ -450,10 +607,8 @@ export class MobileFileRepositoryComponent implements OnInit {
     });
   }
 
-  // ===========================================================================
-  // [ABM - BAJA] ELIMINACIÓN CON DIÁLOGO DE CONFIRMACIÓN
-  // ===========================================================================
-  async confirmDelete(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
+  async confirmDelete(file: ManagedFile, slidingItem?: IonItemSliding, event?: Event): Promise<void> {
+    event?.stopPropagation();
     if (slidingItem) await slidingItem.close();
     this.nativeService.triggerHapticImpact('medium');
 
@@ -474,6 +629,7 @@ export class MobileFileRepositoryComponent implements OnInit {
           text: 'Eliminar',
           role: 'destructive',
           handler: () => {
+            this.closeEditModal();
             this.executeDelete(file);
           }
         }
@@ -500,7 +656,6 @@ export class MobileFileRepositoryComponent implements OnInit {
     return this.confirmDelete(file, slidingItem);
   }
 
-  // [CAPACITOR 8 + WEB SHARE API] Compartir archivo nativamente o por canales digitales
   async shareFileNatively(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
     await this.nativeService.presentShareOptions(file);
@@ -512,7 +667,6 @@ export class MobileFileRepositoryComponent implements OnInit {
     await this.presentToast(res.message, 'success');
   }
 
-  // [@capacitor/filesystem] Guardar explícitamente en almacenamiento interno del dispositivo
   async saveToDeviceStorage(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {
     if (slidingItem) await slidingItem.close();
     await this.nativeService.downloadFileToDevice(file);
@@ -560,16 +714,27 @@ export class MobileFileRepositoryComponent implements OnInit {
     this.router.navigate(['/mobile/file-form']);
   }
 
+  private loadCustomFolders(): ExplorerFolderItem[] {
+    try {
+      const raw = localStorage.getItem(CUSTOM_FOLDERS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  }
+
   private async presentToast(
     message: string,
     color: 'success' | 'danger' | 'dark' = 'dark'
   ): Promise<void> {
-    const toast = await this.toastCtrl.create({
+    const t = await this.toastCtrl.create({
       message,
-      duration: 2200,
-      position: 'top',
-      color
+      duration: 2100,
+      color,
+      position: 'bottom'
     });
-    await toast.present();
+    await t.present();
   }
 }
