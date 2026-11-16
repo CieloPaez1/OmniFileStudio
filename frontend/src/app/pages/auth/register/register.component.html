@@ -1,115 +1,195 @@
-<div class="auth-card">
-  <div class="auth-header">
-    <div class="auth-logo-symbol">
-      <svg lucideSparkles class="sparkle-icon" aria-hidden="true"></svg>
-    </div>
-    <h1>Crear cuenta</h1>
-    <p class="subtitle">Registrate para comenzar a organizar tus documentos en OmniFile</p>
+<div class="register-screen-stage">
+  <!-- Ondas de Seda 3D Naranjas en las 4 esquinas -->
+  <div class="register-silk-waves" aria-hidden="true">
+    <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="register-waves-svg">
+      <defs>
+        <linearGradient id="regWaveTopLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff8c24" stop-opacity="0.78" />
+          <stop offset="48%" stop-color="#d94800" stop-opacity="0.34" />
+          <stop offset="100%" stop-color="#080707" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="regWaveRight" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ff9933" stop-opacity="0.82" />
+          <stop offset="52%" stop-color="#e04f00" stop-opacity="0.36" />
+          <stop offset="100%" stop-color="#080707" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="regWaveBottom" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ff7b1a" stop-opacity="0.78" />
+          <stop offset="55%" stop-color="#b83700" stop-opacity="0.30" />
+          <stop offset="100%" stop-color="#080707" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <!-- Cintas diagonales izquierda -->
+      <path d="M-30,-20 C160,60 190,260 -30,420 Z" fill="url(#regWaveTopLeft)" />
+      <path d="M310,-20 C240,120 90,240 -30,310 L-30,170 C90,110 170,30 210,-20 Z" fill="url(#regWaveTopLeft)" />
+      <path d="M-30,460 C80,410 150,480 180,580 C90,590 20,650 -30,720 Z" fill="url(#regWaveTopLeft)" opacity="0.65" />
+
+      <!-- Cintas diagonales derecha -->
+      <path d="M740,-20 C850,90 910,210 1030,270 L1030,-20 Z" fill="url(#regWaveRight)" />
+      <path d="M1030,210 C890,260 830,390 740,480 C860,460 950,390 1030,350 Z" fill="url(#regWaveRight)" />
+      <path d="M1030,400 C890,450 840,560 780,660 C890,630 960,570 1030,520 Z" fill="url(#regWaveRight)" opacity="0.72" />
+
+      <!-- Cintas inferiores -->
+      <path d="M-30,860 C160,870 290,930 430,1020 L-30,1020 Z" fill="url(#regWaveBottom)" />
+      <path d="M520,1020 C730,940 880,790 1030,680 L1030,1020 Z" fill="url(#regWaveBottom)" />
+    </svg>
   </div>
 
-  @if (error()) {
-    <div class="auth-alert danger" role="alert">
-      <svg lucideAlertCircle class="alert-icon" aria-hidden="true"></svg>
-      <span>{{ error() }}</span>
+  <!-- Tarjeta Central Iluminada: Crear Usuario -->
+  <section class="register-glass-card">
+    <!-- Marca FileManager -->
+    <div class="reg-brand-top">
+      <svg class="reg-folder-svg" viewBox="0 0 44 38" aria-hidden="true">
+        <path d="M4 6C4 3.79 5.79 2 8 2H17.5L21.5 6.8H36C38.21 6.8 40 8.59 40 10.8V30C40 32.21 38.21 34 36 34H8C5.79 34 4 32.21 4 30V6Z" fill="#ffb84d" />
+        <path d="M2 13C2 10.79 3.79 9 6 9H38C40.21 9 42 10.79 42 13V31C42 33.21 40.21 35 38 35H6C3.79 35 2 33.21 2 31V13Z" fill="#ff7315" />
+        <rect x="7" y="6" width="10" height="2" rx="1" fill="#fff7ed" opacity="0.85" />
+      </svg>
+      <span class="reg-brand-word">
+        <strong>File</strong><span class="reg-brand-orange">Manager</span>
+      </span>
     </div>
-  }
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-    <div class="form-group">
-      <label for="name">Nombre Completo</label>
-      <div class="input-wrapper" [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched">
-        <svg lucideUser class="input-icon" aria-hidden="true"></svg>
+    <!-- Encabezado con Icono Usuario+ y Crear Usuario -->
+    <div class="reg-heading-block">
+      <h1>
+        <svg class="reg-user-plus-hero-svg" viewBox="0 0 36 32" aria-hidden="true">
+          <circle cx="13" cy="10" r="5.5" fill="none" stroke="#ffffff" stroke-width="2.4" />
+          <path d="M3 27C3 21.8 7.5 18 13 18C18.5 18 23 21.8 23 27" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M28 13V23M23 18H33" fill="none" stroke="#ff7315" stroke-width="2.8" stroke-linecap="round" />
+        </svg>
+        <span>Crear Usuario</span>
+      </h1>
+      <p>Completá tus datos para comenzar</p>
+    </div>
+
+    @if (error()) {
+      <div class="reg-error-banner" role="alert">
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="reg-pill-form">
+      <!-- 1. Nombre completo -->
+      <div class="reg-pill-input">
+        <svg class="reg-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <path d="M5 20C5 16.5 8.1 14 12 14C15.9 14 19 16.5 19 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
         <input
-          id="name"
           type="text"
           formControlName="name"
-          placeholder="Ej: Juan Pérez"
+          placeholder="Nombre completo"
           autocomplete="name"
+          aria-label="Nombre completo"
         />
       </div>
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-        <small class="error-text">
-          @if (form.get('name')?.errors?.['required']) { El nombre es obligatorio. }
-          @else if (form.get('name')?.errors?.['minlength']) { Debe tener al menos 2 caracteres. }
-        </small>
-      }
-    </div>
 
-    <div class="form-group">
-      <label for="email">Correo electrónico</label>
-      <div class="input-wrapper" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
-        <svg lucideMail class="input-icon" aria-hidden="true"></svg>
+      <!-- 2. Correo electrónico -->
+      <div class="reg-pill-input">
+        <svg class="reg-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <path d="M4 7L12 13L20 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
         <input
-          id="email"
           type="email"
           formControlName="email"
           placeholder="Correo electrónico"
           autocomplete="email"
+          aria-label="Correo electrónico"
         />
       </div>
-      @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <small class="error-text">
-          @if (form.get('email')?.errors?.['required']) { El correo es obligatorio. }
-          @else if (form.get('email')?.errors?.['email']) { Formato de correo inválido. }
-        </small>
-      }
-    </div>
 
-    <div class="form-group">
-      <label for="password">Contraseña</label>
-      <div class="input-wrapper" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
-        <svg lucideLock class="input-icon" aria-hidden="true"></svg>
+      <!-- 3. Contraseña -->
+      <div class="reg-pill-input">
+        <svg class="reg-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <path d="M8 11V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          <circle cx="12" cy="16" r="1.4" fill="currentColor" />
+        </svg>
         <input
-          id="password"
           [type]="showPassword() ? 'text' : 'password'"
           formControlName="password"
-          placeholder="Contraseña (mínimo 6 caracteres)"
+          placeholder="Contraseña"
           autocomplete="new-password"
+          aria-label="Contraseña"
         />
         <button
           type="button"
-          class="eye-btn"
+          class="reg-eye-btn"
           (click)="togglePasswordVisibility()"
-          tabindex="-1"
-          aria-label="Alternar visibilidad de contraseña"
-        >
-          @if (showPassword()) {
-            <svg lucideEyeOff class="eye-icon" aria-hidden="true"></svg>
-          } @else {
-            <svg lucideEye class="eye-icon" aria-hidden="true"></svg>
-          }
+          aria-label="Mostrar u ocultar contraseña">
+          <svg viewBox="0 0 24 24" class="reg-eye-svg" aria-hidden="true">
+            <path d="M3 3L21 21M10.6 10.6C9.8 11.4 9.8 12.6 10.6 13.4C11.4 14.2 12.6 14.2 13.4 13.4M6.5 6.6C4.6 8 3.1 9.8 2 12C4.5 17 8 19.5 12 19.5C14.1 19.5 16.1 18.8 17.8 17.6M12 4.5C16 4.5 19.5 7 22 12C21.2 13.6 20.2 15 19 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
         </button>
       </div>
-      @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <small class="error-text">
-          @if (form.get('password')?.errors?.['required']) { La contraseña es obligatoria. }
-          @else if (form.get('password')?.errors?.['minlength']) { Debe tener al menos 6 caracteres. }
-        </small>
-      }
+
+      <!-- 4. Confirmar contraseña -->
+      <div class="reg-pill-input">
+        <svg class="reg-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <path d="M8 11V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          <circle cx="12" cy="16" r="1.4" fill="currentColor" />
+        </svg>
+        <input
+          [type]="showConfirmPassword() ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          placeholder="Confirmar contraseña"
+          autocomplete="new-password"
+          aria-label="Confirmar contraseña"
+        />
+        <button
+          type="button"
+          class="reg-eye-btn"
+          (click)="toggleConfirmPasswordVisibility()"
+          aria-label="Mostrar u ocultar confirmación de contraseña">
+          <svg viewBox="0 0 24 24" class="reg-eye-svg" aria-hidden="true">
+            <path d="M3 3L21 21M10.6 10.6C9.8 11.4 9.8 12.6 10.6 13.4C11.4 14.2 12.6 14.2 13.4 13.4M6.5 6.6C4.6 8 3.1 9.8 2 12C4.5 17 8 19.5 12 19.5C14.1 19.5 16.1 18.8 17.8 17.6M12 4.5C16 4.5 19.5 7 22 12C21.2 13.6 20.2 15 19 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Checkbox Acepto los términos y condiciones -->
+      <div class="reg-terms-row">
+        <button type="button" class="reg-terms-btn" (click)="toggleAcceptTerms()">
+          <span class="reg-check-box" [class.checked]="acceptTerms()" aria-hidden="true">
+            @if (acceptTerms()) {
+              <svg viewBox="0 0 16 16" class="reg-check-svg">
+                <polyline points="3.5 8.5 6.5 11.5 12.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            }
+          </span>
+          <span>Acepto los <strong class="terms-orange">términos y condiciones</strong></span>
+        </button>
+      </div>
+
+      <!-- Botón Principal Naranja 3D: Registrarse -->
+      <button
+        type="submit"
+        class="reg-orange-cta"
+        [disabled]="loading()">
+        <svg class="reg-cta-ico" viewBox="0 0 28 24" aria-hidden="true">
+          <circle cx="10" cy="7.5" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M3 20C3 16 6.2 13.5 10 13.5C13.8 13.5 17 16 17 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M22 10V17M18.5 13.5H25.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span>{{ loading() ? 'Registrando…' : 'Registrarse' }}</span>
+      </button>
+    </form>
+
+    <!-- Separador con "o" -->
+    <div class="reg-or-divider" aria-hidden="true">
+      <span class="reg-or-line"></span>
+      <span class="reg-or-letter">o</span>
+      <span class="reg-or-line"></span>
     </div>
 
-    <button
-      type="submit"
-      class="btn-submit"
-      [disabled]="form.invalid || loading()"
-    >
-      @if (loading()) {
-        <span class="spinner" aria-hidden="true"></span>
-        <span>Creando cuenta...</span>
-      } @else {
-        <span>Crear cuenta</span>
-        <svg lucideArrowRight class="btn-icon" aria-hidden="true"></svg>
-      }
-    </button>
-  </form>
-
-  <div class="auth-footer">
-    <span>¿Ya tenés una cuenta?</span>
-    <a routerLink="/login" class="auth-link">Iniciar sesión</a>
-  </div>
-
-  <!-- Disclaimer legal estilo Smallpdf (SIN login social de Google/Facebook/Apple) -->
-  <div class="auth-legal-note">
-    <small>Al continuar, aceptas nuestra <span class="legal-highlight">Política de protección de datos</span> & <span class="legal-highlight">Condiciones de uso</span></small>
-  </div>
+    <!-- Botón Secundario: Volver al inicio de sesión -->
+    <a routerLink="/login" class="reg-back-login-pill">
+      <svg class="back-arrow-svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 12H5M11 6L5 12L11 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>Volver al inicio de sesión</span>
+    </a>
+  </section>
 </div>
