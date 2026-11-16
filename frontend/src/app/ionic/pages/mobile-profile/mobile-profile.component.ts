@@ -115,19 +115,11 @@ export interface LevelRankTier {
   selector: 'app-mobile-profile',
   standalone: true,
   imports: [
-    UpperCasePipe,
     FormsModule,
     RouterModule,
     IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
-    IonButtons,
-    IonMenuButton,
     IonIcon,
-    IonButton,
-    IonSelect,
-    IonSelectOption,
     IonToggle
   ],
   templateUrl: './mobile-profile.component.html',
@@ -309,7 +301,7 @@ export class MobileProfileComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    this.fileService.loadFiles().subscribe();
+    this.fileService.getAll().subscribe();
     const user = this.authService.currentUser();
     if (user?.avatarUrl) {
       this.avatarUrl.set(user.avatarUrl);
