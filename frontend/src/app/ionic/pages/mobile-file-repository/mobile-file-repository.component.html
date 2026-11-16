@@ -125,19 +125,27 @@
         </svg>
       </button>
     </div>
+    <!-- Input oculto universal para subir archivos directamente -->
+    <input
+      #directFileInput
+      type="file"
+      multiple
+      style="display: none"
+      (change)="onDirectUpload($event)"
+    />
+
     <!-- Barra de 5 Píldoras de Acción Superior -->
     <section class="action-pills-bar" aria-label="Acciones de archivos">
-      <button type="button" class="action-pill primary-new-pill" (click)="goToReactiveForm()">
+      <button type="button" class="action-pill primary-new-pill" (click)="directFileInput.click()">
         <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
         <span>Nuevo</span>
         <ion-icon name="chevron-down-outline" class="caret-sm" aria-hidden="true"></ion-icon>
       </button>
 
-      <label class="action-pill dark-action-pill">
+      <button type="button" class="action-pill dark-action-pill" (click)="directFileInput.click()">
         <ion-icon name="cloud-upload-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>
         <span>Subir archivos</span>
-        <input type="file" multiple hidden (change)="onDirectUpload($event)" />
-      </label>
+      </button>
 
       <button type="button" class="action-pill dark-action-pill" (click)="promptNewFolder()">
         <ion-icon name="folder-open-outline" class="pill-orange-icon" aria-hidden="true"></ion-icon>

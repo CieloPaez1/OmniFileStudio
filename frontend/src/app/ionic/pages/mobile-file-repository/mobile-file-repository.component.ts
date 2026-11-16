@@ -496,18 +496,21 @@ export class MobileFileRepositoryComponent implements OnInit {
   onDirectUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
+    const selectedFiles = Array.from(input.files);
+    input.value = '';
     const tag =
       this.selectedTag() !== 'Todas' && this.selectedTag() !== 'Archivados'
         ? (this.selectedTag() as any)
         : undefined;
-    this.fileService.upload(input.files, tag, true).subscribe({
+    this.fileService.upload(selectedFiles, tag, false).subscribe({
       next: list =>
         this.presentToast(
-          `¡${list.length} archivo(s) auto-clasificados y guardados localmente!`,
+          `¡${list.length} archivo(s) subido(s) y guardado(s) en PostgreSQL!`,
           'success'
-        )
+        ),
+      error: () =>
+        this.presentToast('Error al subir el archivo. Verificá la conexión con el servidor.', 'danger')
     });
-    input.value = '';
   }
 
   async archiveFromSliding(file: ManagedFile, slidingItem?: IonItemSliding): Promise<void> {

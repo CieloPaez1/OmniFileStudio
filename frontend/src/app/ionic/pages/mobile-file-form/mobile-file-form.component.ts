@@ -139,7 +139,7 @@ export class MobileFileFormComponent implements OnInit {
   // - description: opcional con máximo de 200 caracteres
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
-    tag: ['', [Validators.required]],
+    tag: ['Trabajo', [Validators.required]],
     targetFormat: ['original', [Validators.required]],
     description: ['', [Validators.maxLength(200)]]
   });

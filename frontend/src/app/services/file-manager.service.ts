@@ -589,51 +589,73 @@ export class FileManagerService {
   }
 
   /**
-   * Subida con auto-clasificación y renombrado inteligente local en el cliente.
+   * Subida directa a PostgreSQL (/api/files/upload Multipart + Fallback JSON).
    */
   upload(
     fileList: File[] | FileList,
     defaultTag?: FileTagType,
-    autoNormalize = true
+    autoNormalize = false
   ): Observable<ManagedFile[]> {
     const arr = Array.from(fileList);
     if (arr.length === 0) return of([]);
 
     this.loading.set(true);
-    return new Observable<ManagedFile[]>(observer => {
-      Promise.all(
-        arr.map(async f => {
-          const dataUrl = await this.readFileAsDataUrl(f);
-          const analysis = await this.analyzeFileLocally(f);
-          const ext = this.extractExt(f.name);
-          const finalName = autoNormalize ? analysis.suggestedFullName : f.name;
-          const finalTag = defaultTag || analysis.suggestedTag;
-
-          const created = await this.createFileRecord({
-            name: finalName,
-            ext,
-            mimeType: f.type || this.getMimeType(ext),
-            category: this.getCategory(ext),
-            origin: 'UPLOADED',
-            tag: finalTag,
-            description: analysis.suggestedDescription,
-            size: f.size,
-            pageCount: ext === 'pdf' ? 2 : null,
-            dataUrl
-          }).toPromise();
-          return created!;
-        })
-      )
-        .then(results => {
-          this.loading.set(false);
-          observer.next(results);
-          observer.complete();
-        })
-        .catch(err => {
-          this.loading.set(false);
-          observer.error(err);
-        });
+    const formData = new FormData();
+    arr.forEach(f => {
+      formData.append('files', f, f.name);
     });
+    if (defaultTag) {
+      formData.append('tag', defaultTag);
+    }
+
+    return this.http.post<ManagedFile[]>(`${this.apiUrl}/upload`, formData).pipe(
+      map(createdList => (createdList || []).map(item => this.normalizeRecord(item))),
+      tap(async normalizedList => {
+        if (normalizedList.length > 0) {
+          this.files.update(prev => {
+            const newIds = new Set(normalizedList.map(x => String(x.id)));
+            return [...normalizedList, ...prev.filter(x => !newIds.has(String(x.id)))];
+          });
+          this.usingOfflineFallback.set(false);
+          await this.saveToLocalFallback(this.files());
+        }
+      }),
+      catchError(() => {
+        return new Observable<ManagedFile[]>(observer => {
+          Promise.all(
+            arr.map(async f => {
+              const dataUrl = await this.readFileAsDataUrl(f);
+              const analysis = await this.analyzeFileLocally(f);
+              const ext = this.extractExt(f.name);
+              const finalName = autoNormalize ? analysis.suggestedFullName : f.name;
+              const finalTag = defaultTag || analysis.suggestedTag || 'Trabajo';
+
+              const created = await this.createFileRecord({
+                name: finalName,
+                ext,
+                mimeType: f.type || this.getMimeType(ext),
+                category: this.getCategory(ext),
+                origin: 'UPLOADED',
+                tag: finalTag,
+                description: analysis.suggestedDescription,
+                size: f.size,
+                pageCount: ext === 'pdf' ? 1 : null,
+                dataUrl
+              }).toPromise();
+              return created!;
+            })
+          )
+            .then(results => {
+              observer.next(results);
+              observer.complete();
+            })
+            .catch(err => observer.error(err));
+        });
+      }),
+      finalize(() => {
+        this.loading.set(false);
+      })
+    );
   }
 
   // ===========================================================================

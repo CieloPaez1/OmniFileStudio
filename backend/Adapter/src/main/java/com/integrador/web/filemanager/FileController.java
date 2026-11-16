@@ -165,7 +165,8 @@ public class FileController {
 
     @PostMapping("/upload")
     public ResponseEntity<List<FileResponseDTO>> uploadFiles(
-            @RequestParam("files") MultipartFile[] files
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam(value = "tag", required = false, defaultValue = "Trabajo") String tag
     ) throws IOException {
         List<FileResponseDTO> created = new ArrayList<>();
         for (MultipartFile mf : files) {
@@ -177,7 +178,9 @@ public class FileController {
             String storedFilename = UUID.randomUUID() + "." + ext;
             Files.write(storageDir.resolve(storedFilename), bytes);
 
-            String dataUrl = "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
+            String dataUrl = bytes.length <= 8 * 1024 * 1024
+                    ? "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes)
+                    : "";
 
             ManagedFileEntity entity = new ManagedFileEntity(
                     null,
@@ -194,8 +197,8 @@ public class FileController {
                     null,
                     LocalDateTime.now()
             );
-            entity.setTag("Trabajo");
-            entity.setDescription("Archivo subido y almacenado en la base de datos.");
+            entity.setTag(tag != null && !tag.isBlank() ? tag : "Trabajo");
+            entity.setDescription("Archivo subido y almacenado en PostgreSQL.");
             entity.setArchived(false);
             entity.setSigned(false);
             entity.setCompressed(false);
