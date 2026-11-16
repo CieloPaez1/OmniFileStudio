@@ -75,7 +75,8 @@ import {
   reorderFourOutline,
   listOutline,
   chevronBackOutline,
-  searchOutline
+  searchOutline,
+  arrowForwardOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -655,8 +656,14 @@ export class MobilePdfSuiteComponent implements OnInit {
       reorderFourOutline,
       listOutline,
       chevronBackOutline,
-      searchOutline
+      searchOutline,
+      arrowForwardOutline
     });
+  }
+
+  goToUploadForm(): void {
+    this.nativeService.triggerHapticSelection();
+    this.router.navigate(['/mobile/file-form']);
   }
 
   ngOnInit(): void {

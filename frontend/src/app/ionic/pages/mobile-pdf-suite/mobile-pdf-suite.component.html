@@ -1,46 +1,6 @@
 <ion-header class="ion-no-border sp-catalog-header-shell">
   @if (viewMode() === 'catalog') {
-    <!-- CABECERA PRINCIPAL MODO CATÁLOGO ESTILO SMALLPDF TOOLS -->
-    <ion-toolbar class="sp-tools-navy-toolbar">
-      <ion-buttons slot="start">
-        <ion-menu-button class="sp-toolbar-menu-btn"></ion-menu-button>
-      </ion-buttons>
-
-      <div class="sp-tools-brand-title">
-        <span class="sp-tools-main-heading">Herramientas</span>
-      </div>
-
-      <ion-buttons slot="end">
-        <ion-button
-          class="theme-toggle-btn"
-          (click)="themeService.toggleDarkLight()"
-          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
-          <ion-icon
-            [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
-            slot="icon-only">
-          </ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-
-    <!-- Barra de Búsqueda Rápida del Catálogo -->
-    <div class="sp-catalog-search-bar-wrap">
-      <div class="sp-catalog-search-field">
-        <ion-icon name="search-outline" class="sp-catalog-search-icon"></ion-icon>
-        <input
-          type="text"
-          class="sp-catalog-search-input"
-          placeholder="Buscar herramientas (ej: Word, OCR, Comprimir)?"
-          [ngModel]="catalogSearch()"
-          (ngModelChange)="catalogSearch.set($event)"
-        />
-        @if (catalogSearch()) {
-          <button type="button" class="sp-catalog-search-clear" (click)="catalogSearch.set('')">
-            <ion-icon name="close-outline"></ion-icon>
-          </button>
-        }
-      </div>
-    </div>
+    <!-- Cabecera limpia en modo Herramientas -->
   } @else {
     <!-- CABECERA EN MODO HERRAMIENTA ACTIVA CON BOTÓN ATRÁS ← TOOLS -->
     <ion-toolbar class="sp-tools-navy-toolbar">
@@ -162,55 +122,199 @@
 <ion-content [class.sp-catalog-body]="viewMode() === 'catalog'" [class.ion-padding]="viewMode() === 'tool'">
 
   @if (viewMode() === 'catalog') {
-    <!-- =========================================================================
-         [CATÁLOGO COMPLETO SMALLPDF TOOLS] VISTA IDÉNTICA A CAPTURA MÓVIL
-         ========================================================================= -->
-    <div class="sp-catalog-view-container">
-      @for (category of filteredCategories(); track category.name) {
-        <section class="sp-catalog-category-group">
-          <h2 class="sp-catalog-category-header">{{ category.name }}</h2>
-          <div class="sp-catalog-cards-stack">
-            @for (tool of category.tools; track tool.name) {
-              <button
-                type="button"
-                class="sp-catalog-tool-card"
-                (click)="selectSmallPdfTool(tool)">
-                <!-- Ícono Cuadrado Redondeado de Color Vibrante -->
-                <div class="sp-catalog-icon-squircle" [ngClass]="tool.colorClass">
-                  @if (tool.letterBadge) {
-                    <span class="sp-catalog-letter-badge">{{ tool.letterBadge }}</span>
-                  } @else {
-                    <ion-icon [name]="tool.icon || 'document-outline'"></ion-icon>
-                  }
-                </div>
+    <!-- Ondas de Seda 3D Naranjas de Fondo -->
+    <div class="tools-silk-waves" aria-hidden="true">
+      <svg viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
+        <defs>
+          <linearGradient id="tlWaveRight" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ff8c24" stop-opacity="0.78" />
+            <stop offset="50%" stop-color="#d94800" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#080707" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="tlWaveBottom" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.72" />
+            <stop offset="55%" stop-color="#b83700" stop-opacity="0.24" />
+            <stop offset="100%" stop-color="#080707" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path d="M840,-20 C960,50 1050,150 1230,190 L1230,-20 Z" fill="url(#tlWaveRight)" />
+        <path d="M1230,60 C1060,90 940,180 860,260 C1010,230 1120,180 1230,150 Z" fill="url(#tlWaveRight)" />
+        <path d="M-30,540 C90,590 190,670 280,780 L-30,780 Z" fill="url(#tlWaveBottom)" />
+        <path d="M980,780 C1080,690 1150,590 1230,520 L1230,780 Z" fill="url(#tlWaveBottom)" />
+      </svg>
+    </div>
 
-                <!-- Título de la Herramienta -->
-                <div class="sp-catalog-text-col">
-                  <span class="sp-catalog-tool-name">{{ tool.name }}</span>
-                </div>
-
-                <!-- Elementos al final: Badge PRO + Flecha Chevron -->
-                <div class="sp-catalog-end-col">
-                  @if (tool.badge) {
-                    <span class="sp-catalog-pro-tag">{{ tool.badge }}</span>
-                  }
-                  <ion-icon name="chevron-forward-outline" class="sp-catalog-chevron"></ion-icon>
-                </div>
-              </button>
-            }
-          </div>
-        </section>
-      }
-
-      @if (filteredCategories().length === 0) {
-        <div class="sp-catalog-empty-state">
-          <ion-icon name="search-outline"></ion-icon>
-          <p>No se encontraron herramientas con "{{ catalogSearch() }}"</p>
-          <button type="button" class="sp-catalog-reset-btn" (click)="catalogSearch.set('')">
-            Ver todas las herramientas
-          </button>
+    <div class="tools-hub-shell">
+      <!-- Encabezado Principal: Insignia Llave 3D + Herramientas -->
+      <header class="tools-hub-header">
+        <div class="tools-wrench-squircle" aria-hidden="true">
+          <svg viewBox="0 0 48 48" class="wrench-3d-svg">
+            <defs>
+              <linearGradient id="wrenchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffb347" />
+                <stop offset="100%" stop-color="#ff6200" />
+              </linearGradient>
+            </defs>
+            <path d="M35.5 9.5C32.2 8.2 28.3 9 25.7 11.6C23.4 13.9 22.6 17.2 23.4 20.2L10.8 32.8C9.2 34.4 9.2 37 10.8 38.6C12.4 40.2 15 40.2 16.6 38.6L29.2 26C32.2 26.8 35.5 26 37.8 23.7C40.4 21.1 41.2 17.2 39.9 13.9L34.8 19L31.2 18.2L30.4 14.6L35.5 9.5Z" fill="url(#wrenchGrad)" />
+          </svg>
         </div>
-      }
+
+        <div class="tools-hub-title-col">
+          <h1>Herramientas</h1>
+          <p>Todas las herramientas que necesitas en un solo lugar.</p>
+        </div>
+      </header>
+
+      <!-- Grilla 2x3 de las 6 Tarjetas de Herramientas -->
+      <section class="tools-bento-grid" aria-label="Herramientas principales">
+        <!-- 1. Suite PDF -->
+        <button type="button" class="tool-bento-card" (click)="selectHeroTool('merge')">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 64 68" class="bento-svg-icon">
+              <defs>
+                <linearGradient id="pdfRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff4d4d" />
+                  <stop offset="100%" stop-color="#dc2626" />
+                </linearGradient>
+              </defs>
+              <rect x="6" y="4" width="52" height="60" rx="13" fill="url(#pdfRedGrad)" />
+              <path d="M40 4L58 22H45C42.2 22 40 19.8 40 17V4Z" fill="#fca5a5" />
+              <path d="M31 18C28 27 22 38 17 43C24 41 36 37 45 39C39 35 33 26 31 18Z" stroke="#ffffff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Suite PDF</h2>
+            <p>Editar, convertir, unir y mucho más.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+
+        <!-- 2. Escanear -->
+        <button type="button" class="tool-bento-card" (click)="selectSmallPdfTool('scanner')">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 64 64" class="bento-svg-icon">
+              <path d="M12 24V16C12 13.8 13.8 12 16 12H24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
+              <path d="M40 12H48C50.2 12 52 13.8 52 16V24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
+              <path d="M12 40V48C12 50.2 13.8 52 16 52H24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
+              <path d="M40 52H48C50.2 52 52 50.2 52 48V40" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
+              <line x1="20" y1="32" x2="44" y2="32" stroke="#e0f2fe" stroke-width="4.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Escanear</h2>
+            <p>Digitaliza tus documentos desde la cámara.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+
+        <!-- 3. Convertir archivos -->
+        <button type="button" class="tool-bento-card" (click)="selectHeroTool('convert')">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 64 64" class="bento-svg-icon">
+              <path d="M16 28C17.8 19.5 25.4 13 34.5 13C41.5 13 47.6 16.8 50.8 22.5" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round" />
+              <polygon points="53,13 55,26 42,24" fill="#a855f7" />
+              <path d="M48 36C46.2 44.5 38.6 51 29.5 51C22.5 51 16.4 47.2 13.2 41.5" fill="none" stroke="#9333ea" stroke-width="6" stroke-linecap="round" />
+              <polygon points="11,51 9,38 22,40" fill="#9333ea" />
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Convertir archivos</h2>
+            <p>Convierte tus archivos a otros formatos.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+
+        <!-- 4. Traductor -->
+        <button type="button" class="tool-bento-card" (click)="selectHeroTool('translate')">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 64 64" class="bento-svg-icon">
+              <rect x="6" y="6" width="52" height="52" rx="13" fill="#10b981" />
+              <text x="21" y="39" text-anchor="middle" fill="#ffffff" font-family="Plus Jakarta Sans, sans-serif" font-size="25" font-weight="800">A</text>
+              <text x="43" y="45" text-anchor="middle" fill="#ffffff" font-family="Plus Jakarta Sans, sans-serif" font-size="21" font-weight="800">文</text>
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Traductor</h2>
+            <p>Traduce textos y documentos en varios idiomas.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+
+        <!-- 5. Subir archivos -->
+        <button type="button" class="tool-bento-card" (click)="goToUploadForm()">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 68 60" class="bento-svg-icon">
+              <defs>
+                <linearGradient id="cloudBlueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8" />
+                  <stop offset="100%" stop-color="#0284c7" />
+                </linearGradient>
+              </defs>
+              <path d="M18 48H51C57.6 48 63 42.6 63 36C63 29.8 58.3 24.7 52.2 24.1C50.1 15.5 42.3 9 33 9C22.5 9 14 17.5 14 28C14 28.6 14 29.2 14.1 29.8C8.9 31.4 5 36.2 5 42C5 48 10.8 48 18 48Z" fill="url(#cloudBlueGrad)" />
+              <path d="M34 44V26M26 33L34 25L42 33" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Subir archivos</h2>
+            <p>Carga archivos desde tu dispositivo.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+
+        <!-- 6. Comprimir archivos -->
+        <button type="button" class="tool-bento-card" (click)="selectHeroTool('compress')">
+          <div class="tool-bento-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 64 64" class="bento-svg-icon">
+              <path d="M12 14H52L58 24H6L12 14Z" fill="#ff942e" />
+              <rect x="8" y="24" width="48" height="30" rx="6" fill="#ff6b00" />
+              <line x1="6" y1="24" x2="58" y2="24" stroke="#2a1205" stroke-width="2.5" />
+              <rect x="25" y="24" width="14" height="8" rx="2" fill="none" stroke="#fff7ed" stroke-width="2.5" />
+            </svg>
+          </div>
+          <div class="tool-bento-copy">
+            <h2>Comprimir archivos</h2>
+            <p>Reduce el tamaño de tus archivos.</p>
+          </div>
+          <span class="tool-bento-arrow" aria-hidden="true">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </span>
+        </button>
+      </section>
+
+      <!-- Banner Inferior: Tip útil -->
+      <footer class="tools-tip-banner">
+        <div class="tip-left-group">
+          <svg viewBox="0 0 48 48" class="tip-bulb-svg" aria-hidden="true">
+            <line x1="24" y1="3" x2="24" y2="8" stroke="#ff8c24" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="9" y1="10" x2="13" y2="14" stroke="#ff8c24" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="39" y1="10" x2="35" y2="14" stroke="#ff8c24" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="4" y1="24" x2="9" y2="24" stroke="#ff8c24" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="44" y1="24" x2="39" y2="24" stroke="#ff8c24" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M16 24C16 19.6 19.6 16 24 16C28.4 16 32 19.6 32 24C32 27.1 30.2 29.7 27.6 31L27 35H21L20.4 31C17.8 29.7 16 27.1 16 24Z" fill="#ff7b1a" stroke="#ffb84d" stroke-width="2" />
+            <rect x="20" y="37" width="8" height="3" rx="1.5" fill="#ffb84d" />
+            <rect x="21.5" y="41" width="5" height="2.5" rx="1.2" fill="#ff7b1a" />
+          </svg>
+          <div class="tip-text-col">
+            <strong>Tip útil</strong>
+            <span>Puedes seleccionar varios archivos y usar las herramientas en lote.</span>
+          </div>
+        </div>
+
+        <button type="button" class="tip-saber-mas-btn" (click)="isMegaMenuOpen.set(true)">
+          <span>Saber más</span>
+          <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </footer>
     </div>
   } @else {
     <div class="omni-responsive-shell">
