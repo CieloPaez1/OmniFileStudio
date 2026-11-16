@@ -1,125 +1,7 @@
 <ion-header class="ion-no-border sp-catalog-header-shell">
-  @if (viewMode() === 'catalog') {
-    <!-- Cabecera limpia en modo Herramientas -->
-  } @else {
-    <!-- CABECERA EN MODO HERRAMIENTA ACTIVA CON BOTÓN ATRÁS ← TOOLS -->
-    <ion-toolbar class="sp-tools-navy-toolbar">
-      <ion-buttons slot="start">
-        <button type="button" class="sp-back-to-catalog-pill" (click)="backToCatalog()">
-          <ion-icon name="chevron-back-outline"></ion-icon>
-          <span>Herramientas</span>
-        </button>
-      </ion-buttons>
-
-      <ion-title class="sp-tool-active-title">{{ getActiveToolTitle() }}</ion-title>
-
-      <ion-buttons slot="end">
-        <ion-button
-          class="theme-toggle-btn"
-          (click)="themeService.toggleDarkLight()"
-          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'">
-          <ion-icon
-            [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'"
-            slot="icon-only">
-          </ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-
-    <!-- Barra de Píldoras de Acceso Rápido para cambiar de herramienta -->
-    <div class="smallpdf-subbar">
-      <div class="sp-subbar-scroll">
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'compress'"
-          (click)="selectHeroTool('compress')">
-          Comprimir
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'convert'"
-          (click)="selectHeroTool('convert')">
-          Convertir
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'ocr'"
-          (click)="selectHeroTool('ocr')">
-          OCR
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'merge'"
-          (click)="selectHeroTool('merge')">
-          Fusionar
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'split'"
-          (click)="selectHeroTool('split')">
-          Dividir
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'rotate'"
-          (click)="selectHeroTool('rotate')">
-          Girar
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'watermark'"
-          (click)="selectHeroTool('watermark')">
-          Marca de agua
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'protect'"
-          (click)="selectHeroTool('protect')">
-          Proteger
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'sign'"
-          (click)="selectHeroTool('sign')">
-          Firmar
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link sp-ai-pill"
-          [class.active]="activeTool() === 'ai-tools'"
-          (click)="selectHeroTool('ai-tools')">
-          <ion-icon name="sparkles-outline"></ion-icon>
-          PDF con IA
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link"
-          [class.active]="activeTool() === 'translate'"
-          (click)="selectHeroTool('translate')">
-          Traducir
-        </button>
-        <button
-          type="button"
-          class="sp-subbar-link sp-cam-pill"
-          (click)="selectSmallPdfTool('scanner')">
-          <ion-icon name="camera-outline"></ion-icon>
-          Escáner
-        </button>
-      </div>
-    </div>
-  }
 </ion-header>
 
-<ion-content [class.sp-catalog-body]="viewMode() === 'catalog'" [class.ion-padding]="viewMode() === 'tool'">
+<ion-content [class.sp-catalog-body]="viewMode() === 'catalog'" [class.sp-tool-body]="viewMode() === 'tool'">
 
   @if (viewMode() === 'catalog') {
     <!-- Ondas de Seda 3D Naranjas de Fondo -->
@@ -164,6 +46,69 @@
           <p>Todas las herramientas que necesitas en un solo lugar.</p>
         </div>
       </header>
+
+      <!-- SECCION 1:1 CON CAPTURA 1: LAS 8 HERRAMIENTAS NATIVAS DE FILEMANAGER -->
+      <section class="fm-modules-hub-section" aria-label="Módulos Nativos de FileManager">
+        <div class="fm-modules-hub-grid">
+          @for (mod of fileManagerModules; track mod.id) {
+            <button type="button" class="fm-module-hub-card" (click)="selectHeroTool(mod.id)">
+              <div class="fm-module-card-icon" [ngClass]="'fm-icon-' + mod.iconType" aria-hidden="true">
+                @if (mod.iconType === 'pdf') {
+                  <svg viewBox="0 0 36 42" class="fm-hub-svg">
+                    <rect x="2" y="2" width="32" height="38" rx="6" fill="#dc2626"/>
+                    <path d="M22 2L34 14H24C22.9 14 22 13.1 22 12V2Z" fill="#fca5a5"/>
+                    <text x="18" y="28" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">PDF</text>
+                  </svg>
+                } @else if (mod.iconType === 'pen') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <path d="M6 30h6l16-16-6-6L6 24v6z" fill="#ff7a1a"/>
+                    <line x1="6" y1="30" x2="30" y2="30" stroke="#fed7aa" stroke-width="2.5" stroke-linecap="round"/>
+                  </svg>
+                } @else if (mod.iconType === 'water') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <path d="M18 4C18 4 6 18 6 24C6 30.6 11.4 34 18 34C24.6 34 30 30.6 30 24C30 18 18 4 18 4Z" fill="#ff7a1a"/>
+                  </svg>
+                } @else if (mod.iconType === 'shield') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <path d="M18 4L6 9v9c0 7.5 5.1 14.5 12 16c6.9-1.5 12-8.5 12-16V9L18 4z" fill="#ff7a1a"/>
+                    <rect x="13" y="17" width="10" height="8" rx="2" fill="#fff"/>
+                    <path d="M15 17v-2a3 3 0 0 1 6 0v2" stroke="#fff" stroke-width="2" fill="none"/>
+                  </svg>
+                } @else if (mod.iconType === 'compare') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <rect x="4" y="6" width="16" height="22" rx="3" fill="#ea580c"/>
+                    <rect x="16" y="10" width="16" height="22" rx="3" fill="#ff7a1a" stroke="#080605" stroke-width="1.5"/>
+                    <path d="M22 17l4 4-4 4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  </svg>
+                } @else if (mod.iconType === 'image') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <rect x="4" y="6" width="28" height="24" rx="4" fill="#ea580c"/>
+                    <polygon points="7,26 15,16 21,22 25,17 29,26" fill="#fed7aa"/>
+                    <circle cx="11" cy="12" r="2.5" fill="#fde047"/>
+                  </svg>
+                } @else if (mod.iconType === 'search') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <circle cx="16" cy="16" r="9" fill="none" stroke="#ff7a1a" stroke-width="3.5"/>
+                    <line x1="23" y1="23" x2="31" y2="31" stroke="#ff7a1a" stroke-width="4.5" stroke-linecap="round"/>
+                  </svg>
+                } @else if (mod.iconType === 'rename') {
+                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
+                    <rect x="8" y="4" width="22" height="28" rx="4" fill="#ea580c"/>
+                    <line x1="5" y1="10" x2="5" y2="12" stroke="#ff7a1a" stroke-width="2"/>
+                    <line x1="5" y1="17" x2="5" y2="19" stroke="#ff7a1a" stroke-width="2"/>
+                    <line x1="5" y1="24" x2="5" y2="26" stroke="#ff7a1a" stroke-width="2"/>
+                    <text x="19" y="24" text-anchor="middle" fill="#fff" font-size="16" font-weight="900">A</text>
+                  </svg>
+                }
+              </div>
+              <div class="fm-module-card-text">
+                <strong class="fm-module-title">{{ mod.title }}</strong>
+                <small class="fm-module-subtitle">{{ mod.subtitle }}</small>
+              </div>
+            </button>
+          }
+        </div>
+      </section>
 
       <!-- Grilla 2x3 de las 6 Tarjetas de Herramientas -->
       <section class="tools-bento-grid" aria-label="Herramientas principales">
@@ -316,1183 +261,1736 @@
         </button>
       </footer>
     </div>
-  } @else {
-    <div class="omni-responsive-shell">
-    <!-- [REQUISITO 4] Animación de confirmación con Tick SVG y Feedback Háptico -->
-    @if (successFeedback(); as fb) {
-      <div class="omni-success-feedback">
-        <div class="omni-success-tick-circle">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <div class="omni-success-copy">
-          <strong>{{ fb.title }}</strong>
-          <small>{{ fb.subtitle }}</small>
-        </div>
-      </div>
-    }
-
+    } @else {
     <!-- =========================================================================
-         NAVEGACIÓN SUPERIOR TIPO "HERO CARDS" RESPONSIVA (1 / 2 / 3 / 6 COLUMNAS)
+         [VISTA HERRAMIENTA INDIVIDUAL OBSIDIAN + NEON ORANGE 1:1 CON MOCKUPS]
          ========================================================================= -->
-    <div class="hero-cards-header">
-      <span class="hero-section-kicker">Herramientas del estudio y traductor universal</span>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-        @for (tool of heroTools; track tool.id) {
-          <button
-            type="button"
-            class="hero-nav-card"
-            [ngClass]="tool.accentClass"
-            [class.active]="activeTool() === tool.id"
-            (click)="selectHeroTool(tool.id)">
-            <div class="hero-icon-badge">
-              <ion-icon [name]="tool.icon"></ion-icon>
-            </div>
-            <div class="hero-card-copy">
-              <strong>{{ tool.title }}</strong>
-              <small>{{ tool.subtitle }}</small>
-            </div>
-            @if (activeTool() === tool.id) {
-              <span class="hero-active-dot"></span>
-            }
+    <div class="fm-suite-container">
+      <!-- Ondas de Seda 3D Naranjas de Fondo -->
+      <div class="tools-silk-waves" aria-hidden="true">
+        <svg viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
+          <defs>
+            <linearGradient id="tlWaveOrangeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.32" />
+              <stop offset="50%" stop-color="#ea580c" stop-opacity="0.12" />
+              <stop offset="100%" stop-color="#0c0705" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,80 C320,160 480,20 850,90 C1050,130 1150,70 1200,90 L1200,0 L0,0 Z" fill="url(#tlWaveOrangeGlow)" />
+        </svg>
+      </div>
+
+      <!-- Feedback de exito con haptica y SVG Tick -->
+      @if (successFeedback(); as fb) {
+        <div class="omni-success-feedback">
+          <div class="omni-success-tick-circle">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="omni-success-copy">
+            <strong>{{ fb.title }}</strong>
+            <small>{{ fb.subtitle }}</small>
+          </div>
+        </div>
+      }
+
+      <!-- 1. BARRA SUPERIOR (SEARCH PILL, NOTIFICATION BELL, USER AVATAR CG) -->
+      <header class="fm-topbar">
+        <div class="fm-search-pill">
+          <ion-icon name="search-outline" class="fm-search-icon"></ion-icon>
+          <input type="text" placeholder="Buscar en FileManager..." [(ngModel)]="catalogSearch" />
+        </div>
+        <div class="fm-topbar-actions">
+          <button type="button" class="fm-icon-btn fm-bell-btn" title="Notificaciones" (click)="presentToast('No hay notificaciones pendientes', 'dark')">
+            <ion-icon name="notifications-outline"></ion-icon>
+            <span class="fm-dot-badge"></span>
           </button>
-        }
+          <div class="fm-avatar-chip">
+            <span class="fm-avatar-circle">CG</span>
+            <ion-icon name="chevron-down-outline" class="fm-chevron-icon"></ion-icon>
+          </div>
+        </div>
+      </header>
+
+      <!-- 2. HEADER DE LA HERRAMIENTA (SQUIRCLE BOTON ATRAS + TITULO + SUBTITULO) -->
+      <div class="fm-tool-header">
+        <button type="button" class="fm-back-squircle-btn" (click)="backToCatalog()" title="Volver al catalogo">
+          @if (activeTool() === 'organize') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'edit') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'watermark') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'protect') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'compare') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'image-editor') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'duplicates') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'batch-rename') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-1 9l-1.5-3.5h-3L6 18H4l4-9h2l4 9h-2zm-3.8-5h2.2L9.3 10.6 8.2 13z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'translate') {
+            <span class="fm-header-glyph-text">文A</span>
+          } @else if (activeTool() === 'ocr') {
+            <span class="fm-header-glyph-text fm-glyph-ocr">[OCR]</span>
+          } @else if (activeTool() === 'sign') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
+          } @else if (activeTool() === 'scan-images') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><rect x="3" y="3" width="13" height="13" rx="2" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="7" cy="7" r="1.5" fill="#ff7a1a"/><path d="M14 11l-3-3-5 5" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/><path d="M8 21h11a2 2 0 0 0 2-2V8" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
+          } @else if (activeTool() === 'compress') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#ff7a1a"/><path d="M12 10v6M9 13l3 3 3-3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+          } @else if (activeTool() === 'decompress') {
+            <ion-icon name="arrow-undo-outline"></ion-icon>
+          } @else if (activeTool() === 'merge') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M6 3v12M18 9a9 9 0 0 1-9 9M18 9l-3-3M18 9l-3 3" fill="none" stroke="#ff7a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          } @else if (activeTool() === 'split') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><circle cx="6" cy="6" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="4" x2="8.5" y2="15.5" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="20" x2="8.5" y2="8.5" stroke="#ff7a1a" stroke-width="2"/></svg>
+          } @else if (activeTool() === 'convert') {
+            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
+          } @else {
+            <ion-icon name="arrow-undo-outline"></ion-icon>
+          }
+        </button>
+        <div class="fm-tool-header-text">
+          <h1 class="fm-tool-title">{{ getToolHeaderTitle() }}</h1>
+          <p class="fm-tool-subtitle">{{ getToolHeaderSubtitle() }}</p>
+        </div>
       </div>
-    </div>
 
-    <!-- =========================================================================
-         [MÓDULO OCR] RECONOCIMIENTO ÓPTICO DE CARACTERES (TESSERACT.JS WASM)
-         Extrae texto de fotos tomadas con la cámara, recibos, imágenes y PDFs
-         ========================================================================= -->
-    @if (activeTool() === 'ocr') {
-      <ion-card class="suite-surface-card ocr-card">
-        <ion-card-header>
-          <ion-card-subtitle>MOTOR OCR UNIVERSAL · TESSERACT.JS WASM EN CLIENTE</ion-card-subtitle>
-          <ion-card-title>Extraer Texto de Fotos, Recibos y Documentos Escaneados</ion-card-title>
-        </ion-card-header>
+      <!-- 3. SUB-NAVBAR CON PILDORAS PARA TODAS LAS HERRAMIENTAS (1:1 MOCKUP 5) -->
+      <nav class="fm-subtabs-bar">
+        <div class="fm-subtabs-scroll">
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'organize'" (click)="selectHeroTool('organize')">
+            <ion-icon name="layers-outline"></ion-icon>
+            <span>Organizar</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'edit'" (click)="selectHeroTool('edit')">
+            <ion-icon name="pencil-outline"></ion-icon>
+            <span>Editar PDF</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'watermark'" (click)="selectHeroTool('watermark')">
+            <ion-icon name="water-outline"></ion-icon>
+            <span>Marca de agua</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'protect'" (click)="selectHeroTool('protect')">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <span>Proteger</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'compare'" (click)="selectHeroTool('compare')">
+            <ion-icon name="swap-horizontal-outline"></ion-icon>
+            <span>Comparar</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'image-editor'" (click)="selectHeroTool('image-editor')">
+            <ion-icon name="image-outline"></ion-icon>
+            <span>Editor Fotos</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'duplicates'" (click)="selectHeroTool('duplicates')">
+            <ion-icon name="search-outline"></ion-icon>
+            <span>Duplicados</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'batch-rename'" (click)="selectHeroTool('batch-rename')">
+            <ion-icon name="create-outline"></ion-icon>
+            <span>Renombrar</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'compress'" (click)="selectHeroTool('compress')">
+            <ion-icon name="archive-outline"></ion-icon>
+            <span>Comprimir</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'decompress'" (click)="selectHeroTool('decompress')">
+            <ion-icon name="download-outline"></ion-icon>
+            <span>Descomprimir</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'merge'" (click)="selectHeroTool('merge')">
+            <ion-icon name="copy-outline"></ion-icon>
+            <span>Unir PDFs</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'split'" (click)="selectHeroTool('split')">
+            <ion-icon name="cut-outline"></ion-icon>
+            <span>Dividir PDF</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'convert'" (click)="selectHeroTool('convert')">
+            <ion-icon name="swap-horizontal-outline"></ion-icon>
+            <span>Convertir</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'ocr'" (click)="selectHeroTool('ocr')">
+            <ion-icon name="scan-outline"></ion-icon>
+            <span>OCR</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'translate'" (click)="selectHeroTool('translate')">
+            <ion-icon name="language-outline"></ion-icon>
+            <span>Traducir</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'sign'" (click)="selectHeroTool('sign')">
+            <ion-icon name="create-outline"></ion-icon>
+            <span>Firmar</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'scan-images'" (click)="selectHeroTool('scan-images')">
+            <ion-icon name="images-outline"></ion-icon>
+            <span>Imágenes a PDF</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'protect'" (click)="selectHeroTool('protect')">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <span>Proteger</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'watermark'" (click)="selectHeroTool('watermark')">
+            <ion-icon name="water-outline"></ion-icon>
+            <span>Marca de agua</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'rotate'" (click)="selectHeroTool('rotate')">
+            <ion-icon name="refresh-outline"></ion-icon>
+            <span>Girar</span>
+          </button>
+          <button type="button" class="fm-tab-pill" [class.active]="activeTool() === 'ai-tools'" (click)="selectHeroTool('ai-tools')">
+            <ion-icon name="sparkles-outline"></ion-icon>
+            <span>PDF con IA</span>
+          </button>
+        </div>
+      </nav>
 
-        <ion-card-content>
-          <!-- Grilla de entrada: Repositorio o Subida directa -->
-          <div class="grid grid-cols-1 md:grid-cols-2 translator-inputs-grid">
-            <div class="modern-field-group">
-              <label class="modern-field-label">1. Elegir imagen o documento del Repositorio</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-select
-                  interface="popover"
-                  [ngModel]="ocrFileId()"
-                  (ngModelChange)="onOcrRepoFileChanged($event)"
-                  placeholder="Seleccionar imagen o PDF?">
-                  @for (doc of allFiles(); track doc.id) {
-                    <ion-select-option [value]="doc.id">
-                      {{ doc.name }} (.{{ doc.ext | uppercase }})
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
-            </div>
+      <!-- 4. CUADRICULA PRINCIPAL SPLIT DE DOS COLUMNAS -->
+      <main class="fm-two-col-grid">
+        <!-- ==================== COLUMNA IZQUIERDA: DROPZONE & ARCHIVOS ==================== -->
+        <section class="fm-left-col">
+          <!-- Input oculto de archivos para carga nativa -->
+          <input type="file" multiple #toolFilePicker (change)="onToolFilesPicked($event)" style="display:none" />
 
-            <div class="modern-field-group">
-              <label class="modern-field-label">O cargar foto desde la Galería / Dispositivo</label>
-              <label class="translator-upload-dropzone">
-                <ion-icon name="cloud-upload-outline"></ion-icon>
-                @if (uploadedOcrFile(); as uf) {
-                  <span><strong>{{ uf.name }}</strong> ({{ fileService.formatBytes(uf.size) }})</span>
-                } @else {
-                  <span>Seleccionar imagen (.png, .jpg, .jpeg, .webp, .pdf)?</span>
-                }
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  (change)="onOcrFilePicked($event)"
-                  style="display:none;" />
-              </label>
-            </div>
-          </div>
-
-          <!-- Previsualización de la imagen a procesar -->
-          @if (ocrPreviewUrl(); as prevUrl) {
-            <div class="ocr-preview-box">
-              <div class="ocr-preview-thumb-wrap">
-                <img [src]="prevUrl" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'></svg>" alt="Previsualización OCR" class="ocr-preview-thumb" />
+          <!-- VISTAS ESPECIALES COLUMNA IZQUIERDA -->
+          @if (activeTool() === 'organize') {
+            <!-- 01. ORGANIZAR: DROPZONE PDF 1:1 CON CAPTURA 2 -->
+            <div class="fm-dashed-dropzone fm-organize-dropzone" (click)="toolFilePicker.click()">
+              <div class="fm-drop-icon fm-drop-pdf-plus" aria-hidden="true">
+                <svg viewBox="0 0 64 64" class="fm-svg-pdf-plus">
+                  <rect x="12" y="8" width="34" height="46" rx="5" fill="#dc2626" />
+                  <path d="M34 8L46 20H37C35.3 20 34 18.7 34 17V8Z" fill="#fca5a5" />
+                  <text x="29" y="38" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">PDF</text>
+                  <circle cx="46" cy="44" r="10" fill="#ff7a1a" />
+                  <text x="46" y="48" text-anchor="middle" fill="#fff" font-size="15" font-weight="900">+</text>
+                </svg>
               </div>
-              <div class="ocr-preview-info">
-                <strong>Documento listo para análisis OCR</strong>
-                <p>Las letras y números serán segmentados y vectorizados en cliente sin enviar datos a servidores externos.</p>
-              </div>
-            </div>
-          }
-
-          <!-- Idioma y optimizaciones de imagen -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ocr-controls-row">
-            <div class="modern-field-group">
-              <label class="modern-field-label">Idioma del documento</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-select
-                  interface="popover"
-                  [ngModel]="ocrLang()"
-                  (ngModelChange)="ocrLang.set($event)">
-                  @for (lang of ocrLanguages; track lang.code) {
-                    <ion-select-option [value]="lang.code">
-                      {{ lang.flag }} {{ lang.name }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
-            </div>
-
-            <div class="modern-field-group">
-              <label class="modern-field-label">Título para el archivo .TXT</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-input
-                  [ngModel]="ocrOutputTitle()"
-                  (ionInput)="ocrOutputTitle.set($any($event.target).value)"
-                  placeholder="Nombre del archivo?">
-                </ion-input>
-              </ion-item>
-            </div>
-
-            <div class="modern-field-group ocr-filter-toggle-group">
-              <label class="modern-field-label">Filtro de Alto Contraste</label>
-              <button
-                type="button"
-                class="ocr-filter-btn"
-                [class.active]="ocrEnhanceContrast()"
-                (click)="toggleOcrContrast()">
-                <ion-icon [name]="ocrEnhanceContrast() ? 'checkbox-outline' : 'sparkles-outline'"></ion-icon>
-                <span>{{ ocrEnhanceContrast() ? 'Nitidez + Binarización Activa' : 'Filtro Desactivado' }}</span>
+              <p class="fm-drop-main-text">Arrastrá tu PDF aquí</p>
+              <p class="fm-drop-sub-text">o seleccioná un archivo</p>
+              <button type="button" class="fm-pick-files-btn" (click)="$event.stopPropagation(); toolFilePicker.click()">
+                <ion-icon name="folder-outline"></ion-icon>
+                <span>Seleccionar archivo</span>
               </button>
             </div>
-          </div>
-
-          <!-- Botón de acción principal (CTA) -->
-          <div class="ocr-action-container">
-            <button
-              class="btn-primary-indigo w-full ocr-cta-btn"
-              [disabled]="ocrRunning()"
-              (click)="runOcrExtraction()">
-              @if (ocrRunning()) {
-                <span class="ocr-spinner"></span>
-                <span>Procesando caracteres con Tesseract?</span>
-              } @else {
-                <ion-icon name="scan-outline"></ion-icon>
-                <span>Extraer Texto con OCR</span>
-              }
-            </button>
-          </div>
-
-          <!-- Barra de progreso animada -->
-          @if (ocrRunning()) {
-            <div class="ocr-progress-shell">
-              <div class="ocr-progress-header">
-                <span class="ocr-progress-status-txt">{{ ocrProgressStatus() }}</span>
-                <span class="ocr-progress-pct">{{ ocrProgressPercent() }}%</span>
-              </div>
-              <div class="omni-progress-track">
-                <div class="omni-progress-fill" [style.width.%]="ocrProgressPercent()"></div>
-              </div>
+            <div class="fm-drop-formats-note">
+              <span>Formatos soportados: PDF</span>
             </div>
-          }
-
-          <!-- Resultados del OCR -->
-          @if (ocrResult(); as res) {
-            <div class="ocr-results-panel">
-              <div class="ocr-results-header">
-                <div class="ocr-metrics-row">
-                  <span class="ocr-stat-chip">
-                    <strong>{{ res.wordsCount }}</strong> palabras
-                  </span>
-                  <span class="ocr-stat-chip">
-                    <strong>{{ res.linesCount }}</strong> líneas
-                  </span>
-                  <span class="ocr-confidence-badge" [class.high]="res.confidence >= 80" [class.medium]="res.confidence < 80">
-                    <ion-icon name="checkmark-circle"></ion-icon>
-                    {{ res.confidence }}% precisión
-                  </span>
+          } @else if (activeTool() === 'edit') {
+            <!-- 02. EDITAR: CANVAS INTERACTIVO DE HOJA 1:1 CON CAPTURA 3 ARRIBA -->
+            <div class="fm-edit-canvas-card">
+              <div class="fm-edit-sheet">
+                <h3 class="fm-sheet-title">Trabajo Final</h3>
+                <div class="fm-sheet-paragraph-skel">
+                  <div class="fm-skel-line w-full"></div>
+                  <div class="fm-skel-line w-90"></div>
+                  <div class="fm-skel-line w-80"></div>
                 </div>
-
-                <div class="ocr-quick-actions">
-                  <button type="button" class="ocr-tool-btn" (click)="copyOcrText()" title="Copiar al portapapeles">
-                    <ion-icon name="copy-outline"></ion-icon>
-                    <span>Copiar</span>
-                  </button>
-                  <button type="button" class="ocr-tool-btn primary" (click)="saveOcrAsTxt()" title="Guardar como archivo .txt">
-                    <ion-icon name="download-outline"></ion-icon>
-                    <span>Guardar .TXT</span>
-                  </button>
-                  <button type="button" class="ocr-tool-btn accent" (click)="sendOcrToTranslator()" title="Enviar al Traductor Universal">
-                    <ion-icon name="language-outline"></ion-icon>
-                    <span>Traducir</span>
+                <!-- Cuadro de texto interactivo con foco -->
+                <div class="fm-edit-bounding-box" [style.color]="editColor()">
+                  <span>{{ editSampleText() }}</span>
+                  <button type="button" class="fm-edit-corner-btn" title="Editar este bloque">
+                    <ion-icon name="pencil-outline"></ion-icon>
                   </button>
                 </div>
-              </div>
-
-              <!-- Editor del texto extraído -->
-              <div class="ocr-textarea-wrapper">
-                <textarea
-                  class="ocr-textarea"
-                  rows="7"
-                  [(ngModel)]="res.text"
-                  placeholder="Texto reconocido por el OCR?"></textarea>
+                <div class="fm-sheet-paragraph-skel fm-mt-3">
+                  <div class="fm-skel-line w-95"></div>
+                  <div class="fm-skel-line w-75"></div>
+                </div>
               </div>
             </div>
-          }
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- =========================================================================
-         [REQUISITO 1] TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO
-         Soporta: Word (.docx), Excel (.xlsx/.csv), PowerPoint (.pptx), PDF (.pdf),
-         Texto plano (.txt) y Marcado (.html/.md)
-         ========================================================================= -->
-    @if (activeTool() === 'translate') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>Traductor universal multiformato (100% en cliente)</ion-card-subtitle>
-          <ion-card-title>Traducir Documentos de Oficina, PDF y Texto</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <!-- Formatos soportados organizados en grilla responsiva -->
-          <div class="grid grid-cols-1 md:grid-cols-2 supported-formats-grid">
-            <div class="format-family-panel">
-              <div class="format-family-heading">
-                <ion-icon name="briefcase-outline" aria-hidden="true"></ion-icon>
-                <strong>Documentos de oficina</strong>
-              </div>
-              <p>Conserva tablas, diapositivas y estructura empresarial:</p>
-              <div class="family-badges-row">
-                <span class="file-format-badge fmt-doc">.DOCX (Word)</span>
-                <span class="file-format-badge fmt-data">.XLSX / .CSV (Excel)</span>
-                <span class="file-format-badge fmt-image">.PPTX (Slides)</span>
+          } @else if (activeTool() === 'watermark') {
+            <!-- 03. MARCA DE AGUA: VISTA PREVIA CON SELLO DIAGONAL 1:1 CON CAPTURA 4 ARRIBA -->
+            <div class="fm-watermark-preview-card">
+              <div class="fm-watermark-sheet">
+                <h4 class="fm-watermark-sheet-title">Trabajo Final</h4>
+                <div class="fm-sheet-paragraph-skel">
+                  <div class="fm-skel-line w-full"></div>
+                  <div class="fm-skel-line w-90"></div>
+                  <div class="fm-skel-line w-85"></div>
+                  <div class="fm-skel-line w-70"></div>
+                  <div class="fm-skel-line w-95"></div>
+                </div>
+                <!-- Sello en diagonal -->
+                <div
+                  class="fm-watermark-overlay-label"
+                  [style.opacity]="watermarkOpacity() / 100"
+                  [style.transform]="'rotate(' + watermarkRotation() + 'deg)'">
+                  {{ watermarkContent() }}
+                </div>
               </div>
             </div>
-
-            <div class="format-family-panel">
-              <div class="format-family-heading">
-                <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
-                <strong>Estándar, PDF y marcado</strong>
-              </div>
-              <p>Soporte para PDFs nativos/escaneados y código documental:</p>
-              <div class="family-badges-row">
-                <span class="file-format-badge fmt-pdf">.PDF (Nativo/Scan)</span>
-                <span class="file-format-badge fmt-doc">.TXT (Plano)</span>
-                <span class="file-format-badge fmt-data">.HTML / .MD</span>
+          } @else if (activeTool() === 'protect') {
+            <!-- 04. PROTEGER: CANDADO 3D RESPLANDECIENTE 1:1 CON CAPTURA 3 ABAJO -->
+            <div class="fm-protect-padlock-card">
+              <div class="fm-glowing-pedestal">
+                <div class="fm-pedestal-ring"></div>
+                <svg viewBox="0 0 100 110" class="fm-padlock-3d-svg">
+                  <defs>
+                    <linearGradient id="padlockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ff942e" />
+                      <stop offset="50%" stop-color="#ea580c" />
+                      <stop offset="100%" stop-color="#9a3412" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Arco del candado -->
+                  <path d="M30 45V28A20 20 0 0 1 70 28V45" fill="none" stroke="url(#padlockGrad)" stroke-width="10" stroke-linecap="round"/>
+                  <!-- Cuerpo del candado -->
+                  <rect x="20" y="42" width="60" height="52" rx="14" fill="url(#padlockGrad)"/>
+                  <!-- Agujero de llave -->
+                  <circle cx="50" cy="62" r="5" fill="#180a04"/>
+                  <polygon points="48,65 52,65 53,78 47,78" fill="#180a04"/>
+                </svg>
               </div>
             </div>
-          </div>
-
-          <!-- Selección de documento desde el repositorio o subida directa -->
-          <div class="grid grid-cols-1 md:grid-cols-2 translator-inputs-grid">
-            <div class="modern-field-group">
-              <label class="modern-field-label">1. Elegir documento del Repositorio</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-select
-                  interface="popover"
-                  [ngModel]="translateFileId()"
-                  (ngModelChange)="translateFileId.set($event); uploadedTranslateFile.set(null)"
-                  placeholder="Seleccionar documento?">
-                  @for (doc of translatableFiles(); track doc.id) {
-                    <ion-select-option [value]="doc.id">
-                      {{ doc.name }} (.{{ doc.ext | uppercase }})
-                    </ion-select-option>
+          } @else if (activeTool() === 'compare') {
+            <!-- 05. COMPARAR: VISTA DUAL LADO A LADO -->
+            <div class="fm-compare-dual-card">
+              <div class="fm-compare-pane pane-a">
+                <span class="fm-pane-tag original">Original (v1)</span>
+                <div class="fm-mini-doc-sheet">
+                  <h5>{{ compareFileA() }}</h5>
+                  <p class="diff-equal">1. Introducción al proyecto de seguridad.</p>
+                  <p class="diff-removed">- Versión preliminar sin cifrado AES.</p>
+                </div>
+              </div>
+              <div class="fm-compare-pane pane-b">
+                <span class="fm-pane-tag modified">Modificado (v2)</span>
+                <div class="fm-mini-doc-sheet">
+                  <h5>{{ compareFileB() }}</h5>
+                  <p class="diff-equal">1. Introducción al proyecto de seguridad.</p>
+                  <p class="diff-added">+ Cifrado bancario AES-256 bits activado.</p>
+                </div>
+              </div>
+            </div>
+          } @else if (activeTool() === 'image-editor') {
+            <!-- 06. EDITOR DE IMAGENES: VIEWPORT CON RECUADRO DE RECORTE 1:1 CON CAPTURA 4 ABAJO -->
+            <div class="fm-image-crop-viewport">
+              <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop" alt="Paisaje a editar" class="fm-crop-bg-image" />
+              <!-- Recuadro punteado con esquinas de recorte -->
+              <div class="fm-crop-overlay-rect">
+                <span class="fm-crop-handle handle-tl"></span>
+                <span class="fm-crop-handle handle-tr"></span>
+                <span class="fm-crop-handle handle-bl"></span>
+                <span class="fm-crop-handle handle-br"></span>
+                <span class="fm-crop-handle handle-tc"></span>
+                <span class="fm-crop-handle handle-bc"></span>
+                <span class="fm-crop-handle handle-ml"></span>
+                <span class="fm-crop-handle handle-mr"></span>
+                <div class="fm-crop-rule-of-thirds"></div>
+              </div>
+            </div>
+          } @else if (activeTool() === 'duplicates') {
+            <!-- 07. DUPLICADOS: LISTA DE GRUPOS DETECTADOS -->
+            <div class="fm-duplicates-left-panel">
+              <div class="fm-dup-header">
+                <strong>Archivos duplicados encontrados ({{ duplicateGroups().length }} grupos)</strong>
+              </div>
+              @for (grp of duplicateGroups(); track grp.hash) {
+                <div class="fm-dup-group-box">
+                  <div class="fm-dup-group-head">
+                    <span class="fm-dup-hash">{{ grp.hash }}</span>
+                    <span class="fm-dup-size">{{ grp.size }}</span>
+                  </div>
+                  @for (f of grp.files; track f.id) {
+                    <div class="fm-dup-file-row">
+                      <input type="checkbox" [(ngModel)]="f.keep" class="fm-custom-checkbox" />
+                      <div class="fm-dup-file-info">
+                        <span class="name">{{ f.name }}</span>
+                        <small class="path">{{ f.path }} · {{ f.date }}</small>
+                      </div>
+                      <span class="fm-dup-badge" [class.keep]="f.keep">{{ f.keep ? 'Conservar' : 'Eliminar' }}</span>
+                    </div>
                   }
-                </ion-select>
-              </ion-item>
-            </div>
-
-            <div class="modern-field-group">
-              <label class="modern-field-label">O subir archivo (.docx, .xlsx, .pptx, .pdf, .csv, .txt, .html, .md)</label>
-              <label class="translator-upload-dropzone">
-                <ion-icon name="cloud-upload-outline"></ion-icon>
-                @if (uploadedTranslateFile(); as uf) {
-                  <span><strong>{{ uf.name }}</strong> ({{ fileService.formatBytes(uf.size) }})</span>
-                } @else {
-                  <span>Examinar documento desde tu dispositivo?</span>
-                }
-                <input
-                  type="file"
-                  hidden
-                  accept=".docx,.doc,.xlsx,.xls,.csv,.pptx,.ppt,.pdf,.txt,.html,.md,.json"
-                  (change)="onTranslateFilePicked($event)" />
-              </label>
-            </div>
-          </div>
-
-          <!-- Selector de Idioma Origen <-> Idioma Destino -->
-          <div class="language-bar-grid">
-            <div class="modern-field-group">
-              <label class="modern-field-label">Idioma de Origen</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-select
-                  interface="popover"
-                  [ngModel]="sourceLang()"
-                  (ngModelChange)="sourceLang.set($event)">
-                  @for (lang of sourceLanguages; track lang.code) {
-                    <ion-select-option [value]="lang.code">
-                      {{ lang.flag }} {{ lang.name }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
-            </div>
-
-            <button
-              type="button"
-              class="swap-langs-btn"
-              title="Intercambiar idiomas"
-              (click)="swapTranslationLanguages()">
-              <ion-icon name="swap-horizontal-outline"></ion-icon>
-            </button>
-
-            <div class="modern-field-group">
-              <label class="modern-field-label">Idioma de Destino</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-select
-                  interface="popover"
-                  [ngModel]="targetLang()"
-                  (ngModelChange)="targetLang.set($event)">
-                  @for (lang of targetLanguages(); track lang.code) {
-                    <ion-select-option [value]="lang.code">
-                      {{ lang.flag }} {{ lang.name }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
-            </div>
-          </div>
-
-          <!-- Formato de salida y nombre personalizado -->
-          <div class="grid grid-cols-1 md:grid-cols-2">
-            <div class="modern-field-group">
-              <label class="modern-field-label">Formato del documento traducido</label>
-              <div class="format-target-pills">
-                @for (fmt of ['preserve', 'pdf', 'docx', 'xlsx', 'pptx', 'txt', 'html', 'md']; track fmt) {
-                  <button
-                    type="button"
-                    class="target-fmt-pill"
-                    [class.selected]="translateOutputFormat() === fmt"
-                    (click)="translateOutputFormat.set($any(fmt))">
-                    {{ fmt === 'preserve' ? 'Mantener Original' : '.' + (fmt | uppercase) }}
-                  </button>
-                }
-              </div>
-            </div>
-
-            <div class="modern-field-group">
-              <label class="modern-field-label">Nombre del archivo traducido (opcional)</label>
-              <ion-item lines="none" class="modern-input-item">
-                <ion-input
-                  [ngModel]="translateOutputTitle()"
-                  (ngModelChange)="translateOutputTitle.set($event)"
-                  placeholder="Ej: Contrato_Corporativo_EN">
-                </ion-input>
-              </ion-item>
-            </div>
-          </div>
-
-          <!-- Barra de Progreso Animada durante la traducción -->
-          @if (processing() || translationProgress() > 0) {
-            <div class="translation-progress-box">
-              <div class="progress-head">
-                <span>{{ translationStepLabel() }}</span>
-                <strong>{{ translationProgress() }}%</strong>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" [style.width.%]="translationProgress()"></div>
-              </div>
-            </div>
-          }
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing()"
-            (click)="runDocumentTranslation()">
-            <ion-icon name="language-outline" slot="start"></ion-icon>
-            Traducir Documento y Guardar en Repositorio Local
-          </ion-button>
-
-          <!-- Tarjeta de Resultado con Comparación Original vs Traducido + Vista Previa + Descarga -->
-          @if (lastTranslationResult(); as result) {
-            <div class="translation-result-panel">
-              <div class="result-top-bar">
-                <div>
-                  <span class="result-kicker">TRADUCCIÓN COMPLETADA · {{ result.detectedSourceLang }} → {{ result.targetLangName }}</span>
-                  <h3>{{ result.file.name }}</h3>
                 </div>
-                <span class="file-format-badge fmt-data">.{{ result.file.ext | uppercase }}</span>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 comparison-snippets-grid">
-                <div class="snippet-box original">
-                  <small>EXTRACTO ORIGINAL ({{ result.detectedSourceLang }})</small>
-                  <p>{{ result.originalSnippet }}</p>
-                </div>
-                <div class="snippet-box translated">
-                  <small>EXTRACTO TRADUCIDO ({{ result.targetLangName }})</small>
-                  <p>{{ result.translatedSnippet }}</p>
-                </div>
-              </div>
-
-              <div class="result-actions-row">
-                <ion-button size="small" color="primary" (click)="openQuickPreview(result.file)">
-                  <ion-icon name="eye-outline" slot="start"></ion-icon>
-                  Vista Previa Modal
-                </ion-button>
-
-                <ion-button
-                  size="small"
-                  fill="outline"
-                  color="primary"
-                  (click)="nativeService.downloadFileToDevice(result.file)">
-                  <ion-icon name="download-outline" slot="start"></ion-icon>
-                  Descargar .{{ result.file.ext | uppercase }}
-                </ion-button>
-
-                <ion-button
-                  size="small"
-                  fill="outline"
-                  color="success"
-                  (click)="nativeService.shareManagedFile(result.file)">
-                  <ion-icon name="share-social-outline" slot="start"></ion-icon>
-                  Compartir
-                </ion-button>
-
-                <ion-button size="small" fill="clear" routerLink="/mobile/repository">
-                  Ir al Repositorio →
-                </ion-button>
-              </div>
-            </div>
-          }
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- ==================== 1. UNIR PDFs ==================== -->
-    @if (activeTool() === 'merge') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>COMBINAR DOCUMENTOS</ion-card-subtitle>
-          <ion-card-title>Unir PDFs en un único documento</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p class="suite-help">Seleccioná al menos 2 archivos PDF en el orden en que querés unirlos:</p>
-
-          <div class="selectable-files-grid">
-            @for (pdf of pdfFiles(); track pdf.id) {
-              <button
-                type="button"
-                class="selectable-file-pill"
-                [class.selected]="mergeIds().includes(pdf.id)"
-                (click)="toggleMergeId(pdf.id)">
-                <span class="file-format-badge fmt-pdf">
-                  <ion-icon name="document-text-outline"></ion-icon>
-                  .PDF
-                </span>
-                <div class="selectable-file-text">
-                  <strong>{{ pdf.name }}</strong>
-                  <small>{{ pdf.pageCount || 1 }} págs. · {{ fileService.formatBytes(pdf.size) }}</small>
-                </div>
-                @if (mergeIds().includes(pdf.id)) {
-                  <span class="order-badge">#{{ mergeIds().indexOf(pdf.id) + 1 }}</span>
-                }
-              </button>
-            }
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nombre del documento resultante</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input [ngModel]="mergeOutputTitle()" (ngModelChange)="mergeOutputTitle.set($event)"></ion-input>
-            </ion-item>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || mergeIds().length < 2"
-            (click)="runMerge()">
-            <ion-icon name="git-merge-outline" slot="start"></ion-icon>
-            Unir {{ mergeIds().length }} PDFs Ahora
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- ==================== 2. DIVIDIR PDF ==================== -->
-    @if (activeTool() === 'split') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>SEPARAR PÁGINAS Y RANGOS</ion-card-subtitle>
-          <ion-card-title>Dividir o Extraer PDF</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">Documento PDF de origen</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="splitSourceId()"
-                (ngModelChange)="splitSourceId.set($event)"
-                placeholder="Seleccionar documento PDF?">
-                @for (pdf of pdfFiles(); track pdf.id) {
-                  <ion-select-option [value]="pdf.id">{{ pdf.name }} ({{ pdf.pageCount || 1 }} págs.)</ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Rangos o páginas (ej: 1-2, 4)</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input [ngModel]="splitRanges()" (ngModelChange)="splitRanges.set($event)"></ion-input>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Modo de salida</label>
-            <div class="floating-pill-selector">
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="splitMode() === 'extract-single'"
-                (click)="splitMode.set('extract-single')">
-                <strong>Extraer en 1 nuevo PDF</strong>
-                <small>Unifica las páginas elegidas</small>
-              </button>
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="splitMode() === 'split-multiple'"
-                (click)="splitMode.set('split-multiple')">
-                <strong>Dividir en múltiples PDFs</strong>
-                <small>Un archivo por cada rango</small>
-              </button>
-            </div>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nombre de salida</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input [ngModel]="splitOutputTitle()" (ngModelChange)="splitOutputTitle.set($event)"></ion-input>
-            </ion-item>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !splitSourceId()"
-            (click)="runSplit()">
-            <ion-icon name="cut-outline" slot="start"></ion-icon>
-            Dividir / Extraer PDF
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- ==================== 3. COMPRIMIR PDF ==================== -->
-    @if (activeTool() === 'compress') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>OPTIMIZAR TAMAÑO</ion-card-subtitle>
-          <ion-card-title>Comprimir Documento PDF</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">Documento PDF a comprimir</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="compressFileId()"
-                (ngModelChange)="compressFileId.set($event)"
-                placeholder="Seleccionar documento PDF?">
-                @for (pdf of pdfFiles(); track pdf.id) {
-                  <ion-select-option [value]="pdf.id">
-                    {{ pdf.name }} ({{ fileService.formatBytes(pdf.size) }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nivel de compresión</label>
-            <div class="floating-pill-selector three-cols">
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="compressLevel() === 'low'"
-                (click)="compressLevel.set('low')">
-                <strong>Baja (~22%)</strong>
-                <small>Alta calidad</small>
-              </button>
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="compressLevel() === 'medium'"
-                (click)="compressLevel.set('medium')">
-                <strong>Media (~42%)</strong>
-                <small>Balance ideal</small>
-              </button>
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="compressLevel() === 'extreme'"
-                (click)="compressLevel.set('extreme')">
-                <strong>Extrema (~62%)</strong>
-                <small>Mínimo peso</small>
-              </button>
-            </div>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nombre del PDF comprimido</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input [ngModel]="compressOutputTitle()" (ngModelChange)="compressOutputTitle.set($event)"></ion-input>
-            </ion-item>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !compressFileId()"
-            (click)="runCompress()">
-            <ion-icon name="contract-outline" slot="start"></ion-icon>
-            Comprimir PDF Ahora
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- ==================== 4. FIRMAR PDF DIGITALMENTE ==================== -->
-    @if (activeTool() === 'sign') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>FIRMA ELECTRÓNICA EN DOCUMENTO</ion-card-subtitle>
-          <ion-card-title>Firmar PDF Digitalmente</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">Documento PDF a firmar</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="signFileId()"
-                (ngModelChange)="signFileId.set($event)"
-                placeholder="Seleccionar documento PDF?">
-                @for (pdf of pdfFiles(); track pdf.id) {
-                  <ion-select-option [value]="pdf.id">{{ pdf.name }}</ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nombre y Aclaración del Firmante</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input
-                [ngModel]="signerName()"
-                (ngModelChange)="signerName.set($event)"
-                placeholder="Ej: Ing. María Cielo">
-              </ion-input>
-            </ion-item>
-          </div>
-
-          <div class="signature-pad-wrap">
-            <div class="signature-pad-header">
-              <span>Dibujá tu firma en el lienzo táctil:</span>
-              <ion-button size="small" fill="clear" color="primary" (click)="clearSignatureCanvas()">
-                Limpiar trazo
-              </ion-button>
-            </div>
-            <canvas
-              #signatureCanvas
-              width="320"
-              height="120"
-              class="signature-canvas"
-              aria-label="Lienzo táctil de firma manuscrita"
-              (mousedown)="startDrawing($event)"
-              (mousemove)="draw($event)"
-              (mouseup)="stopDrawing()"
-              (mouseleave)="stopDrawing()"
-              (touchstart)="startDrawing($event)"
-              (touchmove)="draw($event)"
-              (touchend)="stopDrawing()">
-            </canvas>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Posición de la firma en la hoja</label>
-            <div class="floating-pill-selector three-cols">
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="signPosition() === 'bottom-right'"
-                (click)="signPosition.set('bottom-right')">
-                <strong>Inferior Der.</strong>
-                <small>Estándar legal</small>
-              </button>
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="signPosition() === 'bottom-left'"
-                (click)="signPosition.set('bottom-left')">
-                <strong>Inferior Izq.</strong>
-                <small>Margen secundario</small>
-              </button>
-              <button
-                type="button"
-                class="selector-card-option"
-                [class.selected]="signPosition() === 'center'"
-                (click)="signPosition.set('center')">
-                <strong>Centro</strong>
-                <small>Pie central</small>
-              </button>
-            </div>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Nombre del PDF firmado</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input [ngModel]="signOutputTitle()" (ngModelChange)="signOutputTitle.set($event)"></ion-input>
-            </ion-item>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !signFileId()"
-            (click)="runSign()">
-            <ion-icon name="create-outline" slot="start"></ion-icon>
-            Estampar Firma y Guardar PDF
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- ==================== 5. CAMBIAR FORMATO UNIVERSAL ==================== -->
-    @if (activeTool() === 'convert') {
-      <ion-card class="suite-surface-card">
-        <ion-card-header>
-          <ion-card-subtitle>CONVERSOR MULTIFORMATO</ion-card-subtitle>
-          <ion-card-title>Cambiar Formato de Archivo</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">Seleccionar archivo del repositorio</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="convertFileId()"
-                (ngModelChange)="convertFileId.set($event)"
-                placeholder="Elegir archivo?">
-                @for (f of allFiles(); track f.id) {
-                  <ion-select-option [value]="f.id">{{ f.name }} (.{{ f.ext | uppercase }})</ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">Convertir al formato</label>
-            <div class="format-target-pills">
-              @for (fmt of availableTargetsForSelected(); track fmt) {
-                <button
-                  type="button"
-                  class="target-fmt-pill"
-                  [class.selected]="convertTargetFormat() === fmt"
-                  (click)="convertTargetFormat.set(fmt)">
-                  .{{ fmt | uppercase }}
-                </button>
               }
             </div>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !convertFileId()"
-            (click)="runUniversalConvert()">
-            <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
-            Convertir a .{{ convertTargetFormat() | uppercase }}
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- =========================================================================
-         [HERRAMIENTA SMALLPDF 7] MARCA DE AGUA EN PDF (WATERMARK)
-         ========================================================================= -->
-    @if (activeTool() === 'watermark') {
-      <ion-card class="suite-surface-card watermark-card">
-        <ion-card-header>
-          <ion-card-subtitle>Edición y Seguridad de Documentos</ion-card-subtitle>
-          <ion-card-title>Estampar Marca de Agua en PDF</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">1. Seleccionar documento PDF</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="watermarkFileId()"
-                (ngModelChange)="watermarkFileId.set($event)"
-                placeholder="Elegir PDF para estampar?">
-                @for (doc of pdfFiles(); track doc.id) {
-                  <ion-select-option [value]="doc.id">
-                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">2. Texto de la Marca de Agua</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-input
-                [ngModel]="watermarkText()"
-                (ngModelChange)="watermarkText.set($event)"
-                placeholder="Ej. CONFIDENCIAL, COPIA, BORRADOR">
-              </ion-input>
-            </ion-item>
-
-            <!-- Atajos rápidos de texto común de Smallpdf -->
-            <div class="watermark-presets-row">
-              <span class="watermark-preset-label">Atajos sugeridos:</span>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Confidencial')">Confidencial</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Borrador')">Borrador</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Copia privada')">Copia privada</button>
-              <button type="button" class="sp-text-pill" (click)="watermarkText.set('Original')">Original</button>
-            </div>
-          </div>
-
-          <!-- Color y Orientación -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-            <div class="modern-field-group">
-              <label class="modern-field-label">Color del sello</label>
-              <div class="sp-choice-group">
-                <button
-                  type="button"
-                  class="sp-choice-btn"
-                  [class.active]="watermarkColor() === 'gray'"
-                  (click)="watermarkColor.set('gray')">
-                  <span class="color-dot bg-slate-400"></span> Gris Neutro
-                </button>
-                <button
-                  type="button"
-                  class="sp-choice-btn"
-                  [class.active]="watermarkColor() === 'red'"
-                  (click)="watermarkColor.set('red')">
-                  <span class="color-dot bg-red-500"></span> Rojo Alerta
-                </button>
-                <button
-                  type="button"
-                  class="sp-choice-btn"
-                  [class.active]="watermarkColor() === 'blue'"
-                  (click)="watermarkColor.set('blue')">
-                  <span class="color-dot bg-blue-600"></span> Azul Corporativo
-                </button>
+          } @else if (activeTool() === 'batch-rename') {
+            <!-- 08. RENOMBRAR: TABLA ANTES / DESPUES -->
+            <div class="fm-rename-preview-panel">
+              <div class="fm-rename-table-head">
+                <span>Nombre Original</span>
+                <ion-icon name="arrow-forward-outline"></ion-icon>
+                <span>Nuevo Nombre</span>
               </div>
-            </div>
-
-            <div class="modern-field-group">
-              <label class="modern-field-label">Ángulo de estampa</label>
-              <div class="sp-choice-group">
-                <button
-                  type="button"
-                  class="sp-choice-btn"
-                  [class.active]="watermarkAngle() === 45"
-                  (click)="watermarkAngle.set(45)">
-                  Diagonal 45°
-                </button>
-                <button
-                  type="button"
-                  class="sp-choice-btn"
-                  [class.active]="watermarkAngle() === 0"
-                  (click)="watermarkAngle.set(0)">
-                  Horizontal 0°
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !watermarkFileId()"
-            (click)="applyWatermark()">
-            <ion-icon name="water-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Estampando marca de agua?' : 'Estampar Marca de Agua en PDF' }}
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- =========================================================================
-         [HERRAMIENTA SMALLPDF 8] GIRAR / ROTAR PDF (ROTATE)
-         ========================================================================= -->
-    @if (activeTool() === 'rotate') {
-      <ion-card class="suite-surface-card rotate-card">
-        <ion-card-header>
-          <ion-card-subtitle>Organización y Rotación de Documentos</ion-card-subtitle>
-          <ion-card-title>Girar / Rotar Páginas del PDF</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">1. Seleccionar archivo PDF para rotar</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="rotateFileId()"
-                (ngModelChange)="rotateFileId.set($event)"
-                placeholder="Elegir PDF a rotar?">
-                @for (doc of pdfFiles(); track doc.id) {
-                  <ion-select-option [value]="doc.id">
-                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">2. Grado de rotación</label>
-            <div class="rotate-options-grid">
-              <button
-                type="button"
-                class="rotate-option-btn"
-                [class.selected]="rotateAngle() === 90"
-                (click)="rotateAngle.set(90)">
-                <div class="rotate-icon-wrap rotate-90">
-                  <ion-icon name="refresh-outline"></ion-icon>
-                </div>
-                <strong>90° Horario</strong>
-                <small>Girar a la derecha</small>
-              </button>
-
-              <button
-                type="button"
-                class="rotate-option-btn"
-                [class.selected]="rotateAngle() === 180"
-                (click)="rotateAngle.set(180)">
-                <div class="rotate-icon-wrap rotate-180">
-                  <ion-icon name="refresh-outline"></ion-icon>
-                </div>
-                <strong>180° Invertido</strong>
-                <small>De cabeza</small>
-              </button>
-
-              <button
-                type="button"
-                class="rotate-option-btn"
-                [class.selected]="rotateAngle() === 270"
-                (click)="rotateAngle.set(270)">
-                <div class="rotate-icon-wrap rotate-270">
-                  <ion-icon name="refresh-outline"></ion-icon>
-                </div>
-                <strong>270° Antihorario</strong>
-                <small>Girar a la izquierda</small>
-              </button>
-            </div>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !rotateFileId()"
-            (click)="applyRotate()">
-            <ion-icon name="refresh-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Rotando páginas?' : 'Girar Documento ' + rotateAngle() + '°' }}
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- =========================================================================
-         [HERRAMIENTA SMALLPDF 9] PROTEGER PDF CON CONTRASEÑA (PROTECT)
-         ========================================================================= -->
-    @if (activeTool() === 'protect') {
-      <ion-card class="suite-surface-card protect-card">
-        <ion-card-header>
-          <ion-card-subtitle>Cifrado y Seguridad de Archivos</ion-card-subtitle>
-          <ion-card-title>Proteger PDF con Contraseña</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="modern-field-group">
-            <label class="modern-field-label">1. Seleccionar archivo PDF a proteger</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="protectFileId()"
-                (ngModelChange)="protectFileId.set($event)"
-                placeholder="Elegir PDF a proteger?">
-                @for (doc of pdfFiles(); track doc.id) {
-                  <ion-select-option [value]="doc.id">
-                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <div class="modern-field-group">
-            <label class="modern-field-label">2. Definir contraseña de apertura</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
-              <ion-input
-                type="password"
-                [ngModel]="protectPassword()"
-                (ngModelChange)="protectPassword.set($event)"
-                placeholder="Ingresá una clave segura?">
-              </ion-input>
-            </ion-item>
-            <small class="field-hint">
-              Cifrado local: El archivo solo podrá abrirse ingresando esta contraseña de seguridad.
-            </small>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn"
-            [disabled]="processing() || !protectFileId() || !protectPassword()"
-            (click)="applyProtect()">
-            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            {{ processing() ? 'Cifrando documento?' : 'Cifrar y Proteger PDF' }}
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    }
-
-    <!-- =========================================================================
-         [HERRAMIENTA SMALLPDF 10] PDF CON IA (RESUMEN EJECUTIVO & CHAT INTERACTIVO)
-         ========================================================================= -->
-    @if (activeTool() === 'ai-tools') {
-      <ion-card class="suite-surface-card ai-suite-card">
-        <ion-card-header>
-          <ion-card-subtitle>Herramientas OmniFile: inteligencia artificial local</ion-card-subtitle>
-          <ion-card-title>Resumen Ejecutivo y Chat Inteligente con tu PDF</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <!-- Selector de Documento -->
-          <div class="modern-field-group">
-            <label class="modern-field-label">1. Seleccionar archivo PDF a consultar con IA</label>
-            <ion-item lines="none" class="modern-input-item">
-              <ion-select
-                interface="popover"
-                [ngModel]="aiFileId()"
-                (ngModelChange)="aiFileId.set($event)"
-                placeholder="Elegir PDF para analizar?">
-                @for (doc of pdfFiles(); track doc.id) {
-                  <ion-select-option [value]="doc.id">
-                    {{ doc.name }} ({{ fileService.formatBytes(doc.size) }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          </div>
-
-          <ion-button
-            expand="block"
-            color="primary"
-            class="cta-action-btn mb-4"
-            [disabled]="aiAnalyzing() || !aiFileId()"
-            (click)="generateAiSummary()">
-            <ion-icon name="sparkles-outline" slot="start"></ion-icon>
-            {{ aiAnalyzing() ? 'Analizando estructura con IA local?' : 'Generar Resumen Ejecutivo con IA' }}
-          </ion-button>
-
-          <!-- Resumen Inteligente Desplegado -->
-          @if (aiSummary(); as summary) {
-            <div class="ai-summary-box">
-              <div class="ai-summary-header">
-                <h4>{{ summary.title }}</h4>
-                <span class="ai-pill-tag">Síntesis ejecutiva</span>
-              </div>
-              <ul class="ai-summary-bullets">
-                @for (bullet of summary.bullets; track bullet) {
-                  <li>{{ bullet }}</li>
-                }
-              </ul>
-              <div class="ai-meta-pills-row">
-                <span class="ai-meta-chip">Fechas: {{ summary.dates.join(', ') }}</span>
-                <span class="ai-meta-chip">Contexto: {{ summary.entities.join(', ') }}</span>
-              </div>
-            </div>
-          }
-
-          <!-- Interfaz de Chat con el Documento -->
-          <div class="ai-chat-container">
-            <div class="ai-chat-header">
-              <ion-icon name="chatbubbles-outline"></ion-icon>
-              <strong>Chatear con este PDF</strong>
-            </div>
-
-            <!-- Preguntas Sugeridas / Presets de Smallpdf -->
-            <div class="ai-presets-scroll">
-              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿De qué trata este documento?')">
-                ¿De qué trata?
-              </button>
-              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿Cuáles son las fechas clave?')">
-                Fechas clave
-              </button>
-              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿El documento está firmado?')">
-                ¿Está firmado?
-              </button>
-              <button type="button" class="ai-preset-chip" (click)="askPresetAi('¿Hay importes o costos?')">
-                Importes / Precios
-              </button>
-            </div>
-
-            <!-- Mensajes del Chat -->
-            <div class="ai-chat-feed">
-              @if (aiChatMessages().length === 0) {
-                <div class="ai-chat-empty">
-                  <ion-icon name="sparkles-outline"></ion-icon>
-                  <p>Hacé una pregunta sobre tu PDF para recibir respuestas inmediatas en lenguaje natural.</p>
-                </div>
-              } @else {
-                @for (msg of aiChatMessages(); track $index) {
-                  <div class="ai-bubble" [class.user]="msg.sender === 'user'" [class.assistant]="msg.sender === 'assistant'">
-                    <p>{{ msg.text }}</p>
-                    <span class="bubble-time">{{ msg.time }}</span>
+              <div class="fm-rename-rows-list">
+                @for (item of batchFileList(); track item.original) {
+                  <div class="fm-rename-row-item">
+                    <span class="orig">{{ item.original }}</span>
+                    <ion-icon name="chevron-forward-outline" class="arr"></ion-icon>
+                    <span class="dest">{{ item.result }}</span>
                   </div>
                 }
+              </div>
+            </div>
+          } @else if (activeTool() === 'translate' && translateTab() !== 'document') {
+            <!-- TRADUCTOR MOCKUP 1: VISTA DIRECTA DE TEXTO -->
+            <div class="fm-translate-left-card">
+              <div class="fm-segmented-group fm-translate-subtabs">
+                <button type="button" class="fm-seg-btn" [class.active]="translateTab() === 'text'" (click)="translateTab.set('text')">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  <span>Texto</span>
+                </button>
+                <button type="button" class="fm-seg-btn" [class.active]="translateTab() === 'document'" (click)="translateTab.set('document')">
+                  <ion-icon name="document-outline"></ion-icon>
+                  <span>Documento</span>
+                </button>
+                <button type="button" class="fm-seg-btn" [class.active]="translateTab() === 'auto'" (click)="translateTab.set('auto')">
+                  <span>Detección Automática</span>
+                </button>
+              </div>
+
+              <div class="fm-field-section fm-mt-3">
+                <label class="fm-field-title">Texto a traducir:</label>
+                <div class="fm-translate-textarea-shell">
+                  <textarea
+                    class="fm-translate-textarea"
+                    rows="6"
+                    placeholder="Escribe o pega tu texto aquí..."
+                    maxlength="5000"
+                    [(ngModel)]="translateInputText"></textarea>
+                  <span class="fm-char-counter">{{ translateInputText().length }}/5000</span>
+                </div>
+              </div>
+
+              <div class="fm-two-inputs-row fm-mt-3">
+                <div>
+                  <label class="fm-field-title">Idioma de origen:</label>
+                  <select class="fm-select-dark" [(ngModel)]="translateSourceLangCode">
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="en">🇬🇧 Inglés</option>
+                    <option value="fr">🇫🇷 Francés</option>
+                    <option value="de">🇩🇪 Alemán</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="pt">🇵🇹 Portugués</option>
+                    <option value="auto">🌐 Automático</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="fm-field-title">Idioma de destino:</label>
+                  <select class="fm-select-dark" [(ngModel)]="translateTargetLangCode">
+                    <option value="en">🇬🇧 Inglés</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Francés</option>
+                    <option value="de">🇩🇪 Alemán</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="pt">🇵🇹 Portugués</option>
+                    <option value="ja">🇯🇵 Japonés</option>
+                    <option value="zh">🇨🇳 Chino</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-4" (click)="runTranslateText()" [disabled]="processing()">
+                <ion-icon name="arrow-forward-outline"></ion-icon>
+                <span>Traducir</span>
+              </button>
+            </div>
+          } @else {
+            <!-- Zona de arrastre con borde punteado naranja neon -->
+            <div
+              class="fm-dashed-dropzone"
+              (dragover)="onDragOver($event)"
+              (drop)="onDropToolFiles($event)"
+              (click)="toolFilePicker.click()">
+
+              <!-- Iconos centrales tematicos segun la herramienta -->
+              @if (activeTool() === 'compress') {
+                <div class="fm-drop-icon fm-drop-cloud" aria-hidden="true">
+                  <svg viewBox="0 0 68 56" class="fm-svg-cloud">
+                    <path d="M18 44H50C56.6 44 62 38.6 62 32C62 25.8 57.3 20.7 51.2 20.1C49.1 11.5 41.3 5 32 5C21.5 5 13 13.5 13 24C13 24.6 13 25.2 13.1 25.8C7.9 27.4 4 32.2 4 38C4 44 9.8 44 18 44Z" fill="none" stroke="#ff8c24" stroke-width="3" stroke-linecap="round" />
+                    <path d="M32 40V22M24 30L32 22L40 30" fill="none" stroke="#ff942e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'decompress') {
+                <div class="fm-drop-icon fm-drop-zip" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-zip">
+                    <path d="M12 16C12 13.8 13.8 12 16 12H28L34 18H48C50.2 18 52 19.8 52 22V48C52 50.2 50.2 52 48 52H16C13.8 52 12 50.2 12 48Z" fill="#ff7a1a" />
+                    <path d="M28 22H36V46H28Z" fill="#ea580c" />
+                    <line x1="30" y1="24" x2="34" y2="24" stroke="#ffffff" stroke-width="2" />
+                    <line x1="30" y1="28" x2="34" y2="28" stroke="#ffffff" stroke-width="2" />
+                    <line x1="30" y1="32" x2="34" y2="32" stroke="#ffffff" stroke-width="2" />
+                    <line x1="30" y1="36" x2="34" y2="36" stroke="#ffffff" stroke-width="2" />
+                    <rect x="29" y="40" width="6" height="8" rx="2" fill="#fff7ed" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'merge') {
+                <div class="fm-drop-icon fm-drop-merge" aria-hidden="true">
+                  <svg viewBox="0 0 72 64" class="fm-svg-merge">
+                    <rect x="10" y="14" width="26" height="36" rx="4" fill="#dc2626" />
+                    <text x="23" y="36" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">PDF</text>
+                    <rect x="24" y="8" width="26" height="36" rx="4" fill="#ef4444" />
+                    <text x="37" y="30" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">PDF</text>
+                    <circle cx="56" cy="24" r="8" fill="#ff7a1a" />
+                    <text x="56" y="28" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">+</text>
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'split') {
+                <div class="fm-drop-icon fm-drop-split" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-split">
+                    <rect x="12" y="8" width="32" height="44" rx="4" fill="#dc2626" />
+                    <text x="28" y="32" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">PDF</text>
+                    <circle cx="44" cy="42" r="13" fill="#180e0a" stroke="#ff7a1a" stroke-width="2" />
+                    <path d="M38 46L50 38M38 38L50 46" stroke="#ff7a1a" stroke-width="2.5" stroke-linecap="round" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'convert') {
+                <div class="fm-drop-icon fm-drop-convert" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-convert">
+                    <rect x="12" y="8" width="32" height="44" rx="4" fill="#dc2626" />
+                    <text x="28" y="32" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">PDF</text>
+                    <circle cx="44" cy="42" r="13" fill="#180e0a" stroke="#ff7a1a" stroke-width="2" />
+                    <path d="M40 38A5 5 0 0 1 48 41L49 39" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round" />
+                    <path d="M48 46A5 5 0 0 1 40 43L39 45" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'ocr') {
+                <div class="fm-drop-icon fm-drop-ocr" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-ocr">
+                    <rect x="8" y="10" width="38" height="32" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2" />
+                    <polygon points="12,36 22,22 30,30 38,18 44,36" fill="#fdba74" />
+                    <circle cx="18" cy="18" r="3" fill="#ea580c" />
+                    <circle cx="44" cy="38" r="12" fill="#ea580c" />
+                    <path d="M44 32V44M38 38H50" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'sign') {
+                <div class="fm-drop-icon fm-drop-sign" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-sign">
+                    <rect x="12" y="10" width="30" height="42" rx="4" fill="#ff7a1a" />
+                    <path d="M19 28Q27 20 34 27T22 36" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+                    <polygon points="38,30 48,40 37,51 27,41" fill="#ea580c" stroke="#fff" stroke-width="1.5" />
+                    <polygon points="27,41 23,53 35,49" fill="#fed7aa" />
+                  </svg>
+                </div>
+              } @else if (activeTool() === 'scan-images') {
+                <div class="fm-drop-icon fm-drop-images" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" class="fm-svg-images">
+                    <rect x="10" y="14" width="30" height="26" rx="4" fill="#3b82f6" />
+                    <polygon points="13,36 21,24 27,31 33,21 38,36" fill="#93c5fd" />
+                    <circle cx="18" cy="21" r="3" fill="#fbbf24" />
+                    <rect x="22" y="22" width="32" height="28" rx="4" fill="#ea580c" stroke="#1c1917" stroke-width="1.5" />
+                    <polygon points="26,46 34,34 41,41 47,31 52,46" fill="#fdba74" />
+                    <circle cx="31" cy="30" r="3" fill="#fbbf24" />
+                  </svg>
+                </div>
+              } @else {
+                <div class="fm-drop-icon" aria-hidden="true">
+                  <ion-icon name="cloud-upload-outline" class="fm-generic-drop-icon"></ion-icon>
+                </div>
+              }
+
+              <p class="fm-drop-main-text">
+                @if (activeTool() === 'merge') {
+                  Agrega tus archivos PDF
+                } @else if (activeTool() === 'split' || activeTool() === 'convert') {
+                  Selecciona un archivo PDF
+                } @else if (activeTool() === 'ocr') {
+                  Arrastrá una imagen aquí
+                } @else if (activeTool() === 'sign') {
+                  Arrastrá tu archivo aquí
+                } @else if (activeTool() === 'scan-images') {
+                  Arrastrá las imágenes aquí
+                } @else {
+                  Arrastra y solta tus archivos aqui
+                }
+              </p>
+              <p class="fm-drop-sub-text">
+                @if (activeTool() === 'split' || activeTool() === 'convert') {
+                  o arrastra y solta aqui
+                } @else if (activeTool() === 'ocr') {
+                  o seleccioná un archivo
+                } @else if (activeTool() === 'sign') {
+                  o seleccioná un archivo desde tu dispositivo
+                } @else if (activeTool() === 'scan-images') {
+                  o seleccioná desde tu dispositivo
+                } @else {
+                  o selecciona archivos desde tu dispositivo
+                }
+              </p>
+
+              <button type="button" class="fm-pick-files-btn" (click)="$event.stopPropagation(); toolFilePicker.click()">
+                <ion-icon name="folder-outline"></ion-icon>
+                <span>
+                  @if (activeTool() === 'merge') {
+                    Seleccionar PDFs
+                  } @else if (activeTool() === 'split' || activeTool() === 'convert') {
+                    Seleccionar PDF
+                  } @else if (activeTool() === 'ocr') {
+                    Seleccionar imagen
+                  } @else if (activeTool() === 'sign') {
+                    Seleccionar archivo
+                  } @else if (activeTool() === 'scan-images') {
+                    Seleccionar imágenes
+                  } @else {
+                    Seleccionar archivos
+                  }
+                </span>
+                <ion-icon name="chevron-down-outline" class="fm-btn-chev"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Formatos soportados pie de dropzone -->
+            <div class="fm-drop-formats-note">
+              @if (activeTool() === 'ocr') {
+                <span>Formatos soportados: JPG, PNG, WEBP</span>
+              } @else if (activeTool() === 'sign') {
+                <span>Formatos soportados: PDF, JPG, PNG</span>
+              } @else if (activeTool() === 'scan-images') {
+                <span>Formatos: JPG, PNG, WEBP, BMP</span>
+              } @else if (activeTool() === 'convert') {
+                <span>Formatos soportados: PDF, Word, Excel, PPT, TXT, HTML</span>
               }
             </div>
 
-            <!-- Input del Chat -->
-            <div class="ai-input-bar">
-              <ion-input
-                placeholder="Escribí tu pregunta sobre el PDF?"
-                [ngModel]="aiQuestionInput()"
-                (ngModelChange)="aiQuestionInput.set($event)"
-                (keyup.enter)="sendAiQuestion()">
-              </ion-input>
-              <ion-button color="primary" fill="solid" (click)="sendAiQuestion()" [disabled]="!aiQuestionInput().trim()">
-                <ion-icon name="send-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+            <!-- Lista de archivos seleccionados (1:1 con las capturas) -->
+            <div class="fm-selected-files-shell">
+              <div class="fm-selected-files-header">
+                <span class="fm-files-count">Archivos seleccionados ({{ toolSelectedFiles().length }})</span>
+                <button type="button" class="fm-clear-all-btn" (click)="clearToolFiles()" title="Limpiar lista">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Limpiar todo</span>
+                </button>
+              </div>
+
+              <div class="fm-file-items-list">
+                @for (file of toolSelectedFiles(); track file.id) {
+                  <div class="fm-file-item">
+                    <div class="fm-file-item-left">
+                      <span class="fm-format-badge" [ngClass]="'fmt-' + file.ext">
+                        @if (file.ext === 'pdf') {
+                          <span class="badge-text-pdf">PDF</span>
+                        } @else if (file.ext === 'docx' || file.ext === 'doc') {
+                          <span class="badge-text-w">W</span>
+                        } @else if (file.ext === 'xlsx' || file.ext === 'xls') {
+                          <span class="badge-text-x">X</span>
+                        } @else if (file.ext === 'pptx' || file.ext === 'ppt') {
+                          <span class="badge-text-p">P</span>
+                        } @else if (file.ext === 'zip' || file.ext === 'rar' || file.ext === '7z') {
+                          <span class="badge-text-zip">ZIP</span>
+                        } @else {
+                          <span class="badge-text-file">{{ file.ext.toUpperCase() }}</span>
+                        }
+                      </span>
+                      <div class="fm-file-name-meta">
+                        <span class="fm-file-name" [title]="file.name">{{ file.name }}</span>
+                        @if (file.pageCount) {
+                          <span class="fm-file-page-chip">{{ file.pageCount }} pags</span>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="fm-file-item-right">
+                      <span class="fm-file-size">{{ fileService.formatBytes(file.size) }}</span>
+                      <button type="button" class="fm-remove-file-btn" (click)="removeToolFile(file.id)" title="Quitar archivo">
+                        <ion-icon name="close-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="fm-no-files-hint">
+                    <span>No hay archivos seleccionados. Arrastra uno al recuadro o toca en Seleccionar.</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Boton Restablecer -->
+              <button type="button" class="fm-reset-btn" (click)="resetToolSettings()">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span>Restablecer</span>
+              </button>
             </div>
+          }
+        </section>
+        <!-- ==================== COLUMNA DERECHA: TARJETA DE OPCIONES (FROSTED GLASS + GLOW) ==================== -->
+        <section class="fm-right-col">
+          <div class="fm-options-card">
+            <!-- 01. ORGANIZAR PÁGINAS PDF (1:1 CON CAPTURA 2) -->
+            @if (activeTool() === 'organize') {
+              <div class="fm-organize-top-actions">
+                <button type="button" class="fm-organize-tool-btn" [class.active]="organizeAction() === 'reorder'" (click)="organizeAction.set('reorder')">
+                  <ion-icon name="swap-horizontal-outline"></ion-icon>
+                  <span>Reordenar</span>
+                </button>
+                <button type="button" class="fm-organize-tool-btn" (click)="deleteOrganizePage()">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Eliminar</span>
+                </button>
+                <button type="button" class="fm-organize-tool-btn" (click)="presentToast('Página extraída con éxito', 'success')">
+                  <ion-icon name="cut-outline"></ion-icon>
+                  <span>Extraer</span>
+                </button>
+                <button type="button" class="fm-organize-tool-btn" (click)="rotateOrganizePage()">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                  <span>Girar</span>
+                </button>
+              </div>
+
+              <!-- Cuadrícula / Carrusel de páginas con miniaturas -->
+              <div class="fm-organize-pages-grid">
+                @for (page of pdfPages(); track page.id; let i = $index) {
+                  <div class="fm-organize-page-card" [class.selected]="selectedPageIndex() === i" (click)="selectOrganizePage(i)">
+                    <div class="fm-organize-sheet-preview" [style.transform]="'rotate(' + page.rotation + 'deg)'">
+                      <div class="fm-sheet-lines-skeleton">
+                        <strong>Trabajo Final</strong>
+                        <div class="fm-skel-line w-full"></div>
+                        <div class="fm-skel-line w-90"></div>
+                        <div class="fm-skel-line w-80"></div>
+                        <div class="fm-skel-line w-95"></div>
+                      </div>
+                    </div>
+                    <div class="fm-page-index-badge" [class.highlight]="selectedPageIndex() === i">{{ page.pageNum }}</div>
+                  </div>
+                }
+              </div>
+
+              <!-- Barra inferior: Guardar como + Aplicar cambios -->
+              <div class="fm-organize-bottom-bar">
+                <div class="fm-organize-save-as">
+                  <span class="label">Guardar como:</span>
+                  <select class="fm-select-dark fm-mini-select" [(ngModel)]="organizeSaveFormat">
+                    <option value="PDF">PDF</option>
+                    <option value="ZIP">ZIP</option>
+                    <option value="DOCX">DOCX</option>
+                  </select>
+                </div>
+                <button type="button" class="fm-cta-glow-btn fm-btn-compact" (click)="applyOrganizeChanges()" [disabled]="processing()">
+                  <ion-icon name="checkmark-outline"></ion-icon>
+                  <span>Aplicar cambios</span>
+                </button>
+              </div>
+            }
+
+            <!-- 02. EDITAR PDF (1:1 CON CAPTURA 3 ARRIBA) -->
+            @else if (activeTool() === 'edit') {
+              <!-- Barra de herramientas superior -->
+              <div class="fm-edit-top-toolbar">
+                <button type="button" class="fm-edit-tool-pill" [class.active]="editActiveTool() === 'text'" (click)="setEditTool('text')">
+                  <span class="fm-tool-glyph">T</span>
+                  <span>Texto</span>
+                </button>
+                <button type="button" class="fm-edit-tool-pill" [class.active]="editActiveTool() === 'highlight'" (click)="setEditTool('highlight')">
+                  <ion-icon name="pencil-outline"></ion-icon>
+                  <span>Resaltador</span>
+                </button>
+                <button type="button" class="fm-edit-tool-pill" [class.active]="editActiveTool() === 'underline'" (click)="setEditTool('underline')">
+                  <span class="fm-tool-glyph underline-u">U</span>
+                  <span>Subrayado</span>
+                </button>
+                <button type="button" class="fm-edit-tool-pill" [class.active]="editActiveTool() === 'shape'" (click)="setEditTool('shape')">
+                  <ion-icon name="crop-outline"></ion-icon>
+                  <span>Forma</span>
+                </button>
+                <button type="button" class="fm-edit-tool-pill" [class.active]="editActiveTool() === 'comment'" (click)="setEditTool('comment')">
+                  <ion-icon name="chatbubbles-outline"></ion-icon>
+                  <span>Comentario</span>
+                </button>
+              </div>
+
+              <!-- Panel Opciones de texto -->
+              <div class="fm-edit-options-card">
+                <label class="fm-field-title">Opciones de texto</label>
+                <div class="fm-edit-typography-row">
+                  <select class="fm-select-dark fm-font-family-select" [(ngModel)]="editFontFamily">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Helvetica">Helvetica</option>
+                    <option value="Courier">Courier</option>
+                  </select>
+                  <select class="fm-select-dark fm-font-size-select" [(ngModel)]="editFontSize">
+                    <option [value]="12">12</option>
+                    <option [value]="14">14</option>
+                    <option [value]="16">16</option>
+                    <option [value]="18">18</option>
+                    <option [value]="24">24</option>
+                  </select>
+                </div>
+
+                <!-- Botones formato B, I, U, S -->
+                <div class="fm-edit-format-buttons-row">
+                  <button type="button" class="fm-format-mini-btn" [class.active]="editBold()" (click)="editBold.update(v => !v)">B</button>
+                  <button type="button" class="fm-format-mini-btn italic" [class.active]="editItalic()" (click)="editItalic.update(v => !v)">I</button>
+                  <button type="button" class="fm-format-mini-btn underline" [class.active]="editUnderline()" (click)="editUnderline.update(v => !v)">U</button>
+                  <button type="button" class="fm-format-mini-btn strikethrough" [class.active]="editStrikethrough()" (click)="editStrikethrough.update(v => !v)">S</button>
+                </div>
+
+                <!-- Paleta de colores -->
+                <div class="fm-edit-colors-palette">
+                  @for (c of ['#ff7a1a', '#ef4444', '#f59e0b', '#22c55e', '#06b6d4', '#a855f7', '#ffffff']; track c) {
+                    <button type="button" class="fm-color-dot" [style.background-color]="c" [class.active]="editColor() === c" (click)="setEditColor(c)"></button>
+                  }
+                </div>
+              </div>
+
+              <!-- Controles de Zoom, Restablecer y Guardar -->
+              <div class="fm-edit-bottom-bar">
+                <div class="fm-edit-zoom-controls">
+                  <button type="button" class="fm-zoom-btn" (click)="zoomEdit(-10)">-</button>
+                  <span class="fm-zoom-val">{{ editZoom() }}%</span>
+                  <button type="button" class="fm-zoom-btn" (click)="zoomEdit(10)">+</button>
+                </div>
+                <button type="button" class="fm-reset-btn compact" (click)="resetToolSettings()">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                  <span>Restablecer</span>
+                </button>
+                <button type="button" class="fm-cta-glow-btn fm-btn-compact" (click)="savePdfEdits()" [disabled]="processing()">
+                  <ion-icon name="save-outline"></ion-icon>
+                  <span>Guardar cambios</span>
+                </button>
+              </div>
+            }
+
+            <!-- 03. AGREGAR MARCA DE AGUA (1:1 CON CAPTURA 4 ARRIBA) -->
+            @else if (activeTool() === 'watermark') {
+              <div class="fm-watermark-layout-grid">
+                <!-- Columna central de opciones -->
+                <div class="fm-watermark-form-col">
+                  <div class="fm-segmented-group">
+                    <button type="button" class="fm-seg-btn" [class.active]="watermarkMode() === 'text'" (click)="watermarkMode.set('text')">
+                      <ion-icon name="document-text-outline"></ion-icon>
+                      <span>Texto</span>
+                    </button>
+                    <button type="button" class="fm-seg-btn" [class.active]="watermarkMode() === 'image'" (click)="watermarkMode.set('image')">
+                      <ion-icon name="image-outline"></ion-icon>
+                      <span>Imagen</span>
+                    </button>
+                  </div>
+
+                  <div class="fm-watermark-fields-list fm-mt-3">
+                    <div class="fm-field-row">
+                      <label class="label">Texto:</label>
+                      <input type="text" class="fm-input-dark" [(ngModel)]="watermarkContent" />
+                    </div>
+                    <div class="fm-field-row">
+                      <label class="label">Estilo:</label>
+                      <select class="fm-select-dark" [(ngModel)]="watermarkFont">
+                        <option value="Arial Bold">Arial Bold</option>
+                        <option value="Times Bold">Times Bold</option>
+                        <option value="Helvetica Bold">Helvetica Bold</option>
+                      </select>
+                    </div>
+                    <div class="fm-field-row">
+                      <label class="label">Opacidad:</label>
+                      <div class="fm-range-with-val">
+                        <input type="range" min="10" max="100" [(ngModel)]="watermarkOpacity" class="fm-orange-slider" />
+                        <span class="val">{{ watermarkOpacity() }}%</span>
+                      </div>
+                    </div>
+                    <div class="fm-field-row">
+                      <label class="label">Rotación:</label>
+                      <div class="fm-range-with-val">
+                        <input type="range" min="0" max="360" [(ngModel)]="watermarkRotation" class="fm-orange-slider" />
+                        <span class="val">{{ watermarkRotation() }}°</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna derecha: Matriz 3x3 de Posición -->
+                <div class="fm-watermark-position-col">
+                  <label class="fm-field-title text-center">Posición</label>
+                  <div class="fm-pos-grid-3x3">
+                    @for (p of ['tl','tc','tr','cl','cc','cr','bl','bc','br']; track p) {
+                      <button type="button" class="fm-pos-dot" [class.active]="watermarkPosition() === p" (click)="setWatermarkPos(p)"></button>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-3" (click)="applyWatermarkCustom()" [disabled]="processing()">
+                <ion-icon name="checkmark-outline"></ion-icon>
+                <span>Aplicar Marca de Agua</span>
+              </button>
+            }
+
+            <!-- 04. PROTEGER PDF (1:1 CON CAPTURA 3 ABAJO) -->
+            @else if (activeTool() === 'protect') {
+              <div class="fm-protect-layout-grid">
+                <!-- Columna central: Contraseña y Permisos -->
+                <div class="fm-protect-form-col">
+                  <div class="fm-field-section">
+                    <label class="fm-field-title">Contraseña</label>
+                    <div class="fm-input-with-eye">
+                      <input [type]="protectShowPassword() ? 'text' : 'password'" class="fm-input-dark" [(ngModel)]="protectPasswordInput" />
+                      <button type="button" class="fm-eye-btn" (click)="toggleShowPassword()">
+                        <ion-icon [name]="protectShowPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="fm-field-section">
+                    <label class="fm-field-title">Permisos (Opcional)</label>
+                    <div class="fm-checkboxes-list">
+                      <label class="fm-checkbox-row">
+                        <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="protectBlockPrint" />
+                        <span class="fm-check-box"></span>
+                        <span class="fm-check-label">Impedir impresión</span>
+                      </label>
+                      <label class="fm-checkbox-row">
+                        <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="protectBlockCopy" />
+                        <span class="fm-check-box"></span>
+                        <span class="fm-check-label">Bloquear copia de contenido</span>
+                      </label>
+                      <label class="fm-checkbox-row">
+                        <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="protectBlockEdit" />
+                        <span class="fm-check-box"></span>
+                        <span class="fm-check-label">Restringir edición</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna derecha: Tarjeta de Seguridad -->
+                <div class="fm-protect-status-col">
+                  <div class="fm-protect-shield-card">
+                    <div class="fm-shield-check-icon">
+                      <ion-icon name="checkmark-outline"></ion-icon>
+                    </div>
+                    <p class="fm-shield-msg">Tu documento estará protegido y seguro.</p>
+                    <div class="fm-shield-badge-svg" aria-hidden="true">
+                      <svg viewBox="0 0 60 70" class="fm-svg-shield">
+                        <path d="M30 4L8 14v20c0 17 9.4 32.8 22 36c12.6-3.2 22-19 22-36V14L30 4z" fill="none" stroke="#ea580c" stroke-width="3"/>
+                        <path d="M22 34l6 6 12-12" fill="none" stroke="#ff7a1a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-3" (click)="applyProtectionCustom()" [disabled]="processing()">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                <span>Aplicar Protección</span>
+              </button>
+            }
+
+            <!-- 05. COMPARAR DOCUMENTOS -->
+            @else if (activeTool() === 'compare') {
+              <div class="fm-options-header">
+                <h2>Comparación de Documentos</h2>
+              </div>
+
+              <div class="fm-compare-stats-card">
+                <div class="fm-similarity-gauge">
+                  <span class="percent">{{ compareSimilarity() }}%</span>
+                  <span class="label">Similitud de contenido</span>
+                </div>
+                <div class="fm-diff-badge-pill">
+                  <span class="num">{{ compareDiffCount() }}</span>
+                  <span>Diferencias detectadas</span>
+                </div>
+              </div>
+
+              <div class="fm-field-section fm-mt-3">
+                <label class="fm-field-title">Resumen de cambios:</label>
+                <div class="fm-diff-legend">
+                  <span class="item added"><span class="dot"></span> 2 Párrafos agregados</span>
+                  <span class="item removed"><span class="dot"></span> 1 Párrafo eliminado</span>
+                  <span class="item modified"><span class="dot"></span> 2 Formatos modificados</span>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-3" (click)="runCompareDocuments()" [disabled]="processing()">
+                <ion-icon name="swap-horizontal-outline"></ion-icon>
+                <span>Iniciar Comparación</span>
+              </button>
+            }
+
+            <!-- 06. EDITOR DE IMÁGENES (1:1 CON CAPTURA 4 ABAJO) -->
+            @else if (activeTool() === 'image-editor') {
+              <!-- Subtabs de edición de imagen -->
+              <div class="fm-segmented-group">
+                <button type="button" class="fm-seg-btn" [class.active]="imageEditorTab() === 'crop'" (click)="setImgEditorTab('crop')">
+                  <ion-icon name="crop-outline"></ion-icon>
+                  <span>Recortar</span>
+                </button>
+                <button type="button" class="fm-seg-btn" [class.active]="imageEditorTab() === 'resize'" (click)="setImgEditorTab('resize')">
+                  <ion-icon name="contract-outline"></ion-icon>
+                  <span>Redimensionar</span>
+                </button>
+                <button type="button" class="fm-seg-btn" [class.active]="imageEditorTab() === 'filters'" (click)="setImgEditorTab('filters')">
+                  <ion-icon name="sparkles-outline"></ion-icon>
+                  <span>Filtros</span>
+                </button>
+                <button type="button" class="fm-seg-btn" [class.active]="imageEditorTab() === 'adjust'" (click)="setImgEditorTab('adjust')">
+                  <ion-icon name="settings-outline"></ion-icon>
+                  <span>Ajustes</span>
+                </button>
+              </div>
+
+              <!-- Opciones de recorte -->
+              <div class="fm-field-section fm-mt-3">
+                <label class="fm-field-title">Relación de aspecto:</label>
+                <select class="fm-select-dark" [(ngModel)]="imageAspectRatio">
+                  <option value="custom">Personalizado</option>
+                  <option value="1:1">Cuadrado (1:1)</option>
+                  <option value="16:9">Panorámico (16:9)</option>
+                  <option value="4:3">Estándar (4:3)</option>
+                </select>
+              </div>
+
+              <div class="fm-two-inputs-row fm-mt-2">
+                <div>
+                  <label class="fm-field-title">Ancho:</label>
+                  <div class="fm-input-with-suffix">
+                    <input type="number" class="fm-input-dark" [(ngModel)]="imageWidth" />
+                    <span class="fm-input-ext">px</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="fm-field-title">Alto:</label>
+                  <div class="fm-input-with-suffix">
+                    <input type="number" class="fm-input-dark" [(ngModel)]="imageHeight" />
+                    <span class="fm-input-ext">px</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fm-image-bottom-actions fm-mt-3">
+                <button type="button" class="fm-reset-btn compact" (click)="resetToolSettings()">
+                  <ion-icon name="refresh-outline"></ion-icon>
+                  <span>Restablecer</span>
+                </button>
+                <button type="button" class="fm-cta-glow-btn fm-btn-compact" (click)="applyImageEditorChanges()" [disabled]="processing()">
+                  <ion-icon name="color-wand-outline"></ion-icon>
+                  <span>Aplicar cambios</span>
+                </button>
+              </div>
+            }
+
+            <!-- 07. BUSCAR ARCHIVOS DUPLICADOS -->
+            @else if (activeTool() === 'duplicates') {
+              <div class="fm-options-header">
+                <h2>Opciones de Limpieza</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Criterio de búsqueda:</label>
+                <div class="fm-radios-list">
+                  <label class="fm-radio-row">
+                    <input type="radio" name="dupMode" value="exact" [checked]="duplicateScanMode() === 'exact'" (change)="duplicateScanMode.set('exact')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Contenido exacto (MD5)</span>
+                  </label>
+                  <label class="fm-radio-row">
+                    <input type="radio" name="dupMode" value="name" [checked]="duplicateScanMode() === 'name'" (change)="duplicateScanMode.set('name')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Mismo nombre y tamaño</span>
+                  </label>
+                  <label class="fm-radio-row">
+                    <input type="radio" name="dupMode" value="size" [checked]="duplicateScanMode() === 'size'" (change)="duplicateScanMode.set('size')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Archivos redundantes pesados</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="fm-space-freed-card fm-mt-3">
+                <ion-icon name="trash-outline" class="trash-ic"></ion-icon>
+                <div class="text">
+                  <span class="num">{{ duplicateFreedSpace() }}</span>
+                  <span class="sub">Espacio recuperable en disco</span>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-3" (click)="purgeDuplicates()" [disabled]="processing()">
+                <ion-icon name="trash-outline"></ion-icon>
+                <span>Liberar Espacio</span>
+              </button>
+            }
+
+            <!-- 08. RENOMBRAR ARCHIVOS EN LOTE -->
+            @else if (activeTool() === 'batch-rename') {
+              <div class="fm-options-header">
+                <h2>Reglas de Renombrado</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Modo de nomenclatura:</label>
+                <div class="fm-segmented-group">
+                  <button type="button" class="fm-seg-btn" [class.active]="batchRenameMode() === 'prefix-suffix'" (click)="batchRenameMode.set('prefix-suffix')">
+                    <span>Prefijo / Sufijo</span>
+                  </button>
+                  <button type="button" class="fm-seg-btn" [class.active]="batchRenameMode() === 'numbering'" (click)="batchRenameMode.set('numbering')">
+                    <span>Numeración</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="fm-two-inputs-row fm-mt-2">
+                <div>
+                  <label class="fm-field-title">Prefijo:</label>
+                  <input type="text" class="fm-input-dark" [(ngModel)]="batchPrefix" placeholder="Doc_" />
+                </div>
+                <div>
+                  <label class="fm-field-title">Sufijo:</label>
+                  <input type="text" class="fm-input-dark" [(ngModel)]="batchSuffix" placeholder="_2026" />
+                </div>
+              </div>
+
+              <div class="fm-field-section fm-mt-2">
+                <label class="fm-field-title">Numeración automática:</label>
+                <div class="fm-two-inputs-row">
+                  <input type="number" class="fm-input-dark" [(ngModel)]="batchNumberStart" placeholder="Desde 1" />
+                  <select class="fm-select-dark" [(ngModel)]="batchNumberDigits">
+                    <option [value]="1">1 dígito (1, 2, 3)</option>
+                    <option [value]="2">2 dígitos (01, 02)</option>
+                    <option [value]="3">3 dígitos (001, 002)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn fm-mt-3" (click)="applyBatchRename()" [disabled]="processing()">
+                <ion-icon name="create-outline"></ion-icon>
+                <span>Renombrar Archivos</span>
+              </button>
+            }
+
+            <!-- 1. COMPRIMIR ARCHIVOS (1:1 CON CAPTURA 5) -->
+            @else if (activeTool() === 'compress') {
+              <div class="fm-options-header">
+                <ion-icon name="settings-outline" class="fm-gear-icon"></ion-icon>
+                <h2>Opciones de Compresion</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Formato de salida:</label>
+                <div class="fm-segmented-group">
+                  <button type="button" class="fm-seg-btn" [class.active]="compressFormat() === 'zip'" (click)="compressFormat.set('zip')">
+                    <ion-icon name="archive-outline"></ion-icon>
+                    <span>ZIP</span>
+                  </button>
+                  <button type="button" class="fm-seg-btn" [class.active]="compressFormat() === 'rar'" (click)="compressFormat.set('rar')">
+                    <ion-icon name="layers-outline"></ion-icon>
+                    <span>RAR</span>
+                  </button>
+                  <button type="button" class="fm-seg-btn" [class.active]="compressFormat() === '7z'" (click)="compressFormat.set('7z')">
+                    <ion-icon name="document-outline"></ion-icon>
+                    <span>7Z</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Opciones adicionales:</label>
+                <div class="fm-switches-list">
+                  <label class="fm-switch-row">
+                    <div class="fm-switch-label">
+                      <ion-icon name="document-text-outline" class="fm-row-icon"></ion-icon>
+                      <span>Convertir archivos a PDF</span>
+                    </div>
+                    <input type="checkbox" class="fm-toggle-switch" [(ngModel)]="compressConvertToPdf" />
+                  </label>
+
+                  <label class="fm-switch-row">
+                    <div class="fm-switch-label">
+                      <ion-icon name="copy-outline" class="fm-row-icon"></ion-icon>
+                      <span>Combinar en un solo PDF</span>
+                    </div>
+                    <input type="checkbox" class="fm-toggle-switch" [(ngModel)]="compressCombineSinglePdf" />
+                  </label>
+
+                  <label class="fm-switch-row">
+                    <div class="fm-switch-label">
+                      <ion-icon name="lock-closed-outline" class="fm-row-icon"></ion-icon>
+                      <span>Establecer contrasena</span>
+                    </div>
+                    <input type="checkbox" class="fm-toggle-switch" [(ngModel)]="compressSetPassword" />
+                  </label>
+
+                  @if (compressSetPassword()) {
+                    <div class="fm-password-shell">
+                      <input type="password" class="fm-input-dark" placeholder="Ingresa contrasena segura" [(ngModel)]="compressPassword" />
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Nombre del archivo:</label>
+                <div class="fm-input-with-suffix">
+                  <input type="text" class="fm-input-dark" [(ngModel)]="compressOutputName" placeholder="Archivos_Comprimidos" />
+                  <span class="fm-input-ext">.{{ compressFormat() }}</span>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runCompress()" [disabled]="processing()">
+                <ion-icon name="archive-outline"></ion-icon>
+                <span>Comprimir y Procesar &rarr;</span>
+              </button>
+            }
+
+            <!-- 2. DESCOMPRIMIR ARCHIVOS (1:1 CON CAPTURA 1) -->
+            @else if (activeTool() === 'decompress') {
+              <div class="fm-options-header">
+                <h2>Opciones de extraccion</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Destino:</label>
+                <div class="fm-radios-list">
+                  <label class="fm-radio-row">
+                    <input type="radio" name="decompressDest" value="current" [checked]="decompressTarget() === 'current'" (change)="decompressTarget.set('current')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Carpeta actual</span>
+                  </label>
+                  <label class="fm-radio-row">
+                    <input type="radio" name="decompressDest" value="custom" [checked]="decompressTarget() === 'custom'" (change)="decompressTarget.set('custom')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Elegir carpeta...</span>
+                  </label>
+                </div>
+
+                <div class="fm-folder-input-shell">
+                  <ion-icon name="folder-outline" class="fm-folder-icon"></ion-icon>
+                  <input type="text" class="fm-input-dark fm-folder-input" [(ngModel)]="decompressCustomFolder" />
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <div class="fm-checkboxes-list">
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="decompressKeepFolderStructure" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Mantener estructura de carpetas</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="decompressOverwrite" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Sobrescribir archivos existentes</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runDecompress()" [disabled]="processing()">
+                <ion-icon name="download-outline"></ion-icon>
+                <span>Descomprimir</span>
+              </button>
+            }
+
+            <!-- 3. UNIR PDFs (1:1 CON CAPTURA 2) -->
+            @else if (activeTool() === 'merge') {
+              <div class="fm-order-section-header">
+                <h2>Orden de archivos</h2>
+                <div class="fm-order-arrows">
+                  <button type="button" class="fm-arrow-circle-btn" (click)="moveMergeFile('up')" title="Subir orden">
+                    <ion-icon name="arrow-up-outline"></ion-icon>
+                  </button>
+                  <button type="button" class="fm-arrow-circle-btn" (click)="moveMergeFile('down')" title="Bajar orden">
+                    <ion-icon name="arrow-down-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div class="fm-order-files-list">
+                @for (file of toolSelectedFiles(); track file.id; let idx = $index) {
+                  <div
+                    class="fm-order-item"
+                    [class.active]="selectedMergeOrderIndex() === idx"
+                    (click)="selectMergeOrderItem(idx)">
+                    <div class="fm-order-item-left">
+                      <span class="fm-drag-grip">:::</span>
+                      <span class="fm-format-badge fmt-pdf">
+                        <span class="badge-text-pdf">PDF</span>
+                      </span>
+                      <span class="fm-order-file-name">{{ file.name }}</span>
+                    </div>
+                    <button type="button" class="fm-trash-item-btn" (click)="$event.stopPropagation(); removeMergeItem(idx)" title="Eliminar de la lista">
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Opciones adicionales</label>
+                <div class="fm-checkboxes-list">
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="mergeCombineSingle" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Unir en un solo archivo</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="mergeAddCover" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Agregar portada</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Nombre del archivo resultante:</label>
+                <div class="fm-input-with-icon">
+                  <input type="text" class="fm-input-dark" [(ngModel)]="mergeOutputName" />
+                  <ion-icon name="pencil-outline" class="fm-pencil-icon"></ion-icon>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runMerge()" [disabled]="processing()">
+                <ion-icon name="copy-outline"></ion-icon>
+                <span>Unir PDFs</span>
+              </button>
+            }
+
+            <!-- 4. DIVIDIR PDFs (1:1 CON CAPTURA 3) -->
+            @else if (activeTool() === 'split') {
+              <div class="fm-split-split-grid">
+                <!-- Rango de paginas -->
+                <div class="fm-split-col">
+                  <h3 class="fm-subgroup-title">Rango de paginas</h3>
+                  <div class="fm-radios-list">
+                    <label class="fm-radio-row">
+                      <input type="radio" name="splitRangeType" value="all" [checked]="splitRangeType() === 'all'" (change)="splitRangeType.set('all')" />
+                      <span class="fm-radio-custom"></span>
+                      <span class="fm-radio-label">Todas las paginas</span>
+                    </label>
+                    <label class="fm-radio-row">
+                      <input type="radio" name="splitRangeType" value="custom" [checked]="splitRangeType() === 'custom'" (change)="splitRangeType.set('custom')" />
+                      <span class="fm-radio-custom"></span>
+                      <span class="fm-radio-label">Rango personalizado</span>
+                    </label>
+                  </div>
+
+                  @if (splitRangeType() === 'custom') {
+                    <div class="fm-range-inputs">
+                      <div class="fm-range-row">
+                        <span>Desde:</span>
+                        <input type="number" class="fm-range-input" [(ngModel)]="splitPageFrom" min="1" />
+                      </div>
+                      <div class="fm-range-row">
+                        <span>Hasta:</span>
+                        <input type="number" class="fm-range-input" [(ngModel)]="splitPageTo" min="1" />
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- Opciones extra -->
+                <div class="fm-split-col">
+                  <h3 class="fm-subgroup-title">Opciones extra</h3>
+                  <div class="fm-checkboxes-list">
+                    <label class="fm-checkbox-row">
+                      <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="splitByPages" />
+                      <span class="fm-check-box"></span>
+                      <span class="fm-check-label">Dividir por paginas <ion-icon name="information-circle-outline"></ion-icon></span>
+                    </label>
+                    <label class="fm-checkbox-row">
+                      <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="splitEachPage" />
+                      <span class="fm-check-box"></span>
+                      <span class="fm-check-label">Extraer cada pagina en un archivo <ion-icon name="information-circle-outline"></ion-icon></span>
+                    </label>
+                    <label class="fm-checkbox-row">
+                      <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="splitKeepBookmarks" />
+                      <span class="fm-check-box"></span>
+                      <span class="fm-check-label">Mantener marcadores</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Nombre del archivo resultante:</label>
+                <div class="fm-input-with-icon">
+                  <input type="text" class="fm-input-dark" [(ngModel)]="splitOutputName" />
+                  <ion-icon name="pencil-outline" class="fm-pencil-icon"></ion-icon>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runSplit()" [disabled]="processing()">
+                <ion-icon name="cut-outline"></ion-icon>
+                <span>Dividir PDF</span>
+              </button>
+            }
+
+            <!-- 5. CONVERTIR PDFs (1:1 CON CAPTURA 4) -->
+            @else if (activeTool() === 'convert') {
+              <div class="fm-options-header">
+                <h2>Formato de destino</h2>
+              </div>
+
+              <div class="fm-format-grid-2x3">
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'docx'"
+                  (click)="convertSelectedTarget.set('docx')">
+                  <div class="fm-format-icon-badge fmt-badge-word">
+                    <span>W</span>
+                  </div>
+                  <strong class="fm-format-tile-name">Word</strong>
+                  <small class="fm-format-tile-ext">(.docx)</small>
+                </button>
+
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'xlsx'"
+                  (click)="convertSelectedTarget.set('xlsx')">
+                  <div class="fm-format-icon-badge fmt-badge-excel">
+                    <span>X</span>
+                  </div>
+                  <strong class="fm-format-tile-name">Excel</strong>
+                  <small class="fm-format-tile-ext">(.xlsx)</small>
+                </button>
+
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'pptx'"
+                  (click)="convertSelectedTarget.set('pptx')">
+                  <div class="fm-format-icon-badge fmt-badge-ppt">
+                    <span>P</span>
+                  </div>
+                  <strong class="fm-format-tile-name">PowerPoint</strong>
+                  <small class="fm-format-tile-ext">(.pptx)</small>
+                </button>
+
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'image'"
+                  (click)="convertSelectedTarget.set('image')">
+                  <div class="fm-format-icon-badge fmt-badge-img">
+                    <ion-icon name="image-outline"></ion-icon>
+                  </div>
+                  <strong class="fm-format-tile-name">Imagen</strong>
+                  <small class="fm-format-tile-ext">(.png/.jpg)</small>
+                </button>
+
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'txt'"
+                  (click)="convertSelectedTarget.set('txt')">
+                  <div class="fm-format-icon-badge fmt-badge-txt">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                  </div>
+                  <strong class="fm-format-tile-name">Texto</strong>
+                  <small class="fm-format-tile-ext">(.txt)</small>
+                </button>
+
+                <button
+                  type="button"
+                  class="fm-format-tile"
+                  [class.active]="convertSelectedTarget() === 'html'"
+                  (click)="convertSelectedTarget.set('html')">
+                  <div class="fm-format-icon-badge fmt-badge-code">
+                    <span>&lt;/&gt;</span>
+                  </div>
+                  <strong class="fm-format-tile-name">HTML</strong>
+                  <small class="fm-format-tile-ext">(.html)</small>
+                </button>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runUniversalConvert()" [disabled]="processing()">
+                <ion-icon name="sync-outline"></ion-icon>
+                <span>Convertir</span>
+              </button>
+            }
+
+            <!-- 6. OCR (1:1 CON CAPTURA 3) -->
+            @else if (activeTool() === 'ocr') {
+              <div class="fm-options-header">
+                <h2>Opciones de salida</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <div class="fm-radios-list">
+                  <label class="fm-radio-row">
+                    <input type="radio" name="ocrOutFormat" value="txt" [checked]="ocrTargetFormat() === 'txt'" (change)="ocrTargetFormat.set('txt')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Texto (TXT)</span>
+                  </label>
+                  <label class="fm-radio-row">
+                    <input type="radio" name="ocrOutFormat" value="docx" [checked]="ocrTargetFormat() === 'docx'" (change)="ocrTargetFormat.set('docx')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Documento Word (DOCX)</span>
+                  </label>
+                  <label class="fm-radio-row">
+                    <input type="radio" name="ocrOutFormat" value="pdf" [checked]="ocrTargetFormat() === 'pdf'" (change)="ocrTargetFormat.set('pdf')" />
+                    <span class="fm-radio-custom"></span>
+                    <span class="fm-radio-label">Documento PDF</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Idioma del texto:</label>
+                <div class="fm-select-shell">
+                  <select class="fm-select-dark" [(ngModel)]="ocrChosenLang">
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="en">🇬🇧 Inglés</option>
+                    <option value="fr">🇫🇷 Francés</option>
+                    <option value="de">🇩🇪 Alemán</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="pt">🇵🇹 Portugués</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runOcr()" [disabled]="ocrRunning()">
+                <ion-icon name="document-text-outline"></ion-icon>
+                <span>Extraer Texto</span>
+              </button>
+
+              @if (ocrRunning()) {
+                <div class="ocr-progress-shell">
+                  <div class="ocr-progress-header">
+                    <span>{{ ocrProgressStatus() }}</span>
+                    <span>{{ ocrProgressPercent() }}%</span>
+                  </div>
+                  <div class="omni-progress-track">
+                    <div class="omni-progress-fill" [style.width.%]="ocrProgressPercent()"></div>
+                  </div>
+                </div>
+              }
+
+              @if (ocrResult(); as res) {
+                <div class="ocr-results-panel">
+                  <div class="ocr-results-header">
+                    <div class="ocr-metrics-row">
+                      <span class="ocr-stat-chip"><strong>{{ res.wordsCount }}</strong> palabras</span>
+                      <span class="ocr-stat-chip"><strong>{{ res.linesCount }}</strong> lineas</span>
+                      <span class="ocr-confidence-badge" [class.high]="res.confidence >= 80">{{ res.confidence }}% precision</span>
+                    </div>
+                    <div class="ocr-quick-actions">
+                      <button type="button" class="ocr-tool-btn" (click)="copyOcrText()">Copiar</button>
+                      <button type="button" class="ocr-tool-btn primary" (click)="saveOcrAsTxt()">Guardar .TXT</button>
+                      <button type="button" class="ocr-tool-btn accent" (click)="sendOcrToTranslator()">Traducir</button>
+                    </div>
+                  </div>
+                  <textarea class="ocr-textarea" rows="6" [(ngModel)]="res.text"></textarea>
+                </div>
+              }
+            }
+
+            <!-- 7. TRADUCTOR (1:1 CON CAPTURA 1) -->
+            @else if (activeTool() === 'translate') {
+              <div class="fm-translate-features-list">
+                <div class="fm-feature-item">
+                  <span class="fm-feature-check-icon check-orange">✓</span>
+                  <span class="fm-feature-text">Traducción instantánea</span>
+                </div>
+                <div class="fm-feature-item">
+                  <span class="fm-feature-check-icon check-lime">✓</span>
+                  <span class="fm-feature-text">Soporte para +100 idiomas</span>
+                </div>
+                <div class="fm-feature-item">
+                  <span class="fm-feature-check-icon check-green">✓</span>
+                  <span class="fm-feature-text">Traducción de documentos</span>
+                </div>
+              </div>
+
+              <!-- Ilustracion 3D del Mundo con globos Hello! y Hola! -->
+              <div class="fm-translate-globe-wrap">
+                <div class="fm-globe-bubble bubble-blue">Hello!</div>
+                <div class="fm-globe-bubble bubble-orange">¡Hola!</div>
+                <div class="fm-globe-sphere">
+                  <svg viewBox="0 0 120 120" class="fm-globe-svg">
+                    <circle cx="60" cy="60" r="54" fill="#1e40af" />
+                    <path d="M35 25C45 28 50 20 60 25C65 35 55 45 45 42C38 50 30 40 35 25Z" fill="#60a5fa" />
+                    <path d="M55 55C70 50 85 65 75 80C65 95 50 90 55 75C48 70 50 60 55 55Z" fill="#60a5fa" />
+                    <path d="M25 65C35 70 30 85 20 80C18 72 20 66 25 65Z" fill="#60a5fa" />
+                  </svg>
+                </div>
+              </div>
+
+              @if (translateResultOutput()) {
+                <div class="fm-translate-result-shell">
+                  <div class="fm-translate-result-header">
+                    <span class="fm-field-title">Traducción generada:</span>
+                    <button type="button" class="fm-link-btn" (click)="presentToast('Texto copiado al portapapeles', 'success')">Copiar</button>
+                  </div>
+                  <div class="fm-translate-result-text">{{ translateResultOutput() }}</div>
+                </div>
+              }
+            }
+
+            <!-- 8. FIRMAR DIGITAL (1:1 CON CAPTURA 2) -->
+            @else if (activeTool() === 'sign') {
+              <div class="fm-options-header">
+                <h2>Opciones de firma</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <div class="fm-segmented-group">
+                  <button type="button" class="fm-seg-btn" [class.active]="signType() === 'drawn'" (click)="signType.set('drawn')">
+                    <span>Firma Dibujada</span>
+                  </button>
+                  <button type="button" class="fm-seg-btn" [class.active]="signType() === 'digital'" (click)="signType.set('digital')">
+                    <span>Firma Digital</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tarjeta blanca de firma -->
+              <div class="fm-signature-white-card">
+                <canvas
+                  #signatureCanvas
+                  width="320"
+                  height="110"
+                  class="fm-signature-canvas"
+                  (mousedown)="startDrawing($event)"
+                  (mousemove)="draw($event)"
+                  (mouseup)="stopDrawing()"
+                  (mouseleave)="stopDrawing()"
+                  (touchstart)="startDrawing($event)"
+                  (touchmove)="draw($event)"
+                  (touchend)="stopDrawing()"></canvas>
+              </div>
+
+              <!-- Herramientas de firma Limpiar y Ajustar -->
+              <div class="fm-sig-canvas-tools">
+                <button type="button" class="fm-sig-tool-btn" (click)="clearSignatureCanvas()">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Limpiar</span>
+                </button>
+                <button type="button" class="fm-sig-tool-btn" (click)="adjustSignature()">
+                  <ion-icon name="crop-outline"></ion-icon>
+                  <span>Ajustar</span>
+                </button>
+              </div>
+
+              <div class="fm-field-section">
+                <div class="fm-checkboxes-list">
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="signAddDate" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Agregar fecha</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="signAddTime" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Agregar hora</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="signSaveOriginalCopy" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Guardar una copia original</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runSign()" [disabled]="processing()">
+                <ion-icon name="create-outline"></ion-icon>
+                <span>Firmar Documento</span>
+              </button>
+            }
+
+            <!-- 9. ESCANEAR IMÁGENES Y CREAR PDF (1:1 CON CAPTURA 4) -->
+            @else if (activeTool() === 'scan-images') {
+              <div class="fm-options-header">
+                <h2>Opciones de PDF</h2>
+              </div>
+
+              <div class="fm-field-section">
+                <label class="fm-field-title">Orden de páginas:</label>
+                <div class="fm-select-shell">
+                  <select class="fm-select-dark" [(ngModel)]="scanPageOrder">
+                    <option value="original">Orden original</option>
+                    <option value="az">Nombre A-Z</option>
+                    <option value="date">Fecha de captura</option>
+                    <option value="reverse">Invertido</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="fm-field-section">
+                <div class="fm-checkboxes-list">
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="scanAddCover" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Agregar portada</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="scanFitToPage" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Ajustar al tamaño de página</span>
+                  </label>
+                  <label class="fm-checkbox-row">
+                    <input type="checkbox" class="fm-custom-checkbox" [(ngModel)]="scanOptimizeQuality" />
+                    <span class="fm-check-box"></span>
+                    <span class="fm-check-label">Optimizar calidad</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="runCreatePdfFromImages()" [disabled]="processing()">
+                <ion-icon name="document-outline"></ion-icon>
+                <span>Crear PDF</span>
+              </button>
+            }
+
+
+
+            <!-- 11. GIRAR -->
+            @else if (activeTool() === 'rotate') {
+              <div class="fm-options-header">
+                <h2>Girar Paginas</h2>
+              </div>
+              <div class="fm-field-section">
+                <label class="fm-field-title">Angulo de rotacion:</label>
+                <div class="fm-segmented-group">
+                  <button type="button" class="fm-seg-btn" [class.active]="rotateAngle() === 90" (click)="rotateAngle.set(90)">90° Derecha</button>
+                  <button type="button" class="fm-seg-btn" [class.active]="rotateAngle() === 180" (click)="rotateAngle.set(180)">180° Invertido</button>
+                  <button type="button" class="fm-seg-btn" [class.active]="rotateAngle() === 270" (click)="rotateAngle.set(270)">270° Izquierda</button>
+                </div>
+              </div>
+
+              <button type="button" class="fm-cta-glow-btn" (click)="applyRotate()" [disabled]="processing()">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span>Rotar Paginas Ahora</span>
+              </button>
+            }
+
+            <!-- 12. PDF CON IA -->
+            @else if (activeTool() === 'ai-tools') {
+              <div class="fm-options-header">
+                <h2>Inteligencia Artificial</h2>
+              </div>
+              <div class="fm-field-section">
+                <button type="button" class="fm-cta-glow-btn secondary" (click)="runAiSummary()" [disabled]="aiAnalyzing()">
+                  <ion-icon name="sparkles-outline"></ion-icon>
+                  <span>{{ aiAnalyzing() ? 'Analizando con IA...' : 'Generar Resumen Ejecutivo' }}</span>
+                </button>
+              </div>
+
+              @if (aiSummary(); as sum) {
+                <div class="ai-summary-card">
+                  <h4>{{ sum.title }}</h4>
+                  <ul>
+                    @for (bullet of sum.bullets; track bullet) {
+                      <li>{{ bullet }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              <div class="fm-field-section ai-chat-section">
+                <label class="fm-field-title">Chat interactivo con tu documento:</label>
+                <div class="ai-chat-thread">
+                  @for (msg of aiChatMessages(); track msg.time) {
+                    <div class="ai-bubble" [class.user]="msg.sender === 'user'" [class.assistant]="msg.sender === 'assistant'">
+                      <p>{{ msg.text }}</p>
+                      <small>{{ msg.time }}</small>
+                    </div>
+                  }
+                </div>
+                <div class="ai-input-row">
+                  <input type="text" class="fm-input-dark" placeholder="Hacé una pregunta sobre el documento..." [(ngModel)]="aiQuestionInput" (keyup.enter)="sendAiQuestion()" />
+                  <button type="button" class="ai-send-btn" (click)="sendAiQuestion()">
+                    <ion-icon name="send-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            }
           </div>
-        </ion-card-content>
-      </ion-card>
-    }
-  </div>
+        </section>
+      </main>
+    </div>
   } <!-- fin @else viewMode === 'tool' -->
 
   <!-- =========================================================================

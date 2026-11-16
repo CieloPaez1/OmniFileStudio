@@ -1,6 +1,6 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
  * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
- * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+ * nav: 4 tabs (Inicio, Archivos, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, Ionic shadow DOM components unified with Obsidian+Orange CSS variables */
 
 @import '@ionic/angular/css/core.css';
@@ -316,14 +316,14 @@ ion-button {
 }
 
 ion-tab-bar {
-  --background: var(--color-navy);
-  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
-  height: 68px;
+  --background: transparent;
+  border-top: none;
+  height: auto;
 }
 
 ion-tab-button {
-  --color: var(--color-navy-muted);
-  --color-selected: var(--color-accent);
+  --color: var(--color-ink);
+  --color-selected: var(--color-ink);
   font-weight: 600;
   font-size: var(--text-xs);
 }

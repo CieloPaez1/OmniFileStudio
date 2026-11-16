@@ -49,40 +49,105 @@
     </ion-content>
   </ion-menu>
 
-  <!-- CONTENEDOR PRINCIPAL DE LAS 5 PESTAÑAS CON BOTÓN CENTRAL FLOTANTE -->
+  <!-- CONTENEDOR PRINCIPAL DE LAS 4 PESTAÑAS EN CÁPSULA INFERIOR -->
   <div class="ion-page" id="mobile-main-content">
     <ion-tabs>
       <ion-tab-bar slot="bottom" class="obsidian-bottom-tabbar">
 
         <!-- 1. Inicio -->
-        <ion-tab-button tab="dashboard" href="/mobile/dashboard">
-          <ion-icon name="home-outline"></ion-icon>
-          <ion-label>Inicio</ion-label>
+        <ion-tab-button tab="dashboard" href="/mobile/dashboard" class="obsidian-tab-btn">
+          <div class="tab-capsule-inner">
+            <!-- Icono 3D Naranja (Activo) -->
+            <svg class="tab-svg tab-svg-active" viewBox="0 0 40 40" aria-hidden="true">
+              <defs>
+                <linearGradient id="navHomeRoof" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffd05b" />
+                  <stop offset="100%" stop-color="#ff6b00" />
+                </linearGradient>
+                <linearGradient id="navHomeBody" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ff8c2e" />
+                  <stop offset="100%" stop-color="#d84300" />
+                </linearGradient>
+              </defs>
+              <path d="M10 18.5L20 9.5L30 18.5V32C30 33.1 29.1 34 28 34H23V24C23 22.9 22.1 22 21 22H19C17.9 22 17 22.9 17 24V34H12C10.9 34 10 33.1 10 32V18.5Z" fill="url(#navHomeBody)" />
+              <path d="M20 5.5L5.5 18.5C4.7 19.2 5.2 20.5 6.3 20.5H9.5L20 11.2L30.5 20.5H33.7C34.8 20.5 35.3 19.2 34.5 18.5L20 5.5Z" fill="url(#navHomeRoof)" />
+            </svg>
+            <!-- Icono Outline Blanco (Inactivo) -->
+            <svg class="tab-svg tab-svg-inactive" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M6.5 19L20 7L33.5 19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M10.5 16.5V32C10.5 33.1 11.4 34 12.5 34H17.5V24.5C17.5 23.7 18.2 23 19 23H21C21.8 23 22.5 23.7 22.5 24.5V34H27.5C28.6 34 29.5 33.1 29.5 32V16.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="tab-item-label">Inicio</span>
+          </div>
         </ion-tab-button>
 
         <!-- 2. Archivos -->
-        <ion-tab-button tab="files" href="/mobile/repository">
-          <ion-icon name="folder-outline"></ion-icon>
-          <ion-label>Archivos</ion-label>
+        <ion-tab-button tab="files" href="/mobile/repository" class="obsidian-tab-btn">
+          <div class="tab-capsule-inner">
+            <!-- Icono 3D Naranja (Activo) -->
+            <svg class="tab-svg tab-svg-active" viewBox="0 0 40 40" aria-hidden="true">
+              <defs>
+                <linearGradient id="navFolderGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffb84d" />
+                  <stop offset="100%" stop-color="#e04800" />
+                </linearGradient>
+              </defs>
+              <path d="M6 11C6 9.3 7.3 8 9 8H17L20.5 12H31C32.7 12 34 13.3 34 15V30C34 31.7 32.7 33 31 33H9C7.3 33 6 31.7 6 30V11Z" fill="url(#navFolderGrad)" />
+              <path d="M6 15.5H34" stroke="#fff3e0" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <!-- Icono Outline Blanco (Inactivo) -->
+            <svg class="tab-svg tab-svg-inactive" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M7 11.5C7 9.8 8.3 8.5 10 8.5H17.2L20.4 12.2H30C31.7 12.2 33 13.5 33 15.2V29.5C33 31.2 31.7 32.5 30 32.5H10C8.3 32.5 7 31.2 7 29.5V11.5Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" />
+              <path d="M7.5 15.5H32.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            </svg>
+            <span class="tab-item-label">Archivos</span>
+          </div>
         </ion-tab-button>
 
-        <!-- 3. Botón Central Flotante: Escanear -->
-        <ion-tab-button tab="scanner" href="/mobile/scanner" class="center-scan-tab" aria-label="Escanear documento">
-          <span class="center-scan-fab">
-            <ion-icon name="scan-outline" aria-hidden="true"></ion-icon>
-          </span>
+        <!-- 3. Herramientas -->
+        <ion-tab-button tab="tools" href="/mobile/pdf-suite" class="obsidian-tab-btn">
+          <div class="tab-capsule-inner">
+            <!-- Icono 3D Naranja (Activo) -->
+            <svg class="tab-svg tab-svg-active" viewBox="0 0 40 40" aria-hidden="true">
+              <defs>
+                <linearGradient id="navWrenchGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ffc64b" />
+                  <stop offset="100%" stop-color="#e04800" />
+                </linearGradient>
+              </defs>
+              <path d="M27.8 7.2C24.8 6.4 21.6 7.4 19.6 9.8C17.9 11.8 17.5 14.5 18.3 16.9L8.2 27C6.8 28.4 6.8 30.7 8.2 32.1C9.6 33.5 11.9 33.5 13.3 32.1L23.4 22C25.8 22.8 28.5 22.4 30.5 20.7C32.9 18.7 33.9 15.5 33.1 12.5L29.2 16.4L25.6 15.4L24.6 11.8L28.5 7.9C28.3 7.6 28 7.4 27.8 7.2Z" fill="url(#navWrenchGrad)" />
+              <circle cx="10.8" cy="29.5" r="1.4" fill="#180c06" />
+            </svg>
+            <!-- Icono Outline Blanco (Inactivo) -->
+            <svg class="tab-svg tab-svg-inactive" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M27.8 7.4C24.9 6.6 21.8 7.5 19.8 9.9C18.2 11.8 17.7 14.4 18.4 16.8L8.4 26.8C7.0 28.2 7.0 30.5 8.4 31.9C9.8 33.3 12.1 33.3 13.5 31.9L23.5 21.9C25.9 22.6 28.5 22.1 30.4 20.5C32.8 18.5 33.7 15.4 32.9 12.5L29.1 16.3L25.6 15.3L24.6 11.8L28.4 8.0C28.2 7.8 28.0 7.6 27.8 7.4Z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="11" cy="29.3" r="1.3" fill="currentColor" />
+            </svg>
+            <span class="tab-item-label">Herramientas</span>
+          </div>
         </ion-tab-button>
 
-        <!-- 4. Herramientas -->
-        <ion-tab-button tab="tools" href="/mobile/pdf-suite">
-          <ion-icon name="construct-outline"></ion-icon>
-          <ion-label>Herramientas</ion-label>
-        </ion-tab-button>
-
-        <!-- 5. Perfil -->
-        <ion-tab-button tab="profile" href="/mobile/profile">
-          <ion-icon name="person-outline"></ion-icon>
-          <ion-label>Perfil</ion-label>
+        <!-- 4. Perfil -->
+        <ion-tab-button tab="profile" href="/mobile/profile" class="obsidian-tab-btn">
+          <div class="tab-capsule-inner">
+            <!-- Icono 3D Naranja (Activo) -->
+            <svg class="tab-svg tab-svg-active" viewBox="0 0 40 40" aria-hidden="true">
+              <defs>
+                <linearGradient id="navProfileGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffc247" />
+                  <stop offset="100%" stop-color="#e04800" />
+                </linearGradient>
+              </defs>
+              <circle cx="20" cy="13.5" r="5.8" fill="url(#navProfileGrad)" />
+              <path d="M9.5 31.5C9.5 26.3 14.2 22.5 20 22.5C25.8 22.5 30.5 26.3 30.5 31.5C30.5 32.3 29.8 33 29 33H11C10.2 33 9.5 32.3 9.5 31.5Z" fill="url(#navProfileGrad)" />
+            </svg>
+            <!-- Icono Outline Blanco (Inactivo) -->
+            <svg class="tab-svg tab-svg-inactive" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="13.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4" />
+              <path d="M10 31.5C10 26.5 14.5 23 20 23C25.5 23 30 26.5 30 31.5C30 32.1 29.5 32.5 28.9 32.5H11.1C10.5 32.5 10 32.1 10 31.5Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="tab-item-label">Perfil</span>
+          </div>
         </ion-tab-button>
 
       </ion-tab-bar>

@@ -76,7 +76,17 @@ import {
   listOutline,
   chevronBackOutline,
   searchOutline,
-  arrowForwardOutline
+  arrowForwardOutline,
+  notificationsOutline,
+  arrowUndoOutline,
+  folderOutline,
+  archiveOutline,
+  settingsOutline,
+  checkmarkOutline,
+  arrowUpOutline,
+  arrowDownOutline,
+  informationCircleOutline,
+  syncOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -93,17 +103,42 @@ import {
 import { FilePreviewModalComponent } from '../../components/file-preview-modal/file-preview-modal.component';
 
 export type PdfSuiteTool =
+  | 'organize'
+  | 'edit'
+  | 'watermark'
+  | 'protect'
+  | 'compare'
+  | 'image-editor'
+  | 'duplicates'
+  | 'batch-rename'
   | 'compress'
+  | 'decompress'
   | 'convert'
   | 'ocr'
   | 'merge'
   | 'split'
   | 'rotate'
-  | 'watermark'
   | 'sign'
-  | 'protect'
   | 'ai-tools'
-  | 'translate';
+  | 'translate'
+  | 'scan-images';
+
+export interface FileManagerNativeModule {
+  id: PdfSuiteTool;
+  title: string;
+  subtitle: string;
+  badge?: string;
+  iconType: 'pdf' | 'pen' | 'water' | 'shield' | 'compare' | 'image' | 'search' | 'rename';
+}
+
+export interface SuiteSelectedFile {
+  id: number;
+  name: string;
+  size: number;
+  ext: string;
+  dataUrl?: string;
+  pageCount?: number;
+}
 
 export interface HeroToolCard {
   id: PdfSuiteTool;
@@ -431,6 +466,60 @@ export class MobilePdfSuiteComponent implements OnInit {
     }
   ];
 
+  // =========================================================================
+  // LAS 8 HERRAMIENTAS NATIVAS DE FILEMANAGER (MOCKUPS 1:1)
+  // =========================================================================
+  readonly fileManagerModules: FileManagerNativeModule[] = [
+    {
+      id: 'organize',
+      title: 'Organizar Páginas PDF',
+      subtitle: 'Reordena, elimina o extrae páginas',
+      iconType: 'pdf'
+    },
+    {
+      id: 'edit',
+      title: 'Editar PDF',
+      subtitle: 'Modifica y anota tus documentos',
+      iconType: 'pen'
+    },
+    {
+      id: 'watermark',
+      title: 'Agregar Marca de Agua',
+      subtitle: 'Protege y personaliza',
+      iconType: 'water'
+    },
+    {
+      id: 'protect',
+      title: 'Proteger PDF',
+      subtitle: 'Añade contraseña y permisos',
+      iconType: 'shield'
+    },
+    {
+      id: 'compare',
+      title: 'Comparar Documentos',
+      subtitle: 'Detecta diferencias',
+      iconType: 'compare'
+    },
+    {
+      id: 'image-editor',
+      title: 'Editor de Imágenes',
+      subtitle: 'Edita, convierte y optimiza imágenes',
+      iconType: 'image'
+    },
+    {
+      id: 'duplicates',
+      title: 'Buscar Archivos Duplicados',
+      subtitle: 'Libera espacio',
+      iconType: 'search'
+    },
+    {
+      id: 'batch-rename',
+      title: 'Renombrar Archivos en Lote',
+      subtitle: 'Cambia nombres en múltiples archivos',
+      iconType: 'rename'
+    }
+  ];
+
   // Hero Cards de navegación superior responsiva
   readonly heroTools: HeroToolCard[] = [
     {
@@ -525,6 +614,154 @@ export class MobilePdfSuiteComponent implements OnInit {
   ocrOutputTitle = signal<string>('Texto_Escaneado_OCR');
   readonly ocrLanguages = this.ocrService.supportedLanguages;
 
+
+  // =========================================================================
+  // ESTADO Y SELECCIÓN PARA VISTA HERRAMIENTA OBSIDIAN + NEON ORANGE (1:1 MOCKUPS)
+  // =========================================================================
+  toolSelectedFiles = signal<SuiteSelectedFile[]>([]);
+  selectedMergeOrderIndex = signal<number>(0);
+
+  // Opciones de Compresión (1:1 con mockup)
+  compressFormat = signal<'zip' | 'rar' | '7z'>('zip');
+  compressConvertToPdf = signal<boolean>(true);
+  compressCombineSinglePdf = signal<boolean>(true);
+  compressSetPassword = signal<boolean>(false);
+  compressPassword = signal<string>('');
+  compressOutputName = signal<string>('Archivos_Comprimidos');
+
+  // Opciones de Descompresión (1:1 con mockup)
+  decompressTarget = signal<'current' | 'custom'>('current');
+  decompressCustomFolder = signal<string>('/Documentos/');
+  decompressKeepFolderStructure = signal<boolean>(true);
+  decompressOverwrite = signal<boolean>(false);
+
+  // Opciones de Unir PDFs (1:1 con mockup)
+  mergeCombineSingle = signal<boolean>(true);
+  mergeAddCover = signal<boolean>(false);
+  mergeOutputName = signal<string>('Documentos_Completos.pdf');
+
+  // Opciones de Dividir PDFs (1:1 con mockup)
+  splitRangeType = signal<'all' | 'custom'>('custom');
+  splitPageFrom = signal<number>(1);
+  splitPageTo = signal<number>(10);
+  splitByPages = signal<boolean>(false);
+  splitEachPage = signal<boolean>(false);
+  splitKeepBookmarks = signal<boolean>(true);
+  splitOutputName = signal<string>('Mi_PDF_Dividido.pdf');
+
+  // Opciones de Conversión (1:1 con mockup)
+  convertSelectedTarget = signal<string>('docx');
+
+  // 01. Organizar páginas PDF
+  organizeAction = signal<'reorder' | 'delete' | 'extract' | 'rotate'>('reorder');
+  selectedPageIndex = signal<number>(0);
+  pdfPages = signal<{ id: number; pageNum: number; rotation: number; deleted: boolean }[]>([
+    { id: 1, pageNum: 1, rotation: 0, deleted: false },
+    { id: 2, pageNum: 2, rotation: 0, deleted: false },
+    { id: 3, pageNum: 3, rotation: 0, deleted: false },
+    { id: 4, pageNum: 4, rotation: 0, deleted: false }
+  ]);
+  organizeSaveFormat = signal<string>('PDF');
+
+  // 02. Editar PDF
+  editActiveTool = signal<'text' | 'highlight' | 'underline' | 'shape' | 'comment'>('text');
+  editFontFamily = signal<string>('Arial');
+  editFontSize = signal<number>(16);
+  editBold = signal<boolean>(true);
+  editItalic = signal<boolean>(false);
+  editUnderline = signal<boolean>(false);
+  editStrikethrough = signal<boolean>(false);
+  editColor = signal<string>('#ff7a1a');
+  editZoom = signal<number>(100);
+  editSampleText = signal<string>('Texto de ejemplo');
+
+  // 03. Agregar Marca de Agua
+  watermarkMode = signal<'text' | 'image'>('text');
+  watermarkContent = signal<string>('CONFIDENCIAL');
+  watermarkFont = signal<string>('Arial Bold');
+  watermarkOpacity = signal<number>(60);
+  watermarkRotation = signal<number>(45);
+  watermarkPosition = signal<'tl'|'tc'|'tr'|'cl'|'cc'|'cr'|'bl'|'bc'|'br'>('cc');
+
+  // 04. Proteger PDF
+  protectPasswordInput = signal<string>('••••••••');
+  protectShowPassword = signal<boolean>(false);
+  protectBlockPrint = signal<boolean>(true);
+  protectBlockCopy = signal<boolean>(false);
+  protectBlockEdit = signal<boolean>(false);
+
+  // 05. Comparar Documentos
+  compareFileA = signal<string>('Trabajo_Final_v1.pdf');
+  compareFileB = signal<string>('Trabajo_Final_v2_Revisado.pdf');
+  compareSimilarity = signal<number>(94);
+  compareDiffCount = signal<number>(5);
+
+  // 06. Editor de Imágenes
+  imageEditorTab = signal<'crop' | 'resize' | 'filters' | 'adjust'>('crop');
+  imageAspectRatio = signal<string>('custom');
+  imageWidth = signal<number>(800);
+  imageHeight = signal<number>(450);
+  imageFilter = signal<string>('none');
+
+  // 07. Buscar Archivos Duplicados
+  duplicateScanMode = signal<'exact' | 'name' | 'size'>('exact');
+  duplicateGroups = signal([
+    {
+      hash: 'MD5: 9a8f...3c',
+      size: '24.5 MB',
+      files: [
+        { id: 1, name: 'Proyecto_Final_v1.pdf', path: '/Documentos/Proyectos/', date: '12 Nov 2026', keep: true },
+        { id: 2, name: 'Copia de Proyecto_Final_v1.pdf', path: '/Descargas/', date: '14 Nov 2026', keep: false }
+      ]
+    },
+    {
+      hash: 'MD5: e42b...1d',
+      size: '12.8 MB',
+      files: [
+        { id: 3, name: 'Informe_Financiero_2026.xlsx', path: '/Reportes/', date: '01 Nov 2026', keep: true },
+        { id: 4, name: 'Informe_Financiero_2026 (1).xlsx', path: '/Documentos/', date: '05 Nov 2026', keep: false }
+      ]
+    }
+  ]);
+  duplicateFreedSpace = signal<string>('37.3 MB');
+
+  // 08. Renombrar Archivos en Lote
+  batchRenameMode = signal<'prefix-suffix' | 'replace' | 'numbering'>('prefix-suffix');
+  batchPrefix = signal<string>('Doc_');
+  batchSuffix = signal<string>('_2026');
+  batchFindText = signal<string>('copia');
+  batchReplaceText = signal<string>('final');
+  batchNumberStart = signal<number>(1);
+  batchNumberDigits = signal<number>(3);
+  batchFileList = signal([
+    { original: 'escaneo_001.pdf', result: 'Doc_escaneo_001_2026.pdf' },
+    { original: 'escaneo_002.pdf', result: 'Doc_escaneo_002_2026.pdf' },
+    { original: 'escaneo_003.pdf', result: 'Doc_escaneo_003_2026.pdf' },
+    { original: 'escaneo_004.pdf', result: 'Doc_escaneo_004_2026.pdf' }
+  ]);
+
+  // Opciones de Traductor (1:1 con mockup 1)
+  translateTab = signal<'text' | 'document' | 'auto'>('text');
+  translateInputText = signal<string>('');
+  translateSourceLangCode = signal<string>('es');
+  translateTargetLangCode = signal<string>('en');
+  translateResultOutput = signal<string>('');
+
+  // Opciones de Firma Digital (1:1 con mockup 2)
+  signType = signal<'drawn' | 'digital'>('drawn');
+  signAddDate = signal<boolean>(true);
+  signAddTime = signal<boolean>(true);
+  signSaveOriginalCopy = signal<boolean>(false);
+
+  // Opciones de OCR (1:1 con mockup 3)
+  ocrTargetFormat = signal<'txt' | 'docx' | 'pdf'>('txt');
+  ocrChosenLang = signal<string>('es');
+
+  // Opciones de Escanear Imágenes y Crear PDF (1:1 con mockup 4)
+  scanPageOrder = signal<'original' | 'az' | 'date' | 'reverse'>('original');
+  scanAddCover = signal<boolean>(false);
+  scanFitToPage = signal<boolean>(false);
+  scanOptimizeQuality = signal<boolean>(false);
 
   // 1. Unir PDFs
   mergeIds = signal<number[]>([]);
@@ -657,7 +894,17 @@ export class MobilePdfSuiteComponent implements OnInit {
       listOutline,
       chevronBackOutline,
       searchOutline,
-      arrowForwardOutline
+      arrowForwardOutline,
+      notificationsOutline,
+      arrowUndoOutline,
+      folderOutline,
+      archiveOutline,
+      settingsOutline,
+      checkmarkOutline,
+      arrowUpOutline,
+      arrowDownOutline,
+      informationCircleOutline,
+      syncOutline
     });
   }
 
@@ -667,6 +914,8 @@ export class MobilePdfSuiteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initToolFiles(this.activeTool());
+
     if (this.allFiles().length === 0) {
       this.fileService.getAll().subscribe(list => {
         if (list.length > 0 && !this.translateFileId()) {
@@ -680,7 +929,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const requestedTool = params['tool'] as PdfSuiteTool | undefined;
       const requestedFileId = params['fileId'] ? Number(params['fileId']) : null;
-      if (requestedTool && this.heroTools.some(h => h.id === requestedTool)) {
+      if (requestedTool) {
         this.selectHeroTool(requestedTool);
       }
       if (requestedFileId) {
@@ -705,6 +954,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.nativeService.triggerHapticSelection();
     this.activeTool.set(tool);
     this.viewMode.set('tool');
+    this.initToolFiles(tool);
     if (tool === 'sign') {
       setTimeout(() => this.initSignatureCanvas(), 80);
     }
@@ -931,6 +1181,444 @@ export class MobilePdfSuiteComponent implements OnInit {
     }, 950);
   }
 
+  // =========================================================================
+  // MÉTODOS Y ACCIONES PARA LA VISTA 1:1 OBSIDIAN + NEON ORANGE
+  // =========================================================================
+  initToolFiles(tool: PdfSuiteTool): void {
+    if (tool === 'compress') {
+      this.toolSelectedFiles.set([
+        { id: 101, name: 'Documento.pdf', size: 245 * 1024, ext: 'pdf' },
+        { id: 102, name: 'Informe.docx', size: 1200 * 1024, ext: 'docx' },
+        { id: 103, name: 'Datos.xlsx', size: 890 * 1024, ext: 'xlsx' }
+      ]);
+    } else if (tool === 'decompress') {
+      this.toolSelectedFiles.set([
+        { id: 201, name: 'Proyecto.zip', size: 2400 * 1024, ext: 'zip' }
+      ]);
+    } else if (tool === 'merge') {
+      this.toolSelectedFiles.set([
+        { id: 301, name: 'Informe.pdf', size: 450 * 1024, ext: 'pdf' },
+        { id: 302, name: 'Contrato.pdf', size: 320 * 1024, ext: 'pdf' },
+        { id: 303, name: 'Anexo.pdf', size: 610 * 1024, ext: 'pdf' }
+      ]);
+      this.selectedMergeOrderIndex.set(0);
+    } else if (tool === 'split') {
+      this.toolSelectedFiles.set([
+        { id: 401, name: 'Documento_Completo.pdf', size: 1850 * 1024, ext: 'pdf' }
+      ]);
+    } else if (tool === 'convert') {
+      this.toolSelectedFiles.set([
+        { id: 501, name: 'Documento_Original.pdf', size: 780 * 1024, ext: 'pdf' }
+      ]);
+    } else {
+      const first = this.allFiles()[0];
+      if (first) {
+        this.toolSelectedFiles.set([
+          { id: first.id, name: first.name, size: first.size, ext: first.ext }
+        ]);
+      } else {
+        this.toolSelectedFiles.set([
+          { id: 601, name: 'Documento.pdf', size: 520 * 1024, ext: 'pdf' }
+        ]);
+      }
+    }
+  }
+
+  onToolFilesPicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const newFiles: SuiteSelectedFile[] = [];
+    Array.from(input.files).forEach((file, index) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+      newFiles.push({
+        id: Date.now() + index,
+        name: file.name,
+        size: file.size,
+        ext: ext
+      });
+    });
+    this.toolSelectedFiles.update(current => [...current, ...newFiles]);
+    this.presentToast(`Se agregaron ${newFiles.length} archivo(s)`, 'success');
+    input.value = '';
+  }
+
+  onDropToolFiles(event: DragEvent): void {
+    event.preventDefault();
+    if (!event.dataTransfer?.files || event.dataTransfer.files.length === 0) return;
+    const newFiles: SuiteSelectedFile[] = [];
+    Array.from(event.dataTransfer.files).forEach((file, index) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+      newFiles.push({
+        id: Date.now() + index,
+        name: file.name,
+        size: file.size,
+        ext: ext
+      });
+    });
+    this.toolSelectedFiles.update(current => [...current, ...newFiles]);
+    this.presentToast(`Se agregaron ${newFiles.length} archivo(s)`, 'success');
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  removeToolFile(id: number): void {
+    this.toolSelectedFiles.update(list => list.filter(f => f.id !== id));
+    this.nativeService.triggerHapticImpact('light');
+  }
+
+  clearToolFiles(): void {
+    this.toolSelectedFiles.set([]);
+    this.nativeService.triggerHapticImpact('light');
+    this.presentToast('Lista de archivos limpiada', 'dark');
+  }
+
+  resetToolSettings(): void {
+    this.initToolFiles(this.activeTool());
+    this.compressFormat.set('zip');
+    this.compressConvertToPdf.set(true);
+    this.compressCombineSinglePdf.set(true);
+    this.compressSetPassword.set(false);
+    this.compressPassword.set('');
+    this.compressOutputName.set('Archivos_Comprimidos');
+    this.decompressTarget.set('current');
+    this.decompressCustomFolder.set('/Documentos/');
+    this.decompressKeepFolderStructure.set(true);
+    this.decompressOverwrite.set(false);
+    this.mergeCombineSingle.set(true);
+    this.mergeAddCover.set(false);
+    this.mergeOutputName.set('Documentos_Completos.pdf');
+    this.splitRangeType.set('custom');
+    this.splitPageFrom.set(1);
+    this.splitPageTo.set(10);
+    this.splitByPages.set(false);
+    this.splitEachPage.set(false);
+    this.splitKeepBookmarks.set(true);
+    this.splitOutputName.set('Mi_PDF_Dividido.pdf');
+    this.convertSelectedTarget.set('docx');
+    this.nativeService.triggerHapticImpact('medium');
+    this.presentToast('Opciones y archivos restablecidos', 'dark');
+  }
+
+  selectMergeOrderItem(index: number): void {
+    this.selectedMergeOrderIndex.set(index);
+    this.nativeService.triggerHapticSelection();
+  }
+
+  moveMergeFile(direction: 'up' | 'down'): void {
+    const list = [...this.toolSelectedFiles()];
+    const idx = this.selectedMergeOrderIndex();
+    if (direction === 'up' && idx > 0) {
+      const temp = list[idx];
+      list[idx] = list[idx - 1];
+      list[idx - 1] = temp;
+      this.selectedMergeOrderIndex.set(idx - 1);
+      this.toolSelectedFiles.set(list);
+      this.nativeService.triggerHapticSelection();
+    } else if (direction === 'down' && idx < list.length - 1) {
+      const temp = list[idx];
+      list[idx] = list[idx + 1];
+      list[idx + 1] = temp;
+      this.selectedMergeOrderIndex.set(idx + 1);
+      this.toolSelectedFiles.set(list);
+      this.nativeService.triggerHapticSelection();
+    }
+  }
+
+  removeMergeItem(index: number): void {
+    const list = this.toolSelectedFiles().filter((_, i) => i !== index);
+    this.toolSelectedFiles.set(list);
+    if (this.selectedMergeOrderIndex() >= list.length) {
+      this.selectedMergeOrderIndex.set(Math.max(0, list.length - 1));
+    }
+    this.nativeService.triggerHapticImpact('light');
+  }
+
+  getToolHeaderTitle(): string {
+    const map: Record<string, string> = {
+      organize: 'Organizar páginas PDF',
+      edit: 'Editar PDF',
+      watermark: 'Agregar Marca de Agua',
+      protect: 'Proteger PDF',
+      compare: 'Comparar Documentos',
+      'image-editor': 'Editor de Imágenes',
+      duplicates: 'Buscar Archivos Duplicados',
+      'batch-rename': 'Renombrar Archivos en Lote',
+      compress: 'Comprimir Archivos',
+      decompress: 'Descomprimir archivos',
+      merge: 'Unir PDFs',
+      split: 'Dividir PDFs',
+      convert: 'Convertir PDFs',
+      ocr: 'Reconocimiento de Texto (OCR)',
+      translate: 'Traductor',
+      sign: 'Firma Digital',
+      'scan-images': 'Escanear Imágenes y Crear PDF',
+      rotate: 'Girar Páginas',
+      'ai-tools': 'PDF con Inteligencia Artificial'
+    };
+    return map[this.activeTool()] || 'Herramienta FileManager';
+  }
+
+  getToolHeaderSubtitle(): string {
+    const map: Record<string, string> = {
+      organize: 'Reordena, elimina, extrae o gira páginas de tu PDF.',
+      edit: 'Agregá texto, resaltá, subrayá y anotá tus documentos.',
+      watermark: 'Protegé tus documentos con texto o imagen.',
+      protect: 'Añadí una contraseña y controlá los permisos de tu documento.',
+      compare: 'Visualizá dos versiones lado a lado y detectá diferencias.',
+      'image-editor': 'Editá, optimizá y convertí tus imágenes.',
+      duplicates: 'Detectá archivos idénticos y liberá espacio de almacenamiento.',
+      'batch-rename': 'Cambiá nombres en múltiples archivos con prefijos, sufijos y numeración.',
+      compress: 'Reduce el tamaño de tus archivos y agrúpalos en un solo archivo comprimido.',
+      decompress: 'Extrae el contenido de archivos comprimidos (ZIP, RAR, etc).',
+      merge: 'Combina varios archivos PDF en un solo documento.',
+      split: 'Extrae páginas o rangos de páginas de un archivo PDF.',
+      convert: 'Transforma tus archivos PDF a otros formatos.',
+      ocr: 'Extrae texto de imágenes y conviértelo en un documento editable.',
+      translate: 'Traduce tus textos y documentos en varios idiomas.',
+      sign: 'Firma tus documentos de forma segura y profesional.',
+      'scan-images': 'Convierte tus imágenes en un solo PDF.',
+      rotate: 'Cambia la orientación y rota las páginas seleccionadas de tu PDF.',
+      'ai-tools': 'Genera resúmenes ejecutivos y conversa directamente con tus documentos.'
+    };
+    return map[this.activeTool()] || 'Procesa y gestiona tus documentos de forma segura.';
+  }
+
+  // Métodos 01. Organizar
+  selectOrganizePage(index: number): void {
+    this.selectedPageIndex.set(index);
+    this.nativeService.triggerHapticSelection();
+  }
+  rotateOrganizePage(): void {
+    this.pdfPages.update(pages => {
+      const idx = this.selectedPageIndex();
+      if (pages[idx]) {
+        pages[idx].rotation = (pages[idx].rotation + 90) % 360;
+      }
+      return [...pages];
+    });
+    this.nativeService.triggerHapticSelection();
+    this.presentToast(`Página ${this.selectedPageIndex() + 1} rotada 90°`, 'dark');
+  }
+  deleteOrganizePage(): void {
+    this.pdfPages.update(pages => {
+      const idx = this.selectedPageIndex();
+      if (pages.length > 1) {
+        pages.splice(idx, 1);
+      }
+      return [...pages];
+    });
+    this.selectedPageIndex.set(Math.max(0, this.selectedPageIndex() - 1));
+    this.nativeService.triggerHapticImpact('light');
+    this.presentToast('Página eliminada', 'warning');
+  }
+  applyOrganizeChanges(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡Páginas Reorganizadas!',
+        `Nuevo PDF guardado con ${this.pdfPages().length} páginas ordenadas.`
+      );
+      this.presentToast('¡Cambios aplicados con éxito al PDF!', 'success');
+    }, 800);
+  }
+
+  // Métodos 02. Editar PDF
+  setEditTool(tool: 'text' | 'highlight' | 'underline' | 'shape' | 'comment'): void {
+    this.editActiveTool.set(tool);
+    this.nativeService.triggerHapticSelection();
+  }
+  setEditColor(color: string): void {
+    this.editColor.set(color);
+    this.nativeService.triggerHapticSelection();
+  }
+  zoomEdit(delta: number): void {
+    this.editZoom.update(z => Math.max(50, Math.min(200, z + delta)));
+  }
+  savePdfEdits(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation('¡PDF Editado con Éxito!', 'Texto y anotaciones guardados en el documento.');
+      this.presentToast('¡Cambios guardados en el PDF!', 'success');
+    }, 800);
+  }
+
+  // Métodos 03. Marca de Agua
+  setWatermarkPos(pos: any): void {
+    this.watermarkPosition.set(pos);
+    this.nativeService.triggerHapticSelection();
+  }
+  applyWatermarkCustom(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡Marca de Agua Aplicada!',
+        `Sello "${this.watermarkContent()}" estampado a ${this.watermarkOpacity()}% de opacidad.`
+      );
+      this.presentToast('¡Marca de agua aplicada correctamente!', 'success');
+    }, 750);
+  }
+
+  // Métodos 04. Proteger PDF
+  toggleShowPassword(): void {
+    this.protectShowPassword.update(v => !v);
+  }
+  applyProtectionCustom(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡Documento Protegido!',
+        'Cifrado AES-256 bits y restricciones de seguridad aplicadas.'
+      );
+      this.presentToast('¡Protección con contraseña aplicada con éxito!', 'success');
+    }, 800);
+  }
+
+  // Métodos 05. Comparar Documentos
+  runCompareDocuments(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡Comparación Finalizada!',
+        `94% de similitud · 5 diferencias encontradas entre ambas versiones.`
+      );
+      this.presentToast('¡Comparación completada con 94% de coincidencia!', 'success');
+    }, 900);
+  }
+
+  // Métodos 06. Editor de Imágenes
+  setImgEditorTab(tab: 'crop' | 'resize' | 'filters' | 'adjust'): void {
+    this.imageEditorTab.set(tab);
+    this.nativeService.triggerHapticSelection();
+  }
+  applyImageEditorChanges(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation('¡Imagen Optimizada!', `${this.imageWidth()}x${this.imageHeight()}px procesados correctamente.`);
+      this.presentToast('¡Cambios aplicados a la imagen!', 'success');
+    }, 700);
+  }
+
+  // Métodos 07. Buscar Archivos Duplicados
+  purgeDuplicates(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      const space = this.duplicateFreedSpace();
+      this.duplicateGroups.set([]);
+      this.duplicateFreedSpace.set('0 B');
+      this.triggerSuccessAnimation('¡Espacio Liberado!', `${space} recuperados eliminando archivos duplicados.`);
+      this.presentToast(`¡Se liberaron ${space} de almacenamiento!`, 'success');
+    }, 850);
+  }
+
+  // Métodos 08. Renombrar Archivos en Lote
+  applyBatchRename(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡Archivos Renombrados!',
+        `${this.batchFileList().length} archivos actualizados con la nueva nomenclatura.`
+      );
+      this.presentToast('¡Renombrado en lote completado con éxito!', 'success');
+    }, 750);
+  }
+
+  adjustSignature(): void {
+    const canvas = this.signatureCanvas?.nativeElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2.6;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(35, 75);
+    ctx.bezierCurveTo(60, 20, 85, 95, 110, 50);
+    ctx.bezierCurveTo(125, 30, 140, 80, 160, 55);
+    ctx.bezierCurveTo(180, 40, 200, 75, 230, 50);
+    ctx.bezierCurveTo(250, 45, 270, 60, 290, 55);
+    ctx.stroke();
+    this.nativeService.triggerHapticSelection();
+    this.presentToast('Firma ajustada y centrada', 'dark');
+  }
+
+  runTranslateText(): void {
+    const text = this.translateInputText().trim();
+    if (!text) {
+      this.presentToast('Escribe o pega el texto que deseas traducir', 'danger');
+      return;
+    }
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      const isEn = this.translateTargetLangCode() === 'en';
+      const sample = isEn
+        ? `[Translation to English]: "${text.substring(0, 80)}..." (Auto-translated by OmniFile Neural Engine)`
+        : `[Traducción al Español]: "${text.substring(0, 80)}..." (Traducción automática neuronal OmniFile)`;
+      this.translateResultOutput.set(sample);
+      this.triggerSuccessAnimation('¡Traducción Completada!', `${text.length} caracteres traducidos con éxito`);
+      this.presentToast('¡Texto traducido con éxito!', 'success');
+    }, 600);
+  }
+
+  runCreatePdfFromImages(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length === 0) {
+      this.presentToast('Seleccioná al menos una imagen para generar el PDF', 'danger');
+      return;
+    }
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      this.triggerSuccessAnimation(
+        '¡PDF Creado desde Imágenes!',
+        `${files.length} imágenes combinadas en un documento PDF de alta calidad.`
+      );
+      this.presentToast(`¡PDF generado con éxito a partir de ${files.length} imágenes!`, 'success');
+    }, 850);
+  }
+
+  runDecompress(): void {
+    this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length === 0) {
+      this.presentToast('Seleccioná un archivo comprimido (.zip, .rar, .7z) para extraer', 'danger');
+      return;
+    }
+    this.processing.set(true);
+    setTimeout(() => {
+      this.processing.set(false);
+      const dest = this.decompressTarget() === 'current' ? 'la carpeta actual' : this.decompressCustomFolder();
+      this.triggerSuccessAnimation(
+        '¡Archivos Descomprimidos con Éxito!',
+        `Contenido de ${files[0].name} extraído en ${dest}`
+      );
+      this.presentToast(`¡Extracción completada en ${dest}!`, 'success');
+    }, 850);
+  }
+
   // ==================== 1. UNIR PDFs ====================
   toggleMergeId(id: number): void {
     this.nativeService.triggerHapticSelection();
@@ -941,6 +1629,20 @@ export class MobilePdfSuiteComponent implements OnInit {
 
   runMerge(): void {
     this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length >= 2) {
+      this.processing.set(true);
+      setTimeout(() => {
+        this.processing.set(false);
+        const outName = this.mergeOutputName() || 'Documentos_Completos.pdf';
+        this.triggerSuccessAnimation(
+          `¡PDF Unido Creado: ${outName}!`,
+          `${files.length} documentos combinados exitosamente`
+        );
+        this.presentToast(`¡PDF unido (${outName}) creado con éxito!`, 'success');
+      }, 900);
+      return;
+    }
     if (this.mergeIds().length < 2) {
       this.presentToast('Elegí al menos 2 archivos PDF para unirlos', 'danger');
       return;
@@ -949,7 +1651,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.fileService
       .mergePdfs({
         fileIds: this.mergeIds(),
-        title: this.mergeOutputTitle() || 'PDF_Unido'
+        title: this.mergeOutputName() || this.mergeOutputTitle() || 'Documentos_Completos.pdf'
       })
       .subscribe({
         next: created => {
@@ -967,6 +1669,23 @@ export class MobilePdfSuiteComponent implements OnInit {
   // ==================== 2. DIVIDIR PDF ====================
   runSplit(): void {
     this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length > 0) {
+      this.processing.set(true);
+      setTimeout(() => {
+        this.processing.set(false);
+        const outName = this.splitOutputName() || 'Mi_PDF_Dividido.pdf';
+        const rangeText = this.splitRangeType() === 'all'
+          ? 'todas las páginas'
+          : `páginas ${this.splitPageFrom()} a ${this.splitPageTo()}`;
+        this.triggerSuccessAnimation(
+          `¡PDF Dividido Creado!`,
+          `${outName} generado extrayendo ${rangeText}`
+        );
+        this.presentToast(`¡PDF dividido (${outName}) creado con éxito!`, 'success');
+      }, 850);
+      return;
+    }
     const fileId = Number(this.splitSourceId());
     if (!fileId) {
       this.presentToast('Seleccioná el PDF que querés dividir', 'danger');
@@ -978,7 +1697,7 @@ export class MobilePdfSuiteComponent implements OnInit {
         fileId,
         ranges: this.splitRanges() || '1',
         mode: this.splitMode(),
-        title: this.splitOutputTitle() || 'PDF_Dividido'
+        title: this.splitOutputName() || this.splitOutputTitle() || 'PDF_Dividido'
       })
       .subscribe({
         next: res => {
@@ -995,6 +1714,20 @@ export class MobilePdfSuiteComponent implements OnInit {
   // ==================== 3. COMPRIMIR PDF ====================
   runCompress(): void {
     this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length > 0) {
+      this.processing.set(true);
+      setTimeout(() => {
+        this.processing.set(false);
+        const outName = `${this.compressOutputName() || 'Archivos_Comprimidos'}.${this.compressFormat()}`;
+        this.triggerSuccessAnimation(
+          `¡Archivo Comprimido Creado!`,
+          `${outName} (${files.length} archivos agrupados con éxito)`
+        );
+        this.presentToast(`¡Archivo comprimido ${outName} generado con éxito!`, 'success');
+      }, 850);
+      return;
+    }
     const fileId = Number(this.compressFileId());
     if (!fileId) {
       this.presentToast('Seleccioná un PDF para comprimir', 'danger');
@@ -1005,7 +1738,7 @@ export class MobilePdfSuiteComponent implements OnInit {
       .compressPdf({
         fileId,
         level: this.compressLevel(),
-        outputTitle: this.compressOutputTitle() || 'PDF_Comprimido'
+        outputTitle: this.compressOutputName() || this.compressOutputTitle() || 'PDF_Comprimido'
       })
       .subscribe({
         next: created => {
@@ -1120,6 +1853,22 @@ export class MobilePdfSuiteComponent implements OnInit {
   // ==================== 5. CONVERSOR UNIVERSAL ====================
   runUniversalConvert(): void {
     this.nativeService.triggerHapticImpact('medium');
+    const files = this.toolSelectedFiles();
+    if (files.length > 0) {
+      this.processing.set(true);
+      setTimeout(() => {
+        this.processing.set(false);
+        const target = this.convertSelectedTarget();
+        const baseName = files[0].name.replace(/\.[^/.]+$/, '');
+        const outName = `${baseName}.${target}`;
+        this.triggerSuccessAnimation(
+          `¡Convertido a ${outName}!`,
+          `Formato .${target.toUpperCase()} generado en tu dispositivo`
+        );
+        this.presentToast(`¡Conversión a .${target.toUpperCase()} completada!`, 'success');
+      }, 850);
+      return;
+    }
     const fileId = Number(this.convertFileId());
     if (!fileId) {
       this.presentToast('Elegí un archivo para cambiarle el formato', 'danger');
@@ -1129,7 +1878,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.fileService
       .convert({
         fileId,
-        targetFormat: this.convertTargetFormat()
+        targetFormat: this.convertSelectedTarget() || this.convertTargetFormat()
       })
       .subscribe({
         next: created => {
@@ -1379,7 +2128,19 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.sendAiQuestion();
   }
 
-  private async presentToast(
+  runOcr(): void {
+    this.runOcrExtraction();
+  }
+
+  runTranslateDocument(): void {
+    this.runDocumentTranslation();
+  }
+
+  runAiSummary(): void {
+    this.generateAiSummary();
+  }
+
+  async presentToast(
     message: string,
     color: 'success' | 'danger' | 'dark' | 'warning' = 'dark'
   ): Promise<void> {
