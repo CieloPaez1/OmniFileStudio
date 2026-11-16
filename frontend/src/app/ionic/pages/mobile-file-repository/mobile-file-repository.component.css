@@ -846,6 +846,48 @@ button:disabled,
   font-variant-numeric: tabular-nums;
 }
 
+.quick-tools-strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding-top: var(--space-2xs);
+  border-top: var(--rule-hair) solid var(--color-rule);
+}
+
+.quick-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2xs);
+}
+
+.quick-tool-chip {
+  height: 32px;
+  padding: 0 var(--space-2xs);
+  border-radius: var(--radius-md);
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  background: var(--color-paper-3);
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.quick-tool-chip ion-icon {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.quick-tool-chip:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
 .share-tab-box {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

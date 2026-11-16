@@ -604,6 +604,14 @@ export class MobileFileRepositoryComponent implements OnInit {
     });
   }
 
+  openFileInTool(file: ManagedFile, tool: string): void {
+    this.closeEditModal();
+    this.nativeService.triggerHapticImpact('light');
+    this.router.navigate(['/mobile/pdf-suite'], {
+      queryParams: { tool, fileId: file.id }
+    });
+  }
+
   async confirmDelete(file: ManagedFile, slidingItem?: IonItemSliding, event?: Event): Promise<void> {
     event?.stopPropagation();
     if (slidingItem) await slidingItem.close();

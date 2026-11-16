@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 import {
   IonModal,
   IonHeader,
@@ -110,12 +111,16 @@ export class FilePreviewModalComponent implements OnDestroy {
     this.activePptSlideIndex.set(0);
     this.copiedText.set(false);
     if (value) {
+      this.remoteTextContent.set(null);
+      this.loadRemoteTextIfNeeded(value);
       setTimeout(() => this.renderDocumentOnCanvas(), 90);
     }
   }
   get file(): ManagedFile | null {
     return this._file();
   }
+
+  readonly remoteTextContent = signal<string | null>(null);
 
   @Input() isOpen = false;
   @Output() closed = new EventEmitter<void>();
@@ -145,6 +150,49 @@ export class FilePreviewModalComponent implements OnDestroy {
     return ['pptx', 'ppt', 'odp'].includes(ext);
   });
 
+  readonly isImageFile = computed<boolean>(() => {
+    const f = this._file();
+    if (!f) return false;
+    const ext = (f.ext || '').toLowerCase();
+    return f.category === 'IMAGE' || ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'bmp', 'ico'].includes(ext);
+  });
+
+  readonly isAudioFile = computed<boolean>(() => {
+    const ext = (this._file()?.ext || '').toLowerCase();
+    return ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'].includes(ext);
+  });
+
+  readonly isVideoFile = computed<boolean>(() => {
+    const ext = (this._file()?.ext || '').toLowerCase();
+    return ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'].includes(ext);
+  });
+
+  readonly mediaSourceUrl = computed<string>(() => {
+    const f = this._file();
+    if (!f) return '';
+    if (f.dataUrl && f.dataUrl.length > 30) return f.dataUrl;
+    return f.viewUrl || f.downloadUrl || '';
+  });
+
+  private async loadRemoteTextIfNeeded(f: ManagedFile): Promise<void> {
+    const ext = (f.ext || '').toLowerCase();
+    const isTextLike = ['txt', 'csv', 'tsv', 'json', 'md', 'html', 'htm', 'xml', 'log', 'sql', 'js', 'ts', 'css', 'java', 'py'].includes(ext);
+    if (!isTextLike) return;
+    if (f.dataUrl && (f.dataUrl.includes('charset=utf-8,') || f.dataUrl.includes(';base64,'))) return;
+    if (!f.viewUrl) return;
+    try {
+      const res = await fetch(f.viewUrl);
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.trim().length > 0) {
+          this.remoteTextContent.set(text);
+        }
+      }
+    } catch {
+      // Fallback silencioso
+    }
+  }
+
   // Resumen de flujo binario (ArrayBuffer / Hex Header) en cliente
   readonly binaryStreamSummary = computed<string>(() => {
     const f = this._file();
@@ -166,8 +214,9 @@ export class FilePreviewModalComponent implements OnDestroy {
     }
   });
 
-  // Genera un Blob URL seguro para incrustar el PDF en <iframe>
+  // Genera un Blob URL seguro para incrustar el PDF en <iframe> (en Android WebView usa Canvas + botón externo)
   readonly safePdfUrl = computed<SafeResourceUrl | null>(() => {
+    if (Capacitor.getPlatform() === 'android') return null;
     const f = this._file();
     if (!f || (f.ext !== 'pdf' && f.category !== 'PDF')) return null;
 
@@ -228,6 +277,8 @@ export class FilePreviewModalComponent implements OnDestroy {
   readonly decodedTextContent = computed<string>(() => {
     const f = this._file();
     if (!f) return '';
+    const remote = this.remoteTextContent();
+    if (remote) return remote;
     const raw = f.dataUrl || '';
 
     try {

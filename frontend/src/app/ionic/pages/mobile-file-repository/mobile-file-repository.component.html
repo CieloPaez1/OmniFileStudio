@@ -534,6 +534,46 @@
                       <strong>{{ editingFile() ? fileService.formatBytes(editingFile()!.size) : 'Carpeta' }}</strong>
                     </div>
                   </div>
+
+                  @if (editingFile(); as ef) {
+                    <div class="quick-tools-strip">
+                      <span class="meta-caption">Herramientas rápidas para este archivo:</span>
+                      <div class="quick-tools-grid">
+                        <button type="button" class="quick-tool-chip" (click)="closeEditModal(); openPreview(ef)">
+                          <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
+                          <span>Ver</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="closeEditModal(); openQuickConvert(ef)">
+                          <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
+                          <span>Convertir</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="openFileInTool(ef, 'compress')">
+                          <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+                          <span>Comprimir</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="openFileInTool(ef, 'ocr')">
+                          <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                          <span>OCR</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="openFileInTool(ef, 'translate')">
+                          <ion-icon name="share-social-outline" aria-hidden="true"></ion-icon>
+                          <span>Traducir</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="openFileInTool(ef, 'merge')">
+                          <ion-icon name="layers-outline" aria-hidden="true"></ion-icon>
+                          <span>Suite PDF</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="openFileInTool(ef, 'sign')">
+                          <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+                          <span>Firmar</span>
+                        </button>
+                        <button type="button" class="quick-tool-chip" (click)="closeEditModal(); openContextualActions(ef)">
+                          <ion-icon name="ellipsis-horizontal-outline" aria-hidden="true"></ion-icon>
+                          <span>Más</span>
+                        </button>
+                      </div>
+                    </div>
+                  }
                 } @else {
                   @if (editingFile(); as ef) {
                     <div class="share-tab-box">
