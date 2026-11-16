@@ -3,6 +3,10 @@
  * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, unified Obsidian+Charcoal+Terracotta+Orange palette across all mobile and desktop surfaces */
 
+@import './tokens.css';
+@import './base.css';
+@import './styles-ionic.css';
+
 :root,
 [data-theme="dark"],
 [data-theme="light"],
