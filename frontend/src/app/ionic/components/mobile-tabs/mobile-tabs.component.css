@@ -1,5 +1,5 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
- * paper: oklch(11.5% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
  * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, center floating scan FAB requires generous bottom clearance on scrolled pages */
 /* Hallmark · dropped camera-outline, settings-outline · replaced by center scan-outline FAB and person-outline Perfil tab */
@@ -31,9 +31,12 @@ button:disabled,
 
 .obsidian-bottom-tabbar {
   --background: var(--color-navy);
-  --border: var(--rule-hair) solid var(--color-navy-border-subtle);
-  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
-  height: 68px;
+  --border: var(--rule-hair) solid var(--color-rule-strong);
+  border-top: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  height: 70px;
+  max-width: 520px;
+  margin: 0 auto;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   overflow: visible;
   contain: none;
@@ -41,7 +44,7 @@ button:disabled,
 }
 
 .obsidian-bottom-tabbar ion-tab-button {
-  --color: var(--color-navy-muted);
+  --color: var(--color-ink-2);
   --color-selected: var(--color-accent);
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -52,11 +55,12 @@ button:disabled,
 .obsidian-bottom-tabbar ion-tab-button.tab-selected::after {
   content: "";
   position: absolute;
-  bottom: 4px;
-  width: 24px;
+  bottom: 0;
+  width: 38px;
   height: 3px;
   border-radius: var(--radius-pill);
   background: var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent);
 }
 
 .obsidian-bottom-tabbar ion-tab-button.center-scan-tab {
@@ -73,24 +77,24 @@ button:disabled,
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-accent-ink);
-  transform: translateY(-16px);
-  box-shadow: 0 8px 24px var(--color-accent-glow);
-  border: 3px solid var(--color-paper);
+  transform: translateY(-18px);
+  box-shadow: 0 0 0 6px var(--color-paper), 0 8px 26px var(--color-accent-glow);
+  border: 2px solid var(--color-accent-hover);
   transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
 }
 
 .center-scan-fab ion-icon {
-  font-size: 1.55rem;
+  font-size: 1.75rem;
   color: var(--color-accent-ink);
 }
 
 .center-scan-tab:active .center-scan-fab {
-  transform: translateY(-14px) scale(0.95);
+  transform: translateY(-16px) scale(0.95);
 }
 
 @media (prefers-reduced-motion: reduce) {

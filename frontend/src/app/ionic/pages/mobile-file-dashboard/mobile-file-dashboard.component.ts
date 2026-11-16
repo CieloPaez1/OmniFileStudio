@@ -148,11 +148,15 @@ export class MobileFileDashboardComponent implements OnInit {
   readonly favoriteFiles = computed(() => {
     const all = this.fileService.activeFiles();
     const ids = this.favoriteIds();
-    if (ids.length === 0) {
-      return all.slice(0, 3);
+    if (ids.length > 0) {
+      const matched = all.filter(f => ids.includes(String(f.id)));
+      if (matched.length > 0) return matched;
     }
-    const matched = all.filter(f => ids.includes(String(f.id)));
-    return matched.length > 0 ? matched : all.slice(0, 3);
+    const pdf = all.find(f => f.ext.toLowerCase() === 'pdf' || f.category === 'PDF');
+    const img = all.find(f => ['png', 'jpg', 'jpeg', 'webp'].includes(f.ext.toLowerCase()) || f.category === 'IMAGE');
+    const data = all.find(f => ['csv', 'xlsx', 'xls', 'docx', 'txt'].includes(f.ext.toLowerCase()) && f !== pdf && f !== img);
+    const diverse = [pdf, img, data].filter((x): x is ManagedFile => !!x);
+    return diverse.length === 3 ? diverse : all.slice(0, 3);
   });
 
   readonly recentFiles = computed(() => {
