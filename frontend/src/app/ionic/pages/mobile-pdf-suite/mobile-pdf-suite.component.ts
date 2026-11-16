@@ -1101,6 +1101,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     let source: string | File | Blob | null = null;
     const uploaded = this.uploadedOcrFile();
     const fileId = this.ocrFileId();
+    const firstSelected = this.toolSelectedFiles()[0];
 
     if (uploaded) {
       source = uploaded;
@@ -1109,12 +1110,29 @@ export class MobilePdfSuiteComponent implements OnInit {
       if (found) {
         source = found.dataUrl || found.viewUrl;
       }
+    } else if (firstSelected?.dataUrl) {
+      source = firstSelected.dataUrl;
+    } else if (firstSelected) {
+      const found = this.allFiles().find(f => Number(f.id) === Number(firstSelected.id));
+      if (found) {
+        source = found.dataUrl || found.viewUrl;
+      }
     }
 
     if (!source) {
-      this.presentToast('Seleccioná un documento del repositorio o subí una imagen', 'danger');
+      this.presentToast('Seleccioná una imagen o documento del repositorio para extraer texto', 'danger');
       return;
     }
+
+    const langMap: Record<string, OcrLangCode> = {
+      es: 'spa',
+      en: 'eng',
+      pt: 'por',
+      fr: 'fra',
+      de: 'deu',
+      it: 'ita'
+    };
+    const effectiveLang: OcrLangCode = langMap[this.ocrChosenLang()] || this.ocrLang();
 
     this.ocrRunning.set(true);
     this.ocrResult.set(null);
@@ -1122,7 +1140,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.ocrProgressStatus.set('Inicializando motor neuronal OCR...');
 
     try {
-      const res = await this.ocrService.recognize(source, this.ocrLang(), {
+      const res = await this.ocrService.recognize(source, effectiveLang, {
         enhanceContrast: this.ocrEnhanceContrast(),
         onProgress: p => {
           this.ocrProgressPercent.set(p.percentage);
@@ -1320,36 +1338,50 @@ export class MobilePdfSuiteComponent implements OnInit {
   onToolFilesPicked(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
-    const newFiles: SuiteSelectedFile[] = [];
-    Array.from(input.files).forEach((file, index) => {
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-      newFiles.push({
-        id: Date.now() + index,
-        name: file.name,
-        size: file.size,
-        ext: ext
-      });
-    });
-    this.toolSelectedFiles.update(current => [...current, ...newFiles]);
-    this.presentToast(`Se agregaron ${newFiles.length} archivo(s)`, 'success');
+    const filesArr = Array.from(input.files);
     input.value = '';
+    this.addPickedFilesToTool(filesArr);
   }
 
   onDropToolFiles(event: DragEvent): void {
     event.preventDefault();
     if (!event.dataTransfer?.files || event.dataTransfer.files.length === 0) return;
-    const newFiles: SuiteSelectedFile[] = [];
-    Array.from(event.dataTransfer.files).forEach((file, index) => {
+    this.addPickedFilesToTool(Array.from(event.dataTransfer.files));
+  }
+
+  private addPickedFilesToTool(filesArr: File[]): void {
+    const firstFile = filesArr[0];
+    if (firstFile) {
+      this.uploadedOcrFile.set(firstFile);
+      this.ocrFileId.set(null);
+      const base = firstFile.name.replace(/\.[^/.]+$/, '');
+      this.ocrOutputTitle.set(`${base}_OCR`);
+    }
+
+    filesArr.forEach((file, index) => {
       const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-      newFiles.push({
-        id: Date.now() + index,
-        name: file.name,
-        size: file.size,
-        ext: ext
-      });
+      const itemId = Date.now() + index;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = typeof reader.result === 'string' ? reader.result : '';
+        if (index === 0 && dataUrl) {
+          this.ocrPreviewUrl.set(dataUrl);
+        }
+        this.toolSelectedFiles.update(current => [
+          ...current,
+          {
+            id: itemId,
+            name: file.name,
+            size: file.size,
+            ext,
+            dataUrl
+          }
+        ]);
+      };
+      reader.readAsDataURL(file);
     });
-    this.toolSelectedFiles.update(current => [...current, ...newFiles]);
-    this.presentToast(`Se agregaron ${newFiles.length} archivo(s)`, 'success');
+
+    this.presentToast(`Se agregaron ${filesArr.length} archivo(s)`, 'success');
   }
 
   onDragOver(event: DragEvent): void {
