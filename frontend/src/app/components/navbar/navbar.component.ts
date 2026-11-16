@@ -16,7 +16,7 @@ import { ProjectStatusPipe } from '../../pipes/project-status.pipe';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, LucideSearch, LucideX, LucideLogOut, LucidePalette, LucideCheck, LucideSmartphone, TaskStatusPipe, ProjectStatusPipe],
+  imports: [CommonModule, FormsModule, RouterModule, LucidePalette, LucideCheck, LucideSmartphone],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

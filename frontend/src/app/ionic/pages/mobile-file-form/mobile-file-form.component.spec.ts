@@ -47,6 +47,8 @@ describe('MobileFileFormComponent (Tests Unitarios - Formulario Reactivo + IA Co
   it('el formulario debería iniciar inválido cuando los campos obligatorios están vacíos', () => {
     expect(component.form.invalid).toBe(true);
     expect(component.name.errors?.['required']).toBeTruthy();
+
+    component.tag.setValue('');
     expect(component.tag.errors?.['required']).toBeTruthy();
   });
 

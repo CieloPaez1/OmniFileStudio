@@ -97,7 +97,7 @@ describe('FileManagerService (Tests Unitarios - API REST, Fallback Offline e IA 
         archived: false
       }
     ];
-    localStorage.setItem('filestudio_files_preferences_v1', JSON.stringify(cachedFiles));
+    localStorage.setItem('filestudio_files_pg_sync_v3', JSON.stringify(cachedFiles));
 
     // 2. Act
     let resultFiles: ManagedFile[] = [];

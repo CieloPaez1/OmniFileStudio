@@ -1,6 +1,6 @@
-# 🚀 OmniFile Studio — Gestor Universal de Archivos, Escáner a PDF y Suite PDF
+# 🚀 FileManager — Gestor Universal de Archivos, Escáner a PDF y Suite PDF
 
-**OmniFile Studio** es una aplicación híbrida multiplataforma (**Web de Escritorio + App Móvil Android**) construida con **Angular 21 Standalone**, **Ionic 9**, **Capacitor 8** y un backend en **Java 21 + Spring Boot 3.3.8** bajo **Arquitectura Hexagonal (`Core` y `Adapter`)**.
+**FileManager** es una aplicación híbrida multiplataforma (**Web de Escritorio + App Móvil Android**) construida con **Angular 21 Standalone**, **Ionic 9**, **Capacitor 8** y un backend en **Java 21 + Spring Boot 3.3.8** bajo **Arquitectura Hexagonal (`Core` y `Adapter`)**.
 
 ---
 

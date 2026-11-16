@@ -190,3 +190,55 @@ body.dark {
   --input-bg: var(--color-paper-2);
   --input-border: var(--color-rule);
 }
+
+/* =============================================================================
+ * MODO CLARO (Marfil Cálido + Naranja Estudio)
+ * Activado por ThemeService cuando data-theme="light" / .light
+ * ============================================================================= */
+[data-theme="light"],
+html.light,
+body.light,
+html[data-mode="light"],
+body[data-mode="light"] {
+  --color-paper: oklch(97.5% 0.006 55);
+  --color-paper-2: oklch(100% 0 0);
+  --color-paper-3: oklch(94.5% 0.008 50);
+  --color-well: oklch(92.0% 0.010 50);
+  --color-terracotta: oklch(54.0% 0.185 36);
+  --color-terracotta-soft: oklch(54.0% 0.185 36 / 0.14);
+
+  --color-ink: oklch(18.0% 0.015 35);
+  --color-ink-2: oklch(42.0% 0.016 40);
+  --color-muted: oklch(54.0% 0.014 45);
+  --color-subtle: oklch(75.0% 0.012 45);
+
+  --color-rule: oklch(20.0% 0.015 35 / 0.11);
+  --color-rule-strong: oklch(62.0% 0.215 44 / 0.35);
+
+  --color-navy: oklch(99.0% 0.004 55);
+  --color-navy-2: oklch(95.5% 0.008 50);
+  --color-navy-3: oklch(92.0% 0.010 50);
+  --color-navy-ink: oklch(18.0% 0.015 35);
+  --color-navy-muted: oklch(45.0% 0.014 45);
+  --color-navy-field: oklch(20.0% 0.015 35 / 0.05);
+  --color-navy-field-hover: oklch(20.0% 0.015 35 / 0.09);
+  --color-navy-border: oklch(62.0% 0.215 44 / 0.28);
+  --color-navy-border-subtle: oklch(20.0% 0.015 35 / 0.10);
+  --color-navy-placeholder: oklch(48.0% 0.012 45 / 0.70);
+
+  --color-accent: oklch(62.0% 0.215 42);
+  --color-accent-hover: oklch(56.0% 0.215 40);
+  --color-accent-soft: oklch(62.0% 0.215 42 / 0.12);
+  --color-accent-ink: oklch(99.5% 0.004 45);
+  --color-accent-glow: oklch(62.0% 0.215 42 / 0.20);
+  --color-focus: oklch(62.0% 0.215 42);
+
+  --color-success-ink: oklch(38.0% 0.160 152);
+  --color-warning-ink: oklch(45.0% 0.160 68);
+
+  --shadow-subtle: 0 2px 10px oklch(20% 0.01 35 / 0.06);
+  --shadow-card: 0 6px 20px oklch(20% 0.01 35 / 0.08), 0 0 18px oklch(62% 0.215 42 / 0.06);
+  --shadow-hover: 0 10px 26px oklch(20% 0.01 35 / 0.12), 0 0 22px oklch(62% 0.215 42 / 0.12);
+  --shadow-modal: 0 18px 48px oklch(20% 0.01 35 / 0.18);
+  --shadow-tabbar: 0 -4px 18px oklch(20% 0.01 35 / 0.08);
+}

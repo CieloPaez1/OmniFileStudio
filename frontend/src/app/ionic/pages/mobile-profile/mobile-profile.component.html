@@ -50,6 +50,15 @@
         <button
           type="button"
           class="profile-notif-btn"
+          (click)="themeService.toggleDarkLight()"
+          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'"
+          aria-label="Cambiar modo claro u oscuro">
+          <ion-icon [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button
+          type="button"
+          class="profile-notif-btn"
           aria-label="Notificaciones"
           (click)="toggleUserStatus($event)">
           <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
@@ -287,6 +296,26 @@
         </div>
         <ion-icon name="chevron-forward-outline" class="option-chevron" aria-hidden="true"></ion-icon>
       </button>
+
+      <!-- 2b. Apariencia: Modo Oscuro / Claro -->
+      <div class="profile-option-card">
+        <div class="option-icon-wrap" aria-hidden="true">
+          <ion-icon
+            [name]="isDarkMode() ? 'moon-outline' : 'sunny-outline'"
+            style="font-size: 1.55rem; color: var(--color-accent);"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
+        <div class="option-copy">
+          <strong>Modo Oscuro / Claro</strong>
+          <small>{{ isDarkMode() ? 'Tema Obsidian Dark activo' : 'Tema Marfil Claro activo' }}</small>
+        </div>
+        <ion-toggle
+          [checked]="isDarkMode()"
+          (ionChange)="toggleDarkMode($event)"
+          aria-label="Cambiar entre modo oscuro y claro">
+        </ion-toggle>
+      </div>
 
       <!-- 3. Notificaciones Push -->
       <div class="profile-option-card">

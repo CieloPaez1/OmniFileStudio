@@ -83,9 +83,7 @@ import { CapacitorNativeService } from '../../../services/capacitor-native.servi
     IonButton,
     IonContent,
     IonIcon,
-    IonBadge,
-    IonChip,
-    IonLabel
+    IonBadge
   ],
   templateUrl: './file-preview-modal.component.html',
   styleUrls: ['./file-preview-modal.component.css']

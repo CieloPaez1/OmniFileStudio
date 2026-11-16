@@ -54,6 +54,15 @@
         <button
           type="button"
           class="repo-notif-btn"
+          (click)="themeService.toggleDarkLight()"
+          [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Activar Modo Oscuro'"
+          aria-label="Cambiar modo claro u oscuro">
+          <ion-icon [name]="themeService.isDarkMode() ? 'sunny-outline' : 'moon-outline'" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button
+          type="button"
+          class="repo-notif-btn"
           aria-label="Notificaciones"
           (click)="showTagsFilterBar.set(!showTagsFilterBar())">
           <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>

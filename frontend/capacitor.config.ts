@@ -8,7 +8,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // =============================================================================
 const config: CapacitorConfig = {
   appId: 'com.filestudio.app',
-  appName: 'FileStudio PDF Manager',
+  appName: 'FileManager',
   webDir: 'dist/IntegradorProgAvz2026Front/browser',
   server: {
     androidScheme: 'http',

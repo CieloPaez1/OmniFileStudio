@@ -24,8 +24,6 @@ import { LayoutService } from '../../services/layout.service';
     LucideFolderKanban,
     LucideCheckSquare,
     LucideBarChart3,
-    LucideChevronDown,
-    LucideChevronRight,
     LucideList,
     LucidePlus,
     LucideSettings
