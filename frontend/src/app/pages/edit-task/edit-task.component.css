@@ -1,18 +1,47 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
+ * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, unified Obsidian+Charcoal+Terracotta+Orange surfaces across desktop and mobile */
+
+html {
+  overflow-x: clip;
+}
+body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .form-control, .form-select {
   height: 52px;
   border-radius: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-accent);
   padding: 0 16px;
   font-size: 1rem;
-  color: #111827;
-  transition: all 0.2s ease;
-  background-color: #f9fafb;
+  color: var(--color-ink);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.2s ease;
+  background-color: var(--color-accent);
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #2563eb;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  border-color: var(--color-accent);
+  background-color: var(--color-paper-2);
+  box-shadow: 0 0 0 4px var(--color-rule);
 }
 
 .btn:hover:not(:disabled) {
@@ -21,6 +50,14 @@
 
 .invalid-feedback {
   font-size: 0.85rem;
-  color: #ef4444;
+  color: var(--color-tool-red);
   margin-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

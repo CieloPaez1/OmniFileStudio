@@ -8,7 +8,7 @@
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="badge done">Hecha</span>
             <button class="btn-icon-small" (click)="reabrirTarea()" title="Reabrir tarea">
-              <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+              <svg aria-hidden="true" lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
             </button>
           </div>
         } @else if (task()) {
@@ -25,17 +25,17 @@
     </div>
     <div style="display: flex; gap: 12px;">
       <button class="btn-outline" routerLink="/tasks/list">
-        <svg lucideArrowLeft style="width: 18px; height: 18px;"></svg>
+        <svg aria-hidden="true" lucideArrowLeft style="width: 18px; height: 18px;"></svg>
         Volver
       </button>
       @if (task()?.status !== 'DONE') {
         <button class="btn-outline" [routerLink]="['/projects', task()?.projectId, 'tasks', 'edit', task()?.id]">
-          <svg lucideEdit style="width: 18px; height: 18px;"></svg>
+          <svg aria-hidden="true" lucideEdit style="width: 18px; height: 18px;"></svg>
           Editar
         </button>
       }
       <button class="btn-outline danger" (click)="deleteTask()" [disabled]="isLoading()">
-        <svg lucideTrash2 style="width: 18px; height: 18px;"></svg>
+        <svg aria-hidden="true" lucideTrash2 style="width: 18px; height: 18px;"></svg>
         Eliminar
       </button>
     </div>

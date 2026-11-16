@@ -321,7 +321,7 @@ button:disabled,
 
 .excel-toolbar-ribbon {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -411,7 +411,7 @@ button:disabled,
 
 .ppt-slide-canvas {
   background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-accent) 60%, var(--color-accent-hover) 100%);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   padding: 28px 24px;
   min-height: 280px;
   display: flex;
@@ -434,7 +434,7 @@ button:disabled,
   font-size: 1.3rem;
   font-weight: 800;
   margin: 0 0 16px;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .ppt-slide-bullets {

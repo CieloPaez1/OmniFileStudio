@@ -1,12 +1,12 @@
 <div class="container py-5" style="max-width: 1100px;">
 
-  <div class="card border-0 shadow-sm" style="border-radius: 24px; overflow: hidden; background: #ffffff;">
+  <div class="card border-0 shadow-sm" style="border-radius: 24px; overflow: hidden; background: var(--color-paper-2);">
 
     <!-- HEADER -->
-    <div class="card-header border-0" style="background: #ffffff; padding: 32px; border-bottom: 1px solid #eef2f7;">
+    <div class="card-header border-0" style="background: var(--color-paper-2); padding: 32px; border-bottom: 1px solid #eef2f7;">
       <div class="d-flex align-items-center gap-3">
         <div style="width: 54px; height: 54px; border-radius: 14px; background: #fee2e2; display: flex; align-items: center; justify-content: center;">
-          <svg lucideTrash2 style="width: 24px; height: 24px; color: #dc2626;"></svg>
+          <svg aria-hidden="true" lucideTrash2 style="width: 24px; height: 24px; color: var(--color-error);"></svg>
         </div>
         <div>
           <h2 class="mb-1" style="color: #111827; font-weight: 700; font-size: 2rem;">Eliminar Proyecto</h2>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- BODY -->
-    <div class="card-body" style="padding: 40px; background: #ffffff;">
+    <div class="card-body" style="padding: 40px; background: var(--color-paper-2);">
 
       @if (success()) {
         <div class="mb-4" style="background: #ecfdf3; border: 1px solid #bbf7d0; color: #166534; padding: 14px 18px; border-radius: 12px; font-weight: 500;">
@@ -73,7 +73,7 @@
                       [disabled]="loading()"
                       style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 6px;"
                     >
-                      <svg lucideTrash2 style="width: 16px; height: 16px;"></svg> Eliminar
+                      <svg aria-hidden="true" lucideTrash2 style="width: 16px; height: 16px;"></svg> Eliminar
                     </button>
                   </td>
                 </tr>

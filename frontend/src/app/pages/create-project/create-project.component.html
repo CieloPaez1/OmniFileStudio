@@ -11,7 +11,7 @@
       @if (isWizardMode()) {
         <span>Ver formulario clásico</span>
       } @else {
-        <svg lucideSparkles class="icon-sparkle"></svg>
+        <svg aria-hidden="true" lucideSparkles class="icon-sparkle"></svg>
         <span>Asistente interactivo</span>
       }
     </button>
@@ -26,13 +26,13 @@
       <!-- Notificaciones de éxito o error -->
       @if (success()) {
         <div class="wizard-alert success">
-          <svg lucideCheckCircle class="alert-icon"></svg>
+          <svg aria-hidden="true" lucideCheckCircle class="alert-icon"></svg>
           <span>{{ success() }}</span>
         </div>
       }
       @if (error()) {
         <div class="wizard-alert error">
-          <svg lucideXCircle class="alert-icon"></svg>
+          <svg aria-hidden="true" lucideXCircle class="alert-icon"></svg>
           <span>{{ error() }}</span>
         </div>
       }
@@ -148,7 +148,7 @@
                         <div class="scrum-row">
                           <span class="chip-color chip-blue"></span>
                           <span class="scrum-block block-orange"></span>
-                          <svg class="curved-arrow" viewBox="0 0 40 20"><path d="M 5,5 Q 20,20 35,5" fill="none" stroke="#64748b" stroke-width="1.5"/></svg>
+                          <svg aria-hidden="true" class="curved-arrow" viewBox="0 0 40 20"><path d="M 5,5 Q 20,20 35,5" fill="none" stroke="#64748b" stroke-width="1.5"/></svg>
                           <span class="scrum-block block-green"></span>
                         </div>
                         <div class="scrum-row">
@@ -168,7 +168,7 @@
 
                 @if (selectedTemplate().id === tmpl.id) {
                   <div class="selected-check-badge">
-                    <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideCheck style="width: 14px; height: 14px;"></svg>
                   </div>
                 }
               </div>
@@ -178,7 +178,7 @@
           <div class="step-footer-actions right-only">
             <button type="button" class="btn-primary-blue" (click)="nextStep()">
               <span>Continuar</span>
-              <svg lucideArrowRight class="btn-arrow-icon"></svg>
+              <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
             </button>
           </div>
         </div>
@@ -245,12 +245,12 @@
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -266,7 +266,7 @@
                     <h4 class="live-title">{{ spaceNamePreview() }}</h4>
 
                     <div class="pointer-arrow-doodle">
-                      <svg viewBox="0 0 48 32" class="doodle-svg">
+                      <svg aria-hidden="true" viewBox="0 0 48 32" class="doodle-svg">
                         <path d="M 40,6 C 30,2 15,10 6,24 M 6,24 L 14,19 M 6,24 L 8,30" fill="none" stroke="#09090b" stroke-width="2" stroke-linecap="round"/>
                       </svg>
                     </div>
@@ -359,15 +359,15 @@
                   (click)="toggleColumn(col.id)"
                 >
                   <span class="col-chip-icon-box" [style.background]="col.iconBg" [style.color]="col.color">
-                    @if (col.id === 'assignee') { <svg lucideUser class="chip-svg"></svg> }
-                    @else if (col.id === 'status') { <svg lucideCheckSquare class="chip-svg"></svg> }
-                    @else if (col.id === 'dueDate') { <svg lucideCalendar class="chip-svg"></svg> }
-                    @else if (col.id === 'timeline') { <svg lucideClock class="chip-svg"></svg> }
-                    @else if (col.id === 'lastUpdated') { <svg lucideHistory class="chip-svg"></svg> }
-                    @else if (col.id === 'notes') { <svg lucideFileText class="chip-svg"></svg> }
-                    @else if (col.id === 'files') { <svg lucidePaperclip class="chip-svg"></svg> }
-                    @else if (col.id === 'budget') { <svg lucideCoins class="chip-svg"></svg> }
-                    @else if (col.id === 'priority') { <svg lucideTriangle class="chip-svg"></svg> }
+                    @if (col.id === 'assignee') { <svg aria-hidden="true" lucideUser class="chip-svg"></svg> }
+                    @else if (col.id === 'status') { <svg aria-hidden="true" lucideCheckSquare class="chip-svg"></svg> }
+                    @else if (col.id === 'dueDate') { <svg aria-hidden="true" lucideCalendar class="chip-svg"></svg> }
+                    @else if (col.id === 'timeline') { <svg aria-hidden="true" lucideClock class="chip-svg"></svg> }
+                    @else if (col.id === 'lastUpdated') { <svg aria-hidden="true" lucideHistory class="chip-svg"></svg> }
+                    @else if (col.id === 'notes') { <svg aria-hidden="true" lucideFileText class="chip-svg"></svg> }
+                    @else if (col.id === 'files') { <svg aria-hidden="true" lucidePaperclip class="chip-svg"></svg> }
+                    @else if (col.id === 'budget') { <svg aria-hidden="true" lucideCoins class="chip-svg"></svg> }
+                    @else if (col.id === 'priority') { <svg aria-hidden="true" lucideTriangle class="chip-svg"></svg> }
                   </span>
                   <span class="board-column-chip-label">{{ col.label }}</span>
                 </button>
@@ -381,12 +381,12 @@
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -477,13 +477,13 @@
                     (click)="removeWorkflowState($index)"
                     title="Eliminar estado"
                   >
-                    <svg lucideX class="remove-x-icon"></svg>
+                    <svg aria-hidden="true" lucideX class="remove-x-icon"></svg>
                   </button>
                 </div>
               }
 
               <button type="button" class="btn-add-state" (click)="addWorkflowState()">
-                <svg lucidePlus class="add-icon"></svg>
+                <svg aria-hidden="true" lucidePlus class="add-icon"></svg>
                 <span>Agregar nuevo estado</span>
               </button>
             </div>
@@ -492,12 +492,12 @@
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -571,12 +571,12 @@
                   (click)="selectView(vo)"
                 >
                   <span class="view-chip-icon-box" [style.background]="vo.iconBg" [style.color]="vo.color">
-                    @if (vo.id === 'table') { <svg lucideTable class="chip-svg"></svg> }
-                    @else if (vo.id === 'kanban') { <svg lucideKanban class="chip-svg"></svg> }
-                    @else if (vo.id === 'calendar') { <svg lucideCalendar class="chip-svg"></svg> }
-                    @else if (vo.id === 'cards') { <svg lucideLayoutGrid class="chip-svg"></svg> }
-                    @else if (vo.id === 'gantt') { <svg lucideBarChart2 class="chip-svg"></svg> }
-                    @else if (vo.id === 'timeline') { <svg lucideClock class="chip-svg"></svg> }
+                    @if (vo.id === 'table') { <svg aria-hidden="true" lucideTable class="chip-svg"></svg> }
+                    @else if (vo.id === 'kanban') { <svg aria-hidden="true" lucideKanban class="chip-svg"></svg> }
+                    @else if (vo.id === 'calendar') { <svg aria-hidden="true" lucideCalendar class="chip-svg"></svg> }
+                    @else if (vo.id === 'cards') { <svg aria-hidden="true" lucideLayoutGrid class="chip-svg"></svg> }
+                    @else if (vo.id === 'gantt') { <svg aria-hidden="true" lucideBarChart2 class="chip-svg"></svg> }
+                    @else if (vo.id === 'timeline') { <svg aria-hidden="true" lucideClock class="chip-svg"></svg> }
                   </span>
                   <span class="view-chip-label">{{ vo.label }}</span>
                 </button>
@@ -589,12 +589,12 @@
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -640,7 +640,7 @@
                       <div class="timeline-row">
                         <span class="t-label">Testing QA</span>
                         <div class="t-bar-track">
-                          <span class="t-bar" style="width: 38%; left: 60%; background: #10b981;"></span>
+                          <span class="t-bar" style="width: 38%; left: 60%; background: var(--color-success-ink);"></span>
                         </div>
                       </div>
                     </div>
@@ -748,11 +748,11 @@
                   (click)="toggleWidget(w.id)"
                 >
                   <span class="widget-chip-icon-box" [style.background]="w.iconBg" [style.color]="w.color">
-                    @if (w.id === 'overview') { <svg lucideCheckSquare class="chip-svg"></svg> }
-                    @else if (w.id === 'by-status') { <svg lucideBarChart2 class="chip-svg"></svg> }
-                    @else if (w.id === 'by-assignee') { <svg lucideUser class="chip-svg"></svg> }
-                    @else if (w.id === 'overdue') { <svg lucideAlertTriangle class="chip-svg"></svg> }
-                    @else if (w.id === 'by-due-date') { <svg lucideTimer class="chip-svg"></svg> }
+                    @if (w.id === 'overview') { <svg aria-hidden="true" lucideCheckSquare class="chip-svg"></svg> }
+                    @else if (w.id === 'by-status') { <svg aria-hidden="true" lucideBarChart2 class="chip-svg"></svg> }
+                    @else if (w.id === 'by-assignee') { <svg aria-hidden="true" lucideUser class="chip-svg"></svg> }
+                    @else if (w.id === 'overdue') { <svg aria-hidden="true" lucideAlertTriangle class="chip-svg"></svg> }
+                    @else if (w.id === 'by-due-date') { <svg aria-hidden="true" lucideTimer class="chip-svg"></svg> }
                   </span>
                   <span class="widget-chip-label">{{ w.label }}</span>
                 </button>
@@ -766,12 +766,12 @@
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -867,7 +867,7 @@
               @for (m of teamInvites(); track $index) {
                 <div class="team-member-input-row">
                   <div class="invite-email-input-wrapper">
-                    <svg lucideMail class="invite-mail-icon"></svg>
+                    <svg aria-hidden="true" lucideMail class="invite-mail-icon"></svg>
                     <input
                       type="email"
                       [value]="m.email"
@@ -896,7 +896,7 @@
                       (click)="removeTeamMember($index)"
                       title="Quitar"
                     >
-                      <svg lucideX class="remove-x-icon"></svg>
+                      <svg aria-hidden="true" lucideX class="remove-x-icon"></svg>
                     </button>
                   }
                 </div>
@@ -904,19 +904,19 @@
 
               <!-- Botón + Agregar otro -->
               <button type="button" class="btn-add-another-member" (click)="addTeamMember()">
-                <svg lucidePlus class="add-icon"></svg>
+                <svg aria-hidden="true" lucidePlus class="add-icon"></svg>
                 <span>Agregar otro</span>
               </button>
             </div>
 
             <div class="step-footer-actions">
               <button type="button" class="btn-secondary-link" (click)="prevStep()">
-                <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
                 <span>Atrás</span>
               </button>
               <button type="button" class="btn-primary-blue" (click)="nextStep()">
                 <span>Continuar</span>
-                <svg lucideArrowRight class="btn-arrow-icon"></svg>
+                <svg aria-hidden="true" lucideArrowRight class="btn-arrow-icon"></svg>
               </button>
             </div>
           </div>
@@ -933,7 +933,7 @@
                     <h4 class="live-title">{{ spaceNamePreview() }}</h4>
                   </div>
                   <div class="team-collab-badge">
-                    <svg lucideUser style="width: 14px; height: 14px; color: #0052cc;"></svg>
+                    <svg aria-hidden="true" lucideUser style="width: 14px; height: 14px; color: #0052cc;"></svg>
                     <span>Equipo y Colaboradores</span>
                   </div>
                 </div>
@@ -1046,7 +1046,7 @@
 
           <div class="step-footer-actions">
             <button type="button" class="btn-secondary-link" (click)="prevStep()">
-              <svg lucideArrowLeft class="btn-arrow-icon"></svg>
+              <svg aria-hidden="true" lucideArrowLeft class="btn-arrow-icon"></svg>
               <span>Atrás</span>
             </button>
 
@@ -1060,7 +1060,7 @@
                 <span class="btn-spinner"></span>
                 <span>Creando espacio...</span>
               } @else {
-                <svg lucideCheck class="btn-icon"></svg>
+                <svg aria-hidden="true" lucideCheck class="btn-icon"></svg>
                 <span>Crear Espacio y Comenzar</span>
               }
             </button>
@@ -1078,13 +1078,13 @@
     <div class="classic-form-container">
       @if (success()) {
         <div class="wizard-alert success">
-          <svg lucideCheckCircle class="alert-icon"></svg>
+          <svg aria-hidden="true" lucideCheckCircle class="alert-icon"></svg>
           <span>{{ success() }}</span>
         </div>
       }
       @if (error()) {
         <div class="wizard-alert error">
-          <svg lucideXCircle class="alert-icon"></svg>
+          <svg aria-hidden="true" lucideXCircle class="alert-icon"></svg>
           <span>{{ error() }}</span>
         </div>
       }

@@ -15,7 +15,7 @@
       </div>
 
       <button class="btn-primary outline" (click)="exportToPDF()" [disabled]="!selectedProject()">
-        <svg lucideDownload></svg>
+        <svg aria-hidden="true" lucideDownload></svg>
         Descargar PDF
       </button>
     </div>
@@ -23,7 +23,7 @@
 
   @if (!selectedProject()) {
     <div class="empty-state">
-      <svg lucideClipboardList></svg>
+      <svg aria-hidden="true" lucideClipboardList></svg>
       <p>Todavía no hay proyectos para reportar.</p>
     </div>
   } @else {
@@ -43,28 +43,28 @@
       <div class="left-column">
         <section class="report-metrics">
           <article class="metric-card">
-            <div class="metric-icon total"><svg lucideClipboardList></svg></div>
+            <div class="metric-icon total"><svg aria-hidden="true" lucideClipboardList></svg></div>
             <div class="metric-info">
               <span>Total Tareas</span>
               <strong>{{ totalTasks() }}</strong>
             </div>
           </article>
           <article class="metric-card">
-            <div class="metric-icon done"><svg lucideCheckCircle></svg></div>
+            <div class="metric-icon done"><svg aria-hidden="true" lucideCheckCircle></svg></div>
             <div class="metric-info">
               <span>Completadas</span>
               <strong>{{ doneTasks() }}</strong>
             </div>
           </article>
           <article class="metric-card">
-            <div class="metric-icon progress"><svg lucideActivity></svg></div>
+            <div class="metric-icon progress"><svg aria-hidden="true" lucideActivity></svg></div>
             <div class="metric-info">
               <span>En Proceso</span>
               <strong>{{ inProgressTasks() }}</strong>
             </div>
           </article>
           <article class="metric-card">
-            <div class="metric-icon pending"><svg lucideClock></svg></div>
+            <div class="metric-icon pending"><svg aria-hidden="true" lucideClock></svg></div>
             <div class="metric-info">
               <span>Por Hacer</span>
               <strong>{{ pendingTasks() }}</strong>
@@ -130,7 +130,7 @@
       <h3>Lista de Tareas</h3>
       @if (projectTasks().length === 0) {
         <div class="empty-state">
-          <svg lucideListTodo></svg>
+          <svg aria-hidden="true" lucideListTodo></svg>
           <p>Este proyecto todavía no tiene tareas.</p>
         </div>
       } @else {

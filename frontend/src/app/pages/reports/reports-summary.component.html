@@ -6,11 +6,11 @@
     </div>
     <div class="header-actions" style="display: flex; gap: 12px;" data-html2canvas-ignore="true">
       <button class="btn-primary outline" (click)="exportToPDF()">
-        <svg lucideDownload></svg>
+        <svg aria-hidden="true" lucideDownload></svg>
         Descargar PDF
       </button>
       <a routerLink="/reports/project" class="btn-primary">
-        <svg lucideBarChart3></svg>
+        <svg aria-hidden="true" lucideBarChart3></svg>
         Reporte por Proyecto
       </a>
     </div>
@@ -27,17 +27,17 @@
       </div>
       <div class="metric-details">
         <div class="detail-item">
-          <svg lucideCheckCircle class="icon-done"></svg>
+          <svg aria-hidden="true" lucideCheckCircle class="icon-done"></svg>
           <strong>{{ doneTasks() }}</strong>
           <span>Hechas</span>
         </div>
         <div class="detail-item">
-          <svg lucideListTodo class="icon-progress"></svg>
+          <svg aria-hidden="true" lucideListTodo class="icon-progress"></svg>
           <strong>{{ inProgressTasks() }}</strong>
           <span>En proceso</span>
         </div>
         <div class="detail-item">
-          <svg lucideAlertTriangle class="icon-pending"></svg>
+          <svg aria-hidden="true" lucideAlertTriangle class="icon-pending"></svg>
           <strong>{{ pendingTasks() }}</strong>
           <span>Por hacer</span>
         </div>
@@ -59,7 +59,7 @@
   <section class="dashboard-grid charts-grid">
     <article class="chart-card">
       <div class="card-header">
-        <div class="icon-wrapper project-icon"><svg lucideBriefcase></svg></div>
+        <div class="icon-wrapper project-icon"><svg aria-hidden="true" lucideBriefcase></svg></div>
         <h2>Distribución de Proyectos</h2>
       </div>
       <div class="chart-content">
@@ -92,7 +92,7 @@
 
     <article class="chart-card">
       <div class="card-header">
-        <div class="icon-wrapper task-icon"><svg lucidePieChart></svg></div>
+        <div class="icon-wrapper task-icon"><svg aria-hidden="true" lucidePieChart></svg></div>
         <h2>Distribución de Tareas</h2>
       </div>
       <div class="chart-content">
@@ -127,7 +127,7 @@
   <section class="alerts-section">
     <article class="alerts-card">
       <div class="card-header">
-        <div class="icon-wrapper alert-icon"><svg lucideAlertTriangle></svg></div>
+        <div class="icon-wrapper alert-icon"><svg aria-hidden="true" lucideAlertTriangle></svg></div>
         <h2>Alertas del Sistema</h2>
       </div>
       <div class="alerts-list">

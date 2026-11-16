@@ -10,21 +10,21 @@
   <div class="dashboard-card">
     @if (success()) {
       <div class="alert-success">
-        <svg lucideCheckCircle style="width: 20px; height: 20px;"></svg>
+        <svg aria-hidden="true" lucideCheckCircle style="width: 20px; height: 20px;"></svg>
         {{ success() }}
       </div>
     }
 
     @if (error()) {
       <div class="alert-error">
-        <svg lucideXCircle style="width: 20px; height: 20px;"></svg>
+        <svg aria-hidden="true" lucideXCircle style="width: 20px; height: 20px;"></svg>
         {{ error() }}
       </div>
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div style="margin-bottom: 24px;">
-        <label class="form-label">Proyecto <span style="color: #ef4444;">*</span></label>
+        <label class="form-label">Proyecto <span style="color: var(--color-error);">*</span></label>
         <select formControlName="projectId" class="form-control" [class.is-invalid]="isInvalid('projectId')">
           <option value="" disabled>-- Seleccioná un proyecto --</option>
           @for (p of activeProjects(); track p.id) {
@@ -35,14 +35,14 @@
       </div>
 
       <div style="margin-bottom: 24px;">
-        <label class="form-label">Título <span style="color: #ef4444;">*</span></label>
+        <label class="form-label">Título <span style="color: var(--color-error);">*</span></label>
         <input type="text" formControlName="title" class="form-control" [class.is-invalid]="isInvalid('title')" placeholder="Ej: Rediseñar landing page" />
         @if (isInvalid('title')) { <span class="error-text">El título es obligatorio.</span> }
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
         <div>
-          <label class="form-label">Horas estimadas <span style="color: #ef4444;">*</span></label>
+          <label class="form-label">Horas estimadas <span style="color: var(--color-error);">*</span></label>
           <input type="number" formControlName="estimateHours" class="form-control" [class.is-invalid]="isInvalid('estimateHours')" placeholder="Ej: 8" min="1" />
           @if (isInvalid('estimateHours')) { <span class="error-text">Las horas deben ser mayor a 0.</span> }
         </div>
@@ -55,7 +55,7 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
         <div>
-          <label class="form-label">Estado <span style="color: #ef4444;">*</span></label>
+          <label class="form-label">Estado <span style="color: var(--color-error);">*</span></label>
           <select formControlName="status" class="form-control" [class.is-invalid]="isInvalid('status')">
             <option value="" disabled>-- Seleccioná un estado --</option>
             <option value="TODO">Por hacer</option>
@@ -76,13 +76,13 @@
           @if (loading()) {
             Guardando...
           } @else {
-            <svg lucideSave style="width: 18px; height: 18px;"></svg>
+            <svg aria-hidden="true" lucideSave style="width: 18px; height: 18px;"></svg>
             Guardar Tarea
           }
         </button>
 
         <button type="button" class="btn-outline" (click)="cancelar()" [disabled]="loading()">
-          <svg lucideX style="width: 18px; height: 18px;"></svg>
+          <svg aria-hidden="true" lucideX style="width: 18px; height: 18px;"></svg>
           Cancelar
         </button>
       </div>

@@ -100,7 +100,7 @@ button:disabled,
   border-radius: 4px;
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -136,7 +136,7 @@ button:disabled,
   top: -3px;
   right: -3px;
   background: var(--danger-color, var(--color-tool-red));
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 0.6rem;
   font-weight: 700;
   width: 15px;
@@ -167,7 +167,7 @@ button:disabled,
   height: 32px;
   border-radius: var(--space-xs);
   background: var(--primary-color, var(--color-accent-hover));
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-weight: 700;
   font-size: 0.85rem;
   display: flex;
@@ -596,7 +596,7 @@ button:disabled,
   align-items: center;
   justify-content: center;
   padding: 0;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   cursor: pointer;
   flex-shrink: 0;
 }

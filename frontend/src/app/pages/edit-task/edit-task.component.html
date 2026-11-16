@@ -100,7 +100,7 @@
             [disabled]="saving()"
             [routerLink]="['/projects', projectId]"
           >
-            <svg lucideX style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+            <svg aria-hidden="true" lucideX style="width: 18px; height: 18px; margin-right: 8px;"></svg>
             Cancelar
           </button>
           
@@ -113,7 +113,7 @@
               <div class="spinner-border spinner-border-sm me-2" role="status"></div>
               Guardando...
             } @else {
-              <svg lucideSave style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+              <svg aria-hidden="true" lucideSave style="width: 18px; height: 18px; margin-right: 8px;"></svg>
               Actualizar Tarea
             }
           </button>

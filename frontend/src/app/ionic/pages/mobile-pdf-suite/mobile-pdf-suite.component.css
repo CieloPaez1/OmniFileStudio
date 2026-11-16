@@ -126,14 +126,14 @@ button:disabled,
 
 .sp-subbar-link.active {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .sp-subbar-link.sp-ai-pill { color: var(--color-accent); background: var(--color-accent-soft); }
 
 .sp-subbar-link.sp-ai-pill.active {
   background: var(--color-accent-hover);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .sp-subbar-link.sp-cam-pill { color: var(--color-ink); background: var(--color-info-soft); }
@@ -182,7 +182,7 @@ button:disabled,
 
 .hero-nav-card.active {
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   border-color: transparent;
   box-shadow: 0 12px 26px -6px var(--color-accent-soft);
   transform: translateY(-2px);
@@ -233,7 +233,7 @@ button:disabled,
 
 .hero-nav-card.active .hero-icon-badge {
   background: var(--color-navy-field-hover);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .hero-card-copy {
@@ -375,7 +375,7 @@ button:disabled,
 
 .swap-langs-btn:hover {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   transform: rotate(180deg);
 }
 
@@ -538,7 +538,7 @@ button:disabled,
 
 .order-badge {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 0.74rem;
   font-weight: 800;
   padding: 0.25rem 0.55rem;
@@ -629,7 +629,7 @@ button:disabled,
 .target-fmt-pill.selected {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .signature-pad-wrap {
@@ -888,7 +888,7 @@ button:disabled,
 
 .ocr-tool-btn.primary {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   border-color: var(--color-accent);
 }
 
@@ -1000,7 +1000,7 @@ button:disabled,
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 1.15rem;
   flex-shrink: 0;
 }
@@ -1295,7 +1295,7 @@ button:disabled,
 .ai-bubble.user {
   align-self: flex-end;
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   border-bottom-right-radius: 2px;
 }
 
@@ -1343,7 +1343,7 @@ button:disabled,
 .sp-tools-navy-toolbar {
   --background: var(--color-navy) !important;
   background: var(--color-navy) !important;
-  --color: var(--color-paper-2);
+  --color: var(--color-ink);
   min-height: 56px;
   padding-inline: 0.5rem;
 }
@@ -1357,14 +1357,14 @@ button:disabled,
   font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 1.7rem;
   font-weight: 800;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   letter-spacing: -0.02em;
   padding-left: 0.35rem;
 }
 
 .sp-toolbar-menu-btn {
-  --color: var(--color-paper-2);
-  color: var(--color-paper-2);
+  --color: var(--color-ink);
+  color: var(--color-ink);
 }
 
 .sp-catalog-search-bar-wrap {
@@ -1376,7 +1376,7 @@ button:disabled,
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: var(--color-accent-soft);
+  background: var(--color-paper-2); border-color: var(--color-rule-strong);
   border: 1px solid var(--color-navy-field-hover);
   border-radius: 12px;
   padding: 0.5rem 0.85rem;
@@ -1399,14 +1399,14 @@ button:disabled,
   border: none;
   outline: none;
   background: transparent;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 0.9rem;
   font-weight: 500;
   font-family: inherit;
 }
 
 .sp-catalog-search-input::placeholder {
-  color: var(--color-navy-ink);
+  color: var(--color-muted);
 }
 
 .sp-catalog-search-clear {
@@ -1428,7 +1428,7 @@ button:disabled,
   border-radius: 9999px;
   background: var(--color-accent-soft);
   border: 1px solid var(--color-navy-field-hover);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
@@ -1442,12 +1442,11 @@ button:disabled,
 .sp-tool-active-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-paper-2);
+  color: var(--color-ink);
 }
 
 .sp-catalog-body {
-  --background: var(--color-paper-3);
-  background-color: var(--color-paper-3);
+  --background: var(--color-paper); background-color: var(--color-paper);
 }
 
 :host-context(.dark) .sp-catalog-body,
@@ -1471,14 +1470,14 @@ button:disabled,
   font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--color-navy);
+  color: var(--color-ink);
   margin: 0.75rem 0 0.55rem 0.25rem;
   letter-spacing: -0.01em;
 }
 
 :host-context(.dark) .sp-catalog-category-header,
 [data-theme="dark"] .sp-catalog-category-header {
-  color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .sp-catalog-cards-stack {
@@ -1505,6 +1504,7 @@ button:disabled,
 .sp-catalog-tool-card:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px var(--color-rule);
+  border-color: var(--color-rule-strong);
 }
 
 .sp-catalog-tool-card:active {
@@ -1522,6 +1522,7 @@ button:disabled,
 :host-context(.dark) .sp-catalog-tool-card:hover,
 [data-theme="dark"] .sp-catalog-tool-card:hover {
   background: var(--color-paper-3);
+  border-color: var(--color-rule-strong);
 }
 
 .sp-catalog-icon-squircle {
@@ -1568,13 +1569,13 @@ button:disabled,
   font-family: var(--font-display, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 1.02rem;
   font-weight: 600;
-  color: var(--color-navy);
+  color: var(--color-ink);
   display: block;
 }
 
 :host-context(.dark) .sp-catalog-tool-name,
 [data-theme="dark"] .sp-catalog-tool-name {
-  color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .sp-catalog-end-col {
@@ -1586,7 +1587,7 @@ button:disabled,
 
 .sp-catalog-pro-tag {
   background: var(--color-tool-amber);
-  color: var(--color-ink);
+  color: var(--color-pro-ink);
   font-size: 0.68rem;
   font-weight: 800;
   padding: var(--space-3xs) var(--space-xs);
@@ -1626,6 +1627,23 @@ button:disabled,
 
 .sp-catalog-icon-squircle.sp-red .sp-catalog-letter-badge { font-size: var(--text-xs); }
 
+
+
+@media (min-width: 768px) {
+  .sp-catalog-view-container {
+    max-width: 1120px;
+  }
+  .sp-catalog-cards-stack {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-sm);
+  }
+}
+@media (min-width: 1100px) {
+  .sp-catalog-cards-stack {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

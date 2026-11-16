@@ -4,27 +4,21 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 export type AppTheme = 'light' | 'dark' | 'minimal' | 'cyberpunk' | 'ocean' | 'sunset' | 'forest' | 'crimson' | 'cute';
 
-// =============================================================================
-// [OMNIFILE STUDIO · REQUISITO 3: SERVICIO DE MODO OSCURO NATIVO (DARK MODE)]
-// Gestiona la alternancia limpia entre el Modo Claro Minimalista y el Modo
-// Oscuro Slate/Zinc Profundo, aplicando las variables CSS de Ionic y
-// persistiendo la preferencia en @capacitor/preferences y localStorage.
-// =============================================================================
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private readonly DARK_PREF_KEY = 'omnifile_dark_mode_v1';
+  private readonly DARK_PREF_KEY = 'omnifile_obsidian_dark_v2';
 
-  public readonly currentTheme = signal<AppTheme>('light');
-  public readonly isDarkMode = signal<boolean>(false);
+  public readonly currentTheme = signal<AppTheme>('dark');
+  public readonly isDarkMode = signal<boolean>(true);
 
   public readonly availableThemes: { id: AppTheme; name: string; color: string }[] = [
-    { id: 'light', name: '☀️ Claro', color: '#6366f1' },
-    { id: 'dark', name: '🌙 Oscuro', color: '#6366f1' },
-    { id: 'ocean', name: '🌊 Océano', color: '#0284c7' },
-    { id: 'forest', name: '🌲 Esmeralda', color: '#059669' },
-    { id: 'sunset', name: '🟣 Violeta', color: '#7c3aed' }
+    { id: 'dark', name: 'Obsidiana Naranja', color: '#ff6b00' },
+    { id: 'sunset', name: 'Terracota Cálido', color: '#ea580c' },
+    { id: 'ocean', name: 'Carbón Profundo', color: '#f97316' },
+    { id: 'forest', name: 'Ámbar Estudio', color: '#f59e0b' },
+    { id: 'light', name: 'Marfil Cálido', color: '#ea580c' }
   ];
 
   constructor() {
@@ -32,16 +26,8 @@ export class ThemeService {
   }
 
   private async initTheme(): Promise<void> {
-    const allowedThemes: AppTheme[] = ['light', 'dark', 'ocean', 'forest', 'sunset'];
-    const rawTheme = (typeof localStorage !== 'undefined' ? localStorage.getItem('app-theme') : 'light') as AppTheme;
-    const savedTheme = allowedThemes.includes(rawTheme) ? rawTheme : 'light';
-
     let savedDark: string | null =
-      typeof localStorage !== 'undefined'
-        ? localStorage.getItem(this.DARK_PREF_KEY) ||
-          localStorage.getItem('planix_dark_mode') ||
-          localStorage.getItem('taskgo_dark_mode')
-        : null;
+      typeof localStorage !== 'undefined' ? localStorage.getItem(this.DARK_PREF_KEY) : null;
 
     if (savedDark === null) {
       try {
@@ -50,44 +36,21 @@ export class ThemeService {
       } catch {}
     }
 
-    const prefersDark =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldBeDark = savedDark !== null ? savedDark === 'true' : true;
+    const activeTheme: AppTheme = shouldBeDark ? 'dark' : 'light';
 
-    const isDarkInherently = savedTheme === 'dark';
-    let shouldBeDark = false;
-
-    if (savedDark !== null) {
-      shouldBeDark = savedDark === 'true';
-    } else if (isDarkInherently || prefersDark) {
-      shouldBeDark = true;
-    }
-
-    this.currentTheme.set(shouldBeDark ? 'dark' : savedTheme);
+    this.currentTheme.set(activeTheme);
     this.isDarkMode.set(shouldBeDark);
-    this.applyTheme(shouldBeDark ? 'dark' : savedTheme, shouldBeDark);
+    this.applyTheme(activeTheme, shouldBeDark);
   }
 
   public setTheme(theme: AppTheme): void {
     this.currentTheme.set(theme);
-
-    let darkState = this.isDarkMode();
-    if (theme === 'dark' || theme === 'cyberpunk' || theme === 'crimson') {
-      darkState = true;
-      this.isDarkMode.set(true);
-    } else if (theme === 'light') {
-      darkState = false;
-      this.isDarkMode.set(false);
-    }
-
+    const darkState = theme !== 'light';
+    this.isDarkMode.set(darkState);
     this.applyTheme(theme, darkState);
   }
 
-  /**
-   * Alterna limpiamente entre Modo Claro Minimalista y Modo Oscuro Nativo Slate/Zinc
-   * con feedback háptico sutil (@capacitor/haptics).
-   */
   public toggleDarkLight(): void {
     const nextDark = !this.isDarkMode();
     this.isDarkMode.set(nextDark);
@@ -96,40 +59,27 @@ export class ThemeService {
       Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
     } catch {}
 
-    let theme = this.currentTheme();
-    if (!nextDark && theme === 'dark') {
-      theme = 'light';
-      this.currentTheme.set('light');
-    } else if (nextDark && theme === 'light') {
-      theme = 'dark';
-      this.currentTheme.set('dark');
-    }
-
+    const theme: AppTheme = nextDark ? 'dark' : 'light';
+    this.currentTheme.set(theme);
     this.applyTheme(theme, nextDark);
   }
 
   private applyTheme(theme: AppTheme, isDark: boolean): void {
     if (typeof document !== 'undefined') {
-      document.documentElement.removeAttribute('data-theme');
-      document.body.removeAttribute('data-theme');
-
-      if (theme !== 'light') {
-        document.documentElement.setAttribute('data-theme', theme);
-        document.body.setAttribute('data-theme', theme);
-      }
-
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-mode', isDark ? 'dark' : 'light');
       document.body.setAttribute('data-mode', isDark ? 'dark' : 'light');
       document.documentElement.classList.toggle('dark', isDark);
       document.documentElement.classList.toggle('ion-palette-dark', isDark);
       document.body.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('light', !isDark);
+      document.body.classList.toggle('light', !isDark);
     }
 
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('app-theme', theme);
       localStorage.setItem(this.DARK_PREF_KEY, isDark ? 'true' : 'false');
-      localStorage.setItem('planix_dark_mode', isDark ? 'true' : 'false');
-      localStorage.setItem('taskgo_dark_mode', isDark ? 'true' : 'false');
     }
 
     Preferences.set({

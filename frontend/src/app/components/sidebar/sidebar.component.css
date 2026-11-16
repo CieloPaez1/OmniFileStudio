@@ -1,3 +1,32 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
+ * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, unified Obsidian+Charcoal+Terracotta+Orange surfaces across desktop and mobile */
+
+html {
+  overflow-x: clip;
+}
+body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .sidebar {
   width: 240px;
   min-height: 100vh;
@@ -10,7 +39,7 @@
   top: 0;
   bottom: 0;
   z-index: 100;
-  transition: width 0.2s cubic-bezier(0.2, 0, 0, 1);
+  transition: transform var(--dur-short) var(--ease-out), opacity var(--dur-short) var(--ease-out);
   user-select: none;
 }
 
@@ -33,7 +62,7 @@
   height: 32px;
   border-radius: 6px;
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: var(--color-ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,7 +85,7 @@
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.04em;
+  
   line-height: 1.1;
 }
 
@@ -64,8 +93,8 @@
   font-size: 0.65rem;
   font-weight: 600;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
 }
 
 .collapse-btn {
@@ -81,7 +110,7 @@
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.15s ease;
   padding: 0;
 }
 
@@ -109,7 +138,7 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.15s ease;
 }
 
 .btn-sidebar-action.primary {
@@ -120,7 +149,7 @@
 
 .btn-sidebar-action.primary:hover {
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: var(--color-ink);
 }
 
 .btn-sidebar-action.secondary {
@@ -148,8 +177,8 @@
 .nav-section-title {
   font-size: 0.65rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  
+  
   color: var(--text-tertiary);
   padding: 8px 10px 4px;
 }
@@ -269,4 +298,12 @@
   padding: 10px;
   border-top: 1px solid var(--border-color);
   margin-top: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

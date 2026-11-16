@@ -1,13 +1,13 @@
 <div class="container py-5" style="max-width: 1100px;">
 
   <!-- FORM CARD -->
-  <div class="card border-0 shadow-sm mb-4" style="border-radius: 24px; overflow: hidden; background: #ffffff;">
+  <div class="card border-0 shadow-sm mb-4" style="border-radius: 24px; overflow: hidden; background: var(--color-paper-2);">
 
     <!-- HEADER -->
-    <div class="card-header border-0" style="background: #ffffff; padding: 32px; border-bottom: 1px solid #eef2f7;">
+    <div class="card-header border-0" style="background: var(--color-paper-2); padding: 32px; border-bottom: 1px solid #eef2f7;">
       <div class="d-flex align-items-center gap-3">
         <div style="width: 60px; height: 60px; border-radius: 18px; background: #f0f9ff; display: flex; align-items: center; justify-content: center; font-size: 28px;">
-          <svg lucideSearch style="width: 24px; height: 24px; color: #0284c7;"></svg>
+          <svg aria-hidden="true" lucideSearch style="width: 24px; height: 24px; color: #0284c7;"></svg>
         </div>
         <div>
           <h2 class="mb-1" style="color: #111827; font-weight: 700; font-size: 2rem;">Filtrar Tareas</h2>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- BODY -->
-    <div class="card-body" style="padding: 40px; background: #ffffff;">
+    <div class="card-body" style="padding: 40px; background: var(--color-paper-2);">
 
       @if (error()) {
         <div class="mb-4" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 12px; font-weight: 500;">
@@ -39,7 +39,7 @@
               [class.is-invalid]="form.get('minEstimate')?.invalid && form.get('minEstimate')?.touched"
               placeholder="Ej: 8"
               min="1"
-              style="height: 56px; border-radius: 14px; border: 1px solid #dbe1ea; background: #fff; padding: 0 18px;"
+              style="height: 56px; border-radius: 14px; border: 1px solid #dbe1ea; background: var(--color-paper-2); padding: 0 18px;"
             />
             @if (form.get('minEstimate')?.invalid && form.get('minEstimate')?.touched) {
               <div style="color: #dc3545; font-size: 0.875rem; margin-top: 4px;">
@@ -57,7 +57,7 @@
               formControlName="assignee"
               class="form-control"
               placeholder="Ej: alice"
-              style="height: 56px; border-radius: 14px; border: 1px solid #dbe1ea; background: #fff; padding: 0 18px;"
+              style="height: 56px; border-radius: 14px; border: 1px solid #dbe1ea; background: var(--color-paper-2); padding: 0 18px;"
             />
           </div>
         </div>
@@ -73,7 +73,7 @@
               <div class="spinner-border spinner-border-sm me-2" role="status"></div>
               Buscando...
             } @else {
-              <svg lucideSearch style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+              <svg aria-hidden="true" lucideSearch style="width: 18px; height: 18px; margin-right: 8px;"></svg>
               Buscar
             }
           </button>
@@ -84,7 +84,7 @@
             style="border-radius: 12px; font-weight: 600; color: #4b5563; background: #f3f4f6; border: none;"
             (click)="limpiar()"
           >
-            <svg lucideX style="width: 18px; height: 18px; margin-right: 8px;"></svg>
+            <svg aria-hidden="true" lucideX style="width: 18px; height: 18px; margin-right: 8px;"></svg>
             Limpiar
           </button>
         </div>
@@ -94,8 +94,8 @@
   </div>
 
   <!-- TABLA -->
-  <div class="card border-0 shadow-sm" style="border-radius: 24px; overflow: hidden; background: #ffffff;">
-    <div class="card-header border-0" style="background: #ffffff; padding: 28px 32px; border-bottom: 1px solid #eef2f7;">
+  <div class="card border-0 shadow-sm" style="border-radius: 24px; overflow: hidden; background: var(--color-paper-2);">
+    <div class="card-header border-0" style="background: var(--color-paper-2); padding: 28px 32px; border-bottom: 1px solid #eef2f7;">
       <h4 class="mb-1" style="color: #111827; font-weight: 700;">Resultados</h4>
       <p class="mb-0" style="color: #6b7280;">Tareas que coinciden con los filtros</p>
     </div>

@@ -72,7 +72,7 @@
         class="view-tab-btn"
         [class.active]="viewMode() === 'BOARD'"
         (click)="viewMode.set('BOARD')">
-        <svg lucideKanban style="width: 17px; height: 17px;"></svg>
+        <svg aria-hidden="true" lucideKanban style="width: 17px; height: 17px;"></svg>
         <span>Tablero Kanban</span>
       </button>
 
@@ -81,7 +81,7 @@
         class="view-tab-btn"
         [class.active]="viewMode() === 'LIST'"
         (click)="viewMode.set('LIST')">
-        <svg lucideList style="width: 17px; height: 17px;"></svg>
+        <svg aria-hidden="true" lucideList style="width: 17px; height: 17px;"></svg>
         <span>Lista</span>
       </button>
     </div>
@@ -90,7 +90,7 @@
     <div class="jira-filter-controls">
       <!-- Buscador -->
       <div class="search-input-wrap">
-        <svg lucideSearch class="search-ico"></svg>
+        <svg aria-hidden="true" lucideSearch class="search-ico"></svg>
         <input
           type="text"
           placeholder="Buscar tarea, proyecto, responsable..."
@@ -140,7 +140,7 @@
       <!-- Limpiar Filtros -->
       @if (searchTerm() || statusFilter() !== 'ALL' || priorityFilter() !== 'ALL' || projectFilter() !== 'ALL') {
         <button type="button" class="btn-clear-filter" (click)="resetFilters()" title="Limpiar filtros">
-          <svg lucideX style="width: 15px; height: 15px;"></svg>
+          <svg aria-hidden="true" lucideX style="width: 15px; height: 15px;"></svg>
           Limpiar
         </button>
       }
@@ -161,7 +161,7 @@
     </div>
   } @else if (filteredTasks().length === 0) {
     <div class="empty-state-card" style="margin-top: 24px;">
-      <svg lucideList style="width: 48px; height: 48px; opacity: 0.4; margin-bottom: 12px;"></svg>
+      <svg aria-hidden="true" lucideList style="width: 48px; height: 48px; opacity: 0.4; margin-bottom: 12px;"></svg>
       <h3>No se encontraron tareas</h3>
       <p>Probá cambiando los filtros o agregá nuevas tareas desde el detalle de cada proyecto.</p>
     </div>
@@ -197,7 +197,7 @@
                 </div>
 
                 <div class="card-project-pill">
-                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <svg aria-hidden="true" lucideFolder style="width: 12px; height: 12px;"></svg>
                   <span>{{ getProjectName(t.projectId) }}</span>
                 </div>
 
@@ -212,14 +212,14 @@
                   </div>
 
                   <span class="estimate-pill">
-                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                     {{ t.estimateHours }}h
                   </span>
                 </div>
 
                 @if (t.dueDate) {
                   <div class="card-due-date">
-                    <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideCalendar style="width: 13px; height: 13px;"></svg>
                     <span>{{ t.dueDate | date:'shortDate' }}</span>
                   </div>
                 }
@@ -232,7 +232,7 @@
                     (click)="moverColumna(t, 'next', $event)"
                     title="Mover a En Progreso →">
                     <span>En curso</span>
-                    <svg lucideChevronRight style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideChevronRight style="width: 14px; height: 14px;"></svg>
                   </button>
                 </div>
               </div>
@@ -264,7 +264,7 @@
                 </div>
 
                 <div class="card-project-pill">
-                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <svg aria-hidden="true" lucideFolder style="width: 12px; height: 12px;"></svg>
                   <span>{{ getProjectName(t.projectId) }}</span>
                 </div>
 
@@ -279,14 +279,14 @@
                   </div>
 
                   <span class="estimate-pill">
-                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                     {{ t.estimateHours }}h
                   </span>
                 </div>
 
                 @if (t.dueDate) {
                   <div class="card-due-date">
-                    <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideCalendar style="width: 13px; height: 13px;"></svg>
                     <span>{{ t.dueDate | date:'shortDate' }}</span>
                   </div>
                 }
@@ -298,7 +298,7 @@
                     class="btn-move-col"
                     (click)="moverColumna(t, 'prev', $event)"
                     title="← Volver a Por Hacer">
-                    <svg lucideChevronLeft style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideChevronLeft style="width: 14px; height: 14px;"></svg>
                     <span>Por Hacer</span>
                   </button>
 
@@ -308,7 +308,7 @@
                     (click)="moverColumna(t, 'next', $event)"
                     title="Completar tarea →">
                     <span>Hecho</span>
-                    <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideCheck style="width: 14px; height: 14px;"></svg>
                   </button>
                 </div>
               </div>
@@ -338,7 +338,7 @@
                 </div>
 
                 <div class="card-project-pill">
-                  <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                  <svg aria-hidden="true" lucideFolder style="width: 12px; height: 12px;"></svg>
                   <span>{{ getProjectName(t.projectId) }}</span>
                 </div>
 
@@ -353,7 +353,7 @@
                   </div>
 
                   <span class="estimate-pill">
-                    <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                     {{ t.estimateHours }}h
                   </span>
                 </div>
@@ -365,7 +365,7 @@
                     class="btn-move-col"
                     (click)="moverColumna(t, 'prev', $event)"
                     title="Reabrir a En Progreso">
-                    <svg lucideRotateCcw style="width: 13px; height: 13px;"></svg>
+                    <svg aria-hidden="true" lucideRotateCcw style="width: 13px; height: 13px;"></svg>
                     <span>Reabrir</span>
                   </button>
                 </div>
@@ -391,7 +391,7 @@
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="jira-ticket-id">#PLX-{{ t.id }}</span>
                   <span class="card-project-pill">
-                    <svg lucideFolder style="width: 12px; height: 12px;"></svg>
+                    <svg aria-hidden="true" lucideFolder style="width: 12px; height: 12px;"></svg>
                     {{ getProjectName(t.projectId) }}
                   </span>
                   <span class="row-title" [class.is-done]="t.status === 'DONE'">{{ t.title }}</span>
@@ -417,11 +417,11 @@
                   @if (t.status === 'DONE') {
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <span class="monday-pill pill-done">
-                        <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                        <svg aria-hidden="true" lucideCheck style="width: 14px; height: 14px;"></svg>
                         Hecho
                       </span>
                       <button class="btn-icon-small" (click)="reabrirTarea(t)" title="Reabrir tarea">
-                        <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+                        <svg aria-hidden="true" lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
                       </button>
                     </div>
                   } @else {
@@ -438,11 +438,11 @@
 
                 @if (t.status !== 'DONE') {
                   <button class="btn-icon-small" (click)="goToEdit(t, $event)" title="Editar tarea">
-                    <svg lucideEdit style="width: 16px; height: 16px;"></svg>
+                    <svg aria-hidden="true" lucideEdit style="width: 16px; height: 16px;"></svg>
                   </button>
                 }
                 <button class="btn-icon-small danger" (click)="eliminarTarea(t, $event)" title="Eliminar tarea">
-                  <svg lucideTrash2 class="trash-icon" style="width: 16px; height: 16px;"></svg>
+                  <svg aria-hidden="true" lucideTrash2 class="trash-icon" style="width: 16px; height: 16px;"></svg>
                 </button>
               </div>
 
@@ -476,14 +476,14 @@
               class="btn-icon-small danger"
               (click)="eliminarTarea(selectedTask()!, $event)"
               title="Eliminar tarea">
-              <svg lucideTrash2 style="width: 17px; height: 17px;"></svg>
+              <svg aria-hidden="true" lucideTrash2 style="width: 17px; height: 17px;"></svg>
             </button>
             <button
               type="button"
               class="btn-icon-small"
               (click)="closeTaskDrawer()"
               title="Cerrar panel">
-              <svg lucideX style="width: 18px; height: 18px;"></svg>
+              <svg aria-hidden="true" lucideX style="width: 18px; height: 18px;"></svg>
             </button>
           </div>
         </div>
@@ -496,7 +496,7 @@
           <!-- Propiedad: Proyecto -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideFolder style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideFolder style="width: 15px; height: 15px;"></svg>
               <span>Proyecto</span>
             </div>
             <div class="prop-value">
@@ -507,7 +507,7 @@
           <!-- Propiedad: Estado -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideTag style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideTag style="width: 15px; height: 15px;"></svg>
               <span>Estado</span>
             </div>
             <div class="prop-value">
@@ -525,7 +525,7 @@
           <!-- Propiedad: Responsable -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideUser style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideUser style="width: 15px; height: 15px;"></svg>
               <span>Responsable</span>
             </div>
             <div class="prop-value">
@@ -536,7 +536,7 @@
           <!-- Propiedad: Prioridad -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideFilter style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideFilter style="width: 15px; height: 15px;"></svg>
               <span>Prioridad</span>
             </div>
             <div class="prop-value">
@@ -554,7 +554,7 @@
           <!-- Propiedad: Estimación -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideClock style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideClock style="width: 15px; height: 15px;"></svg>
               <span>Estimación</span>
             </div>
             <div class="prop-value">
@@ -565,7 +565,7 @@
           <!-- Propiedad: Vencimiento -->
           <div class="prop-row">
             <div class="prop-label">
-              <svg lucideCalendar style="width: 15px; height: 15px;"></svg>
+              <svg aria-hidden="true" lucideCalendar style="width: 15px; height: 15px;"></svg>
               <span>Vencimiento</span>
             </div>
             <div class="prop-value">
@@ -605,7 +605,7 @@
                   class="btn-delete-subtask"
                   (click)="deleteSubtask(sub.id)"
                   title="Eliminar subtarea">
-                  <svg lucideX style="width: 14px; height: 14px;"></svg>
+                  <svg aria-hidden="true" lucideX style="width: 14px; height: 14px;"></svg>
                 </button>
               </div>
             }

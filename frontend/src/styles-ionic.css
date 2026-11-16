@@ -1,11 +1,7 @@
-/* ============================================================================
-   OMNIFILE STUDIO · SISTEMA DE DISEÑO IONIC 9 + CAPACITOR 8
-   1. Eliminación de cajas grises pesadas: tarjetas rounded-2xl (20px) + shadow-sm/md
-   2. Paleta Slate Moderna + Acento Índigo Vibrante (#6366f1)
-   3. Modo Oscuro Nativo (Dark Mode) con tonos Slate/Zinc profundos
-   4. Badges e Iconos de Archivo Estilizados por formato (PDF, Imagen, Datos, Texto)
-   5. Animaciones de Transición Suaves y Ticks de Confirmación SVG
-   ============================================================================ */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
+ * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, Ionic shadow DOM components unified with Obsidian+Orange CSS variables */
 
 @import '@ionic/angular/css/core.css';
 @import '@ionic/angular/css/structure.css';
@@ -18,64 +14,37 @@
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
 
-:root {
-  /* Paleta Hallmark OKLCH conectada a tokens.css (Modo Claro) */
+:root,
+body,
+body.dark,
+html.dark,
+html[data-mode="dark"],
+body[data-mode="dark"],
+html[data-mode="light"],
+body[data-mode="light"] {
   --ion-color-primary: var(--color-accent);
   --ion-color-primary-contrast: var(--color-accent-ink);
-  --ion-color-primary-shade: var(--color-accent-hover);
-  --ion-color-primary-tint: var(--color-tool-indigo);
+  --ion-color-primary-shade: var(--color-terracotta);
+  --ion-color-primary-tint: var(--color-accent-hover);
 
-  --ion-color-secondary: var(--color-tool-blue);
-  --ion-color-secondary-contrast: var(--color-accent-ink);
-  --ion-color-secondary-shade: var(--color-accent-hover);
-  --ion-color-secondary-tint: var(--color-tool-teal);
+  --ion-color-secondary: var(--color-tool-amber);
+  --ion-color-secondary-contrast: var(--color-pro-ink);
+  --ion-color-secondary-shade: var(--color-accent);
+  --ion-color-secondary-tint: var(--color-tool-yellow);
 
-  --ion-color-tertiary: var(--color-tool-purple);
+  --ion-color-tertiary: var(--color-terracotta);
   --ion-color-tertiary-contrast: var(--color-accent-ink);
-  --ion-color-tertiary-shade: var(--color-tool-purple);
-  --ion-color-tertiary-tint: var(--color-tool-indigo);
+  --ion-color-tertiary-shade: var(--color-terracotta);
+  --ion-color-tertiary-tint: var(--color-accent);
 
   --ion-color-success: var(--color-success);
   --ion-color-warning: var(--color-warning);
   --ion-color-danger: var(--color-error);
-  --ion-color-medium: var(--color-muted);
+  --ion-color-medium: var(--color-ink-2);
   --ion-color-light: var(--color-paper-3);
 
-  /* Superficies Paper & Ink Limpias */
   --ion-background-color: var(--color-paper);
   --ion-text-color: var(--color-ink);
-  --ion-card-background: var(--color-paper-2);
-  --ion-item-background: var(--color-paper-2);
-  --ion-toolbar-background: var(--color-navy);
-  --ion-tab-bar-background: var(--color-navy);
-
-  /* Tokens globales de OmniFile Studio */
-  --omni-surface: var(--color-paper-2);
-  --omni-surface-muted: var(--color-paper-3);
-  --omni-text-main: var(--color-ink);
-  --omni-text-muted: var(--color-ink-2);
-  --omni-border-subtle: var(--color-rule);
-  --omni-radius-2xl: var(--radius-lg);
-  --omni-radius-xl: var(--radius-card);
-  --omni-shadow-sm: var(--shadow-subtle);
-  --omni-shadow-md: var(--shadow-card);
-}
-
-/* ============================================================================
-   [REQUISITO 3] MODO OSCURO NATIVO (DARK MODE) CON TOKENS HALLMARK
-   ============================================================================ */
-body.dark,
-html.dark,
-html[data-mode="dark"],
-body[data-mode="dark"] {
-  --ion-color-primary: var(--color-accent);
-  --ion-color-primary-contrast: var(--color-accent-ink);
-  --ion-color-primary-shade: var(--color-accent-hover);
-  --ion-color-primary-tint: var(--color-tool-indigo);
-
-  --ion-background-color: var(--color-paper);
-  --ion-text-color: var(--color-ink);
-
   --ion-card-background: var(--color-paper-2);
   --ion-item-background: var(--color-paper-2);
   --ion-toolbar-background: var(--color-navy);
@@ -87,78 +56,47 @@ body[data-mode="dark"] {
   --omni-text-main: var(--color-ink);
   --omni-text-muted: var(--color-ink-2);
   --omni-border-subtle: var(--color-rule);
+  --omni-radius-2xl: var(--radius-lg);
+  --omni-radius-xl: var(--radius-card);
   --omni-shadow-sm: var(--shadow-subtle);
   --omni-shadow-md: var(--shadow-card);
 }
 
-/* Ajustes automáticos de componentes en Modo Oscuro */
-body.dark ion-content,
-html[data-mode="dark"] ion-content {
+ion-content {
   --background: var(--color-paper);
   --color: var(--color-ink);
 }
 
-body.dark ion-card,
-html[data-mode="dark"] ion-card {
-  background: var(--color-paper-2) !important;
-  border-color: var(--color-rule) !important;
-  color: var(--color-ink);
+ion-content::part(background) {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(ellipse 70% 35% at 95% 4%, oklch(64% 0.215 44 / 0.16), transparent 68%),
+    radial-gradient(ellipse 60% 32% at 6% 90%, oklch(56% 0.185 36 / 0.12), transparent 70%);
 }
 
-body.dark ion-card-title,
-html[data-mode="dark"] ion-card-title {
-  color: var(--color-ink) !important;
-}
-
-body.dark ion-item,
-html[data-mode="dark"] ion-item {
-  --background: var(--color-paper-2);
-  --color: var(--color-ink);
-  border-color: var(--color-rule) !important;
-}
-
-body.dark ion-tab-bar,
-html[data-mode="dark"] ion-tab-bar {
-  --background: var(--color-navy);
-  border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
-}
-
-body.dark ion-searchbar,
-html[data-mode="dark"] ion-searchbar {
-  --background: var(--color-paper-2);
-  --color: var(--color-ink);
-  --placeholder-color: var(--color-muted);
-  --icon-color: var(--color-accent);
-}
-
-/* Botón alternador de Modo Claro/Oscuro en el Header */
 .theme-toggle-btn {
-  --border-radius: 12px;
-  transition: transform 0.2s ease;
+  --border-radius: var(--radius-md);
+  --color: var(--color-navy-ink);
+  transition: transform var(--dur-short) var(--ease-out);
 }
 
 .theme-toggle-btn:active {
-  transform: scale(0.9);
-}
-
-/* ============================================================================
-   1. ELIMINACIÓN DE CAJAS GRISES PESADAS -> TARJETAS ROUNDED-2XL + SOMBRAS
-   ============================================================================ */
-ion-content {
-  --background: var(--ion-background-color);
+  transform: scale(0.92);
 }
 
 ion-card {
-  border-radius: var(--omni-radius-2xl) !important;
-  box-shadow: var(--omni-shadow-sm) !important;
-  border: var(--rule-hair) solid var(--omni-border-subtle) !important;
-  background: var(--ion-card-background, var(--color-paper-2));
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: var(--rule-hair) solid var(--color-rule-strong) !important;
+  background: var(--color-paper-2) !important;
+  color: var(--color-ink);
   margin: var(--space-sm) var(--space-2xs);
-  transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out), background var(--dur-short) var(--ease-out);
+  transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
 }
 
 ion-card:hover {
-  box-shadow: var(--omni-shadow-md) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--color-accent) !important;
 }
 
 ion-card-header {
@@ -176,24 +114,28 @@ ion-card-subtitle {
 }
 
 ion-card-title {
+  font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--omni-text-main);
+  color: var(--color-ink) !important;
+}
+
+ion-list {
+  background: transparent !important;
 }
 
 ion-item {
-  --border-radius: var(--omni-radius-xl);
-  --background: var(--ion-item-background, var(--color-paper-2));
+  --border-radius: var(--radius-card);
+  --background: var(--color-paper-2);
+  --color: var(--color-ink);
   --border-color: transparent;
   margin-bottom: var(--space-xs);
-  border-radius: var(--omni-radius-xl);
-  box-shadow: var(--omni-shadow-sm);
-  border: var(--rule-hair) solid var(--omni-border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-subtle);
+  border: var(--rule-hair) solid var(--color-rule);
 }
 
-/* ============================================================================
-   3. BADGES E ICONOS DE ARCHIVO ESTILIZADOS (JERARQUÍA VISUAL POR FORMATO)
-   ============================================================================ */
+/* Badges de Formato */
 .file-format-badge {
   display: inline-flex;
   align-items: center;
@@ -211,61 +153,31 @@ ion-item {
   font-size: 0.95rem;
 }
 
-/* Rojo para PDFs */
 .file-format-badge.fmt-pdf {
-  background: var(--color-error-soft);
-  color: var(--color-error);
-  border: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-tool-red);
+  color: var(--color-accent-ink);
+  border: var(--rule-hair) solid var(--color-tool-red);
 }
 
-/* Azul para Imágenes (PNG, JPG, WEBP, SVG) */
 .file-format-badge.fmt-image {
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
-  border: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-tool-green);
+  color: var(--color-accent-ink);
+  border: var(--rule-hair) solid var(--color-tool-green);
 }
 
-/* Verde para Hojas de Cálculo y Datos (CSV, JSON, XLSX) */
 .file-format-badge.fmt-data {
-  background: var(--color-success-soft);
-  color: var(--color-success-ink);
-  border: var(--rule-hair) solid var(--color-success-border);
+  background: var(--color-tool-orange);
+  color: var(--color-accent-ink);
+  border: var(--rule-hair) solid var(--color-tool-orange);
 }
 
-/* Índigo para Documentos de texto (TXT, MD, HTML, DOC) */
 .file-format-badge.fmt-doc {
-  background: var(--color-info-soft);
-  color: var(--color-info);
-  border: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-tool-blue);
+  color: var(--color-accent-ink);
+  border: var(--rule-hair) solid var(--color-tool-blue);
 }
 
-body.dark .file-format-badge.fmt-pdf {
-  background: var(--color-error-soft);
-  color: var(--color-error);
-  border-color: var(--color-rule-strong);
-}
-
-body.dark .file-format-badge.fmt-image {
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
-  border-color: var(--color-rule-strong);
-}
-
-body.dark .file-format-badge.fmt-data {
-  background: var(--color-success-soft);
-  color: var(--color-success-ink);
-  border-color: var(--color-success-border);
-}
-
-body.dark .file-format-badge.fmt-doc {
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
-  border-color: var(--color-rule-strong);
-}
-
-/* ============================================================================
-   [REQUISITO 4] ANIMACIONES DE TRANSICIÓN SUAVES Y TICKS DE CONFIRMACIÓN
-   ============================================================================ */
+/* Feedback de confirmación */
 @keyframes checkmarkPop {
   0% {
     opacity: 0;
@@ -296,8 +208,8 @@ body.dark .file-format-badge.fmt-doc {
   gap: var(--space-sm);
   padding: var(--space-md);
   border-radius: var(--radius-card);
-  background: var(--color-success-soft);
-  border: var(--rule-hair) solid var(--color-success-border);
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule-strong);
   margin: var(--space-2xs) var(--space-2xs) var(--space-md);
   animation: checkmarkPop var(--dur-long) var(--ease-out) forwards;
   box-shadow: var(--shadow-card);
@@ -307,13 +219,13 @@ body.dark .file-format-badge.fmt-doc {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-pill);
-  background: var(--color-success-ink);
+  background: var(--color-accent);
   color: var(--color-accent-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: var(--shadow-subtle);
+  box-shadow: 0 4px 14px var(--color-accent-glow);
 }
 
 .omni-success-tick-circle svg {
@@ -338,46 +250,63 @@ body.dark .file-format-badge.fmt-doc {
 .omni-success-copy strong {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--omni-text-main);
+  color: var(--color-ink);
 }
 
 .omni-success-copy small {
   font-size: var(--text-xs);
-  color: var(--omni-text-muted);
+  color: var(--color-ink-2);
 }
 
-/* ============================================================================
-   5. MODALES, POPOVERS Y SELECTORES FLOTANTES ESTILIZADOS
-   ============================================================================ */
+/* Modales, Popovers, Searchbar y Segmentos */
 ion-modal {
+  --background: var(--color-paper);
   --border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   --box-shadow: var(--shadow-modal);
 }
 
 ion-popover {
-  --background: var(--omni-surface);
+  --background: var(--color-paper-2);
+  --color: var(--color-ink);
   --box-shadow: var(--shadow-modal);
 }
 
 ion-popover::part(content) {
   border-radius: var(--radius-card);
-  border: var(--rule-hair) solid var(--omni-border-subtle);
+  border: var(--rule-hair) solid var(--color-rule-strong);
 }
 
 ion-action-sheet {
-  --background: var(--omni-surface);
-  --button-color: var(--omni-text-main);
+  --background: var(--color-paper-2);
+  --button-color: var(--color-ink);
   --button-background-selected: var(--color-accent-soft);
 }
 
 ion-searchbar {
-  --background: var(--omni-surface);
-  --border-radius: var(--radius-card);
-  --box-shadow: var(--omni-shadow-sm);
+  --background: var(--color-paper-2);
+  --color: var(--color-ink);
+  --border-radius: var(--radius-md);
+  --box-shadow: var(--shadow-subtle);
   --placeholder-color: var(--color-muted);
   --icon-color: var(--color-accent);
+  --clear-button-color: var(--color-ink-2);
   padding-top: var(--space-2xs);
   padding-bottom: var(--space-2xs);
+}
+
+ion-segment {
+  --background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-md);
+  padding: var(--space-3xs);
+}
+
+ion-segment-button {
+  --color: var(--color-ink-2);
+  --color-checked: var(--color-accent-ink);
+  --indicator-color: var(--color-accent);
+  --border-radius: var(--radius-sm);
+  font-weight: 600;
 }
 
 ion-button {
@@ -389,34 +318,24 @@ ion-button {
 ion-tab-bar {
   --background: var(--color-navy);
   border-top: var(--rule-hair) solid var(--color-navy-border-subtle);
-  height: 62px;
+  height: 68px;
 }
 
 ion-tab-button {
   --color: var(--color-navy-muted);
-  --color-selected: var(--color-navy-ink);
-  font-weight: 700;
+  --color-selected: var(--color-accent);
+  font-weight: 600;
   font-size: var(--text-xs);
 }
 
-/* ============================================================================
-   [REQUISITO 2] DISEÑO RESPONSIVO FLUIDO (SMARTPHONES, TABLETS Y ESCRITORIO)
-   Soporte nativo para utilidades tipo Tailwind (grid-cols-1 md:grid-cols-2 lg:grid-cols-4)
-   y contenedores adaptativos sin desalineaciones en cualquier resolución.
-   ============================================================================ */
-.omni-responsive-shell {
-  width: 100%;
-  max-width: 1240px;
-  margin: 0 auto;
-}
-
+/* Utilidades de Grid Responsivo (Móvil, Tablet y Escritorio) */
 .grid {
   display: grid;
-  gap: 0.85rem;
+  gap: var(--space-sm);
 }
 
 .grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .grid-cols-2 {
@@ -426,9 +345,6 @@ ion-tab-button {
 @media (min-width: 640px) {
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .sm\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -442,14 +358,7 @@ ion-tab-button {
 }
 
 @media (min-width: 1024px) {
-  .lg\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .lg\:grid-cols-6 {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
 }
-

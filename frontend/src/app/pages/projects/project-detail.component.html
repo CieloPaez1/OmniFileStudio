@@ -9,13 +9,13 @@
       <div class="monday-title-row">
         <h1 class="project-title monday-main-title">
           <span>{{ project()?.name }}</span>
-          <svg lucideChevronDown class="monday-title-chevron"></svg>
+          <svg aria-hidden="true" lucideChevronDown class="monday-title-chevron"></svg>
         </h1>
         @if (project()?.status === 'CLOSED') {
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="badge closed">Completado</span>
             <button class="btn-icon-small" (click)="reabrirProyecto()" title="Reabrir proyecto">
-              <svg lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
+              <svg aria-hidden="true" lucideRotateCcw class="rotate-icon" style="width: 16px; height: 16px;"></svg>
             </button>
           </div>
         } @else if (project()) {
@@ -34,35 +34,35 @@
     <!-- Acciones superiores estilo Monday: Sugerencias de IA, Integrar, Automatizar -->
     <div class="monday-header-right-actions">
       <button type="button" class="btn-monday-pill ai-btn" (click)="toggleAiModal()">
-        <svg lucideSparkles class="ai-sparkle-icon"></svg>
+        <svg aria-hidden="true" lucideSparkles class="ai-sparkle-icon"></svg>
         <span>Sugerencias de IA</span>
         <span class="pill-badge-new">Nuevo</span>
       </button>
 
       <button type="button" class="btn-monday-pill" title="Integraciones con herramientas externas">
-        <svg lucideZap class="pill-ico"></svg>
+        <svg aria-hidden="true" lucideZap class="pill-ico"></svg>
         <span>Integrar</span>
       </button>
 
       <button type="button" class="btn-monday-pill" title="Reglas y automatizaciones de flujo">
-        <svg lucideBot class="pill-ico"></svg>
+        <svg aria-hidden="true" lucideBot class="pill-ico"></svg>
         <span>Automatizar</span>
       </button>
 
       <div class="header-divider"></div>
 
       <button class="btn-outline" routerLink="/projects" title="Volver a proyectos">
-        <svg lucideArrowLeft style="width: 16px; height: 16px;"></svg>
+        <svg aria-hidden="true" lucideArrowLeft style="width: 16px; height: 16px;"></svg>
         <span>Volver</span>
       </button>
       @if (project()?.status !== 'CLOSED') {
         <button class="btn-outline" [routerLink]="['/projects/edit', project()?.id]" title="Editar proyecto">
-          <svg lucideEdit style="width: 16px; height: 16px;"></svg>
+          <svg aria-hidden="true" lucideEdit style="width: 16px; height: 16px;"></svg>
           <span>Editar</span>
         </button>
       }
       <button class="btn-outline danger" (click)="deleteProject()" [disabled]="isLoading()" title="Eliminar proyecto">
-        <svg lucideTrash2 style="width: 16px; height: 16px;"></svg>
+        <svg aria-hidden="true" lucideTrash2 style="width: 16px; height: 16px;"></svg>
         <span>Eliminar</span>
       </button>
     </div>
@@ -78,9 +78,9 @@
       [class.active]="viewMode() === 'TABLE'"
       (click)="viewMode.set('TABLE')"
     >
-      <svg lucideTable class="tab-icon"></svg>
+      <svg aria-hidden="true" lucideTable class="tab-icon"></svg>
       <span>Tabla principal</span>
-      <svg lucideMoreHorizontal class="tab-more-dots"></svg>
+      <svg aria-hidden="true" lucideMoreHorizontal class="tab-more-dots"></svg>
     </button>
 
     <button
@@ -89,7 +89,7 @@
       [class.active]="viewMode() === 'TIMELINE'"
       (click)="viewMode.set('TIMELINE')"
     >
-      <svg lucideClock class="tab-icon"></svg>
+      <svg aria-hidden="true" lucideClock class="tab-icon"></svg>
       <span>Cronograma</span>
     </button>
 
@@ -99,7 +99,7 @@
       [class.active]="viewMode() === 'BOARD'"
       (click)="viewMode.set('BOARD')"
     >
-      <svg lucideKanban class="tab-icon"></svg>
+      <svg aria-hidden="true" lucideKanban class="tab-icon"></svg>
       <span>Tablero Kanban</span>
     </button>
 
@@ -109,12 +109,12 @@
       [class.active]="viewMode() === 'LIST'"
       (click)="viewMode.set('LIST')"
     >
-      <svg lucideList class="tab-icon"></svg>
+      <svg aria-hidden="true" lucideList class="tab-icon"></svg>
       <span>Lista</span>
     </button>
 
     <button type="button" class="monday-tab-add-btn" (click)="addCustomGroup()" title="Agregar nuevo grupo o vista">
-      <svg lucidePlus class="add-plus-svg"></svg>
+      <svg aria-hidden="true" lucidePlus class="add-plus-svg"></svg>
     </button>
   </div>
 
@@ -126,13 +126,13 @@
     <div class="monday-split-add-btn">
       <button type="button" class="btn-monday-add-main" (click)="toggleAddTask()">
         <span>Agregar tarea</span>
-        <svg lucideChevronDown class="split-caret"></svg>
+        <svg aria-hidden="true" lucideChevronDown class="split-caret"></svg>
       </button>
     </div>
 
     <!-- Barra de búsqueda rápida -->
     <div class="monday-search-box">
-      <svg lucideSearch class="monday-search-icon"></svg>
+      <svg aria-hidden="true" lucideSearch class="monday-search-icon"></svg>
       <input
         type="text"
         placeholder="Buscar"
@@ -144,7 +144,7 @@
 
     <!-- Selector de Persona -->
     <div class="monday-tool-filter-wrapper">
-      <svg lucideUser class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideUser class="tool-prefix-icon"></svg>
       <select
         class="monday-filter-select"
         [ngModel]="assigneeFilter()"
@@ -159,7 +159,7 @@
 
     <!-- Selector de Filtrar (Prioridad) -->
     <div class="monday-tool-filter-wrapper">
-      <svg lucideFilter class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideFilter class="tool-prefix-icon"></svg>
       <select
         class="monday-filter-select"
         [ngModel]="priorityFilter()"
@@ -174,30 +174,30 @@
 
     <!-- Botón Ordenar -->
     <button type="button" class="monday-tool-action-btn">
-      <svg lucideArrowUpDown class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideArrowUpDown class="tool-prefix-icon"></svg>
       <span>Ordenar</span>
     </button>
 
     <!-- Botón Ocultar -->
     <button type="button" class="monday-tool-action-btn">
-      <svg lucideEye class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideEye class="tool-prefix-icon"></svg>
       <span>Ocultar</span>
     </button>
 
     <!-- Botón Agrupar por -->
     <button type="button" class="monday-tool-action-btn">
-      <svg lucideLayers class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideLayers class="tool-prefix-icon"></svg>
       <span>Agrupar por</span>
     </button>
 
     <!-- Más opciones -->
     <button type="button" class="monday-tool-action-btn icon-only" title="Más opciones">
-      <svg lucideMoreHorizontal class="tool-prefix-icon"></svg>
+      <svg aria-hidden="true" lucideMoreHorizontal class="tool-prefix-icon"></svg>
     </button>
 
     @if (searchTerm() || priorityFilter() !== 'ALL' || assigneeFilter() !== 'ALL') {
       <button type="button" class="btn-clear-filter" (click)="resetFilters()" title="Limpiar filtros">
-        <svg lucideX style="width: 14px; height: 14px;"></svg>
+        <svg aria-hidden="true" lucideX style="width: 14px; height: 14px;"></svg>
         <span>Limpiar</span>
       </button>
     }
@@ -211,7 +211,7 @@
           Agregar Nueva Tarea
         </h4>
         <button type="button" class="btn-icon-small" (click)="toggleAddTask()">
-          <svg lucideX style="width: 18px; height: 18px;"></svg>
+          <svg aria-hidden="true" lucideX style="width: 18px; height: 18px;"></svg>
         </button>
       </div>
 
@@ -256,7 +256,7 @@
 
         <div style="display: flex; gap: 12px;">
           <button type="submit" class="btn-primary" [disabled]="taskForm.invalid || isLoading()">
-            <svg lucideSave style="width: 16px; height: 16px;"></svg>
+            <svg aria-hidden="true" lucideSave style="width: 16px; height: 16px;"></svg>
             Guardar Tarea
           </button>
           <button type="button" class="btn-outline" (click)="toggleAddTask()">Cancelar</button>
@@ -277,9 +277,9 @@
           <div class="monday-group-heading" (click)="toggleGroup(grp.id)">
             <button type="button" class="group-arrow-toggle">
               @if (isGroupCollapsed(grp.id)) {
-                <svg lucideChevronRight class="grp-arrow-svg" [style.color]="grp.color"></svg>
+                <svg aria-hidden="true" lucideChevronRight class="grp-arrow-svg" [style.color]="grp.color"></svg>
               } @else {
-                <svg lucideChevronDown class="grp-arrow-svg" [style.color]="grp.color"></svg>
+                <svg aria-hidden="true" lucideChevronDown class="grp-arrow-svg" [style.color]="grp.color"></svg>
               }
             </button>
             <span class="group-title-text" [style.color]="grp.color">{{ grp.name }}</span>
@@ -301,7 +301,7 @@
                     </th>
                     <th class="th-task">Tarea</th>
                     <th class="th-chat" title="Comentarios y subtareas">
-                      <svg lucideMessageSquare class="th-ico"></svg>
+                      <svg aria-hidden="true" lucideMessageSquare class="th-ico"></svg>
                     </th>
                     <th class="th-assignee">Responsable</th>
                     <th class="th-status">Estado <span class="th-info-circle">ⓘ</span></th>
@@ -336,7 +336,7 @@
                       <!-- Columna Chat / Notas -->
                       <td class="td-chat" (click)="openTaskDrawer(t, $event)">
                         <button type="button" class="btn-cell-chat" title="Abrir notas y subtareas">
-                          <svg lucideMessageSquare class="cell-chat-svg"></svg>
+                          <svg aria-hidden="true" lucideMessageSquare class="cell-chat-svg"></svg>
                           <span class="chat-plus-badge">+</span>
                         </button>
                       </td>
@@ -349,7 +349,7 @@
                           </div>
                         } @else {
                           <div class="assignee-avatar-circle unassigned" title="Sin asignar">
-                            <svg lucideUser class="unassigned-svg"></svg>
+                            <svg aria-hidden="true" lucideUser class="unassigned-svg"></svg>
                           </div>
                         }
                       </td>
@@ -534,7 +534,7 @@
       <!-- Botón inferior "+ Agregar grupo nuevo" -->
       <div class="monday-bottom-add-group">
         <button type="button" class="btn-add-group-outline" (click)="addCustomGroup()">
-          <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+          <svg aria-hidden="true" lucidePlus style="width: 16px; height: 16px;"></svg>
           <span>Agregar grupo nuevo</span>
         </button>
       </div>
@@ -560,7 +560,7 @@
             class="btn-col-add"
             (click)="openQuickAddTask('TODO')"
             title="Agregar tarea en Por Hacer">
-            <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+            <svg aria-hidden="true" lucidePlus style="width: 16px; height: 16px;"></svg>
           </button>
         </div>
 
@@ -588,14 +588,14 @@
                 </div>
 
                 <span class="estimate-pill">
-                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                   {{ t.estimateHours }}h
                 </span>
               </div>
 
               @if (t.dueDate) {
                 <div class="card-due-date">
-                  <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideCalendar style="width: 13px; height: 13px;"></svg>
                   <span>{{ t.dueDate | date:'shortDate' }}</span>
                 </div>
               }
@@ -608,7 +608,7 @@
                   (click)="moverColumna(t, 'next', $event)"
                   title="Mover a En Progreso →">
                   <span>En curso</span>
-                  <svg lucideChevronRight style="width: 14px; height: 14px;"></svg>
+                  <svg aria-hidden="true" lucideChevronRight style="width: 14px; height: 14px;"></svg>
                 </button>
               </div>
             </div>
@@ -629,7 +629,7 @@
             class="btn-col-add"
             (click)="openQuickAddTask('IN_PROGRESS')"
             title="Agregar tarea en En Progreso">
-            <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+            <svg aria-hidden="true" lucidePlus style="width: 16px; height: 16px;"></svg>
           </button>
         </div>
 
@@ -657,14 +657,14 @@
                 </div>
 
                 <span class="estimate-pill">
-                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                   {{ t.estimateHours }}h
                 </span>
               </div>
 
               @if (t.dueDate) {
                 <div class="card-due-date">
-                  <svg lucideCalendar style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideCalendar style="width: 13px; height: 13px;"></svg>
                   <span>{{ t.dueDate | date:'shortDate' }}</span>
                 </div>
               }
@@ -676,7 +676,7 @@
                   class="btn-move-col secondary"
                   (click)="moverColumna(t, 'prev', $event)"
                   title="← Volver a Por Hacer">
-                  <svg lucideChevronLeft style="width: 14px; height: 14px;"></svg>
+                  <svg aria-hidden="true" lucideChevronLeft style="width: 14px; height: 14px;"></svg>
                 </button>
 
                 <button
@@ -685,7 +685,7 @@
                   (click)="moverColumna(t, 'next', $event)"
                   title="Completar tarea ✓">
                   <span>Completar</span>
-                  <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                  <svg aria-hidden="true" lucideCheck style="width: 14px; height: 14px;"></svg>
                 </button>
               </div>
             </div>
@@ -725,7 +725,7 @@
                 </div>
 
                 <span class="estimate-pill">
-                  <svg lucideClock style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideClock style="width: 13px; height: 13px;"></svg>
                   {{ t.estimateHours }}h
                 </span>
               </div>
@@ -737,7 +737,7 @@
                   class="btn-move-col"
                   (click)="moverColumna(t, 'prev', $event)"
                   title="Reabrir a En Progreso">
-                  <svg lucideRotateCcw style="width: 13px; height: 13px;"></svg>
+                  <svg aria-hidden="true" lucideRotateCcw style="width: 13px; height: 13px;"></svg>
                   <span>Reabrir</span>
                 </button>
               </div>
@@ -832,11 +832,11 @@
                   @if (t.status === 'DONE') {
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <span class="monday-pill pill-done">
-                        <svg lucideCheck style="width: 14px; height: 14px;"></svg>
+                        <svg aria-hidden="true" lucideCheck style="width: 14px; height: 14px;"></svg>
                         Hecho
                       </span>
                       <button class="btn-icon-small" (click)="reabrirTarea(t)" title="Reabrir tarea">
-                        <svg lucideRotateCcw class="rotate-icon" style="width: 14px; height: 14px;"></svg>
+                        <svg aria-hidden="true" lucideRotateCcw class="rotate-icon" style="width: 14px; height: 14px;"></svg>
                       </button>
                     </div>
                   } @else {
@@ -852,7 +852,7 @@
                 </div>
 
                 <button class="btn-icon-small danger" (click)="deleteTask(t, $event)" title="Eliminar tarea">
-                  <svg lucideTrash2 style="width: 16px; height: 16px;"></svg>
+                  <svg aria-hidden="true" lucideTrash2 style="width: 16px; height: 16px;"></svg>
                 </button>
               </div>
 
@@ -875,7 +875,7 @@
             <span class="drawer-project-name">📁 {{ project()?.name }}</span>
           </div>
           <button class="btn-icon-close" (click)="closeTaskDrawer()" title="Cerrar panel">
-            <svg lucideX style="width: 20px; height: 20px;"></svg>
+            <svg aria-hidden="true" lucideX style="width: 20px; height: 20px;"></svg>
           </button>
         </div>
 
@@ -887,7 +887,7 @@
           <div class="notion-properties-grid">
             <div class="notion-property-row">
               <span class="prop-label">
-                <svg lucideUser style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucideUser style="width: 15px; height: 15px;"></svg>
                 Responsable
               </span>
               <div class="prop-value">
@@ -897,7 +897,7 @@
 
             <div class="notion-property-row">
               <span class="prop-label">
-                <svg lucideTag style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucideTag style="width: 15px; height: 15px;"></svg>
                 Estado
               </span>
               <div class="prop-value">
@@ -914,7 +914,7 @@
 
             <div class="notion-property-row">
               <span class="prop-label">
-                <svg lucideClock style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucideClock style="width: 15px; height: 15px;"></svg>
                 Prioridad
               </span>
               <div class="prop-value">
@@ -931,7 +931,7 @@
 
             <div class="notion-property-row">
               <span class="prop-label">
-                <svg lucideClock style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucideClock style="width: 15px; height: 15px;"></svg>
                 Horas Estimadas
               </span>
               <div class="prop-value">
@@ -942,7 +942,7 @@
             @if (selectedTask()?.dueDate) {
               <div class="notion-property-row">
                 <span class="prop-label">
-                  <svg lucideCalendar style="width: 15px; height: 15px;"></svg>
+                  <svg aria-hidden="true" lucideCalendar style="width: 15px; height: 15px;"></svg>
                   Vencimiento
                 </span>
                 <div class="prop-value">
@@ -975,7 +975,7 @@
                     class="subtask-checkbox" />
                   <span class="subtask-text" [class.done]="st.done">{{ st.text }}</span>
                   <button class="btn-subtask-del" (click)="deleteSubtask(st.id)" title="Eliminar subtarea">
-                    <svg lucideTrash2 style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideTrash2 style="width: 14px; height: 14px;"></svg>
                   </button>
                 </div>
               }
@@ -991,7 +991,7 @@
                 (keydown.enter)="addSubtask()"
                 class="subtask-input" />
               <button class="btn-add-subtask" (click)="addSubtask()" [disabled]="!newSubtaskText().trim()">
-                <svg lucidePlus style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucidePlus style="width: 15px; height: 15px;"></svg>
               </button>
             </div>
           </div>
@@ -1028,7 +1028,7 @@
         <div class="ai-modal-header">
           <div class="ai-title-wrap">
             <div class="ai-spark-box">
-              <svg lucideSparkles class="ai-sparkle-big"></svg>
+              <svg aria-hidden="true" lucideSparkles class="ai-sparkle-big"></svg>
             </div>
             <div>
               <h3>Sugerencias de IA · Planix Assistant</h3>
@@ -1036,7 +1036,7 @@
             </div>
           </div>
           <button type="button" class="btn-icon-close" (click)="toggleAiModal()">
-            <svg lucideX style="width: 18px; height: 18px;"></svg>
+            <svg aria-hidden="true" lucideX style="width: 18px; height: 18px;"></svg>
           </button>
         </div>
 

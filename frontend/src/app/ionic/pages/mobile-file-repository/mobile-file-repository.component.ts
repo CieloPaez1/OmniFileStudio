@@ -61,7 +61,14 @@ import {
   closeOutline,
   moonOutline,
   sunnyOutline,
-  createOutline
+  createOutline,
+  folder,
+  folderOutline,
+  folderOpenOutline,
+  star,
+  starOutline,
+  layersOutline,
+  ellipsisVerticalOutline
 } from 'ionicons/icons';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { CapacitorNativeService } from '../../../services/capacitor-native.service';
@@ -134,6 +141,29 @@ export class MobileFileRepositoryComponent implements OnInit {
   viewMode = signal<'list' | 'grid'>('list');
   searchQuery = signal<string>('');
   selectedTag = signal<string>('Todas');
+  selectedCategory = signal<'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'>('ALL');
+
+  readonly archivedCount = computed(() => this.fileService.files().filter(f => f.archived).length);
+  readonly docAndDataCount = computed(() =>
+    this.fileService
+      .activeFiles()
+      .filter(f => f.ext !== 'pdf' && f.category !== 'PDF' && f.category !== 'IMAGE').length
+  );
+
+  selectCategoryFolder(cat: 'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'): void {
+    this.nativeService.triggerHapticImpact('light');
+    if (this.selectedCategory() === cat && cat !== 'ALL') {
+      this.selectedCategory.set('ALL');
+      this.selectedTag.set('Todas');
+      return;
+    }
+    this.selectedCategory.set(cat);
+    if (cat === 'TRASH') {
+      this.selectedTag.set('Archivados');
+    } else if (this.selectedTag() === 'Archivados') {
+      this.selectedTag.set('Todas');
+    }
+  }
 
   // Panel flotante para cambiar de formato un archivo seleccionado
   convertingFile = signal<ManagedFile | null>(null);
@@ -171,14 +201,43 @@ export class MobileFileRepositoryComponent implements OnInit {
 
   readonly filteredFiles = computed(() => {
     const tag = this.selectedTag();
+    const cat = this.selectedCategory();
     const q = this.searchQuery().toLowerCase().trim();
+    let favIds: string[] = [];
+    try {
+      const raw = localStorage.getItem('omnifile_dashboard_favorites_v1');
+      if (raw) favIds = JSON.parse(raw).map(String);
+    } catch {}
+
     return this.fileService.files().filter(f => {
-      if (tag === 'Archivados') {
+      if (tag === 'Archivados' || cat === 'TRASH') {
         if (!f.archived) return false;
       } else {
         if (f.archived) return false;
         if (tag !== 'Todas' && (f.tag || 'Trabajo') !== tag) return false;
       }
+
+      if (cat === 'PDF' && f.ext.toLowerCase() !== 'pdf' && f.category !== 'PDF') return false;
+      if (
+        cat === 'IMAGE' &&
+        !['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(f.ext.toLowerCase()) &&
+        f.category !== 'IMAGE'
+      ) {
+        return false;
+      }
+      if (
+        cat === 'DOC' &&
+        (f.ext.toLowerCase() === 'pdf' ||
+          f.category === 'PDF' ||
+          f.category === 'IMAGE' ||
+          ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(f.ext.toLowerCase()))
+      ) {
+        return false;
+      }
+      if (cat === 'FAV' && favIds.length > 0 && !favIds.includes(String(f.id))) {
+        return false;
+      }
+
       if (
         q &&
         !f.name.toLowerCase().includes(q) &&
@@ -214,7 +273,15 @@ export class MobileFileRepositoryComponent implements OnInit {
       statsChartOutline,
       closeOutline,
       moonOutline,
-      sunnyOutline
+      sunnyOutline,
+      createOutline,
+      folder,
+      folderOutline,
+      folderOpenOutline,
+      star,
+      starOutline,
+      layersOutline,
+      ellipsisVerticalOutline
     });
   }
 

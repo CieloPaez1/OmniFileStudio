@@ -103,7 +103,7 @@ button:disabled,
 
 .scanner-controls button.btn-ocr-photo {
   background: var(--color-accent);
-  color: var(--color-paper-2);
+  color: var(--color-ink);
   padding: var(--space-2xs) var(--space-xs);
   border-radius: var(--space-xs);
   font-size: 0.72rem;

@@ -7,12 +7,12 @@
 
   <div class="navbar-right">
     <a routerLink="/mobile/dashboard" class="icon-btn mobile-mode-btn" title="Abrir Vista Móvil Ionic (4 Pestañas)">
-      <svg lucideSmartphone style="width: 20px; height: 20px;"></svg>
+      <svg aria-hidden="true" lucideSmartphone style="width: 20px; height: 20px;"></svg>
     </a>
 
     <div class="theme-menu-container">
       <button class="icon-btn theme-toggle" (click)="toggleThemeMenu($event)">
-        <svg lucidePalette style="width: 20px; height: 20px;"></svg>
+        <svg aria-hidden="true" lucidePalette style="width: 20px; height: 20px;"></svg>
       </button>
 
       <div class="theme-dropdown" *ngIf="showThemeMenu">
@@ -20,7 +20,7 @@
         <button class="theme-dropdown-item" *ngFor="let t of themeService.availableThemes" (click)="selectTheme(t.id)">
           <span class="theme-color-dot" [style.background]="t.color"></span>
           <span class="theme-name">{{ t.name }}</span>
-          <svg lucideCheck *ngIf="themeService.currentTheme() === t.id" class="theme-check"></svg>
+          <svg aria-hidden="true" lucideCheck *ngIf="themeService.currentTheme() === t.id" class="theme-check"></svg>
         </button>
       </div>
     </div>

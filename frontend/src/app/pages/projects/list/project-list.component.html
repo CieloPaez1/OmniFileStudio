@@ -30,7 +30,7 @@
 
       <!-- Buscador -->
       <div class="search-wrap">
-        <svg lucideSearch class="search-ico"></svg>
+        <svg aria-hidden="true" lucideSearch class="search-ico"></svg>
         <input
           type="text"
           [(ngModel)]="searchTerm"
@@ -39,7 +39,7 @@
       </div>
 
       <a routerLink="/projects/create" class="btn-primary">
-        <svg lucidePlus style="width: 16px; height: 16px;"></svg>
+        <svg aria-hidden="true" lucidePlus style="width: 16px; height: 16px;"></svg>
         <span>Nuevo Proyecto</span>
       </a>
     </div>
@@ -56,7 +56,7 @@
       <div class="empty-state" style="color: var(--danger-color);">{{ error() }}</div>
     } @else if (projects().length === 0) {
       <div class="empty-state">
-        <svg lucideFolderKanban style="width: 44px; height: 44px; color: var(--text-tertiary); margin-bottom: 12px;"></svg>
+        <svg aria-hidden="true" lucideFolderKanban style="width: 44px; height: 44px; color: var(--text-tertiary); margin-bottom: 12px;"></svg>
         <p style="margin: 0; font-weight: 600; color: var(--text-primary);">No hay proyectos creados aún.</p>
         <a routerLink="/projects/create" class="btn-primary" style="margin-top: 14px;">
           Creá tu primer proyecto
@@ -94,7 +94,7 @@
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span class="status-badge status-done">Completado</span>
                   <button class="btn-icon-small" (click)="reabrirProyecto(p)" title="Reabrir proyecto">
-                    <svg lucideRotateCcw style="width: 14px; height: 14px;"></svg>
+                    <svg aria-hidden="true" lucideRotateCcw style="width: 14px; height: 14px;"></svg>
                   </button>
                 </div>
               } @else {
@@ -113,11 +113,11 @@
             <div class="col-actions" (click)="$event.stopPropagation()">
               @if (p.status !== 'CLOSED') {
                 <button class="btn-icon-small" [routerLink]="['/projects', 'edit', p.id]" title="Editar proyecto">
-                  <svg lucideEdit style="width: 15px; height: 15px;"></svg>
+                  <svg aria-hidden="true" lucideEdit style="width: 15px; height: 15px;"></svg>
                 </button>
               }
               <button class="btn-icon-small danger" (click)="eliminarProyecto(p)" title="Eliminar proyecto">
-                <svg lucideTrash2 style="width: 15px; height: 15px;"></svg>
+                <svg aria-hidden="true" lucideTrash2 style="width: 15px; height: 15px;"></svg>
               </button>
             </div>
             

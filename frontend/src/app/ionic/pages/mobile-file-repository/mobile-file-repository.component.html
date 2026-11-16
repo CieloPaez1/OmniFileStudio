@@ -40,7 +40,7 @@
   <div class="repo-top-actions">
     <ion-button size="small" color="primary" (click)="goToReactiveForm()">
       <ion-icon name="add-outline" slot="start"></ion-icon>
-      Subida Inteligente (Formulario Reactivo)
+      Subida Inteligente
     </ion-button>
 
     <label class="upload-pill-btn">
@@ -50,7 +50,91 @@
     </label>
   </div>
 
-  <!-- Filtros por etiquetas (Píldoras flotantes Slate/Indigo) -->
+  <!-- Explorador de Carpetas Inteligentes (Todos, PDFs, Imágenes, Documentos, Favoritos, Papelera) -->
+  <section class="explorer-folders-section">
+    <div class="explorer-section-head">
+      <span class="explorer-section-label">Carpetas y colecciones</span>
+      @if (selectedCategory() !== 'ALL') {
+        <button type="button" class="reset-folder-btn" (click)="selectCategoryFolder('ALL')">
+          Ver todas
+        </button>
+      }
+    </div>
+
+    <div class="folders-grid">
+      <button
+        type="button"
+        class="folder-card"
+        [class.active]="selectedCategory() === 'PDF'"
+        (click)="selectCategoryFolder('PDF')">
+        <span class="folder-icon-wrap tone-red" aria-hidden="true">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </span>
+        <div class="folder-meta">
+          <strong>PDFs</strong>
+          <span>{{ fileService.pdfFiles().length }} archivos</span>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="folder-card"
+        [class.active]="selectedCategory() === 'IMAGE'"
+        (click)="selectCategoryFolder('IMAGE')">
+        <span class="folder-icon-wrap tone-green" aria-hidden="true">
+          <ion-icon name="image-outline"></ion-icon>
+        </span>
+        <div class="folder-meta">
+          <strong>Imágenes</strong>
+          <span>{{ fileService.imageFiles().length }} archivos</span>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="folder-card"
+        [class.active]="selectedCategory() === 'DOC'"
+        (click)="selectCategoryFolder('DOC')">
+        <span class="folder-icon-wrap tone-orange" aria-hidden="true">
+          <ion-icon name="layers-outline"></ion-icon>
+        </span>
+        <div class="folder-meta">
+          <strong>Documentos</strong>
+          <span>{{ docAndDataCount() }} archivos</span>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="folder-card"
+        [class.active]="selectedCategory() === 'FAV'"
+        (click)="selectCategoryFolder('FAV')">
+        <span class="folder-icon-wrap tone-amber" aria-hidden="true">
+          <ion-icon name="star"></ion-icon>
+        </span>
+        <div class="folder-meta">
+          <strong>Favoritos</strong>
+          <span>Destacados</span>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="folder-card"
+        [class.active]="selectedCategory() === 'TRASH'"
+        (click)="selectCategoryFolder('TRASH')">
+        <span class="folder-icon-wrap tone-purple" aria-hidden="true">
+          <ion-icon name="archive-outline"></ion-icon>
+        </span>
+        <div class="folder-meta">
+          <strong>Papelera</strong>
+          <span>{{ archivedCount() }} archivados</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- Filtros por etiquetas -->
   <div class="tags-bar">
     @for (t of tags; track t) {
       <button

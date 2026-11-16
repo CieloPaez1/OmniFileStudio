@@ -1,3 +1,32 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: obsidian-orange · redesign: full
+ * paper: oklch(11.0% 0.012 35) · accent: oklch(68.0% 0.215 44) · display: Plus Jakarta Sans · body: Inter
+ * nav: 5 tabs (Inicio, Archivos, Escanear FAB, Herramientas, Perfil) · signature: OmniFile Studio · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V5 · weakest: S, unified Obsidian+Charcoal+Terracotta+Orange surfaces across desktop and mobile */
+
+html {
+  overflow-x: clip;
+}
+body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.985);
+}
+
+button:disabled,
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .create-task-page {
   padding: 32px 40px;
   max-width: 1200px;
@@ -12,8 +41,8 @@
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   margin: 0 0 8px;
 }
 
@@ -57,7 +86,7 @@
   background: var(--input-bg);
   font-size: 1rem;
   color: var(--text-primary);
-  transition: all 0.3s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.3s ease;
   box-sizing: border-box;
 }
 
@@ -93,7 +122,7 @@
   border-radius: var(--radius-btn);
   border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 20px var(--primary-glow);
 }
 
@@ -115,7 +144,7 @@
   border-radius: var(--radius-btn);
   border: 1px solid var(--border-color);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.3s ease;
 }
 
 .btn-outline:hover:not(:disabled) {
@@ -143,20 +172,20 @@
 }
 
 .alert-success {
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--color-rule);
   color: var(--success-color);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--color-rule);
 }
 
 .alert-error {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--color-rule);
   color: var(--danger-color);
   padding: 16px 20px;
   border-radius: 12px;
   font-weight: 700;
   font-size: 0.95rem;
   margin-bottom: 24px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--color-rule);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -196,7 +225,7 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--glass-shadow);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .floating-row:hover {
@@ -239,9 +268,9 @@
 .meta-label {
   font-size: 0.75rem;
   font-weight: 800;
-  text-transform: uppercase;
+  
   color: var(--text-secondary);
-  letter-spacing: 0.05em;
+  
 }
 
 .meta-val {
@@ -260,8 +289,8 @@
   border-radius: var(--radius-badge);
   font-size: 0.8rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   display: inline-block;
   border: 1px solid transparent;
 }
@@ -279,4 +308,12 @@
   background: var(--card-bg);
   border-radius: var(--radius-card);
   border: 1px dashed var(--border-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
