@@ -193,68 +193,66 @@
         </div>
 
         <!-- Filas de Carpetas -->
-        @if (selectedCategory() === 'ALL') {
-          @for (fld of folderItems(); track fld.id) {
-            <div
-              class="table-item-row"
-              [class.row-selected]="isSelected('folder-' + fld.id)"
-              (click)="selectCategoryFolder(fld.category)">
+        @for (fld of folderItems(); track fld.id) {
+          <div
+            class="table-item-row"
+            [class.row-selected]="isSelected('folder-' + fld.id)"
+            (click)="openManageFolderModal(fld, $event)">
+            <button
+              type="button"
+              class="custom-check-btn"
+              [class.checked]="isSelected('folder-' + fld.id)"
+              (click)="openManageFolderModal(fld, $event)"
+              [attr.aria-label]="'Seleccionar ' + fld.name">
+              @if (isSelected('folder-' + fld.id)) {
+                <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+              }
+            </button>
+
+            <div class="col-name item-identity">
+              <svg class="row-svg-icon" viewBox="0 0 38 32" aria-hidden="true">
+                <path d="M3 5C3 3.34 4.34 2 6 2H14.5L18 6H31C32.66 6 34 7.34 34 9V25C34 26.66 32.66 28 31 28H6C4.34 28 3 26.66 3 25V5Z" fill="#ffb03a" />
+                <path d="M2 10C2 8.34 3.34 7 5 7H32C33.66 7 35 8.34 35 10V26C35 27.66 33.66 29 32 29H5C3.34 29 2 27.66 2 26V10Z" fill="#ff7315" />
+                <rect x="6" y="4.5" width="8" height="1.8" rx="0.9" fill="#fff7ed" opacity="0.8" />
+              </svg>
+              <strong class="item-title">{{ fld.name }}</strong>
+            </div>
+
+            <div class="col-type">
+              <span class="type-pill folder-pill">Carpeta</span>
+            </div>
+
+            <div class="col-size">3 elementos</div>
+
+            <div class="col-modified">{{ fld.modified }}</div>
+
+            <div class="col-actions" (click)="$event.stopPropagation()">
               <button
                 type="button"
-                class="custom-check-btn"
-                [class.checked]="isSelected('folder-' + fld.id)"
-                (click)="toggleSelection('folder-' + fld.id, $event)"
-                [attr.aria-label]="'Seleccionar ' + fld.name">
-                @if (isSelected('folder-' + fld.id)) {
-                  <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
-                }
+                class="row-circle-btn"
+                (click)="openManageFolderModal(fld, $event)"
+                title="Abrir carpeta"
+                aria-label="Abrir carpeta">
+                <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
               </button>
-
-              <div class="col-name item-identity">
-                <svg class="row-svg-icon" viewBox="0 0 38 32" aria-hidden="true">
-                  <path d="M3 5C3 3.34 4.34 2 6 2H14.5L18 6H31C32.66 6 34 7.34 34 9V25C34 26.66 32.66 28 31 28H6C4.34 28 3 26.66 3 25V5Z" fill="#ffb03a" />
-                  <path d="M2 10C2 8.34 3.34 7 5 7H32C33.66 7 35 8.34 35 10V26C35 27.66 33.66 29 32 29H5C3.34 29 2 27.66 2 26V10Z" fill="#ff7315" />
-                  <rect x="6" y="4.5" width="8" height="1.8" rx="0.9" fill="#fff7ed" opacity="0.8" />
-                </svg>
-                <strong class="item-title">{{ fld.name }}</strong>
-              </div>
-
-              <div class="col-type">
-                <span class="type-pill folder-pill">Carpeta</span>
-              </div>
-
-              <div class="col-size">3 elementos</div>
-
-              <div class="col-modified">{{ fld.modified }}</div>
-
-              <div class="col-actions" (click)="$event.stopPropagation()">
-                <button
-                  type="button"
-                  class="row-circle-btn"
-                  (click)="selectCategoryFolder(fld.category)"
-                  title="Abrir carpeta"
-                  aria-label="Abrir carpeta">
-                  <ion-icon name="eye-outline" aria-hidden="true"></ion-icon>
-                </button>
-                <button
-                  type="button"
-                  class="row-circle-btn"
-                  (click)="openManageFolderModal(fld, $event)"
-                  title="Gestionar carpeta"
-                  aria-label="Gestionar carpeta">
-                  <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
-                </button>
-                <button
-                  type="button"
-                  class="row-circle-btn danger-hover"
-                  (click)="deleteFolder(fld, $event)"
-                  title="Eliminar carpeta"
-                  aria-label="Eliminar carpeta">
-                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
-                </button>
-              </div>
+              <button
+                type="button"
+                class="row-circle-btn"
+                (click)="openManageFolderModal(fld, $event)"
+                title="Gestionar carpeta"
+                aria-label="Gestionar carpeta">
+                <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+              </button>
+              <button
+                type="button"
+                class="row-circle-btn danger-hover"
+                (click)="deleteFolder(fld, $event)"
+                title="Eliminar carpeta"
+                aria-label="Eliminar carpeta">
+                <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              </button>
             </div>
-          }
+          </div>
         }
 
         <!-- Filas de Archivos -->
@@ -262,12 +260,12 @@
           <div
             class="table-item-row"
             [class.row-selected]="isSelected(f.id)"
-            (click)="openPreview(f)">
+            (click)="openEditModal(f, undefined, $event)">
             <button
               type="button"
               class="custom-check-btn"
               [class.checked]="isSelected(f.id)"
-              (click)="toggleSelection(f.id, $event)"
+              (click)="openEditModal(f, undefined, $event)"
               [attr.aria-label]="'Seleccionar ' + f.name">
               @if (isSelected(f.id)) {
                 <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
@@ -393,17 +391,41 @@
                 @if (manageTab() !== 'share') {
                   <div class="manage-main-grid">
                     <div class="manage-big-icon-box">
-                      <svg class="manage-big-folder-svg" viewBox="0 0 64 56" aria-hidden="true">
-                        <defs>
-                          <linearGradient id="dlgFolderFront" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ff942e" />
-                            <stop offset="100%" stop-color="#e04800" />
-                          </linearGradient>
-                        </defs>
-                        <path d="M6 10C6 6.69 8.69 4 12 4H25L31 11H52C55.31 11 58 13.69 58 17V44C58 47.31 55.31 50 52 50H12C8.69 50 6 47.31 6 44V10Z" fill="#ffb84d" />
-                        <path d="M4 18C4 14.69 6.69 12 10 12H54C57.31 12 60 14.69 60 18V46C60 49.31 57.31 52 54 52H10C6.69 52 4 49.31 4 46V18Z" fill="url(#dlgFolderFront)" />
-                        <rect x="11" y="9" width="14" height="3" rx="1.5" fill="#fff7ed" opacity="0.9" />
-                      </svg>
+                      @if (editingFile(); as ef) {
+                        @if (getFormatBadgeClass(ef.ext, ef.category) === 'fmt-pdf') {
+                          <svg class="manage-big-folder-svg" viewBox="0 0 56 60" aria-hidden="true">
+                            <rect x="6" y="4" width="44" height="52" rx="10" fill="#ef3b2d" />
+                            <path d="M36 4L50 18H39C37.3 18 36 16.7 36 15V4Z" fill="#fca5a5" />
+                            <path d="M28 20C25.5 26 21.5 34 17.5 38C22.5 36.5 31.5 33.5 38 35C34 32 29.5 25.5 28 20Z" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+                          </svg>
+                        } @else if (getFormatBadgeClass(ef.ext, ef.category) === 'fmt-image') {
+                          <svg class="manage-big-folder-svg" viewBox="0 0 56 56" aria-hidden="true">
+                            <rect x="4" y="4" width="48" height="48" rx="10" fill="#10b981" />
+                            <circle cx="19" cy="19" r="4" fill="#ffffff" />
+                            <path d="M10 42L22 28L30 36L36 30L46 42H10Z" fill="#ffffff" />
+                          </svg>
+                        } @else {
+                          <svg class="manage-big-folder-svg" viewBox="0 0 56 60" aria-hidden="true">
+                            <rect x="6" y="4" width="44" height="52" rx="10" fill="#2563eb" />
+                            <path d="M36 4L50 18H39C37.3 18 36 16.7 36 15V4Z" fill="#93c5fd" />
+                            <rect x="15" y="25" width="26" height="3.5" rx="1.7" fill="#ffffff" />
+                            <rect x="15" y="33" width="26" height="3.5" rx="1.7" fill="#ffffff" />
+                            <rect x="15" y="41" width="18" height="3.5" rx="1.7" fill="#ffffff" />
+                          </svg>
+                        }
+                      } @else {
+                        <svg class="manage-big-folder-svg" viewBox="0 0 64 56" aria-hidden="true">
+                          <defs>
+                            <linearGradient id="dlgFolderFront" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stop-color="#ff942e" />
+                              <stop offset="100%" stop-color="#e04800" />
+                            </linearGradient>
+                          </defs>
+                          <path d="M6 10C6 6.69 8.69 4 12 4H25L31 11H52C55.31 11 58 13.69 58 17V44C58 47.31 55.31 50 52 50H12C8.69 50 6 47.31 6 44V10Z" fill="#ffb84d" />
+                          <path d="M4 18C4 14.69 6.69 12 10 12H54C57.31 12 60 14.69 60 18V46C60 49.31 57.31 52 54 52H10C6.69 52 4 49.31 4 46V18Z" fill="url(#dlgFolderFront)" />
+                          <rect x="11" y="9" width="14" height="3" rx="1.5" fill="#fff7ed" opacity="0.9" />
+                        </svg>
+                      }
                     </div>
 
                     <div class="manage-fields-col">

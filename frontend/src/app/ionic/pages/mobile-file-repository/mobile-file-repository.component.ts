@@ -147,13 +147,8 @@ export class MobileFileRepositoryComponent implements OnInit {
 
   // Estado del Modal "Gestionar Archivo" (ABM)
   editingFile = signal<ManagedFile | null>(null);
-  editingFolder = signal<ExplorerFolderItem | null>({
-    id: 'docs',
-    name: 'Documentos',
-    category: 'DOC',
-    modified: 'Hoy, 14:32'
-  });
-  isEditModalOpen = signal<boolean>(true);
+  editingFolder = signal<ExplorerFolderItem | null>(null);
+  isEditModalOpen = signal<boolean>(false);
   readonly editTags: FileTagType[] = FILE_TAGS;
 
   readonly editForm: FormGroup = this.fb.group({
@@ -383,6 +378,7 @@ export class MobileFileRepositoryComponent implements OnInit {
   openManageFolderModal(folderItem: ExplorerFolderItem, event?: Event): void {
     event?.stopPropagation();
     this.nativeService.triggerHapticImpact('light');
+    this.selectedIds.set(['folder-' + folderItem.id]);
     this.editingFile.set(null);
     this.editingFolder.set(folderItem);
     this.manageTab.set('info');
@@ -533,6 +529,7 @@ export class MobileFileRepositoryComponent implements OnInit {
     event?.stopPropagation();
     if (slidingItem) await slidingItem.close();
     this.nativeService.triggerHapticImpact('light');
+    this.selectedIds.set([String(file.id)]);
     this.editingFolder.set(null);
     this.editingFile.set(file);
     this.manageTab.set('info');

@@ -3,15 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import {
-  LucideMail,
-  LucideLock,
-  LucideEye,
-  LucideEyeOff,
-  LucideArrowRight,
-  LucideAlertCircle,
-  LucideSparkles
-} from '@lucide/angular';
 
 @Component({
   selector: 'app-login',
@@ -19,14 +10,7 @@ import {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
-    LucideMail,
-    LucideLock,
-    LucideEye,
-    LucideEyeOff,
-    LucideArrowRight,
-    LucideAlertCircle,
-    LucideSparkles
+    RouterModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -39,14 +23,19 @@ export class LoginComponent {
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
   showPassword = signal<boolean>(false);
+  rememberSession = signal<boolean>(true);
 
   form: FormGroup = this.fb.group({
-    email: ['admin@proyectos.com', [Validators.required, Validators.email]],
-    password: ['admin123', [Validators.required, Validators.minLength(6)]]
+    email: ['admin@proyectos.com', [Validators.required]],
+    password: ['admin123', [Validators.required, Validators.minLength(4)]]
   });
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
+  }
+
+  toggleRemember(): void {
+    this.rememberSession.update(v => !v);
   }
 
   fillDemoCredentials(): void {
@@ -54,6 +43,7 @@ export class LoginComponent {
       email: 'admin@proyectos.com',
       password: 'admin123'
     });
+    this.error.set(null);
   }
 
   onSubmit(targetRoute = '/mobile/dashboard'): void {
@@ -72,7 +62,7 @@ export class LoginComponent {
       },
       error: (err: Error) => {
         this.loading.set(false);
-        this.error.set(err.message || 'Error al iniciar sesión');
+        this.error.set(err.message || 'Credenciales inválidas. Probá con admin@proyectos.com / admin123');
       }
     });
   }

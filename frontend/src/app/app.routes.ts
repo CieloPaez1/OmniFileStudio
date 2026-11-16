@@ -9,6 +9,18 @@ export const routes: Routes = [
   // Suite Gestor y Conversor de Archivos (Vista Escritorio Web)
   { path: 'files', component: FileManagerComponent },
 
+  // Autenticación (Login y Registro)
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/auth/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./pages/auth/register/register.component').then(m => m.RegisterComponent)
+  },
+
   // Rutas de las 4 Pestañas + Formulario Reactivo con Ionic 9 + Capacitor 8
   ...ionicRoutes,
 
