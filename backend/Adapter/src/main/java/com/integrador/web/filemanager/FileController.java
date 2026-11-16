@@ -65,11 +65,6 @@ public class FileController {
 
     @GetMapping
     public ResponseEntity<List<FileResponseDTO>> getAllFiles() {
-        // Auto-seed initial samples in PostgreSQL if database is empty
-        if (jpaRepository.count() == 0) {
-            seedInitialDatabaseRecords();
-        }
-
         List<FileResponseDTO> list = jpaRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(ManagedFileMapper::toDomain)

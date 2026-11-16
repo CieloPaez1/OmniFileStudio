@@ -344,6 +344,12 @@
           </div>
         }
 
+        @if (folderItems().length === 0 && filteredFiles().length === 0) {
+          <div style="padding: var(--space-xl) var(--space-md); text-align: center; color: var(--color-ink-2); font-size: var(--text-sm);">
+            La base de datos PostgreSQL está vacía (0 archivos). Usá <strong>+ Nuevo</strong>, <strong>Subir archivos</strong> o <strong>Nueva carpeta</strong> para crear registros reales.
+          </div>
+        }
+
         <!-- ==================== TARJETA FLOTANTE SUPERPUESTA: "GESTIONAR ARCHIVO" ==================== -->
         @if (isEditModalOpen()) {
           <div class="manage-floating-overlay">

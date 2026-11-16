@@ -372,13 +372,10 @@ export class FileManagerService {
       const raw = localStorage.getItem(this.CACHE_KEY);
       if (raw) {
         const parsed = (JSON.parse(raw) as ManagedFile[]).map(item => this.normalizeRecord(item));
-        if (parsed.length > 0) return parsed;
+        return parsed;
       }
     } catch {}
-    if (this.files().length > 0) return this.files();
-    const seed = this.getDefaultSeedFiles();
-    this.saveToLocalFallback(seed);
-    return seed;
+    return [];
   }
 
   private getDefaultSeedFiles(): ManagedFile[] {

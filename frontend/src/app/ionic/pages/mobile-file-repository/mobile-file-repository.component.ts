@@ -116,19 +116,14 @@ export class MobileFileRepositoryComponent implements OnInit {
   sortField = signal<'name' | 'date'>('date');
   sortAsc = signal<boolean>(true);
 
-  selectedIds = signal<string[]>(['folder-docs']);
+  selectedIds = signal<string[]>([]);
   manageTab = signal<'info' | 'edit' | 'share'>('info');
 
   customFolders = signal<ExplorerFolderItem[]>(this.loadCustomFolders());
 
   readonly folderItems = computed<ExplorerFolderItem[]>(() => {
-    const base: ExplorerFolderItem[] = [
-      { id: 'docs', name: 'Documentos', category: 'DOC', modified: 'Hoy, 14:32' },
-      { id: 'images', name: 'Imágenes', category: 'IMAGE', modified: 'Hoy, 13:20' },
-      { id: 'projects', name: 'Proyectos', category: 'PDF', modified: 'Ayer, 18:45' }
-    ];
     const q = this.searchQuery().toLowerCase().trim();
-    const all = [...base, ...this.customFolders()];
+    const all = this.customFolders();
     if (!q) return all;
     return all.filter(f => f.name.toLowerCase().includes(q));
   });
@@ -280,9 +275,7 @@ export class MobileFileRepositoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.fileService.files().length === 0) {
-      this.fileService.getAll().subscribe();
-    }
+    this.fileService.getAll().subscribe();
   }
 
   selectCategoryFolder(cat: 'ALL' | 'PDF' | 'IMAGE' | 'DOC' | 'FAV' | 'TRASH'): void {
