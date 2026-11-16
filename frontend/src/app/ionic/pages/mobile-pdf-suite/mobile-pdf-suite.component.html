@@ -865,6 +865,31 @@
               }
             </div>
 
+            <!-- Selector rápido de archivos reales en PostgreSQL -->
+            <div class="fm-db-picker-shell">
+              <div class="fm-selected-files-header">
+                <span class="fm-files-count">Archivos en Base de Datos ({{ allFiles().length }})</span>
+              </div>
+              @if (allFiles().length > 0) {
+                <div class="fm-db-chips-grid">
+                  @for (dbFile of allFiles(); track dbFile.id) {
+                    <button
+                      type="button"
+                      class="fm-db-file-chip"
+                      [class.selected]="isDatabaseFileSelected(dbFile.id)"
+                      (click)="addDatabaseFileToTool(dbFile)">
+                      <span class="fm-db-ext">.{{ dbFile.ext | uppercase }}</span>
+                      <span class="fm-db-name">{{ dbFile.name }}</span>
+                    </button>
+                  }
+                </div>
+              } @else {
+                <div class="fm-no-files-hint">
+                  <span>No hay archivos guardados en PostgreSQL todavía. Subí uno desde Archivos o arriba.</span>
+                </div>
+              }
+            </div>
+
             <!-- Lista de archivos seleccionados (1:1 con las capturas) -->
             <div class="fm-selected-files-shell">
               <div class="fm-selected-files-header">

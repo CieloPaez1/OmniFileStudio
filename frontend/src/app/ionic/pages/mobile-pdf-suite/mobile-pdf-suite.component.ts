@@ -1031,6 +1031,22 @@ export class MobilePdfSuiteComponent implements OnInit {
         this.compressFileId.set(requestedFileId);
         this.splitSourceId.set(requestedFileId);
         this.convertFileId.set(requestedFileId);
+        this.ocrFileId.set(requestedFileId);
+        const found = this.allFiles().find(f => Number(f.id) === requestedFileId);
+        if (found) {
+          this.toolSelectedFiles.set([
+            {
+              id: found.id,
+              name: found.name,
+              size: found.size,
+              ext: found.ext,
+              dataUrl: found.dataUrl,
+              pageCount: found.pageCount ?? undefined
+            }
+          ]);
+          this.ocrPreviewUrl.set(found.dataUrl || found.viewUrl);
+          this.ocrOutputTitle.set(`${found.name.replace(/\.[^/.]+$/, '')}_OCR`);
+        }
       }
     });
   }
@@ -1296,43 +1312,71 @@ export class MobilePdfSuiteComponent implements OnInit {
   // MÉTODOS Y ACCIONES PARA LA VISTA 1:1 OBSIDIAN + NEON ORANGE
   // =========================================================================
   initToolFiles(tool: PdfSuiteTool): void {
-    if (tool === 'compress') {
-      this.toolSelectedFiles.set([
-        { id: 101, name: 'Documento.pdf', size: 245 * 1024, ext: 'pdf' },
-        { id: 102, name: 'Informe.docx', size: 1200 * 1024, ext: 'docx' },
-        { id: 103, name: 'Datos.xlsx', size: 890 * 1024, ext: 'xlsx' }
-      ]);
-    } else if (tool === 'decompress') {
-      this.toolSelectedFiles.set([
-        { id: 201, name: 'Proyecto.zip', size: 2400 * 1024, ext: 'zip' }
-      ]);
-    } else if (tool === 'merge') {
-      this.toolSelectedFiles.set([
-        { id: 301, name: 'Informe.pdf', size: 450 * 1024, ext: 'pdf' },
-        { id: 302, name: 'Contrato.pdf', size: 320 * 1024, ext: 'pdf' },
-        { id: 303, name: 'Anexo.pdf', size: 610 * 1024, ext: 'pdf' }
-      ]);
-      this.selectedMergeOrderIndex.set(0);
-    } else if (tool === 'split') {
-      this.toolSelectedFiles.set([
-        { id: 401, name: 'Documento_Completo.pdf', size: 1850 * 1024, ext: 'pdf' }
-      ]);
-    } else if (tool === 'convert') {
-      this.toolSelectedFiles.set([
-        { id: 501, name: 'Documento_Original.pdf', size: 780 * 1024, ext: 'pdf' }
-      ]);
-    } else {
-      const first = this.allFiles()[0];
-      if (first) {
-        this.toolSelectedFiles.set([
-          { id: first.id, name: first.name, size: first.size, ext: first.ext }
-        ]);
-      } else {
-        this.toolSelectedFiles.set([
-          { id: 601, name: 'Documento.pdf', size: 520 * 1024, ext: 'pdf' }
-        ]);
-      }
+    const dbFiles = this.allFiles();
+    if (dbFiles.length === 0) {
+      this.toolSelectedFiles.set([]);
+      return;
     }
+    if (tool === 'merge') {
+      const pdfs = dbFiles.filter(f => f.ext === 'pdf' || f.category === 'PDF').slice(0, 3);
+      const sourceList = pdfs.length > 0 ? pdfs : dbFiles.slice(0, 2);
+      this.toolSelectedFiles.set(
+        sourceList.map(f => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          ext: f.ext,
+          dataUrl: f.dataUrl,
+          pageCount: f.pageCount ?? undefined
+        }))
+      );
+      this.selectedMergeOrderIndex.set(0);
+      return;
+    }
+    const first = dbFiles[0];
+    this.toolSelectedFiles.set([
+      {
+        id: first.id,
+        name: first.name,
+        size: first.size,
+        ext: first.ext,
+        dataUrl: first.dataUrl,
+        pageCount: first.pageCount ?? undefined
+      }
+    ]);
+  }
+
+  addDatabaseFileToTool(dbFile: ManagedFile): void {
+    this.nativeService.triggerHapticSelection();
+    const exists = this.toolSelectedFiles().some(f => Number(f.id) === Number(dbFile.id));
+    if (!exists) {
+      this.toolSelectedFiles.update(curr => [
+        ...curr,
+        {
+          id: dbFile.id,
+          name: dbFile.name,
+          size: dbFile.size,
+          ext: dbFile.ext,
+          dataUrl: dbFile.dataUrl,
+          pageCount: dbFile.pageCount ?? undefined
+        }
+      ]);
+    }
+    this.ocrFileId.set(dbFile.id);
+    this.uploadedOcrFile.set(null);
+    this.ocrPreviewUrl.set(dbFile.dataUrl || dbFile.viewUrl);
+    this.ocrOutputTitle.set(`${dbFile.name.replace(/\.[^/.]+$/, '')}_OCR`);
+    this.translateFileId.set(dbFile.id);
+    this.signFileId.set(dbFile.id);
+    this.compressFileId.set(dbFile.id);
+    this.splitSourceId.set(dbFile.id);
+    this.convertFileId.set(dbFile.id);
+    this.aiFileId.set(dbFile.id);
+    this.presentToast(`"${dbFile.name}" seleccionado desde PostgreSQL`, 'success');
+  }
+
+  isDatabaseFileSelected(id: number): boolean {
+    return this.toolSelectedFiles().some(f => Number(f.id) === Number(id));
   }
 
   onToolFilesPicked(event: Event): void {

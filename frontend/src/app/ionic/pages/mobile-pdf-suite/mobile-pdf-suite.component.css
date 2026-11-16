@@ -2374,6 +2374,52 @@ button:disabled,
   gap: 12px;
 }
 
+.fm-db-picker-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fm-db-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fm-db-file-chip {
+  height: 34px;
+  max-width: 100%;
+  padding: 0 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.fm-db-file-chip.selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.fm-db-ext {
+  color: var(--color-accent);
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.fm-db-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
 .fm-selected-files-header {
   display: flex;
   align-items: center;
