@@ -38,7 +38,7 @@ button:disabled,
   height: 84px;
   max-width: 680px;
   width: calc(100% - var(--space-lg));
-  margin: 0 auto var(--space-xs);
+  margin: 0 auto max(var(--space-xs), env(safe-area-inset-bottom, 8px));
   padding: var(--space-3xs);
   overflow: visible;
   contain: none;

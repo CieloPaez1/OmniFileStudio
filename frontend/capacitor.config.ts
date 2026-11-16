@@ -11,7 +11,8 @@ const config: CapacitorConfig = {
   appName: 'FileStudio PDF Manager',
   webDir: 'dist/IntegradorProgAvz2026Front/browser',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http',
+    cleartext: true
   },
   plugins: {
     Camera: {

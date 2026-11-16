@@ -41,8 +41,11 @@ import { ActivityLogService } from './activity-log.service';
 export class FileManagerService {
   private readonly http = inject(HttpClient);
   private readonly activityLog = inject(ActivityLogService);
-  readonly apiUrl = `http://${typeof window !== 'undefined' && window.location?.hostname ? window.location.hostname : 'localhost'}:8080/api/files`;
-  private readonly CACHE_KEY = 'filestudio_files_preferences_v1';
+  readonly apiUrl =
+    Capacitor.getPlatform() === 'android'
+      ? 'http://10.0.2.2:8080/api/files'
+      : `http://${typeof window !== 'undefined' && window.location?.hostname ? window.location.hostname : 'localhost'}:8080/api/files`;
+  private readonly CACHE_KEY = 'filestudio_files_pg_sync_v3';
 
   // Indicador de Privacidad Client-Side (Privacy-First)
   readonly privacyModeActive = signal<boolean>(true);

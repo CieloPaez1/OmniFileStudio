@@ -10,6 +10,8 @@ INJECTED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-c
 		ADDED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-cordova-android-plugins\src\main\AndroidManifest.xml:2:11-69
 application
 ADDED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-cordova-android-plugins\src\main\AndroidManifest.xml:4:1-6:15
+	android:usesCleartextTraffic
+		ADDED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-cordova-android-plugins\src\main\AndroidManifest.xml:4:15-50
 uses-sdk
 INJECTED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-cordova-android-plugins\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Cielo\Desktop\OmniFileStudio\frontend\android\capacitor-cordova-android-plugins\src\main\AndroidManifest.xml
