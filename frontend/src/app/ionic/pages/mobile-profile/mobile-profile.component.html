@@ -84,6 +84,34 @@
       </div>
     </header>
 
+    <!-- 2.5. BUSCADOR EN CÁPSULA RESPLANDECIENTE (1:1 con Herramientas) -->
+    <div class="profile-search-pill-bar">
+      <ion-icon name="search-outline" class="profile-search-ico" aria-hidden="true"></ion-icon>
+      <input
+        type="search"
+        class="profile-search-input"
+        placeholder="Buscar en ajustes y cuenta…"
+        [ngModel]="profileSearch()"
+        (ngModelChange)="profileSearch.set($event)"
+        aria-label="Buscar en ajustes y cuenta"
+      />
+      <button
+        type="button"
+        class="profile-sliders-btn"
+        (click)="isSettingsModalOpen.set(true)"
+        title="Abrir configuración general"
+        aria-label="Configuración general">
+        <svg viewBox="0 0 24 24" class="profile-sliders-svg" aria-hidden="true">
+          <line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <circle cx="9" cy="7" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+          <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <circle cx="15" cy="12" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+          <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <circle cx="10" cy="17" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+
     <!-- 3. TARJETA PRINCIPAL DE IDENTIDAD Y ALMACENAMIENTO -->
     <section class="profile-identity-card" aria-label="Información del usuario">
       <div class="identity-top-row">

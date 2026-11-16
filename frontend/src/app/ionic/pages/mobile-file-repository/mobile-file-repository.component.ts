@@ -54,6 +54,8 @@ import {
   checkmarkCircleOutline,
   checkmarkOutline,
   chevronDownOutline,
+  notificationsOutline,
+  arrowForwardOutline,
   arrowUpOutline,
   arrowDownOutline
 } from 'ionicons/icons';
@@ -269,6 +271,8 @@ export class MobileFileRepositoryComponent implements OnInit {
       checkmarkCircleOutline,
       checkmarkOutline,
       chevronDownOutline,
+      notificationsOutline,
+      arrowForwardOutline,
       arrowUpOutline,
       arrowDownOutline
     });

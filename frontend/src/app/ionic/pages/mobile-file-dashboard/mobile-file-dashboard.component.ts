@@ -45,6 +45,7 @@ import {
   closeOutline,
   checkmarkCircleOutline,
   chevronDownOutline,
+  chevronForwardOutline,
   sunnyOutline,
   moonOutline
 } from 'ionicons/icons';
@@ -194,6 +195,7 @@ export class MobileFileDashboardComponent implements OnInit {
       closeOutline,
       checkmarkCircleOutline,
       chevronDownOutline,
+      chevronForwardOutline,
       sunnyOutline,
       moonOutline
     });

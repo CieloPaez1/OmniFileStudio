@@ -60,6 +60,7 @@ import {
   chevronForwardOutline,
   chevronDownOutline,
   arrowForwardOutline,
+  searchOutline,
   logoSlack,
   calendarOutline,
   logoGithub,
@@ -140,6 +141,7 @@ export class MobileProfileComponent implements OnInit {
   isDarkMode = computed(() => this.themeService.isDark());
   avatarUrl = signal<string | null>(null);
   pushEnabled = signal<boolean>(true);
+  profileSearch = signal<string>('');
 
   // Datos reales de proyectos y tareas para KPIs, Nivel XP y Carrusel
   // (Compartidos con Inicio, Proyectos y Tareas a través de IonicStorageService)
@@ -268,6 +270,7 @@ export class MobileProfileComponent implements OnInit {
       chevronForwardOutline,
       chevronDownOutline,
       arrowForwardOutline,
+      searchOutline,
       logoSlack,
       calendarOutline,
       logoGithub,
