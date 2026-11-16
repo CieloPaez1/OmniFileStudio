@@ -128,7 +128,26 @@ export interface FileManagerNativeModule {
   title: string;
   subtitle: string;
   badge?: string;
-  iconType: 'pdf' | 'pen' | 'water' | 'shield' | 'compare' | 'image' | 'search' | 'rename';
+  iconType:
+    | 'pdf'
+    | 'pen'
+    | 'water'
+    | 'shield'
+    | 'compare'
+    | 'image'
+    | 'search'
+    | 'rename'
+    | 'merge'
+    | 'split'
+    | 'compress'
+    | 'decompress'
+    | 'convert'
+    | 'ocr'
+    | 'translate'
+    | 'sign'
+    | 'rotate'
+    | 'scan-images'
+    | 'ai-tools';
 }
 
 export interface SuiteSelectedFile {
@@ -467,58 +486,132 @@ export class MobilePdfSuiteComponent implements OnInit {
   ];
 
   // =========================================================================
-  // LAS 8 HERRAMIENTAS NATIVAS DE FILEMANAGER (MOCKUPS 1:1)
+  // TODAS LAS HERRAMIENTAS DE FILEMANAGER (MOCKUP 1:1 + SUITE COMPLETA)
   // =========================================================================
   readonly fileManagerModules: FileManagerNativeModule[] = [
     {
       id: 'organize',
-      title: 'Organizar Páginas PDF',
-      subtitle: 'Reordena, elimina o extrae páginas',
+      title: 'Organizar páginas PDF',
+      subtitle: 'Reordená, eliminá, duplicá y reordená tus páginas.',
       iconType: 'pdf'
     },
     {
       id: 'edit',
       title: 'Editar PDF',
-      subtitle: 'Modifica y anota tus documentos',
+      subtitle: 'Agregá texto, imágenes y anotaciones.',
       iconType: 'pen'
     },
     {
       id: 'watermark',
-      title: 'Agregar Marca de Agua',
-      subtitle: 'Protege y personaliza',
+      title: 'Agregar marca de agua',
+      subtitle: 'Insertá marcas de agua en tus documentos.',
       iconType: 'water'
     },
     {
       id: 'protect',
       title: 'Proteger PDF',
-      subtitle: 'Añade contraseña y permisos',
+      subtitle: 'Establecé contraseñas y permisos.',
       iconType: 'shield'
     },
     {
       id: 'compare',
-      title: 'Comparar Documentos',
-      subtitle: 'Detecta diferencias',
+      title: 'Comparar documentos',
+      subtitle: 'Detectá diferencias entre archivos.',
       iconType: 'compare'
     },
     {
       id: 'image-editor',
-      title: 'Editor de Imágenes',
-      subtitle: 'Edita, convierte y optimiza imágenes',
+      title: 'Editor de imágenes',
+      subtitle: 'Recortá, ajustá y convertí tus imágenes.',
       iconType: 'image'
     },
     {
       id: 'duplicates',
-      title: 'Buscar Archivos Duplicados',
-      subtitle: 'Libera espacio',
+      title: 'Buscar archivos duplicados',
+      subtitle: 'Encontrá y eliminá archivos repetidos.',
       iconType: 'search'
     },
     {
       id: 'batch-rename',
-      title: 'Renombrar Archivos en Lote',
-      subtitle: 'Cambia nombres en múltiples archivos',
+      title: 'Renombrar archivos en lote',
+      subtitle: 'Cambiá nombres de varios archivos a la vez.',
       iconType: 'rename'
+    },
+    {
+      id: 'merge',
+      title: 'Unir PDF',
+      subtitle: 'Combiná varios archivos PDF en un solo documento.',
+      iconType: 'merge'
+    },
+    {
+      id: 'split',
+      title: 'Dividir PDF',
+      subtitle: 'Extraé páginas o separá un PDF en varios archivos.',
+      iconType: 'split'
+    },
+    {
+      id: 'compress',
+      title: 'Comprimir archivos',
+      subtitle: 'Reducí el tamaño de tus archivos sin perder calidad.',
+      iconType: 'compress'
+    },
+    {
+      id: 'decompress',
+      title: 'Descomprimir archivos',
+      subtitle: 'Extraé el contenido de tus paquetes comprimidos.',
+      iconType: 'decompress'
+    },
+    {
+      id: 'convert',
+      title: 'Convertir archivos',
+      subtitle: 'Convertí tus archivos a otros formatos documentales.',
+      iconType: 'convert'
+    },
+    {
+      id: 'ocr',
+      title: 'Escanear documento (OCR)',
+      subtitle: 'Digitalizá tus documentos y extraé texto desde la cámara.',
+      iconType: 'ocr'
+    },
+    {
+      id: 'translate',
+      title: 'Traductor de documentos',
+      subtitle: 'Traducí textos y documentos en varios idiomas.',
+      iconType: 'translate'
+    },
+    {
+      id: 'sign',
+      title: 'Firmar PDF',
+      subtitle: 'Dibujá o estampá tu firma digital en tus documentos.',
+      iconType: 'sign'
+    },
+    {
+      id: 'rotate',
+      title: 'Girar PDF',
+      subtitle: 'Rotá la orientación de las páginas de tu PDF.',
+      iconType: 'rotate'
+    },
+    {
+      id: 'scan-images',
+      title: 'Imágenes a PDF',
+      subtitle: 'Creá un documento PDF a partir de tus fotos.',
+      iconType: 'scan-images'
+    },
+    {
+      id: 'ai-tools',
+      title: 'PDF con IA',
+      subtitle: 'Generá resúmenes ejecutivos y consultá tus documentos.',
+      iconType: 'ai-tools'
     }
   ];
+
+  readonly filteredModules = computed<FileManagerNativeModule[]>(() => {
+    const q = this.catalogSearch().toLowerCase().trim();
+    if (!q) return this.fileManagerModules;
+    return this.fileManagerModules.filter(
+      m => m.title.toLowerCase().includes(q) || m.subtitle.toLowerCase().includes(q)
+    );
+  });
 
   // Hero Cards de navegación superior responsiva
   readonly heroTools: HeroToolCard[] = [

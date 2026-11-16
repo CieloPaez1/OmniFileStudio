@@ -6,7 +6,7 @@
   @if (viewMode() === 'catalog') {
     <!-- Ondas de Seda 3D Naranjas de Fondo -->
     <div class="tools-silk-waves" aria-hidden="true">
-      <svg viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
+      <svg aria-hidden="true" viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
         <defs>
           <linearGradient id="tlWaveRight" x1="100%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#ff8c24" stop-opacity="0.78" />
@@ -27,213 +27,233 @@
     </div>
 
     <div class="tools-hub-shell">
+      <!-- Barra Superior de Marca: FileManager + Campana (3) + Avatar CG -->
+      <div class="tools-brand-topbar">
+        <div class="tools-brand-left">
+          <svg viewBox="0 0 48 42" class="tools-brand-folder-svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="tlBrandFolderBack" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffb84d" />
+                <stop offset="100%" stop-color="#e05300" />
+              </linearGradient>
+              <linearGradient id="tlBrandFolderFront" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff9838" />
+                <stop offset="100%" stop-color="#e04800" />
+              </linearGradient>
+            </defs>
+            <path d="M4 8C4 5.2 6.2 3 9 3H19L23.5 8H39C41.8 8 44 10.2 44 13V33C44 35.8 41.8 38 39 38H9C6.2 38 4 35.8 4 33V8Z" fill="url(#tlBrandFolderBack)" />
+            <path d="M3 14C3 11.2 5.2 9 8 9H40C42.8 9 45 11.2 45 14V34C45 36.8 42.8 39 40 39H8C5.2 39 3 36.8 3 34V14Z" fill="url(#tlBrandFolderFront)" />
+            <rect x="8" y="6.8" width="10" height="2.2" rx="1.1" fill="#fff7ed" opacity="0.9" />
+          </svg>
+          <span class="tools-brand-wordmark">File<strong>Manager</strong></span>
+        </div>
+
+        <div class="tools-brand-right">
+          <button
+            type="button"
+            class="tools-notif-btn"
+            aria-label="Notificaciones"
+            (click)="presentToast('Tenés 3 herramientas recomendadas listas para usar', 'dark')">
+            <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+            <span class="tools-notif-badge">3</span>
+          </button>
+
+          <button type="button" class="tools-user-pill" routerLink="/mobile/profile" aria-label="Perfil de usuario">
+            <span>CG</span>
+            <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
       <!-- Encabezado Principal: Insignia Llave 3D + Herramientas -->
       <header class="tools-hub-header">
         <div class="tools-wrench-squircle" aria-hidden="true">
-          <svg viewBox="0 0 48 48" class="wrench-3d-svg">
+          <svg aria-hidden="true" viewBox="0 0 48 48" class="wrench-3d-svg">
             <defs>
               <linearGradient id="wrenchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffb347" />
+                <stop offset="0%" stop-color="#ffc247" />
                 <stop offset="100%" stop-color="#ff6200" />
               </linearGradient>
             </defs>
             <path d="M35.5 9.5C32.2 8.2 28.3 9 25.7 11.6C23.4 13.9 22.6 17.2 23.4 20.2L10.8 32.8C9.2 34.4 9.2 37 10.8 38.6C12.4 40.2 15 40.2 16.6 38.6L29.2 26C32.2 26.8 35.5 26 37.8 23.7C40.4 21.1 41.2 17.2 39.9 13.9L34.8 19L31.2 18.2L30.4 14.6L35.5 9.5Z" fill="url(#wrenchGrad)" />
+            <circle cx="13.7" cy="35.7" r="1.6" fill="#1a0b05" />
           </svg>
         </div>
 
         <div class="tools-hub-title-col">
           <h1>Herramientas</h1>
-          <p>Todas las herramientas que necesitas en un solo lugar.</p>
+          <p>Todas las herramientas que necesitás en un solo lugar.</p>
         </div>
       </header>
 
-      <!-- SECCION 1:1 CON CAPTURA 1: LAS 8 HERRAMIENTAS NATIVAS DE FILEMANAGER -->
-      <section class="fm-modules-hub-section" aria-label="Módulos Nativos de FileManager">
+      <!-- Barra de Búsqueda en Cápsula Resplandeciente -->
+      <div class="tools-search-pill-bar">
+        <ion-icon name="search-outline" class="tools-search-ico" aria-hidden="true"></ion-icon>
+        <input
+          type="search"
+          class="tools-search-input"
+          placeholder="Buscar herramienta..."
+          [ngModel]="catalogSearch()"
+          (ngModelChange)="catalogSearch.set($event)"
+          aria-label="Buscar herramienta"
+        />
+        <button
+          type="button"
+          class="tools-filter-sliders-btn"
+          aria-label="Ver catálogo completo de herramientas"
+          (click)="isMegaMenuOpen.set(true)">
+          <svg viewBox="0 0 24 24" class="tools-sliders-svg" aria-hidden="true">
+            <line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <circle cx="9" cy="7" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+            <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <circle cx="15" cy="12" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+            <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <circle cx="10" cy="17" r="2.3" fill="#180c06" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- LISTA COMPLETA DE TODAS LAS HERRAMIENTAS (1:1 CON LA IMAGEN DE REFERENCIA) -->
+      <section class="fm-modules-hub-section" aria-label="Todas las herramientas de FileManager">
         <div class="fm-modules-hub-grid">
-          @for (mod of fileManagerModules; track mod.id) {
+          @for (mod of filteredModules(); track mod.id) {
             <button type="button" class="fm-module-hub-card" (click)="selectHeroTool(mod.id)">
               <div class="fm-module-card-icon" [ngClass]="'fm-icon-' + mod.iconType" aria-hidden="true">
                 @if (mod.iconType === 'pdf') {
-                  <svg viewBox="0 0 36 42" class="fm-hub-svg">
-                    <rect x="2" y="2" width="32" height="38" rx="6" fill="#dc2626"/>
-                    <path d="M22 2L34 14H24C22.9 14 22 13.1 22 12V2Z" fill="#fca5a5"/>
-                    <text x="18" y="28" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">PDF</text>
+                  <svg aria-hidden="true" viewBox="0 0 40 42" class="fm-hub-svg">
+                    <rect x="5" y="3" width="30" height="36" rx="7" fill="#ff8524" />
+                    <path d="M24 3L35 14H26.5C25.1 14 24 12.9 24 11.5V3Z" fill="#ffd29d" />
+                    <path d="M20 12C18.5 16 16.5 19.5 14.5 21.5C17 20.8 21.5 19.8 25 20.5C22.8 18.8 20.8 15.2 20 12Z" stroke="#1f0c04" stroke-width="1.8" fill="none" stroke-linecap="round" />
+                    <text x="20" y="33" text-anchor="middle" fill="#1f0c04" font-size="8.5" font-weight="900">PDF</text>
                   </svg>
                 } @else if (mod.iconType === 'pen') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <path d="M6 30h6l16-16-6-6L6 24v6z" fill="#ff7a1a"/>
-                    <line x1="6" y1="30" x2="30" y2="30" stroke="#fed7aa" stroke-width="2.5" stroke-linecap="round"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M8 29.5L14.5 28L30.5 12L25 6.5L9 22.5L8 29.5Z" fill="#ff8c2e" />
+                    <path d="M26.8 4.8L32.2 10.2L29.5 12.9L24.1 7.5L26.8 4.8Z" fill="#ffd29d" />
+                    <line x1="8" y1="33.5" x2="31" y2="33.5" stroke="#ff8c2e" stroke-width="2.6" stroke-linecap="round" />
                   </svg>
                 } @else if (mod.iconType === 'water') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <path d="M18 4C18 4 6 18 6 24C6 30.6 11.4 34 18 34C24.6 34 30 30.6 30 24C30 18 18 4 18 4Z" fill="#ff7a1a"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M19 5C19 5 8 18.2 8 25C8 31.1 12.9 35 19 35C25.1 35 30 31.1 30 25C30 18.2 19 5 19 5Z" fill="#ff8524" />
+                    <path d="M29.5 29.5C29.5 29.5 26.5 33 26.5 34.8C26.5 36.4 27.8 37.5 29.5 37.5C31.2 37.5 32.5 36.4 32.5 34.8C32.5 33 29.5 29.5 29.5 29.5Z" fill="#ffb84d" />
                   </svg>
                 } @else if (mod.iconType === 'shield') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <path d="M18 4L6 9v9c0 7.5 5.1 14.5 12 16c6.9-1.5 12-8.5 12-16V9L18 4z" fill="#ff7a1a"/>
-                    <rect x="13" y="17" width="10" height="8" rx="2" fill="#fff"/>
-                    <path d="M15 17v-2a3 3 0 0 1 6 0v2" stroke="#fff" stroke-width="2" fill="none"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M20 4L7 9.5V19C7 27.4 12.5 34.6 20 36.8C27.5 34.6 33 27.4 33 19V9.5L20 4Z" fill="#ff8524" />
+                    <rect x="14.5" y="18.5" width="11" height="8.5" rx="2" fill="#1f0c04" />
+                    <path d="M16.5 18.5V16C16.5 14.1 18.1 12.5 20 12.5C21.9 12.5 23.5 14.1 23.5 16V18.5" stroke="#1f0c04" stroke-width="2.2" fill="none" />
                   </svg>
                 } @else if (mod.iconType === 'compare') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <rect x="4" y="6" width="16" height="22" rx="3" fill="#ea580c"/>
-                    <rect x="16" y="10" width="16" height="22" rx="3" fill="#ff7a1a" stroke="#080605" stroke-width="1.5"/>
-                    <path d="M22 17l4 4-4 4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="5" y="5" width="19" height="25" rx="4" fill="#ff8524" />
+                    <line x1="9" y1="12" x2="18" y2="12" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <line x1="9" y1="16.5" x2="18" y2="16.5" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <line x1="9" y1="21" x2="15" y2="21" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <rect x="18" y="16" width="17" height="19" rx="4" fill="#ffb84d" stroke="#180a05" stroke-width="1.5" />
+                    <path d="M23 25.5H30M27.5 22.5L30.5 25.5L27.5 28.5" stroke="#1f0c04" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 } @else if (mod.iconType === 'image') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <rect x="4" y="6" width="28" height="24" rx="4" fill="#ea580c"/>
-                    <polygon points="7,26 15,16 21,22 25,17 29,26" fill="#fed7aa"/>
-                    <circle cx="11" cy="12" r="2.5" fill="#fde047"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="4" y="7" width="32" height="26" rx="5" fill="none" stroke="#ff8c2e" stroke-width="2.6" />
+                    <circle cx="13.5" cy="15" r="2.8" fill="#ffb84d" />
+                    <path d="M7.5 29L16 19.5L22 25.5L26.5 21L32.5 29H7.5Z" fill="#ff8524" />
                   </svg>
                 } @else if (mod.iconType === 'search') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <circle cx="16" cy="16" r="9" fill="none" stroke="#ff7a1a" stroke-width="3.5"/>
-                    <line x1="23" y1="23" x2="31" y2="31" stroke="#ff7a1a" stroke-width="4.5" stroke-linecap="round"/>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="5" y="5" width="18" height="23" rx="3.5" fill="#ff8524" />
+                    <line x1="9" y1="12" x2="17" y2="12" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <line x1="9" y1="16.5" x2="17" y2="16.5" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <rect x="17" y="11" width="18" height="24" rx="3.5" fill="#ffb84d" stroke="#180a05" stroke-width="1.5" />
+                    <line x1="21" y1="19" x2="30" y2="19" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <line x1="21" y1="23.5" x2="30" y2="23.5" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
+                    <line x1="21" y1="28" x2="27" y2="28" stroke="#1f0c04" stroke-width="2" stroke-linecap="round" />
                   </svg>
                 } @else if (mod.iconType === 'rename') {
-                  <svg viewBox="0 0 36 36" class="fm-hub-svg">
-                    <rect x="8" y="4" width="22" height="28" rx="4" fill="#ea580c"/>
-                    <line x1="5" y1="10" x2="5" y2="12" stroke="#ff7a1a" stroke-width="2"/>
-                    <line x1="5" y1="17" x2="5" y2="19" stroke="#ff7a1a" stroke-width="2"/>
-                    <line x1="5" y1="24" x2="5" y2="26" stroke="#ff7a1a" stroke-width="2"/>
-                    <text x="19" y="24" text-anchor="middle" fill="#fff" font-size="16" font-weight="900">A</text>
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="5" y="8" width="30" height="24" rx="5" fill="none" stroke="#ff8c2e" stroke-width="2.5" stroke-dasharray="6 3" />
+                    <text x="20" y="25" text-anchor="middle" fill="#ffb84d" font-size="15" font-weight="900">Aa</text>
+                  </svg>
+                } @else if (mod.iconType === 'merge') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M11 9V21C11 24.5 14 27 20 27M29 9V21C29 24.5 26 27 20 27M20 27V34" fill="none" stroke="#ff8c2e" stroke-width="3" stroke-linecap="round" />
+                    <circle cx="11" cy="8" r="3.5" fill="#ffb84d" />
+                    <circle cx="29" cy="8" r="3.5" fill="#ffb84d" />
+                    <circle cx="20" cy="34" r="3.5" fill="#ff7a1a" />
+                  </svg>
+                } @else if (mod.iconType === 'split') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <circle cx="11" cy="11" r="4" fill="none" stroke="#ffb84d" stroke-width="2.5" />
+                    <circle cx="11" cy="29" r="4" fill="none" stroke="#ffb84d" stroke-width="2.5" />
+                    <line x1="32" y1="8" x2="14.5" y2="25.5" stroke="#ff8524" stroke-width="2.8" stroke-linecap="round" />
+                    <line x1="32" y1="32" x2="14.5" y2="14.5" stroke="#ff8524" stroke-width="2.8" stroke-linecap="round" />
+                  </svg>
+                } @else if (mod.iconType === 'compress') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M8 10H32L35 16H5L8 10Z" fill="#ffb84d" />
+                    <rect x="6" y="16" width="28" height="18" rx="4" fill="#ff7a1a" />
+                    <rect x="16" y="16" width="8" height="5" rx="1.5" fill="#1f0c04" />
+                  </svg>
+                } @else if (mod.iconType === 'decompress') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="6" y="15" width="28" height="19" rx="4" fill="#ff7a1a" />
+                    <path d="M20 28V12M14 17L20 11L26 17" fill="none" stroke="#ffd29d" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                } @else if (mod.iconType === 'convert') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M10 18C11.2 12.5 16 8.5 21.8 8.5C26.2 8.5 30 10.8 32 14.5" fill="none" stroke="#ffb84d" stroke-width="3" stroke-linecap="round" />
+                    <polygon points="33,8.5 34.5,16.5 26.5,15.5" fill="#ffb84d" />
+                    <path d="M30 22C28.8 27.5 24 31.5 18.2 31.5C13.8 31.5 10 29.2 8 25.5" fill="none" stroke="#ff7a1a" stroke-width="3" stroke-linecap="round" />
+                    <polygon points="7,31.5 5.5,23.5 13.5,24.5" fill="#ff7a1a" />
+                  </svg>
+                } @else if (mod.iconType === 'ocr') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M8 15V10C8 8.9 8.9 8 10 8H15" fill="none" stroke="#ffb84d" stroke-width="2.8" stroke-linecap="round" />
+                    <path d="M25 8H30C31.1 8 32 8.9 32 10V15" fill="none" stroke="#ffb84d" stroke-width="2.8" stroke-linecap="round" />
+                    <path d="M8 25V30C8 31.1 8.9 32 10 32H15" fill="none" stroke="#ffb84d" stroke-width="2.8" stroke-linecap="round" />
+                    <path d="M25 32H30C31.1 32 32 31.1 32 30V25" fill="none" stroke="#ffb84d" stroke-width="2.8" stroke-linecap="round" />
+                    <line x1="12" y1="20" x2="28" y2="20" stroke="#ff7a1a" stroke-width="2.8" stroke-linecap="round" />
+                  </svg>
+                } @else if (mod.iconType === 'translate') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="5" y="5" width="30" height="30" rx="7" fill="#ff7a1a" />
+                    <text x="14" y="24" text-anchor="middle" fill="#1f0c04" font-size="14" font-weight="900">A</text>
+                    <text x="26.5" y="28" text-anchor="middle" fill="#ffd29d" font-size="12" font-weight="900">文</text>
+                  </svg>
+                } @else if (mod.iconType === 'sign') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M7 28C11 22 14 20 16 24C18 28 21 19 25 22C28 24 31 21 34 19" fill="none" stroke="#ffb84d" stroke-width="2.6" stroke-linecap="round" />
+                    <path d="M24 8L31 15L19 27L12 27L12 20L24 8Z" fill="#ff7a1a" />
+                  </svg>
+                } @else if (mod.iconType === 'rotate') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M31 20C31 26.1 26.1 31 20 31C13.9 31 9 26.1 9 20C9 13.9 13.9 9 20 9C23.8 9 27.1 10.9 29.1 13.8" fill="none" stroke="#ff8c2e" stroke-width="2.8" stroke-linecap="round" />
+                    <polygon points="31,7 32.5,15.5 24,14" fill="#ffb84d" />
+                  </svg>
+                } @else if (mod.iconType === 'scan-images') {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <rect x="5" y="6" width="24" height="20" rx="4" fill="#ff8524" />
+                    <circle cx="12" cy="12.5" r="2" fill="#1f0c04" />
+                    <path d="M8 22L14 15L19 20L22 17L26 22H8Z" fill="#1f0c04" />
+                    <rect x="20" y="21" width="15" height="13" rx="3" fill="#ffb84d" />
+                    <text x="27.5" y="30" text-anchor="middle" fill="#1f0c04" font-size="6.5" font-weight="900">PDF</text>
+                  </svg>
+                } @else {
+                  <svg aria-hidden="true" viewBox="0 0 40 40" class="fm-hub-svg">
+                    <path d="M20 5L23.5 15.5L34 19L23.5 22.5L20 33L16.5 22.5L6 19L16.5 15.5L20 5Z" fill="#ffb84d" />
+                    <circle cx="31" cy="9" r="2.5" fill="#ff7a1a" />
                   </svg>
                 }
               </div>
+
               <div class="fm-module-card-text">
                 <strong class="fm-module-title">{{ mod.title }}</strong>
                 <small class="fm-module-subtitle">{{ mod.subtitle }}</small>
               </div>
+
+              <ion-icon name="chevron-forward-outline" class="fm-module-chevron" aria-hidden="true"></ion-icon>
             </button>
           }
         </div>
-      </section>
-
-      <!-- Grilla 2x3 de las 6 Tarjetas de Herramientas -->
-      <section class="tools-bento-grid" aria-label="Herramientas principales">
-        <!-- 1. Suite PDF -->
-        <button type="button" class="tool-bento-card" (click)="selectHeroTool('merge')">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 64 68" class="bento-svg-icon">
-              <defs>
-                <linearGradient id="pdfRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#ff4d4d" />
-                  <stop offset="100%" stop-color="#dc2626" />
-                </linearGradient>
-              </defs>
-              <rect x="6" y="4" width="52" height="60" rx="13" fill="url(#pdfRedGrad)" />
-              <path d="M40 4L58 22H45C42.2 22 40 19.8 40 17V4Z" fill="#fca5a5" />
-              <path d="M31 18C28 27 22 38 17 43C24 41 36 37 45 39C39 35 33 26 31 18Z" stroke="#ffffff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Suite PDF</h2>
-            <p>Editar, convertir, unir y mucho más.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
-
-        <!-- 2. Escanear -->
-        <button type="button" class="tool-bento-card" (click)="selectSmallPdfTool('scanner')">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 64 64" class="bento-svg-icon">
-              <path d="M12 24V16C12 13.8 13.8 12 16 12H24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
-              <path d="M40 12H48C50.2 12 52 13.8 52 16V24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
-              <path d="M12 40V48C12 50.2 13.8 52 16 52H24" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
-              <path d="M40 52H48C50.2 52 52 50.2 52 48V40" fill="none" stroke="#00a8ff" stroke-width="5" stroke-linecap="round" />
-              <line x1="20" y1="32" x2="44" y2="32" stroke="#e0f2fe" stroke-width="4.5" stroke-linecap="round" />
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Escanear</h2>
-            <p>Digitaliza tus documentos desde la cámara.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
-
-        <!-- 3. Convertir archivos -->
-        <button type="button" class="tool-bento-card" (click)="selectHeroTool('convert')">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 64 64" class="bento-svg-icon">
-              <path d="M16 28C17.8 19.5 25.4 13 34.5 13C41.5 13 47.6 16.8 50.8 22.5" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round" />
-              <polygon points="53,13 55,26 42,24" fill="#a855f7" />
-              <path d="M48 36C46.2 44.5 38.6 51 29.5 51C22.5 51 16.4 47.2 13.2 41.5" fill="none" stroke="#9333ea" stroke-width="6" stroke-linecap="round" />
-              <polygon points="11,51 9,38 22,40" fill="#9333ea" />
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Convertir archivos</h2>
-            <p>Convierte tus archivos a otros formatos.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
-
-        <!-- 4. Traductor -->
-        <button type="button" class="tool-bento-card" (click)="selectHeroTool('translate')">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 64 64" class="bento-svg-icon">
-              <rect x="6" y="6" width="52" height="52" rx="13" fill="#10b981" />
-              <text x="21" y="39" text-anchor="middle" fill="#ffffff" font-family="Plus Jakarta Sans, sans-serif" font-size="25" font-weight="800">A</text>
-              <text x="43" y="45" text-anchor="middle" fill="#ffffff" font-family="Plus Jakarta Sans, sans-serif" font-size="21" font-weight="800">文</text>
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Traductor</h2>
-            <p>Traduce textos y documentos en varios idiomas.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
-
-        <!-- 5. Subir archivos -->
-        <button type="button" class="tool-bento-card" (click)="goToUploadForm()">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 68 60" class="bento-svg-icon">
-              <defs>
-                <linearGradient id="cloudBlueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#38bdf8" />
-                  <stop offset="100%" stop-color="#0284c7" />
-                </linearGradient>
-              </defs>
-              <path d="M18 48H51C57.6 48 63 42.6 63 36C63 29.8 58.3 24.7 52.2 24.1C50.1 15.5 42.3 9 33 9C22.5 9 14 17.5 14 28C14 28.6 14 29.2 14.1 29.8C8.9 31.4 5 36.2 5 42C5 48 10.8 48 18 48Z" fill="url(#cloudBlueGrad)" />
-              <path d="M34 44V26M26 33L34 25L42 33" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Subir archivos</h2>
-            <p>Carga archivos desde tu dispositivo.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
-
-        <!-- 6. Comprimir archivos -->
-        <button type="button" class="tool-bento-card" (click)="selectHeroTool('compress')">
-          <div class="tool-bento-icon-wrap" aria-hidden="true">
-            <svg viewBox="0 0 64 64" class="bento-svg-icon">
-              <path d="M12 14H52L58 24H6L12 14Z" fill="#ff942e" />
-              <rect x="8" y="24" width="48" height="30" rx="6" fill="#ff6b00" />
-              <line x1="6" y1="24" x2="58" y2="24" stroke="#2a1205" stroke-width="2.5" />
-              <rect x="25" y="24" width="14" height="8" rx="2" fill="none" stroke="#fff7ed" stroke-width="2.5" />
-            </svg>
-          </div>
-          <div class="tool-bento-copy">
-            <h2>Comprimir archivos</h2>
-            <p>Reduce el tamaño de tus archivos.</p>
-          </div>
-          <span class="tool-bento-arrow" aria-hidden="true">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
-          </span>
-        </button>
       </section>
 
       <!-- Banner Inferior: Tip útil -->
@@ -251,7 +271,7 @@
           </svg>
           <div class="tip-text-col">
             <strong>Tip útil</strong>
-            <span>Puedes seleccionar varios archivos y usar las herramientas en lote.</span>
+            <span>Explorá todas las herramientas y potenciá tu productividad.</span>
           </div>
         </div>
 
@@ -268,7 +288,7 @@
     <div class="fm-suite-container">
       <!-- Ondas de Seda 3D Naranjas de Fondo -->
       <div class="tools-silk-waves" aria-hidden="true">
-        <svg viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
+        <svg aria-hidden="true" viewBox="0 0 1200 760" preserveAspectRatio="none" class="tools-waves-svg">
           <defs>
             <linearGradient id="tlWaveOrangeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.32" />
@@ -304,7 +324,7 @@
         <div class="fm-topbar-actions">
           <button type="button" class="fm-icon-btn fm-bell-btn" title="Notificaciones" (click)="presentToast('No hay notificaciones pendientes', 'dark')">
             <ion-icon name="notifications-outline"></ion-icon>
-            <span class="fm-dot-badge"></span>
+            <span class="fm-notif-pip"></span>
           </button>
           <div class="fm-avatar-chip">
             <span class="fm-avatar-circle">CG</span>
@@ -317,39 +337,39 @@
       <div class="fm-tool-header">
         <button type="button" class="fm-back-squircle-btn" (click)="backToCatalog()" title="Volver al catalogo">
           @if (activeTool() === 'organize') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'edit') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'watermark') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'protect') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'compare') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'image-editor') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'duplicates') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'batch-rename') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-1 9l-1.5-3.5h-3L6 18H4l4-9h2l4 9h-2zm-3.8-5h2.2L9.3 10.6 8.2 13z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-1 9l-1.5-3.5h-3L6 18H4l4-9h2l4 9h-2zm-3.8-5h2.2L9.3 10.6 8.2 13z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'translate') {
             <span class="fm-header-glyph-text">文A</span>
           } @else if (activeTool() === 'ocr') {
             <span class="fm-header-glyph-text fm-glyph-ocr">[OCR]</span>
           } @else if (activeTool() === 'sign') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#ff7a1a"/></svg>
           } @else if (activeTool() === 'scan-images') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><rect x="3" y="3" width="13" height="13" rx="2" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="7" cy="7" r="1.5" fill="#ff7a1a"/><path d="M14 11l-3-3-5 5" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/><path d="M8 21h11a2 2 0 0 0 2-2V8" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><rect x="3" y="3" width="13" height="13" rx="2" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="7" cy="7" r="1.5" fill="#ff7a1a"/><path d="M14 11l-3-3-5 5" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/><path d="M8 21h11a2 2 0 0 0 2-2V8" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
           } @else if (activeTool() === 'compress') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#ff7a1a"/><path d="M12 10v6M9 13l3 3 3-3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#ff7a1a"/><path d="M12 10v6M9 13l3 3 3-3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
           } @else if (activeTool() === 'decompress') {
             <ion-icon name="arrow-undo-outline"></ion-icon>
           } @else if (activeTool() === 'merge') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M6 3v12M18 9a9 9 0 0 1-9 9M18 9l-3-3M18 9l-3 3" fill="none" stroke="#ff7a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M6 3v12M18 9a9 9 0 0 1-9 9M18 9l-3-3M18 9l-3 3" fill="none" stroke="#ff7a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           } @else if (activeTool() === 'split') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><circle cx="6" cy="6" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="4" x2="8.5" y2="15.5" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="20" x2="8.5" y2="8.5" stroke="#ff7a1a" stroke-width="2"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><circle cx="6" cy="6" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="4" x2="8.5" y2="15.5" stroke="#ff7a1a" stroke-width="2"/><line x1="20" y1="20" x2="8.5" y2="8.5" stroke="#ff7a1a" stroke-width="2"/></svg>
           } @else if (activeTool() === 'convert') {
-            <svg viewBox="0 0 24 24" class="fm-header-svg"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="fm-header-svg"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-linecap="round"/></svg>
           } @else {
             <ion-icon name="arrow-undo-outline"></ion-icon>
           }
@@ -462,7 +482,7 @@
             <!-- 01. ORGANIZAR: DROPZONE PDF 1:1 CON CAPTURA 2 -->
             <div class="fm-dashed-dropzone fm-organize-dropzone" (click)="toolFilePicker.click()">
               <div class="fm-drop-icon fm-drop-pdf-plus" aria-hidden="true">
-                <svg viewBox="0 0 64 64" class="fm-svg-pdf-plus">
+                <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-pdf-plus">
                   <rect x="12" y="8" width="34" height="46" rx="5" fill="#dc2626" />
                   <path d="M34 8L46 20H37C35.3 20 34 18.7 34 17V8Z" fill="#fca5a5" />
                   <text x="29" y="38" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">PDF</text>
@@ -529,7 +549,7 @@
             <div class="fm-protect-padlock-card">
               <div class="fm-glowing-pedestal">
                 <div class="fm-pedestal-ring"></div>
-                <svg viewBox="0 0 100 110" class="fm-padlock-3d-svg">
+                <svg aria-hidden="true" viewBox="0 0 100 110" class="fm-padlock-3d-svg">
                   <defs>
                     <linearGradient id="padlockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#ff942e" />
@@ -551,17 +571,15 @@
             <!-- 05. COMPARAR: VISTA DUAL LADO A LADO -->
             <div class="fm-compare-dual-card">
               <div class="fm-compare-pane pane-a">
-                <span class="fm-pane-tag original">Original (v1)</span>
                 <div class="fm-mini-doc-sheet">
-                  <h5>{{ compareFileA() }}</h5>
+                  <h5>Original (v1) · {{ compareFileA() }}</h5>
                   <p class="diff-equal">1. Introducción al proyecto de seguridad.</p>
                   <p class="diff-removed">- Versión preliminar sin cifrado AES.</p>
                 </div>
               </div>
               <div class="fm-compare-pane pane-b">
-                <span class="fm-pane-tag modified">Modificado (v2)</span>
                 <div class="fm-mini-doc-sheet">
-                  <h5>{{ compareFileB() }}</h5>
+                  <h5>Modificado (v2) · {{ compareFileB() }}</h5>
                   <p class="diff-equal">1. Introducción al proyecto de seguridad.</p>
                   <p class="diff-added">+ Cifrado bancario AES-256 bits activado.</p>
                 </div>
@@ -661,26 +679,26 @@
                 <div>
                   <label class="fm-field-title">Idioma de origen:</label>
                   <select class="fm-select-dark" [(ngModel)]="translateSourceLangCode">
-                    <option value="es">🇪🇸 Español</option>
-                    <option value="en">🇬🇧 Inglés</option>
-                    <option value="fr">🇫🇷 Francés</option>
-                    <option value="de">🇩🇪 Alemán</option>
-                    <option value="it">🇮🇹 Italiano</option>
-                    <option value="pt">🇵🇹 Portugués</option>
-                    <option value="auto">🌐 Automático</option>
+                    <option value="es">Español</option>
+                    <option value="en">Inglés</option>
+                    <option value="fr">Francés</option>
+                    <option value="de">Alemán</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Portugués</option>
+                    <option value="auto">Automático</option>
                   </select>
                 </div>
                 <div>
                   <label class="fm-field-title">Idioma de destino:</label>
                   <select class="fm-select-dark" [(ngModel)]="translateTargetLangCode">
-                    <option value="en">🇬🇧 Inglés</option>
-                    <option value="es">🇪🇸 Español</option>
-                    <option value="fr">🇫🇷 Francés</option>
-                    <option value="de">🇩🇪 Alemán</option>
-                    <option value="it">🇮🇹 Italiano</option>
-                    <option value="pt">🇵🇹 Portugués</option>
-                    <option value="ja">🇯🇵 Japonés</option>
-                    <option value="zh">🇨🇳 Chino</option>
+                    <option value="en">Inglés</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Francés</option>
+                    <option value="de">Alemán</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Portugués</option>
+                    <option value="ja">Japonés</option>
+                    <option value="zh">Chino</option>
                   </select>
                 </div>
               </div>
@@ -701,14 +719,14 @@
               <!-- Iconos centrales tematicos segun la herramienta -->
               @if (activeTool() === 'compress') {
                 <div class="fm-drop-icon fm-drop-cloud" aria-hidden="true">
-                  <svg viewBox="0 0 68 56" class="fm-svg-cloud">
+                  <svg aria-hidden="true" viewBox="0 0 68 56" class="fm-svg-cloud">
                     <path d="M18 44H50C56.6 44 62 38.6 62 32C62 25.8 57.3 20.7 51.2 20.1C49.1 11.5 41.3 5 32 5C21.5 5 13 13.5 13 24C13 24.6 13 25.2 13.1 25.8C7.9 27.4 4 32.2 4 38C4 44 9.8 44 18 44Z" fill="none" stroke="#ff8c24" stroke-width="3" stroke-linecap="round" />
                     <path d="M32 40V22M24 30L32 22L40 30" fill="none" stroke="#ff942e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
               } @else if (activeTool() === 'decompress') {
                 <div class="fm-drop-icon fm-drop-zip" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-zip">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-zip">
                     <path d="M12 16C12 13.8 13.8 12 16 12H28L34 18H48C50.2 18 52 19.8 52 22V48C52 50.2 50.2 52 48 52H16C13.8 52 12 50.2 12 48Z" fill="#ff7a1a" />
                     <path d="M28 22H36V46H28Z" fill="#ea580c" />
                     <line x1="30" y1="24" x2="34" y2="24" stroke="#ffffff" stroke-width="2" />
@@ -720,7 +738,7 @@
                 </div>
               } @else if (activeTool() === 'merge') {
                 <div class="fm-drop-icon fm-drop-merge" aria-hidden="true">
-                  <svg viewBox="0 0 72 64" class="fm-svg-merge">
+                  <svg aria-hidden="true" viewBox="0 0 72 64" class="fm-svg-merge">
                     <rect x="10" y="14" width="26" height="36" rx="4" fill="#dc2626" />
                     <text x="23" y="36" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">PDF</text>
                     <rect x="24" y="8" width="26" height="36" rx="4" fill="#ef4444" />
@@ -731,7 +749,7 @@
                 </div>
               } @else if (activeTool() === 'split') {
                 <div class="fm-drop-icon fm-drop-split" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-split">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-split">
                     <rect x="12" y="8" width="32" height="44" rx="4" fill="#dc2626" />
                     <text x="28" y="32" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">PDF</text>
                     <circle cx="44" cy="42" r="13" fill="#180e0a" stroke="#ff7a1a" stroke-width="2" />
@@ -740,7 +758,7 @@
                 </div>
               } @else if (activeTool() === 'convert') {
                 <div class="fm-drop-icon fm-drop-convert" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-convert">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-convert">
                     <rect x="12" y="8" width="32" height="44" rx="4" fill="#dc2626" />
                     <text x="28" y="32" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">PDF</text>
                     <circle cx="44" cy="42" r="13" fill="#180e0a" stroke="#ff7a1a" stroke-width="2" />
@@ -750,7 +768,7 @@
                 </div>
               } @else if (activeTool() === 'ocr') {
                 <div class="fm-drop-icon fm-drop-ocr" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-ocr">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-ocr">
                     <rect x="8" y="10" width="38" height="32" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2" />
                     <polygon points="12,36 22,22 30,30 38,18 44,36" fill="#fdba74" />
                     <circle cx="18" cy="18" r="3" fill="#ea580c" />
@@ -760,7 +778,7 @@
                 </div>
               } @else if (activeTool() === 'sign') {
                 <div class="fm-drop-icon fm-drop-sign" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-sign">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-sign">
                     <rect x="12" y="10" width="30" height="42" rx="4" fill="#ff7a1a" />
                     <path d="M19 28Q27 20 34 27T22 36" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" />
                     <polygon points="38,30 48,40 37,51 27,41" fill="#ea580c" stroke="#fff" stroke-width="1.5" />
@@ -769,7 +787,7 @@
                 </div>
               } @else if (activeTool() === 'scan-images') {
                 <div class="fm-drop-icon fm-drop-images" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" class="fm-svg-images">
+                  <svg aria-hidden="true" viewBox="0 0 64 64" class="fm-svg-images">
                     <rect x="10" y="14" width="30" height="26" rx="4" fill="#3b82f6" />
                     <polygon points="13,36 21,24 27,31 33,21 38,36" fill="#93c5fd" />
                     <circle cx="18" cy="21" r="3" fill="#fbbf24" />
@@ -933,7 +951,7 @@
               <!-- Cuadrícula / Carrusel de páginas con miniaturas -->
               <div class="fm-organize-pages-grid">
                 @for (page of pdfPages(); track page.id; let i = $index) {
-                  <div class="fm-organize-page-card" [class.selected]="selectedPageIndex() === i" (click)="selectOrganizePage(i)">
+                  <div class="fm-organize-page-panel" [class.selected]="selectedPageIndex() === i" (click)="selectOrganizePage(i)">
                     <div class="fm-organize-sheet-preview" [style.transform]="'rotate(' + page.rotation + 'deg)'">
                       <div class="fm-sheet-lines-skeleton">
                         <strong>Trabajo Final</strong>
@@ -992,7 +1010,7 @@
               </div>
 
               <!-- Panel Opciones de texto -->
-              <div class="fm-edit-options-card">
+              <div class="fm-edit-options-panel">
                 <label class="fm-field-title">Opciones de texto</label>
                 <div class="fm-edit-typography-row">
                   <select class="fm-select-dark fm-font-family-select" [(ngModel)]="editFontFamily">
@@ -1021,7 +1039,7 @@
                 <!-- Paleta de colores -->
                 <div class="fm-edit-colors-palette">
                   @for (c of ['#ff7a1a', '#ef4444', '#f59e0b', '#22c55e', '#06b6d4', '#a855f7', '#ffffff']; track c) {
-                    <button type="button" class="fm-color-dot" [style.background-color]="c" [class.active]="editColor() === c" (click)="setEditColor(c)"></button>
+                    <button type="button" class="fm-color-swatch" [style.background-color]="c" [class.active]="editColor() === c" (click)="setEditColor(c)"></button>
                   }
                 </div>
               </div>
@@ -1095,7 +1113,7 @@
                   <label class="fm-field-title text-center">Posición</label>
                   <div class="fm-pos-grid-3x3">
                     @for (p of ['tl','tc','tr','cl','cc','cr','bl','bc','br']; track p) {
-                      <button type="button" class="fm-pos-dot" [class.active]="watermarkPosition() === p" (click)="setWatermarkPos(p)"></button>
+                      <button type="button" class="fm-pos-cell" [class.active]="watermarkPosition() === p" (click)="setWatermarkPos(p)"></button>
                     }
                   </div>
                 </div>
@@ -1146,13 +1164,13 @@
 
                 <!-- Columna derecha: Tarjeta de Seguridad -->
                 <div class="fm-protect-status-col">
-                  <div class="fm-protect-shield-card">
+                  <div class="fm-protect-shield-panel">
                     <div class="fm-shield-check-icon">
                       <ion-icon name="checkmark-outline"></ion-icon>
                     </div>
                     <p class="fm-shield-msg">Tu documento estará protegido y seguro.</p>
                     <div class="fm-shield-badge-svg" aria-hidden="true">
-                      <svg viewBox="0 0 60 70" class="fm-svg-shield">
+                      <svg aria-hidden="true" viewBox="0 0 60 70" class="fm-svg-shield">
                         <path d="M30 4L8 14v20c0 17 9.4 32.8 22 36c12.6-3.2 22-19 22-36V14L30 4z" fill="none" stroke="#ea580c" stroke-width="3"/>
                         <path d="M22 34l6 6 12-12" fill="none" stroke="#ff7a1a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
@@ -1173,7 +1191,7 @@
                 <h2>Comparación de Documentos</h2>
               </div>
 
-              <div class="fm-compare-stats-card">
+              <div class="fm-compare-stats-panel">
                 <div class="fm-similarity-gauge">
                   <span class="percent">{{ compareSimilarity() }}%</span>
                   <span class="label">Similitud de contenido</span>
@@ -1187,9 +1205,9 @@
               <div class="fm-field-section fm-mt-3">
                 <label class="fm-field-title">Resumen de cambios:</label>
                 <div class="fm-diff-legend">
-                  <span class="item added"><span class="dot"></span> 2 Párrafos agregados</span>
-                  <span class="item removed"><span class="dot"></span> 1 Párrafo eliminado</span>
-                  <span class="item modified"><span class="dot"></span> 2 Formatos modificados</span>
+                  <span class="item added">2 Párrafos agregados</span>
+                  <span class="item removed">1 Párrafo eliminado</span>
+                  <span class="item modified">2 Formatos modificados</span>
                 </div>
               </div>
 
@@ -1288,7 +1306,7 @@
                 </div>
               </div>
 
-              <div class="fm-space-freed-card fm-mt-3">
+              <div class="fm-space-freed-panel fm-mt-3">
                 <ion-icon name="trash-outline" class="trash-ic"></ion-icon>
                 <div class="text">
                   <span class="num">{{ duplicateFreedSpace() }}</span>
@@ -1419,7 +1437,7 @@
 
               <button type="button" class="fm-cta-glow-btn" (click)="runCompress()" [disabled]="processing()">
                 <ion-icon name="archive-outline"></ion-icon>
-                <span>Comprimir y Procesar &rarr;</span>
+                <span>Comprimir y Procesar</span>
               </button>
             }
 
@@ -1721,12 +1739,12 @@
                 <label class="fm-field-title">Idioma del texto:</label>
                 <div class="fm-select-shell">
                   <select class="fm-select-dark" [(ngModel)]="ocrChosenLang">
-                    <option value="es">🇪🇸 Español</option>
-                    <option value="en">🇬🇧 Inglés</option>
-                    <option value="fr">🇫🇷 Francés</option>
-                    <option value="de">🇩🇪 Alemán</option>
-                    <option value="it">🇮🇹 Italiano</option>
-                    <option value="pt">🇵🇹 Portugués</option>
+                    <option value="es">Español</option>
+                    <option value="en">Inglés</option>
+                    <option value="fr">Francés</option>
+                    <option value="de">Alemán</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Portugués</option>
                   </select>
                 </div>
               </div>
@@ -1789,7 +1807,7 @@
                 <div class="fm-globe-bubble bubble-blue">Hello!</div>
                 <div class="fm-globe-bubble bubble-orange">¡Hola!</div>
                 <div class="fm-globe-sphere">
-                  <svg viewBox="0 0 120 120" class="fm-globe-svg">
+                  <svg aria-hidden="true" viewBox="0 0 120 120" class="fm-globe-svg">
                     <circle cx="60" cy="60" r="54" fill="#1e40af" />
                     <path d="M35 25C45 28 50 20 60 25C65 35 55 45 45 42C38 50 30 40 35 25Z" fill="#60a5fa" />
                     <path d="M55 55C70 50 85 65 75 80C65 95 50 90 55 75C48 70 50 60 55 55Z" fill="#60a5fa" />
@@ -1827,8 +1845,8 @@
               </div>
 
               <!-- Tarjeta blanca de firma -->
-              <div class="fm-signature-white-card">
-                <canvas
+              <div class="fm-signature-white-panel">
+                <canvas aria-label="Lienzo de firma digital"
                   #signatureCanvas
                   width="320"
                   height="110"
@@ -1959,7 +1977,7 @@
               </div>
 
               @if (aiSummary(); as sum) {
-                <div class="ai-summary-card">
+                <div class="ai-summary-panel">
                   <h4>{{ sum.title }}</h4>
                   <ul>
                     @for (bullet of sum.bullets; track bullet) {
