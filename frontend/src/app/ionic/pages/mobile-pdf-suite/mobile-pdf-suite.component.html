@@ -1816,11 +1816,48 @@
                 </div>
               </div>
 
+              @if (translateTab() === 'document') {
+                <div class="fm-field-section">
+                  <div class="fm-two-inputs-row">
+                    <div>
+                      <label class="fm-field-title">Idioma origen:</label>
+                      <select class="fm-select-dark" [(ngModel)]="translateSourceLangCode">
+                        <option value="auto">Automático</option>
+                        <option value="es">Español</option>
+                        <option value="en">Inglés</option>
+                        <option value="fr">Francés</option>
+                        <option value="de">Alemán</option>
+                        <option value="it">Italiano</option>
+                        <option value="pt">Portugués</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="fm-field-title">Idioma destino:</label>
+                      <select class="fm-select-dark" [(ngModel)]="translateTargetLangCode">
+                        <option value="en">Inglés</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Francés</option>
+                        <option value="de">Alemán</option>
+                        <option value="it">Italiano</option>
+                        <option value="pt">Portugués</option>
+                        <option value="ja">Japonés</option>
+                        <option value="zh">Chino</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="fm-cta-glow-btn" (click)="runTranslateFromDropzone()" [disabled]="processing()">
+                  <ion-icon name="language-outline"></ion-icon>
+                  <span>Traducir Documento</span>
+                </button>
+              }
+
               @if (translateResultOutput()) {
                 <div class="fm-translate-result-shell">
                   <div class="fm-translate-result-header">
                     <span class="fm-field-title">Traducción generada:</span>
-                    <button type="button" class="fm-link-btn" (click)="presentToast('Texto copiado al portapapeles', 'success')">Copiar</button>
+                    <button type="button" class="fm-link-btn" (click)="copyTranslatedText()">Copiar</button>
                   </div>
                   <div class="fm-translate-result-text">{{ translateResultOutput() }}</div>
                 </div>

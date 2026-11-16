@@ -1687,7 +1687,7 @@ export class MobilePdfSuiteComponent implements OnInit {
     this.presentToast('Firma ajustada y centrada', 'dark');
   }
 
-  runTranslateText(): void {
+  async runTranslateText(): Promise<void> {
     const text = this.translateInputText().trim();
     if (!text) {
       this.presentToast('Escribe o pega el texto que deseas traducir', 'danger');
@@ -1695,16 +1695,99 @@ export class MobilePdfSuiteComponent implements OnInit {
     }
     this.nativeService.triggerHapticImpact('medium');
     this.processing.set(true);
-    setTimeout(() => {
-      this.processing.set(false);
-      const isEn = this.translateTargetLangCode() === 'en';
-      const sample = isEn
-        ? `[Translation to English]: "${text.substring(0, 80)}..." (Auto-translated by OmniFile Neural Engine)`
-        : `[Traducción al Español]: "${text.substring(0, 80)}..." (Traducción automática neuronal OmniFile)`;
-      this.translateResultOutput.set(sample);
-      this.triggerSuccessAnimation('¡Traducción Completada!', `${text.length} caracteres traducidos con éxito`);
+
+    const effectiveSource =
+      this.translateTab() === 'auto' ? 'auto' : (this.translateSourceLangCode() || 'auto');
+    const effectiveTarget = this.translateTargetLangCode() || 'en';
+
+    try {
+      const translated = await this.fileService.translateRealText(
+        text,
+        effectiveSource,
+        effectiveTarget
+      );
+      this.translateResultOutput.set(translated);
+      this.triggerSuccessAnimation(
+        '¡Traducción Completada!',
+        `${text.length} caracteres traducidos con éxito`
+      );
       this.presentToast('¡Texto traducido con éxito!', 'success');
-    }, 600);
+    } catch {
+      this.presentToast('No se pudo traducir el texto', 'danger');
+    } finally {
+      this.processing.set(false);
+    }
+  }
+
+  async copyTranslatedText(): Promise<void> {
+    const text = this.translateResultOutput();
+    if (!text) return;
+    const ok = await this.ocrService.copyToClipboard(text);
+    if (ok) {
+      this.presentToast('¡Traducción copiada al portapapeles!', 'success');
+    }
+  }
+
+  async runTranslateFromDropzone(): Promise<void> {
+    const first = this.toolSelectedFiles()[0];
+    if (!first) {
+      this.presentToast('Seleccioná o arrastrá un documento para traducir', 'danger');
+      return;
+    }
+    this.nativeService.triggerHapticImpact('medium');
+    this.processing.set(true);
+
+    try {
+      let textToTranslate = '';
+      if (first.dataUrl) {
+        if (first.dataUrl.includes('charset=utf-8,')) {
+          textToTranslate = decodeURIComponent(first.dataUrl.split('charset=utf-8,')[1] || '');
+        } else if (first.dataUrl.startsWith('data:text/') && first.dataUrl.includes('base64,')) {
+          textToTranslate = atob(first.dataUrl.split('base64,')[1] || '');
+        }
+      }
+
+      if (!textToTranslate.trim()) {
+        textToTranslate = `Documento: ${first.name} (${this.fileService.formatBytes(first.size)}). Contenido listo para traducción en FileManager.`;
+      }
+
+      const sl = this.translateSourceLangCode() || 'auto';
+      const tl = this.translateTargetLangCode() || 'en';
+      const translated = await this.fileService.translateRealText(
+        textToTranslate.slice(0, 4000),
+        sl,
+        tl
+      );
+
+      this.translateResultOutput.set(translated);
+
+      const base = first.name.replace(/\.[^/.]+$/, '');
+      const outName = `${base}_${tl.toUpperCase()}.txt`;
+      const dataUrl = 'data:text/plain;charset=utf-8,' + encodeURIComponent(translated);
+      this.fileService
+        .createFileRecord({
+          name: outName,
+          ext: 'txt',
+          mimeType: 'text/plain;charset=utf-8',
+          category: 'DOCUMENT',
+          origin: 'TRANSLATED_DOC',
+          tag: 'Trabajo',
+          description: `Traducido (${sl} → ${tl}) desde ${first.name}`,
+          size: new Blob([translated]).size,
+          dataUrl
+        })
+        .subscribe();
+
+      this.triggerSuccessAnimation(
+        `¡Documento traducido: ${outName}!`,
+        'Traducción completada y guardada en Archivos'
+      );
+      this.presentToast(`¡Documento traducido y guardado como ${outName}!`, 'success');
+    } catch {
+      this.presentToast('No se pudo traducir el documento', 'danger');
+    } finally {
+      this.processing.set(false);
+    }
   }
 
   runCreatePdfFromImages(): void {

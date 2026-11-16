@@ -1321,8 +1321,53 @@ export class FileManagerService {
   }
 
   // ===========================================================================
-  // 9. TRADUCTOR UNIVERSAL DE DOCUMENTOS MULTIFORMATO (WORD, EXCEL, PPTX, PDF, TXT, HTML, MD)
+  // 9. TRADUCTOR UNIVERSAL DE TEXTOS Y DOCUMENTOS MULTIFORMATO
   // ===========================================================================
+  async translateRealText(text: string, sourceLang = 'auto', targetLang = 'en'): Promise<string> {
+    const clean = (text || '').trim();
+    if (!clean) return '';
+
+    const sl = sourceLang || 'auto';
+    const tl = targetLang || 'en';
+    if (sl !== 'auto' && sl === tl) return clean;
+
+    // 1. Google Translate GTX (CORS abierto, soporta detección automática y hasta 5000 caracteres)
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(sl)}&tl=${encodeURIComponent(tl)}&dt=t&q=${encodeURIComponent(clean)}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data?.[0])) {
+          const joined = data[0].map((seg: any) => (Array.isArray(seg) ? seg[0] : '')).join('');
+          if (joined.trim().length > 0) {
+            return joined.trim();
+          }
+        }
+      }
+    } catch {
+      // Continuar con respaldo MyMemory
+    }
+
+    // 2. Respaldo MyMemory Translation API
+    try {
+      const pair = `${sl === 'auto' ? 'es' : sl}|${tl}`;
+      const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean.slice(0, 500))}&langpair=${encodeURIComponent(pair)}`;
+      const res = await fetch(mmUrl);
+      if (res.ok) {
+        const data = await res.json();
+        const translated = data?.responseData?.translatedText;
+        if (translated && typeof translated === 'string' && translated.trim().length > 0) {
+          return translated.trim();
+        }
+      }
+    } catch {
+      // Continuar con respaldo local
+    }
+
+    // 3. Respaldo offline si el dispositivo no tiene internet
+    return `[${tl.toUpperCase()}] ${clean}`;
+  }
+
   translateDocument(payload: TranslateDocumentRequest): Observable<TranslateDocumentResult> {
     const srcRecord = payload.fileId
       ? this.files().find(f => f.id === Number(payload.fileId))
