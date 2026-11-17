@@ -1,8 +1,8 @@
 {
-  "name": "omnifile-studio-tp",
+  "name": "filemanager-tp",
   "version": "1.0.0",
   "private": true,
-  "description": "OmniFile Studio - Gestor Universal de Archivos, Escáner de Cámara y Suite PDF (Ionic 9 + Angular Standalone + Capacitor 8)",
+  "description": "FileManager - Gestor Universal de Archivos, Escaner de Camara y Suite PDF (Ionic 9 + Angular Standalone + Capacitor 8)",
   "scripts": {
     "start": "node start-all.cjs",
     "ionic": "npm --prefix frontend run ionic",

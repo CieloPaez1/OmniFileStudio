@@ -41,7 +41,7 @@ FileManager es una aplicacion hibrida multiplataforma (Web de Escritorio + App M
 ## Estructura del Proyecto
 
 ```text
-OmniFileStudio/
+FileManager/
 ├── backend/                  # API REST Java 21 + Spring Boot (Arquitectura Hexagonal)
 │   ├── Core/                 # Dominio puro Java 21, Casos de Uso, Puertos y Tests JUnit 5
 │   └── Adapter/              # Infraestructura Spring Boot + JPA + iText 8 + Controladores REST
